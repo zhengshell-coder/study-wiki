@@ -1,10 +1,52 @@
 {
   "modules": [
-    { "id": "hist", "name": "历史", "folder": "历史", "icon": "🏛️", "color": "#c08457" },
-    { "id": "tcm",  "name": "中医", "folder": "中医", "icon": "🌿", "color": "#4a9d6f" },
-    { "id": "pol",  "name": "政治", "folder": "政治", "icon": "⚖️", "color": "#5566cc" },
-    { "id": "econ", "name": "经济", "folder": "经济", "icon": "📈", "color": "#d98a3d" },
-    { "id": "tech", "name": "科技", "folder": "科技", "icon": "🔬", "color": "#3aa6b9" }
+    {
+      "id": "hist",
+      "name": "历史",
+      "folder": "历史",
+      "icon": "🏛️",
+      "color": "#c08457"
+    },
+    {
+      "id": "tcm",
+      "name": "中医",
+      "folder": "中医",
+      "icon": "🌿",
+      "color": "#4a9d6f"
+    },
+    {
+      "id": "pol",
+      "name": "政治",
+      "folder": "政治",
+      "icon": "⚖️",
+      "color": "#5566cc"
+    },
+    {
+      "id": "econ",
+      "name": "经济",
+      "folder": "经济",
+      "icon": "📈",
+      "color": "#d98a3d"
+    },
+    {
+      "id": "tech",
+      "name": "科技",
+      "folder": "科技",
+      "icon": "🔬",
+      "color": "#3aa6b9"
+    }
   ],
-  "pages": []
+  "pages": [
+    {
+      "id": "mptnzjy4gq5l",
+      "moduleId": "hist",
+      "title": "连接测试",
+      "file": "连接测试.html",
+      "desc": "",
+      "tags": [
+        "测试"
+      ],
+      "date": "2026-05-31"
+    }
+  ]
 }
