@@ -38,17 +38,6 @@
   ],
   "pages": [
     {
-      "id": "mptnzjy4gq5l",
-      "moduleId": "hist",
-      "title": "连接测试",
-      "file": "连接测试.html",
-      "desc": "",
-      "tags": [
-        "测试"
-      ],
-      "date": "2026-05-31"
-    },
-    {
       "id": "mpto4qlr4mjh",
       "moduleId": "tcm",
       "title": "中医学习",
