@@ -47,6 +47,15 @@
         "测试"
       ],
       "date": "2026-05-31"
+    },
+    {
+      "id": "mpto4qlr4mjh",
+      "moduleId": "tcm",
+      "title": "中医学习",
+      "file": "中医系统课.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-05-31"
     }
   ]
 }
