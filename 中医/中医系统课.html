@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>岐黄入门 · 中医系统课</title>
+<style>
+  :root{
+    --paper:#efe5d0;        /* 宣纸底 */
+    --paper-2:#e7d9bd;      /* 略深宣纸 */
+    --paper-card:#f5edda;   /* 卡片纸 */
+    --ink:#2b2622;          /* 墨黑 */
+    --ink-soft:#5a5048;     /* 淡墨 */
+    --cinnabar:#9e3526;     /* 朱砂红 */
+    --cinnabar-2:#b5442e;
+    --seal:#a8362a;         /* 印章红 */
+    --pine:#41513c;         /* 松烟墨绿 */
+    --pine-2:#586b50;
+    --gold:#a8884e;         /* 旧金 */
+    --line:#cbb892;
+    --shadow:rgba(60,45,25,.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Songti SC","SimSun","Noto Serif CJK SC","Source Han Serif SC",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,.25), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(160,130,80,.03) 0 2px, transparent 2px 28px),
+      var(--paper);
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ===== 布局 ===== */
+  .wrap{display:flex;min-height:100vh;}
+  /* ===== 侧栏：卷轴目录 ===== */
+  #sidebar{
+    width:300px;flex:0 0 300px;
+    background:
+      linear-gradient(180deg, var(--paper-2), #ddcaa6);
+    border-right:2px solid var(--line);
+    box-shadow:inset -6px 0 14px -10px var(--shadow);
+    height:100vh;position:sticky;top:0;overflow-y:auto;
+    padding:0 0 40px;
+  }
+  .brand{
+    text-align:center;padding:26px 16px 18px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#e9d9b6,#e3d0aa);
+  }
+  .brand .seal{
+    display:inline-block;font-family:"STKaiti","KaiTi","Kaiti SC",serif;
+    background:var(--seal);color:#f5edda;border-radius:8px;
+    font-size:13px;letter-spacing:3px;padding:4px 9px;margin-bottom:10px;
+    box-shadow:0 1px 0 rgba(0,0,0,.15);
+  }
+  .brand h1{
+    font-family:"STKaiti","KaiTi","Kaiti SC",serif;
+    font-size:30px;margin:2px 0 4px;letter-spacing:6px;color:var(--ink);
+  }
+  .brand .sub{font-size:12px;color:var(--ink-soft);letter-spacing:2px;}
+  /* 版本切换 */
+  .ver-box{padding:14px 18px 4px;}
+  .ver-box .lab{font-size:11px;color:var(--ink-soft);letter-spacing:2px;margin-bottom:6px;font-family:"STKaiti","KaiTi",serif;}
+  .ver-switch{display:flex;border:1px solid var(--cinnabar);border-radius:8px;overflow:hidden;}
+  .ver-switch button{
+    flex:1;font-family:"STKaiti","KaiTi",serif;font-size:14px;letter-spacing:2px;
+    border:none;background:transparent;color:var(--cinnabar);padding:7px 0;cursor:pointer;transition:.15s;
+  }
+  .ver-switch button.on{background:var(--cinnabar);color:#f5edda;}
+  .ver-box .hint{font-size:11px;color:var(--ink-soft);margin-top:6px;line-height:1.5;}
+  /* 深入版块：标准版隐藏 */
+  .deep-only{display:none;}
+  body.deep .deep-only{display:block;}
+  .block.deep-block{
+    position:relative;border:1px solid var(--pine-2);border-left:5px solid var(--pine);
+    background:rgba(65,81,60,.06);border-radius:0 10px 10px 0;padding:18px 22px 14px;
+  }
+  .block.deep-block::after{
+    content:"深入";position:absolute;top:14px;right:16px;font-size:11px;letter-spacing:2px;
+    color:#f5edda;background:var(--pine);border-radius:5px;padding:2px 8px;font-family:"STKaiti","KaiTi",serif;
+  }
+  .block.deep-block > h3{color:var(--pine);}
+  .block.deep-block .badge{background:var(--pine);}
+  /* 标题下版本标签 */
+  .ver-tag-line{margin:-2px 0 4px;}
+  .vt{display:inline-block;font-family:"STKaiti","KaiTi",serif;font-size:13px;letter-spacing:1px;border-radius:6px;padding:3px 12px;}
+  .vt-std{background:rgba(158,53,38,.12);color:var(--cinnabar);border:1px solid var(--line);}
+  .vt-deep{display:none;background:var(--pine);color:var(--paper-card);}
+  body.deep .vt-std{display:none;}
+  body.deep .vt-deep{display:inline-block;}
+  /* 深入精讲（折叠式 + 课内小目录） */
+  .deepdive{margin:34px 0 12px;border:1px solid var(--pine);border-radius:10px;background:rgba(65,81,60,.05);overflow:hidden;}
+  .dd-title{background:var(--pine);color:var(--paper-card);font-family:"STKaiti","KaiTi",serif;letter-spacing:3px;font-size:16px;padding:11px 18px;display:flex;align-items:center;gap:10px;}
+  .dd-title small{font-family:"Songti SC",serif;letter-spacing:1px;font-size:12px;opacity:.85;}
+  .dd-toc{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px;border-bottom:1px dashed var(--line);}
+  .dd-toc button{font-family:"STKaiti","KaiTi",serif;font-size:13px;letter-spacing:1px;background:var(--paper-card);border:1px solid var(--line);color:var(--pine);border-radius:6px;padding:5px 11px;cursor:pointer;transition:.15s;}
+  .dd-toc button:hover{background:rgba(65,81,60,.14);}
+  .acc{border-bottom:1px solid var(--line);margin:0 14px;}
+  .acc:last-child{border-bottom:none;}
+  .acc-h{width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:"STKaiti","KaiTi",serif;font-size:16px;letter-spacing:1px;color:var(--ink);padding:14px 4px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .acc-h:hover{color:var(--pine);}
+  .acc-h .ico{font-family:"Songti SC",serif;color:var(--pine);font-size:20px;line-height:1;flex:0 0 auto;transition:transform .2s;}
+  .acc.open .acc-h .ico{transform:rotate(45deg);}
+  .acc-b{display:none;padding:0 6px 18px;}
+  .acc.open .acc-b{display:block;}
+  .acc-b p{margin:10px 0;}
+  .acc-b .rx{display:inline-block;background:rgba(158,53,38,.1);border:1px solid var(--line);color:var(--cinnabar);border-radius:6px;padding:1px 8px;font-family:"STKaiti","KaiTi",serif;font-size:14px;}
+  .progress-box{padding:14px 18px 8px;}
+  .progress-box .pct{font-size:12px;color:var(--ink-soft);display:flex;justify-content:space-between;margin-bottom:5px;letter-spacing:1px;}
+  .bar{height:7px;background:#d6c19a;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pine),var(--pine-2));transition:width .4s;}
+  nav{padding:8px 10px;}
+  .part-title{
+    font-family:"STKaiti","KaiTi",serif;font-size:14px;color:var(--cinnabar);
+    letter-spacing:2px;margin:16px 8px 6px;padding-bottom:4px;
+    border-bottom:1px dashed var(--line);display:flex;align-items:center;gap:6px;
+  }
+  .part-title::before{content:"卷";font-size:11px;background:var(--cinnabar);color:#f5edda;border-radius:4px;padding:1px 4px;}
+  .lesson-link{
+    display:flex;align-items:flex-start;gap:8px;cursor:pointer;
+    padding:7px 10px;border-radius:7px;font-size:14px;color:var(--ink);
+    transition:background .15s;
+  }
+  .lesson-link:hover{background:rgba(168,136,78,.18);}
+  .lesson-link.active{background:rgba(158,53,38,.13);box-shadow:inset 3px 0 0 var(--cinnabar);}
+  .lesson-link .num{font-size:11px;color:var(--ink-soft);min-width:20px;text-align:right;padding-top:2px;}
+  .lesson-link .chk{font-size:12px;color:var(--pine);min-width:14px;}
+  .lesson-link.locked{color:#a99c84;cursor:default;}
+  .lesson-link.locked:hover{background:none;}
+  .lesson-link .pin{font-size:10px;color:var(--gold);}
+  /* ===== 主区 ===== */
+  main{flex:1;min-width:0;display:flex;justify-content:center;padding:42px 28px 90px;}
+  .scroll{
+    width:min(760px,100%);
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    box-shadow:0 10px 40px -22px var(--shadow), 0 2px 0 #d9c8a4;
+    padding:48px 54px 60px;position:relative;
+  }
+  .scroll::before,.scroll::after{
+    content:"";position:absolute;left:0;right:0;height:10px;
+    background:repeating-linear-gradient(90deg,var(--cinnabar) 0 16px,#8d2f22 16px 18px);
+    opacity:.0;
+  }
+  .l-part{font-family:"STKaiti","KaiTi",serif;color:var(--cinnabar);letter-spacing:3px;font-size:14px;}
+  .l-title{
+    font-family:"STKaiti","KaiTi",serif;font-size:34px;letter-spacing:4px;
+    margin:6px 0 2px;color:var(--ink);
+  }
+  .l-sub{color:var(--ink-soft);font-size:15px;letter-spacing:1px;margin-bottom:8px;}
+  .rule{height:2px;background:linear-gradient(90deg,var(--gold),transparent);margin:14px 0 26px;border:none;}
+  /* 七块 */
+  .block{margin:30px 0;}
+  .block > h3{
+    font-family:"STKaiti","KaiTi",serif;font-size:19px;letter-spacing:2px;
+    color:var(--pine);margin:0 0 12px;display:flex;align-items:center;gap:9px;
+  }
+  .block > h3 .badge{
+    font-size:12px;background:var(--pine);color:var(--paper-card);
+    border-radius:5px;padding:2px 8px;letter-spacing:2px;font-family:inherit;
+  }
+  .block.hook{background:rgba(168,136,78,.1);border-left:4px solid var(--gold);padding:16px 20px;border-radius:0 8px 8px 0;font-style:normal;}
+  .block.hook p{margin:0;color:var(--ink-soft);}
+  /* 小故事 · 典故 */
+  .block.story{
+    background:
+      radial-gradient(circle at 12% 0%, rgba(255,255,255,.3), transparent 45%),
+      linear-gradient(180deg,#f3e9d2,#ecdfc2);
+    border:1px solid var(--line);border-left:5px solid var(--gold);
+    border-radius:0 10px 10px 0;padding:18px 24px 16px;position:relative;
+    box-shadow:inset 0 0 0 1px rgba(168,136,78,.15);
+  }
+  .block.story > h3{color:var(--gold);}
+  .block.story .badge{background:var(--gold);}
+  .block.story p{font-family:"STKaiti","KaiTi","Kaiti SC",serif;font-size:16px;letter-spacing:.5px;color:var(--ink);margin:8px 0;}
+  .block.story .src{font-size:12px;color:var(--ink-soft);font-family:"Songti SC",serif;letter-spacing:1px;}
+  .block.story .moral{border-top:1px dashed var(--line);padding-top:10px;margin-top:12px;color:var(--cinnabar);}
+  .block.story .moral::before{content:"点睛　";color:var(--cinnabar);font-weight:bold;}
+  .block.caution > h3{color:var(--cinnabar);}
+  .block.caution .badge{background:var(--cinnabar);}
+  p{margin:12px 0;}
+  .concepts{counter-reset:c;padding-left:0;list-style:none;margin:0;}
+  .concepts > li{
+    position:relative;padding:12px 16px 12px 52px;margin:10px 0;
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  }
+  .concepts > li::before{
+    counter-increment:c;content:counter(c);
+    position:absolute;left:14px;top:12px;
+    width:26px;height:26px;border-radius:50%;
+    background:var(--cinnabar);color:#f5edda;font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"STKaiti","KaiTi",serif;
+  }
+  .concepts b{color:var(--cinnabar);}
+  .term{
+    border-bottom:1.5px dotted var(--cinnabar);cursor:help;position:relative;color:var(--ink);
+  }
+  .term:hover::after{
+    content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);
+    bottom:140%;width:240px;background:var(--ink);color:var(--paper-card);
+    font-size:13px;line-height:1.6;font-style:normal;letter-spacing:.5px;
+    padding:10px 12px;border-radius:8px;z-index:30;box-shadow:0 6px 20px -6px rgba(0,0,0,.5);
+    font-family:"Songti SC",serif;
+  }
+  .term:hover::before{
+    content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:130%;
+    border:6px solid transparent;border-top-color:var(--ink);z-index:30;
+  }
+  .diagram{text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px 16px 14px;}
+  .diagram svg{max-width:100%;height:auto;}
+  .diagram .cap{font-size:13px;color:var(--ink-soft);margin-top:10px;letter-spacing:1px;}
+  .quote{font-family:"STKaiti","KaiTi",serif;color:var(--cinnabar);font-size:17px;letter-spacing:1px;
+    border-left:3px solid var(--cinnabar);padding:2px 0 2px 14px;margin:14px 0;}
+  .modern{background:rgba(65,81,60,.09);border:1px dashed var(--pine-2);border-radius:8px;padding:12px 16px;margin-top:12px;}
+  .modern b{color:var(--pine);}
+  /* 小测 */
+  .quiz .q{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:10px 0;}
+  .quiz .q p{margin:0 0 8px;font-weight:bold;}
+  .quiz .a{display:none;color:var(--pine);border-top:1px dashed var(--line);padding-top:8px;margin-top:8px;}
+  .quiz .a.show{display:block;}
+  .quiz button{
+    font-family:inherit;font-size:13px;background:var(--pine);color:var(--paper-card);
+    border:none;border-radius:6px;padding:5px 12px;cursor:pointer;letter-spacing:1px;
+  }
+  .quiz button:hover{background:var(--pine-2);}
+  /* 课末操作 */
+  .lesson-foot{margin-top:40px;padding-top:22px;border-top:2px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;}
+  .btn{font-family:"STKaiti","KaiTi",serif;letter-spacing:2px;font-size:15px;cursor:pointer;
+    border:1px solid var(--cinnabar);background:var(--cinnabar);color:#f5edda;
+    padding:8px 20px;border-radius:8px;transition:.15s;}
+  .btn:hover{background:#8d2f22;}
+  .btn.ghost{background:transparent;color:var(--cinnabar);}
+  .btn.ghost:hover{background:rgba(158,53,38,.1);}
+  .btn.nav{border-color:var(--pine);background:transparent;color:var(--pine);}
+  .btn.nav:hover{background:rgba(65,81,60,.1);}
+  .btn[disabled]{opacity:.35;cursor:default;}
+  .note-area{width:100%;margin-top:16px;}
+  .note-area textarea{width:100%;min-height:80px;font-family:"Songti SC",serif;font-size:14px;
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--ink);resize:vertical;}
+  .note-area label{font-family:"STKaiti","KaiTi",serif;color:var(--pine);font-size:14px;letter-spacing:1px;}
+  .placeholder{text-align:center;color:var(--ink-soft);padding:40px 10px;}
+  .placeholder .big{font-family:"STKaiti","KaiTi",serif;font-size:22px;color:var(--cinnabar);letter-spacing:2px;}
+  .outline{display:inline-block;text-align:left;margin-top:16px;background:var(--paper);border:1px solid var(--line);
+    border-radius:8px;padding:14px 22px;color:var(--ink);font-size:14px;}
+  .toc-toggle{display:none;}
+  /* 响应式 */
+  @media(max-width:820px){
+    .wrap{flex-direction:column;}
+    #sidebar{position:relative;width:100%;height:auto;flex:none;max-height:0;overflow:hidden;transition:max-height .3s;padding-bottom:0;}
+    #sidebar.open{max-height:1200px;overflow-y:auto;padding-bottom:30px;}
+    .toc-toggle{display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:40;background:var(--cinnabar);color:#f5edda;
+      font-family:"STKaiti","KaiTi",serif;letter-spacing:3px;padding:12px 18px;cursor:pointer;}
+    .scroll{padding:30px 22px 50px;}
+    main{padding:18px 12px 70px;}
+    .l-title{font-size:27px;}
+  }
+</style>
+</head>
+<body>
+<div class="toc-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <span>☰ 目录</span><span style="font-family:'STKaiti',serif">岐黄入门</span>
+</div>
+<div class="wrap">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="seal">岐黄之術</div>
+      <h1>岐黄入门</h1>
+      <div class="sub">中 医 系 统 课 · 标 准 版</div>
+    </div>
+    <div class="ver-box">
+      <div class="lab">学习版本</div>
+      <div class="ver-switch">
+        <button id="verStd" onclick="setVersion('std')">标准版</button>
+        <button id="verDeep" onclick="setVersion('deep')">深入版</button>
+      </div>
+      <div class="hint" id="verHint"></div>
+    </div>
+    <div class="progress-box">
+      <div class="pct"><span>已学进度</span><span id="pctText">0 / 24</span></div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <main>
+    <article class="scroll" id="content"></article>
+  </main>
+</div>
+
+<script>
+/* =====================================================================
+   课程数据：序章、气、阴阳 = 完整内容；其余 21 课为大纲占位
+   ===================================================================== */
+const PARTS = [
+  {name:"序章", lessons:[1]},
+  {name:"第一部 · 思维与根基（理）", lessons:[2,3,4,5,6,7,8]},
+  {name:"第二部 · 为什么会生病（病机）", lessons:[9,10]},
+  {name:"第三部 · 怎么看病（诊）", lessons:[11,12,13,14,15]},
+  {name:"第四部 · 怎么治（法·方·药）", lessons:[16,17,18,19,20,21]},
+  {name:"第五部 · 用起来（养生·实践）", lessons:[22,23,24]},
+  {name:"第六部 · 名著解读（四大经典）", lessons:[25,26,27,28]},
+];
+
+/* ---------- SVG 图表 ---------- */
+const SVG = {};
+
+// 全景六环
+SVG.roadmap = `
+<svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  ${['理','病','诊','法','方药','养生'].map((t,i)=>{
+    const x=20+i*110; const c=i%2?'#41513c':'#9e3526';
+    return `<g>
+      <circle cx="${x+38}" cy="62" r="34" fill="${c}"/>
+      <text x="${x+38}" y="70" text-anchor="middle" fill="#f5edda" font-size="22" letter-spacing="1">${t}</text>
+      ${i<5?`<path d="M${x+76} 62 L${x+108} 62" stroke="#a8884e" stroke-width="3" marker-end="url(#ar)"/>`:''}
+      <text x="${x+38}" y="118" text-anchor="middle" fill="#5a5048" font-size="12">${['世界观','病因病机','望闻问切','治则治法','方剂中药','调养实践'][i]}</text>
+    </g>`;}).join('')}
+  <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+    <path d="M0 0 L9 4.5 L0 9 z" fill="#a8884e"/></marker></defs>
+</svg>`;
+
+// 气的五大功能 + 升降出入
+SVG.qi = `
+<svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  <circle cx="230" cy="150" r="56" fill="#9e3526"/>
+  <text x="230" y="160" text-anchor="middle" fill="#f5edda" font-size="40">氣</text>
+  ${[['推动','#41513c',230,28],['温煦','#586b50',410,95],['防御','#41513c',410,205],['固摄','#586b50',230,272],['气化','#41513c',50,150]].map(([t,c,x,y])=>`
+    <line x1="230" y1="150" x2="${x}" y2="${y}" stroke="#cbb892" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="${x-34}" y="${y-16}" width="68" height="32" rx="16" fill="${c}"/>
+    <text x="${x}" y="${y+6}" text-anchor="middle" fill="#f5edda" font-size="17">${t}</text>`).join('')}
+  <text x="50" y="150" text-anchor="middle" fill="#f5edda" font-size="0"></text>
+</svg>`;
+
+SVG.qiji = `
+<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  <rect x="120" y="40" width="80" height="120" rx="10" fill="#efe5d0" stroke="#cbb892" stroke-width="2"/>
+  <text x="160" y="108" text-anchor="middle" fill="#5a5048" font-size="15">气机</text>
+  <path d="M160 36 L160 8" stroke="#9e3526" stroke-width="3" marker-end="url(#a2)"/>
+  <text x="160" y="6" text-anchor="middle" fill="#9e3526" font-size="14">升</text>
+  <path d="M160 164 L160 192" stroke="#41513c" stroke-width="3" marker-end="url(#a3)"/>
+  <text x="160" y="190" text-anchor="middle" fill="#41513c" font-size="0"></text>
+  <text x="186" y="186" fill="#41513c" font-size="14">降</text>
+  <path d="M204 100 L296 100" stroke="#9e3526" stroke-width="3" marker-end="url(#a2)"/>
+  <text x="300" y="105" fill="#9e3526" font-size="14">出</text>
+  <path d="M24 100 L116 100" stroke="#41513c" stroke-width="3" marker-end="url(#a3)"/>
+  <text x="8" y="105" fill="#41513c" font-size="14">入</text>
+  <defs>
+    <marker id="a2" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#9e3526"/></marker>
+    <marker id="a3" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#41513c"/></marker>
+  </defs>
+</svg>`;
+
+// 太极阴阳鱼
+SVG.taiji = `
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="120" cy="120" r="108" fill="#2b2622"/>
+  <path d="M120 12 a108 108 0 0 1 0 216 a54 54 0 0 1 0 -108 a54 54 0 0 0 0 -108" fill="#efe5d0"/>
+  <circle cx="120" cy="66" r="16" fill="#2b2622"/>
+  <circle cx="120" cy="174" r="16" fill="#efe5d0"/>
+  <circle cx="120" cy="120" r="108" fill="none" stroke="#a8884e" stroke-width="3"/>
+  <text x="62" y="200" fill="#9e3526" font-size="20" font-family="STKaiti,KaiTi,serif">阴</text>
+  <text x="160" y="56" fill="#41513c" font-size="20" font-family="STKaiti,KaiTi,serif">阳</text>
+</svg>`;
+
+// 阴阳消长正弦
+SVG.xiaozhang = `
+<svg viewBox="0 0 380 170" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  <line x1="20" y1="85" x2="360" y2="85" stroke="#cbb892" stroke-width="1.5"/>
+  <path d="M20 85 Q105 5 190 85 T360 85" fill="none" stroke="#9e3526" stroke-width="3"/>
+  <path d="M20 85 Q105 165 190 85 T360 85" fill="none" stroke="#41513c" stroke-width="3"/>
+  <text x="100" y="34" fill="#9e3526" font-size="15">阳长</text>
+  <text x="270" y="34" fill="#9e3526" font-size="15">阳消</text>
+  <text x="100" y="150" fill="#41513c" font-size="15">阴消</text>
+  <text x="270" y="150" fill="#41513c" font-size="15">阴长</text>
+  <text x="22" y="105" fill="#5a5048" font-size="12">子夜</text>
+  <text x="172" y="105" fill="#5a5048" font-size="12">正午</text>
+  <text x="330" y="105" fill="#5a5048" font-size="12">子夜</text>
+</svg>`;
+
+// 六经传变（伤寒论）
+SVG.liujing = `
+<svg viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  <text x="22" y="46" fill="#9e3526" font-size="18">三阳</text>
+  <text x="22" y="64" fill="#5a5048" font-size="11">病浅·正气足</text>
+  ${[['太阳','表证·脉浮恶寒',155],['阳明','里热·高热口渴',305],['少阳','半表里·寒热往来',455]].map(([t,s,x])=>`
+    <rect x="${x-68}" y="24" width="136" height="50" rx="10" fill="#9e3526"/>
+    <text x="${x}" y="48" text-anchor="middle" fill="#f5edda" font-size="18">${t}</text>
+    <text x="${x}" y="66" text-anchor="middle" fill="#f3dcd0" font-size="10">${s}</text>`).join('')}
+  <text x="22" y="192" fill="#41513c" font-size="18">三阴</text>
+  <text x="22" y="210" fill="#5a5048" font-size="11">病深·正气虚</text>
+  ${[['太阴','脾虚寒湿',155],['少阴','心肾虚衰',305],['厥阴','寒热错杂·危',455]].map(([t,s,x])=>`
+    <rect x="${x-68}" y="170" width="136" height="50" rx="10" fill="#41513c"/>
+    <text x="${x}" y="194" text-anchor="middle" fill="#f5edda" font-size="18">${t}</text>
+    <text x="${x}" y="212" text-anchor="middle" fill="#dfe6da" font-size="10">${s}</text>`).join('')}
+  <line x1="305" y1="80" x2="305" y2="164" stroke="#a8884e" stroke-width="3" stroke-dasharray="5 4" marker-end="url(#lj)"/>
+  <text x="318" y="118" fill="#a8884e" font-size="12">由表入里</text>
+  <text x="318" y="136" fill="#a8884e" font-size="12">由阳入阴</text>
+  <defs><marker id="lj" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9z" fill="#a8884e"/></marker></defs>
+</svg>`;
+
+// 《伤寒论》全书结构
+SVG.shanghanjiegou = `
+<svg viewBox="0 0 580 300" xmlns="http://www.w3.org/2000/svg" font-family="STKaiti,KaiTi,serif">
+  <defs><marker id="sj" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="#a8884e"/></marker></defs>
+  <rect x="230" y="10" width="120" height="42" rx="10" fill="#2b2622"/>
+  <text x="290" y="37" text-anchor="middle" fill="#f5edda" font-size="18">《伤寒论》</text>
+  <line x1="290" y1="52" x2="110" y2="84" stroke="#cbb892" stroke-width="2"/>
+  <line x1="290" y1="52" x2="300" y2="84" stroke="#cbb892" stroke-width="2"/>
+  <line x1="290" y1="52" x2="482" y2="84" stroke="#cbb892" stroke-width="2"/>
+  <rect x="20" y="84" width="180" height="46" rx="9" fill="#9e3526"/>
+  <text x="110" y="105" text-anchor="middle" fill="#f5edda" font-size="16">六经病篇 · 主体</text>
+  <text x="110" y="122" text-anchor="middle" fill="#f3dcd0" font-size="10">辨六经病脉证并治</text>
+  <rect x="225" y="84" width="150" height="46" rx="9" fill="#586b50"/>
+  <text x="300" y="112" text-anchor="middle" fill="#f5edda" font-size="14">辨脉法·平脉法</text>
+  <rect x="405" y="84" width="155" height="46" rx="9" fill="#586b50"/>
+  <text x="482" y="112" text-anchor="middle" fill="#f5edda" font-size="14">霍乱·差后劳复</text>
+  <line x1="110" y1="130" x2="110" y2="154" stroke="#cbb892" stroke-width="2"/>
+  ${[['太阳','#9e3526',55],['阳明','#9e3526',120],['少阳','#9e3526',185],['太阴','#41513c',250],['少阴','#41513c',315],['厥阴','#41513c',380]].map(([t,c,x])=>`<rect x="${x-28}" y="154" width="56" height="34" rx="8" fill="${c}"/><text x="${x}" y="176" text-anchor="middle" fill="#f5edda" font-size="15">${t}</text>`).join('')}
+  <text x="20" y="232" fill="#5a5048" font-size="12">每经体例</text>
+  ${[['提纲证',95],['本证·主方',225],['兼证·变证',355],['类证鉴别',485]].map(([t,x],i)=>`<rect x="${x-58}" y="242" width="116" height="40" rx="9" fill="#efe5d0" stroke="#cbb892" stroke-width="1.5"/><text x="${x}" y="266" text-anchor="middle" fill="#2b2622" font-size="14">${t}</text>${i<3?`<line x1="${x+58}" y1="262" x2="${x+72}" y2="262" stroke="#a8884e" stroke-width="2.5" marker-end="url(#sj)"/>`:''}`).join('')}
+</svg>`;
+
+/* ---------- 课程正文 ---------- */
+const LESSONS = {
+1:{part:"序章", title:"如何学中医", sub:"心法与全景地图", deepCount:2, body:`
+<div class="block hook"><p>很多人面对中医，常陷入两种极端：要么当成玄学一笑置之，要么奉为包治百病的神术。这两种态度，都学不进去。本课给你第三条路——把中医当成一套<b>自洽的"身体运行模型"</b>来理解：先弄懂古人<em>为什么会这样想</em>，再决定哪些拿来用。</p></div>
+
+<div class="block story"><h3><span class="badge">事</span>小故事 · 扁鹊见蔡桓公</h3>
+<p>名医扁鹊去见蔡桓公，看了一眼就说："您的病在皮肤纹理，不治会加重。"桓公不以为然："我没病。"过了十天，扁鹊说病已到肌肉；又十天，说到了肠胃——桓公始终不信，还嫌他多事。再过十天，扁鹊远远望见桓公，转身就走。桓公派人追问，扁鹊答："病在皮肤、肌肉、肠胃，针药尚可及；如今已深入骨髓，无能为力了。"不久桓公果然病发，再请扁鹊，人已不知去向。</p>
+<p class="src">——《韩非子·喻老》</p>
+<p class="moral">最高明的医生，在病还浅时就看出端倪；可惜病人讳疾忌医。这正是中医"治未病"的精神，也是学中医该有的态度——别等问题深了才正视，先理解、早调护。</p></div>
+
+<div class="block"><h3><span class="badge">核心</span>核心概念</h3>
+<ol class="concepts">
+<li>中医是<b>"关系思维"</b>，不是"解剖实体"。它关心的是身体各部分之间的<span class="term" data-tip="中医不追问'肝长什么样'，而问'肝和其他系统如何互相影响、是否平衡'。">关系与动态平衡</span>，而非器官的物理结构。这是它和西医最根本的视角差异。</li>
+<li>整门学问是<b>一条主线</b>串起来的：<span class="term" data-tip="理→病→诊→法→方→药→养，环环相扣，后面每一课都挂在这条线上。">理（世界观）→ 病（为何生病）→ 诊（怎么看）→ 法（怎么治）→ 方药（用什么）→ 养（日常调护）</span>。记住这条线，就不会学散。</li>
+<li>学习心法：<b>先理解模型，再记结论</b>。中医的结论（如"肝主疏泄"）单背很枯燥，但理解了背后的模型，细节自然挂得上、记得住。</li>
+<li>保持<b>诚实的分辨力</b>：哪些有现代研究支持、哪些是千百年的经验沉淀、哪些被过度夸大——三者分清，才能既会用又不盲信。这正是本课程贯穿始终的态度。</li>
+</ol></div>
+
+<div class="block deep-block deep-only"><h3><span class="badge">深</span>中医独特的三种思维方法</h3>
+<ol class="concepts">
+<li><b>取象比类</b>：用熟悉的自然现象去类推人体。说"肝属木""肝为将军之官"，不是说肝是木头或真有官职，而是借木的<em>生发、条达</em>之性、将军的<em>主谋虑、易动怒</em>之态，来把握肝的功能特点。这是中医建立模型的主要手法。</li>
+<li><b>司外揣内</b>：从外在表现（面色、舌象、脉象、症状）推断体内的状态。这是中医诊断的方法论核心——看不到内部，就用可观察的"象"去反推。</li>
+<li><b>整体恒动观</b>：人是一个相互联系的整体，且与天地四时相应（<span class="term" data-tip="人体节律与自然节律相呼应，如四季、昼夜对人的影响。">天人相应</span>）；状态永远在动态变化，诊断是看"此刻这个动态的人"，而非一张静止快照。</li>
+</ol></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 中医全景地图</h3>
+<div class="diagram">${SVG.roadmap}<div class="cap">六环主线：本课程 24 课，正是沿这条线层层展开</div></div></div>
+
+<div class="block"><h3><span class="badge">参</span>名家说 & 现代视角</h3>
+<p class="quote">"上工治未病，不治已病。"——《黄帝内经·素问》</p>
+<p>中医的最高追求不是病了再救，而是<b>在失衡的苗头就调回来</b>。这部奠基之作并非一人一时写成：学界共识是它<span class="term" data-tip="《黄帝内经》分《素问》《灵枢》两部分，内容由不同时代医家积累而成。">形成于春秋战国、成书于西汉中晚期</span>，是历代经验的汇编。</p>
+<div class="modern"><b>现代视角：</b>"治未病"的思路与今天的<b>预防医学、整体健康管理</b>不谋而合。世界卫生组织已将传统医学纳入 ICD-11 分类体系——但这意味着"被记录、被研究"，而非"已被全部证实"。我们学习时，会始终区分"传统经验"与"循证证据"。</p></div>
+
+<div class="block deep-block deep-only"><h3><span class="badge">深</span>一张诚实的"证据地图"</h3>
+<p>学深入，更要拎得清。大致可分三层：<b>有较强现代证据</b>的（如针灸用于某些慢性疼痛、术后及化疗恶心呕吐，已被多项系统评价支持；青蒿素源自中药启发）；<b>有经验与初步研究、尚待充分验证</b>的（大量复方与辨证施治，研究设计本身就很难）；<b>被过度夸大或证据不足</b>的（号称"包治""根治"的说法）。</p>
+<div class="modern"><b>现代视角：</b>中医的整体、动态、联系的思路，与<b>系统论、复杂系统科学</b>颇为呼应；但"思路先进"不等于"每个结论都成立"。学习时把"思维方法"与"具体疗效"分开看待，是既深入又不盲信的关键。</div></div>
+
+<div class="block caution"><h3><span class="badge">辨</span>别误会</h3>
+<p>① 中医不等于"慢"——经方治急症自古有之；② 中医不等于"纯草药"——它是一套完整的诊疗思维，针灸、推拿、食养都在其中；③ "调理"不是万能，遇到急重病症，该看现代医学就看，二者并不对立。</p></div>
+
+<div class="block"><h3><span class="badge">用</span>用得上</h3>
+<p>给自己定个节奏：每周 1–2 课，不求快。学的同时，养成<b>观察自己身体</b>的习惯——睡眠、二便、舌头的颜色、容易冷还是容易热。这些"活数据"会让后面的辨证、体质课变得无比具体。</p></div>
+
+<div class="block quiz"><h3><span class="badge">测</span>小测</h3>
+<div class="q"><p>1. 中医的主线"六环"是哪六个？</p><button onclick="toggleA(this)">看答案</button><div class="a">理 → 病 → 诊 → 法 → 方药 → 养（世界观→病因病机→诊法→治法→方剂中药→养生）。</div></div>
+<div class="q"><p>2. "治未病"是什么意思？</p><button onclick="toggleA(this)">看答案</button><div class="a">在疾病尚未发生或刚有苗头时就介入调节，重在预防与维持平衡，而非病重才救治。</div></div>
+</div>
+`},
+
+2:{part:"第一部 · 思维与根基（理）", title:"气", sub:"中医的世界观基石", deepCount:6, body:`
+<div class="block hook"><p>你夸人"气色好"、说自己"中气十足"、抱怨"最近气不顺"——这些日常话，其实全来自中医。<b>气</b>，是打开整个中医大门的第一把钥匙。不懂气，后面的经络、脏腑、方药都会悬空。</p></div>
+
+<div class="block story"><h3><span class="badge">事</span>小故事 · 华佗与五禽戏</h3>
+<p>名医华佗对弟子吴普说："人的身体需要活动，但不要累到极点。一动起来，吃进的水谷之气才消化得开，血脉就流通，病就生不出来——好比门的转轴常转就不会被虫蛀。"他模仿虎、鹿、熊、猿、鸟五种动物的姿态，创了一套"五禽戏"。吴普照着练，到九十多岁仍耳聪目明、牙齿坚固。</p>
+<p class="src">——《三国志·华佗传》</p>
+<p class="moral">"流水不腐，户枢不蠹。"气最怕的是停滞。适度而规律的运动，是养气最朴素、也最有效的办法——这一点，现代运动医学完全认同。</p></div>
+
+<div class="block"><h3><span class="badge">核心</span>核心概念</h3>
+<ol class="concepts">
+<li>气是<b>"功能性的能量流"</b>——你看不见它，却能通过它的<em>作用</em>看见它。就像看不见电，但看得见灯亮。</li>
+<li>气有<b>五大功能</b>：<span class="term" data-tip="推动血与津液运行、推动生长发育。">推动</span>、<span class="term" data-tip="维持体温，让身体暖和。">温煦</span>、<span class="term" data-tip="抵御外邪，相当于免疫防线。">防御</span>、<span class="term" data-tip="固摄血、汗、尿、精，不让它们无故流失。">固摄</span>、<span class="term" data-tip="物质与能量的相互转化，如食物化为气血。">气化</span>。</li>
+<li>气有<b>两个来源</b>：<span class="term" data-tip="禀受于父母，藏于肾，是生命的'本钱'。">先天之气</span>（藏于肾）+ <span class="term" data-tip="脾胃运化的水谷之气 + 肺吸入的清气。">后天之气</span>（靠脾胃饮食与肺呼吸不断补充）。本钱有限，后天可养。</li>
+<li>气在动，叫<b>"气机"</b>：<span class="term" data-tip="升、降、出、入四种基本运动，协调有序则健康。">升、降、出、入</span>。顺畅则安，郁滞则"气郁"，逆乱则"气逆"（如打嗝、咳逆）。</li>
+</ol></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 气的五大功能</h3>
+<div class="diagram">${SVG.qi}<div class="cap">一团"气"向外发挥五种作用，缺哪一项，就对应一类常见毛病</div></div></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 气机升降出入</h3>
+<div class="diagram">${SVG.qiji}<div class="cap">气的运动有方向；中医说的很多"病"，本质是这套运动出了岔子</div></div></div>
+
+<div class="block"><h3><span class="badge">参</span>名家说 & 现代视角</h3>
+<p class="quote">"人之有生，全赖此气。"</p>
+<p>历代医家把"气"理解为人体的<b>整体功能状态</b>——不是某一个零件，而是全身协同运转的那股"劲儿"。</p>
+<div class="modern"><b>现代视角：</b>"气"并不对应某一种单一物质，它更像是对<b>代谢、循环、免疫、神经-内分泌调节</b>等多种功能总和的古代描述。所以不必硬给它找一个器官或一种分子——它是<b>模型语言</b>，用来描述"身体运转得好不好"。理解这一点，就不会被"气是不是特异功能"之类的问题困住。</p></div>
+
+<div class="block caution"><h3><span class="badge">辨</span>别误会</h3>
+<p>① 气不是武侠或气功表演里的"能量波"，更不是特异功能；② "补气"不等于打鸡血或大补特补——气虚要慢慢养，猛补反而壅滞；③ 看不见摸不着，不代表它玄虚，它描述的是实实在在的功能强弱。</p></div>
+
+<div class="block"><h3><span class="badge">用</span>用得上</h3>
+<p><b>气虚的常见信号</b>：容易累、稍动就气短、说话声音弱、容易出虚汗、反复感冒。<b>最简单的养气法</b>：别熬夜（熬夜最耗气）、按时吃早饭以养"后天之气"、适度而不过量的运动。气是后面学"气血津液""脏腑""体质"的共同地基。</p></div>
+
+<div class="deepdive deep-only">
+  <div class="dd-title">深入精讲 · 系统展开 <small>点目录可跳转，逐节展开</small></div>
+  <div class="dd-toc">
+    <button onclick="ddJump(this,0)">① 气从哪里来</button>
+    <button onclick="ddJump(this,1)">② 四种气：元宗营卫</button>
+    <button onclick="ddJump(this,2)">③ 气机升降出入</button>
+    <button onclick="ddJump(this,3)">④ 气失常的六种证型</button>
+    <button onclick="ddJump(this,4)">⑤ 气与血、津液</button>
+    <button onclick="ddJump(this,5)">⑥ 现代视角与养气</button>
+  </div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>① 气从哪里来：生成与三脏</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>气不是凭空来的，它由<b>三个源头</b>合成：<b>先天之精</b>（父母所授，藏于肾）化生元气，是老本钱；<b>水谷之精</b>（脾胃运化饮食而来）化生谷气；<b>自然清气</b>（肺吸入）。后两者在胸中相合为宗气，再与元气一起充养全身。</p>
+    <p>所以气的盛衰，落在三个脏上：<b>肾为气之根，脾胃为生化之源，肺为气之主</b>。任何一脏弱，气都会不足——这也是为什么中医"补气"最常从<b>健脾</b>入手。</p>
+    <p class="quote">"真气者，所受于天，与谷气并而充身者也。"——《灵枢·刺节真邪》</p>
+    <div class="modern"><b>浅出比喻：</b>把气想成一个家的"现金流"——肾是祖上留的本金（先天，动一点少一点），脾胃是每天的工资（后天饮食），肺把空气这份"外快"纳进来。会过日子，就是用后天养住先天。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>② 四种气：元 · 宗 · 营 · 卫</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>"气"是总称，按生成与职能可分四类，分清它们，后面读《伤寒》《温病》会顺很多：</p>
+    <p><b>元气（原气）</b>：根于肾，借<span class="term" data-tip="上中下三焦，是元气与水液通行全身的通道。">三焦</span>输布全身，是脏腑功能的总原动力。元气伤则根本动摇。</p>
+    <p><b>宗气</b>：积于胸中"<span class="term" data-tip="胸中宗气汇聚处，又称气海，约当膻中。">气海</span>"，走息道而<b>司呼吸</b>、贯心脉而<b>行气血</b>。古人甚至在左乳下"<span class="term" data-tip="心尖搏动处，可候宗气盛衰。">虚里</span>"处候宗气的强弱。宗气虚：气短、声低、心悸、动则气喘。</p>
+    <p><b>营气</b>：行于<em>脉中</em>，化生血液、营养周身（"营"即营养）。</p>
+    <p><b>卫气</b>：行于<em>脉外</em>，温分肉、充皮肤、司汗孔开合、御外邪；且<b>"昼行于阳、夜行于阴"</b>——白天卫气行于体表，人清醒；夜入于里，人入睡。卫气失常，可见怕冷易感，或失眠。</p>
+    <p class="quote">"营在脉中，卫在脉外。"——《灵枢·营卫生会》</p>
+    <div class="modern"><b>现代视角：</b>卫气≈体表屏障＋体温调节＋固有免疫＋部分昼夜节律；营气化血≈血液的营养运输。古人没有显微镜，却用"功能分类"抓住了要点。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>③ 气机：升降出入</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"升降出入，无器不有。"——《素问·六微旨大论》</p>
+    <p>每个脏腑都在做这套运动，且各有分工：<b>肺</b>主宣发（出）与肃降（降）；<b>脾升胃降</b>是中焦的枢纽（脾把精微往上送、胃把糟粕往下降）；<b>肝主升发、肺主肃降</b>，一左一右；<b>心火下降、肾水上升</b>，水火既济、心肾相交。</p>
+    <p>气机一乱就生病：脾不升则泄泻、胃不降则呕逆、肺失宣降则咳喘、肝升太过则头胀眩晕、急躁易怒。中医说的很多病，本质就是这套"升降出入"出了岔子。</p>
+    <div class="modern"><b>浅出比喻：</b>身体像一座有上下水、有进排气的房子——只要"通"且方向对就安稳；堵了（气滞）、逆流了（气逆），就出问题。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>④ 气失常的六种证型</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>这是把"气"用到临床的关键。气出问题，无非"不足"与"运行失常"两大类，细分六型：</p>
+    <ol class="concepts">
+      <li><b>气虚</b>——气量不足：神疲乏力、气短懒言、自汗、易感冒、舌淡脉弱。代表方 <span class="rx">四君子汤</span>。</li>
+      <li><b>气陷</b>——气虚到"托不住"：脏器下垂（胃下垂、子宫脱垂）、久泻脱肛、小腹坠胀。代表方 <span class="rx">补中益气汤</span>（李东垣"甘温除热"之法）。</li>
+      <li><b>气滞</b>——气堵了：胀、闷、胀痛且部位走窜、随情绪起伏（以肝郁气滞最常见）。代表方 <span class="rx">柴胡疏肝散</span>。</li>
+      <li><b>气逆</b>——该降反升：肺气逆则咳喘、胃气逆则呃逆呕吐、肝气逆则头胀痛眩晕，甚则呕血。</li>
+      <li><b>气脱</b>——气随大汗、大出血、大吐泻而暴脱：大汗淋漓、面白、脉微欲绝。<b>急症</b>，<span class="rx">独参汤</span>等益气固脱。</li>
+      <li><b>气闭</b>——气机骤然闭塞：突然昏厥、牙关紧闭、二便不通。<b>急症</b>，需开窍急救。</li>
+    </ol>
+    <div class="modern"><b>浅出比喻（用水管想）：</b>水太少＝气虚；水压撑不住往下漏＝气陷；管子堵了＝气滞；水往反方向冲＝气逆；水突然漏光＝气脱；阀门彻底卡死＝气闭。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑤ 气与血、津液的关系</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p><b>气为血之帅</b>：气能<b>生血</b>（化生）、<b>行血</b>（推动）、<b>摄血</b>（固摄不外溢）。所以气虚→血少；气虚或气滞→血瘀；气不摄血→出血（如月经过多、皮下瘀斑）。</p>
+    <p><b>血为气之母</b>：血能载气、养气。大失血时气失去依附，可"<b>气随血脱</b>"。</p>
+    <p><b>气与津液</b>：气能生津、行津、摄津——气虚则水停（水肿、痰饮），气不摄津则多汗多尿；津也能载气，剧烈吐泻丢津太多可"<b>气随津脱</b>"。</p>
+    <p>这就解释了临床上的许多配伍智慧：补血方常重用补气药（如<span class="rx">当归补血汤</span>，黄芪五倍于当归）；止血要兼顾益气；利水消肿要兼健脾益气。</p>
+    <div class="modern"><b>现代视角：</b>恰好呼应"循环—体液—代谢"是一个相互依存的整体——任何一环失衡，都会牵动其余。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑥ 现代视角与养气实操</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>把"气"理解为<b>代谢、循环、免疫、自主神经调节</b>等功能的综合态——它会盛会衰、会通会堵，但不必对应单一器官或分子。</p>
+    <p><b>养气的五个抓手</b>：① 睡眠养元气（熬夜最伤根本）；② 规律饮食、护脾胃以养中气（后天之本）；③ 缓而深的呼吸、八段锦、太极养宗气；④ 不过劳、也不久坐久卧（"久卧伤气、久坐耗气"）；⑤ 情志舒畅以防气滞（肝喜条达）。</p>
+    <div class="modern"><b>诚实地说：</b>这些养气措施，多与现代健康常识（睡眠、营养、运动、压力管理）一致，有合理依据；但"补气类中药"的具体疗效需辨证、因人而异，不宜自行长期大补。</div>
+  </div></div>
+</div>
+
+<div class="block quiz"><h3><span class="badge">测</span>小测</h3>
+<div class="q"><p>1. 气的五大功能分别是什么？</p><button onclick="toggleA(this)">看答案</button><div class="a">推动、温煦、防御、固摄、气化。</div></div>
+<div class="q"><p>2. 先天之气藏在哪个脏？后天之气主要靠什么补充？</p><button onclick="toggleA(this)">看答案</button><div class="a">先天之气藏于肾；后天之气主要靠脾胃运化饮食 + 肺吸入清气来补充。</div></div>
+</div>
+`},
+
+3:{part:"第一部 · 思维与根基（理）", title:"阴阳", sub:"最简单也最深的工具", deepCount:6, body:`
+<div class="block hook"><p>白天黑夜、男女、动静、寒热——古人观察万物，发现一切都能分成<b>相对的两面</b>，于是提炼出"阴阳"。它不是迷信符号，而是一套<b>描述关系的坐标系</b>。学会用它，你就拿到了中医看待身体与疾病的总框架。</p></div>
+
+<div class="block story"><h3><span class="badge">事</span>小故事 · 一根杆子量出的阴阳</h3>
+<p>几千年前，古人想知道一年的节律，办法朴素得惊人：在地上立一根杆子（叫"圭表"），每天正午量一次影子的长短。他们发现，冬至那天影子最长，此后一天天变短，到夏至最短，再慢慢变长——影子长，是阴盛；影子短，是阳盛。把一整年的日影长短连成一条曲线，竟与太极图里那条S形的阴阳分界线几乎一模一样。</p>
+<p class="src">——据天文史学者对太极图与圭表测影关系的研究</p>
+<p class="moral">这是一个很有说服力的解释：太极图很可能不是凭空玄想，而是古人长年观测日影、记录"阴阳消长"得来的。阴阳，源自实打实的观察。</p></div>
+
+<div class="block"><h3><span class="badge">核心</span>核心概念</h3>
+<ol class="concepts">
+<li>阴阳是<b>相对的、可再分的</b>：任何事物都能分阴阳，且<span class="term" data-tip="太极图里黑中的白点、白中的黑点，就是这个意思。">阴中有阳、阳中有阴</span>。白天是阳，但上午比下午更阳。</li>
+<li>阴阳之间有<b>四种关系</b>：<span class="term" data-tip="寒与热、动与静相互制约，谁也别压倒谁。">对立制约</span>、<span class="term" data-tip="阴依赖阳、阳依赖阴，孤阴不生、独阳不长。">互根互用</span>、<span class="term" data-tip="此长彼消，如昼夜更替、四季流转。">消长平衡</span>、<span class="term" data-tip="物极必反，如高热到极点出现寒象。">相互转化</span>。</li>
+<li>用到<b>身体</b>：上为阳/下为阴、表为阳/里为阴、动为阳/静为阴、功能活动为阳/物质基础为阴。</li>
+<li>用到<b>看病</b>：阴阳是"八纲"的总纲。发热、口渴、面红、烦躁＝<b>阳证</b>；怕冷、蜷卧、面白、安静＝<b>阴证</b>。健康的本质，就是<span class="term" data-tip="阴气平和、阳气固密，二者动态平衡。">"阴平阳秘"</span>。</li>
+</ol></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 太极阴阳鱼</h3>
+<div class="diagram">${SVG.taiji}<div class="cap">两条鱼首尾相抱：对立又互含，黑中有白、白中有黑</div></div></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 阴阳消长</h3>
+<div class="diagram">${SVG.xiaozhang}<div class="cap">一天之内阴阳此消彼长，正午阳最盛、子夜阴最盛——平衡是动态的，不是静止的</div></div></div>
+
+<div class="block"><h3><span class="badge">参</span>名家说 & 现代视角</h3>
+<p class="quote">"阴平阳秘，精神乃治；阴阳离决，精气乃绝。"——《黄帝内经·素问》</p>
+<p>这句话点出了中医对健康与疾病的根本判断：<b>平衡则安，失衡则病，彻底崩解则危</b>。</p>
+<div class="modern"><b>现代视角：</b>阴阳的本质，是古人对<b>"动态平衡 / 负反馈调节"</b>的精彩表达，与现代生理学的<b>稳态（homeostasis）</b>高度相通——身体正是靠一对对相反的力量（如交感与副交感、产热与散热）此消彼长，维持在一个健康区间。把"阴阳"翻译成"动态平衡"，它立刻就不神秘了。</p></div>
+
+<div class="block caution"><h3><span class="badge">辨</span>别误会</h3>
+<p>① 阴阳不是"好与坏"——两者都必需，没有高下；② 它和算命、占卜的"阴阳"不是一回事，中医的阴阳是描述身体状态的工具；③ "阴虚火旺"里的"火"不是真有一团火，而是"阴不足、相对显得阳偏亢"的一种失衡状态。</p></div>
+
+<div class="block"><h3><span class="badge">用</span>用得上</h3>
+<p><b>快速自测偏性</b>：你平时更怕冷还是更怕热？爱喝热水还是冷饮？手脚常凉还是常热？精神偏亢奋还是偏疲倦？——偏寒、喜热、怕冷多偏<b>阳虚（阴偏盛）</b>；偏热、喜凉、烦躁多偏<b>阴虚（阳偏亢）</b>。这只是粗判，却是后面"体质辨识"和"辨证"的起点。</p></div>
+
+<div class="deepdive deep-only">
+  <div class="dd-title">深入精讲 · 系统展开 <small>点目录可跳转，逐节展开</small></div>
+  <div class="dd-toc">
+    <button onclick="ddJump(this,0)">① 四种关系深讲</button>
+    <button onclick="ddJump(this,1)">② 阴阳的六大应用</button>
+    <button onclick="ddJump(this,2)">③ 病机：寒热虚实之根</button>
+    <button onclick="ddJump(this,3)">④ 三阴三阳与六经</button>
+    <button onclick="ddJump(this,4)">⑤ 如何指导治疗</button>
+    <button onclick="ddJump(this,5)">⑥ 现代视角</button>
+  </div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>① 四种关系，讲深一层</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p><b>对立制约</b>：阴阳相反、互相牵制以维持平衡。"<span class="term" data-tip="一方偏盛，必致另一方受损。">阴胜则阳病，阳胜则阴病</span>"。</p>
+    <p><b>互根互用</b>：互为根基、互相化生。"孤阴不生，独阳不长"；<span class="term" data-tip="《素问·阴阳应象大论》：阴在内守护，阳在外为之役使，二者不可分。">"阴在内，阳之守也；阳在外，阴之使也"</span>。功能（阳）靠物质（阴）供养，物质（阴）靠功能（阳）化生。</p>
+    <p><b>消长平衡</b>：此长彼消，是<b>量</b>的渐变。如一昼夜：子夜到正午阳长阴消，正午到子夜阳消阴长。</p>
+    <p><b>相互转化</b>：发展到极点向反面突变，是<b>质</b>的飞跃。"重阴必阳，重阳必阴""寒极生热，热极生寒"。如高热（阳极）突然转为四肢厥冷、脉微（阴）——这是病情骤变的危险信号。</p>
+    <div class="modern"><b>关键区分：</b>消长是量变（渐进），转化是质变（突变）。看懂这一点，你才能<b>预判病势</b>——什么时候是缓慢加重，什么时候是即将翻盘。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>② 阴阳学说的六大应用</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>阴阳不是空谈，它一路贯穿到诊断与用药。中医用它做六件事：</p>
+    <ol class="concepts">
+      <li><b>说明组织结构</b>：上为阳/下为阴、表为阳/里为阴、背为阳/腹为阴、六腑为阳/五脏为阴、气为阳/血为阴。</li>
+      <li><b>说明生理</b>：物质（阴）与功能（阳）互根互用，健康即"<b>阴平阳秘</b>"。</li>
+      <li><b>说明病理</b>：一切疾病不外阴阳失调——这是总纲。</li>
+      <li><b>用于诊断</b>：色泽鲜明属阳、晦暗属阴；声高气粗属阳、低微属阴；脉浮数大属阳、沉迟细属阴。八纲辨证即以阴阳统领表里、寒热、虚实。</li>
+      <li><b>用于治疗</b>：总则是"调整阴阳，<b>损其有余、补其不足</b>，以平为期"。</li>
+      <li><b>归纳药性</b>：四气温热属阳、寒凉属阴；五味辛甘淡属阳、酸苦咸属阴；升浮属阳、沉降属阴。</li>
+    </ol>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>③ 病机：寒热虚实的总根</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>几乎所有"上火""怕冷"的背后，都是阴阳的偏盛或偏衰。分清这四种，是辨证的根本功夫：</p>
+    <table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;">
+      <tr><th style="border:1px solid var(--line);padding:8px;background:rgba(65,81,60,.1);"></th><th style="border:1px solid var(--line);padding:8px;background:rgba(65,81,60,.1);color:var(--cinnabar);">偏盛 · 实证</th><th style="border:1px solid var(--line);padding:8px;background:rgba(65,81,60,.1);color:var(--pine);">偏衰 · 虚证</th></tr>
+      <tr><td style="border:1px solid var(--line);padding:8px;"><b>热</b></td><td style="border:1px solid var(--line);padding:8px;">实热（阳盛）：壮热、面赤、口渴、便秘 → <b>清热</b></td><td style="border:1px solid var(--line);padding:8px;">虚热（阴虚）：潮热盗汗、五心烦热、舌红少苔 → <b>滋阴</b></td></tr>
+      <tr><td style="border:1px solid var(--line);padding:8px;"><b>寒</b></td><td style="border:1px solid var(--line);padding:8px;">实寒（阴盛）：畏寒、脘腹冷痛、舌淡 → <b>温散</b></td><td style="border:1px solid var(--line);padding:8px;">虚寒（阳虚）：畏寒神疲、自汗、夜尿多 → <b>温补</b></td></tr>
+    </table>
+    <p>这正是阴阳分型的临床价值：<b>同是发热，治法可截然相反</b>——实热要清，虚热要滋阴；硬清虚热，反伤其本。</p>
+    <p>更复杂的几种：<b>阴阳互损</b>（阴虚日久累及阳、阳虚日久累及阴 → 阴阳两虚）；<b>阴阳格拒</b>（盛极相互排斥，出现真寒假热、真热假寒，是辨证的陷阱）；<b>阴阳亡失</b>——亡阴（大汗黏热、烦躁、脉数疾无力）、亡阳（冷汗淋漓、四肢厥冷、脉微欲绝），皆为危候，须急救救阴或回阳。</p>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>④ 从两分到六分：三阴三阳</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>阴阳可以再分。把阴、阳各分三层，就得到<b>三阳</b>（太阳、阳明、少阳）与<b>三阴</b>（太阴、少阴、厥阴），合称"六经"。</p>
+    <p>这不是文字游戏——它是《伤寒论》<span class="term" data-tip="把外感病的发展分为六个阶段/层次来辨证论治。">六经辨证</span>的骨架，描述外邪由表入里、由阳入阴的层层深入（第 15 课与第 27 课会专门展开）。这里先建立印象：<b>阴阳不只是非黑即白，它还能刻画"程度与层次"</b>。</p>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑤ 阴阳如何指导治疗</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>把"调阴阳"落到开方上，有几条历代奉为圭臬的思路：</p>
+    <ol class="concepts">
+      <li><b>阳病治阴，阴病治阳</b>：治的是失衡的根源，而非只压症状。</li>
+      <li><b>阴中求阳，阳中求阴</b>：<span class="term" data-tip="张景岳《景岳全书》名论。">"善补阳者，必于阴中求阳，则阳得阴助而生化无穷"</span>——补阳别忘滋阴打底，反之亦然。</li>
+      <li><b>壮水制火、益火消阴</b>：<span class="term" data-tip="王冰注《素问》语。">"壮水之主，以制阳光"</span>治阴虚火旺（滋阴以制虚火）；"益火之源，以消阴翳"治阳虚阴盛。</li>
+    </ol>
+    <p class="quote">"谨察阴阳所在而调之，以平为期。"——《素问·至真要大论》</p>
+    <div class="modern"><b>一句话收束：</b>中医为何常"不见火而治火、不见寒而治寒"？因为它治的是阴阳的失衡点，不是冒出来的那个症状。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑥ 现代视角：阴阳≈稳态与负反馈</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>阴阳平衡，约等于现代生理学的<b>稳态（homeostasis）</b>；"调阴阳"，约等于把偏离的<b>设定点</b>拉回来——靠的是一对相反力量（如交感与副交感、产热与散热）的此消彼长。</p>
+    <p>病机分型也能找到现代类比：<b>实热</b>近于急性炎症、机能亢进；<b>虚热</b>近于慢性消耗、阴液不足。这就解释了为何"同是发热，治法可以截然相反"。</p>
+    <div class="modern"><b>诚实地说：</b>这是帮现代人理解的类比，不是说"阴阳"能被某一个生理指标完全替代。它的价值在于提供一套<b>整体调节</b>的思考框架。</div>
+  </div></div>
+</div>
+
+<div class="block quiz"><h3><span class="badge">测</span>小测</h3>
+<div class="q"><p>1. 阴阳之间的四种关系是什么？</p><button onclick="toggleA(this)">看答案</button><div class="a">对立制约、互根互用、消长平衡、相互转化。</div></div>
+<div class="q"><p>2. "阴平阳秘"是什么意思？为什么重要？</p><button onclick="toggleA(this)">看答案</button><div class="a">阴气平和、阳气固密，二者动态平衡，是中医对"健康"的根本定义；失衡即病。</div></div>
+</div>
+`},
+
+27:{part:"第六部 · 名著解读（四大经典）", title:"《伤寒论》", sub:"方书之祖，辨证论治的开山", deepCount:10, body:`
+<div class="block hook"><p>如果说《黄帝内经》给了中医一套世界观，那《伤寒论》第一次把它落成了<b>"怎么看病、怎么开方"的实操手册</b>。后世尊它为"方书之祖"——学中医，绕不开张仲景这本书。</p></div>
+
+<div class="block story"><h3><span class="badge">事</span>小故事 · 一部从切肤之痛里写出的书</h3>
+<p>东汉末年，战乱频仍、瘟疫横行。张仲景出身的家族原有二百余口，不到十年竟死去三分之二，其中大半死于"伤寒"一类的外感热病。他痛心于当时的医生只按套路敷衍、不肯钻研，于是"勤求古训，博采众方"，写成《伤寒杂病论》。原书几经离乱散佚，幸得晋代王叔和搜集整理、宋代林亿等校订，才分成《伤寒论》与《金匮要略》两部分流传至今。</p>
+<p class="src">——事见《伤寒论·自序》</p>
+<p class="moral">一部奠基之作，竟是从切肤的家族之痛中写出来的。经典不是高高在上的教条，而是前人用性命换来的经验。</p></div>
+
+<div class="block"><h3><span class="badge">史</span>成书背景与地位</h3>
+<p>《伤寒论》成书于东汉末年，是中医"四大经典"之一，被后世尊为<b>"方书之祖、众方之宗"</b>。它最大的功绩，是把《内经》的理论第一次系统地变成了<b>可操作的临床体系</b>——确立了"辨证论治"这一中医临床至今奉行的根本范式，传世载方一百余首、条文近四百条，几乎每一条都是一则浓缩的诊疗实录。<b>全书以"六经病"为主线编排</b>——这正是读懂它的总钥匙（结构详见下方深入精讲）。</p></div>
+
+<div class="block"><h3><span class="badge">核心</span>核心学术思想</h3>
+<ol class="concepts">
+<li><b>辨证论治</b>：不照"一病一方"的死办法，而是看<em>当下</em>的脉象与症候来立法处方——<span class="term" data-tip="《伤寒论》辨证论治的十二字纲领。">"观其脉证，知犯何逆，随证治之"</span>。这是中医临床的灵魂。</li>
+<li><b>六经辨证</b>：把外感病的演变分为太阳、阳明、少阳（三阳）与太阴、少阴、厥阴（三阴）六个层次，由表入里、由阳入阴，每一经都有提纲性的典型表现。</li>
+<li><b>方证相应</b>：<span class="term" data-tip="有这个证，就用这个方，方与证严密对应。">"有是证，用是方"</span>，后世遂有"桂枝汤证""柴胡证"之说。</li>
+<li><b>保胃气、存津液</b>：处处顾护正气与津液，攻邪不忘扶正——这是仲景用药的分寸感，也是他最被推崇的一点。</li>
+</ol></div>
+
+<div class="block"><h3><span class="badge">图</span>一图看懂 · 六经传变</h3>
+<div class="diagram">${SVG.liujing}<div class="cap">外邪由表入里、由阳入阴；判断病在哪一经，就知道大致的治疗方向</div></div></div>
+
+<div class="block"><h3><span class="badge">文</span>原文金句选读</h3>
+<p class="quote">"观其脉证，知犯何逆，随证治之。"</p>
+<p>白话：看清脉象与症候，判断病机偏到哪里去了，就顺着这个"证"来治——十二个字，道尽了辨证论治的全部精神。</p>
+<p class="quote">"太阳之为病，脉浮，头项强痛而恶寒。"</p>
+<p>白话：这是"太阳病"的提纲，描述外邪刚侵袭体表时最典型的一组表现——脉浮、后脑与脖颈发紧作痛、怕冷。一句话就给一个病的阶段立了标尺。</p></div>
+
+<div class="block"><h3><span class="badge">方</span>对临床方药的影响</h3>
+<p>《伤寒论》里的方子，被后世专称为<b>"经方"</b>——桂枝汤、麻黄汤、小柴胡汤、白虎汤、四逆汤……至今仍是临床常用方，也是整个中医方剂学的根。日本的"汉方医学"、近现代的"经方派"都直接承袭于此。可以说，本课程后面第 19–21 课要学的方剂体系，源头就在这本书里。</p></div>
+
+<div class="block caution"><h3><span class="badge">辨</span>别误会</h3>
+<p>① 这里的"伤寒"是<b>广义的外感热病</b>（多种发热性疾病的统称），不是西医说的"伤寒（肠伤寒）"；② 它绝非只治"寒"——六经病有寒证也有热证（如阳明、少阳多见热）；③ 别一上来就硬啃条文，先抓住"辨证"的思路，再回头读条文就顺了。</p></div>
+
+<div class="block"><h3><span class="badge">用</span>用得上 · 怎么读这本书</h3>
+<p>入门别直接背条文。可先听<b>郝万山、刘渡舟</b>等名家的讲解（把死条文讲活），再回到原文；先记牢几首核心经方的"方证"——什么样的人、什么样的证，用什么方；日常里，试着用六经的框架去理解一次普通感冒发热的不同阶段，你会对它豁然开朗。</p></div>
+
+<div class="deepdive deep-only">
+  <div class="dd-title">深入精讲 · 系统展开 <small>点目录可跳转，逐节展开</small></div>
+  <div class="dd-toc">
+    <button onclick="ddJump(this,0)">① 全书结构与读法</button>
+    <button onclick="ddJump(this,1)">② 六经辨证总纲</button>
+    <button onclick="ddJump(this,2)">③ 太阳病</button>
+    <button onclick="ddJump(this,3)">④ 阳明病</button>
+    <button onclick="ddJump(this,4)">⑤ 少阳病</button>
+    <button onclick="ddJump(this,5)">⑥ 太阴病</button>
+    <button onclick="ddJump(this,6)">⑦ 少阴病</button>
+    <button onclick="ddJump(this,7)">⑧ 厥阴病</button>
+    <button onclick="ddJump(this,8)">⑨ 治法与用药智慧</button>
+    <button onclick="ddJump(this,9)">⑩ 六经实质与研习</button>
+  </div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>① 全书结构与读法</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>读一本经典，先看它是<b>怎么搭起来的</b>——把骨架理清，零散的内容才挂得上、串得起来。</p>
+    <p><b>成书与版本</b>：原书《伤寒杂病论》历经离乱散佚，晋·王叔和搜集整理、宋·林亿等校订，析为《伤寒论》（论外感）与《金匮要略》（论杂病）两部。今通行的"宋本"约 398 条、113 方。</p>
+    <p><b>全书骨架</b>：除开篇的辨脉法、平脉法与卷末的霍乱、阴阳易差后劳复等篇，主体是六篇——<b>辨太阳、阳明、少阳、太阴、少阴、厥阴病脉证并治</b>。这"六经病"就是贯穿全书的主线。</p>
+    <p><b>每经内部的体例</b>（原文不曾明言，是历代医家归纳出的隐藏结构）：先出<b>提纲证</b>（一句话立标尺）→ 再列<b>本证</b>（该经主证与主方）→ 然后是<b>兼证、变证、坏病</b>（失治误治后的演变）→ 最后是<b>类证鉴别</b>（易混证的辨别）。</p>
+    <div class="diagram">${SVG.shanghanjiegou}<div class="cap">全书结构：六经为主线，每经按"提纲→本证→兼变证→类证"展开</div></div>
+    <div class="modern"><b>怎么用这个结构读：</b>拿到任一条文，先问它属哪一经、是本证还是兼变证——挂到这副骨架上，它立刻就有了位置。下面各节，正是沿这个结构逐经展开。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>② 六经辨证：总纲与传变</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p>六经辨证，是把外感病的<b>全过程</b>按"病位深浅 + 正邪盛衰"切成六个层次：<b>三阳</b>（太阳、阳明、少阳）主表、主热、主实，正气尚足、抗邪有力；<b>三阴</b>（太阴、少阴、厥阴）主里、主寒、主虚，正气已衰、邪气深入。</p>
+    <p>每一经都有一句<b>"提纲证"</b>——用最精炼的脉证点出该经的典型面貌，是临证辨别"病在何经"的路标。</p>
+    <p>传变并非死板按天数推进。它可以<b>循经传</b>（太阳→阳明）、<b>越经传</b>（隔一经而传）、<b>表里传</b>（太阳→少阴），也可外邪不经三阳、<b>直中</b>三阴。判断往哪传，看的永远是<b>脉证的变化</b>，而非得病几日。</p>
+    <div class="modern"><b>现代视角：</b>六经更像疾病的"分期 + 分型"坐标系——先定位病在哪个阶段、正邪态势如何，就锁定了治疗的大方向（汗、清、和、温、补）。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>③ 太阳病 · 表证</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"太阳之为病，脉浮，头项强痛而恶寒。"</p>
+    <p>邪在肌表，正气趋表抗邪，故见脉浮、头项僵痛、怕冷。这是外感的<b>第一道防线</b>。</p>
+    <p>太阳病分两大证型，是经方入门的分水岭：<br>· <b>中风（表虚）</b>：有汗、恶风、脉浮缓——方用 <span class="rx">桂枝汤</span>，解肌发表、调和营卫；<br>· <b>伤寒（表实）</b>：无汗、恶寒、身痛、脉浮紧——方用 <span class="rx">麻黄汤</span>，发汗解表。</p>
+    <p>一句口诀记牢：<b>有汗用桂枝，无汗用麻黄</b>。太阳病若失治误治，邪可内传，或生结胸、痞证等"变证"。</p>
+    <div class="modern"><b>现代视角：</b>约当外感初起的"表证期"，辨清虚实、及时解表，常可一汗而解。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>④ 阳明病 · 里热实</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"阳明之为病，胃家实是也。"</p>
+    <p>邪已入里化热，正盛邪实——这是六经中最"热"、最"实"的阶段。又分两类：<br>· <b>经证</b>：大热、大汗、大渴、脉洪大（"四大"），方用 <span class="rx">白虎汤</span> 清热；<br>· <b>腑证</b>：潮热、腹满硬痛、便秘、甚至谵语，方用 <span class="rx">承气汤类</span> 攻下。</p>
+    <p>治法核心是<b>"清"与"下"</b>，讲究"急下存阴"——趁热势未把津液耗尽时果断清下。</p>
+    <div class="modern"><b>现代视角：</b>约当高热极盛、腑实内结的实热阶段（如某些高热脱水、急腹症的热实表现）。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑤ 少阳病 · 半表半里</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"少阳之为病，口苦、咽干、目眩也。"</p>
+    <p>邪在半表半里，<b>既不可单纯发汗，也不可贸然攻下</b>。主证是：往来寒热、胸胁苦满、默默不欲饮食、心烦喜呕。</p>
+    <p>方用 <span class="rx">小柴胡汤</span>，<b>和解少阳</b>、调畅枢机——这是"和法"的代表方。所谓"和"，就是既不强攻也不强补，而是把卡住的气机重新转动起来。</p>
+    <div class="modern"><b>现代视角：</b>约当正邪相持、迁延不解的阶段。小柴胡汤临床应用极广，凡寒热往来、肝胆不和之证常用之。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑥ 太阴病 · 脾虚寒湿</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。"</p>
+    <p>病入三阴的第一站，脾阳已虚、寒湿内盛，故见腹胀、呕吐、食不下、腹泻而无热象。</p>
+    <p>方用 <span class="rx">理中汤</span>，温中健脾。治法由前面的"清、下、和"一转而为<b>"温"</b>——温里散寒、扶助脾阳。</p>
+    <div class="modern"><b>现代视角：</b>约当脾胃虚寒、消化功能低下（慢性腹泻、腹部冷痛喜温喜按）。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑦ 少阴病 · 心肾虚衰</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"少阴之为病，脉微细，但欲寐。"</p>
+    <p>心肾两虚，是六经中最危重的环节之一——脉极弱、精神萎靡只想睡。它有"两化"：<br>· <b>寒化</b>：畏寒蜷卧、下利清谷、四肢厥冷——方用 <span class="rx">四逆汤</span> 回阳救逆；<br>· <b>热化</b>：心烦不眠、口燥咽干——方用 <span class="rx">黄连阿胶汤</span> 滋阴降火。</p>
+    <p>治法重在<b>扶阳</b>或<b>育阴</b>。"回阳救逆"正是仲景的看家本领，关键时刻能把人从虚脱边缘拉回来。</p>
+    <div class="modern"><b>现代视角：</b>寒化约当循环衰竭、重症虚脱；热化约当阴虚内热、烦躁失眠。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑧ 厥阴病 · 寒热错杂</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p class="quote">"厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食……"</p>
+    <p>病至最深一层，阴阳错杂、寒热混见，是六经里最难辨的一经——上热下寒、虚实交织。</p>
+    <p>代表方 <span class="rx">乌梅丸</span>，寒热并用、攻补兼施。治法常需<b>寒热并调、阴阳兼顾</b>，不可一味偏温或偏清。</p>
+    <div class="modern"><b>现代视角：</b>约当复杂危重、虚实寒热交错的终末或缠绵阶段，最考验辨证功力。</div>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑨ 仲景的治法与用药智慧</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p><b>八法的雏形</b>：汗（麻黄、桂枝）、吐、下（承气）、和（柴胡）、温（四逆）、清（白虎）、消、补——后世归纳的"八法"，多能在《伤寒论》里找到源头（第 16 课会专讲）。</p>
+    <p><b>保胃气、存津液</b>：仲景用药时时顾护脾胃与津液，攻邪有度、不伤正气——这是他被后世奉为圭臬的分寸感。</p>
+    <p><b>煎服法即是药</b>：桂枝汤要"啜热稀粥、温覆取微汗"；大承气汤"先煮枳、朴，后下大黄"以存其攻下之力。火候、次序、服法都直接影响疗效，不是细枝末节。</p>
+    <p><b>剂量配伍精严</b>：同样几味药，比例一变方义全变——桂枝汤加重桂枝即成桂枝加桂汤，主治随之不同。这正是 <span class="rx">桂枝汤</span> 被尊为"群方之首"的原因：五味药（桂枝、芍药、生姜、大枣、炙甘草）一散一收调和营卫，是理解"方证相应"最好的入门范本。</p>
+  </div></div>
+
+  <div class="acc"><button class="acc-h" onclick="accToggle(this)"><span>⑩ "六经"实质之争与现代研习</span><span class="ico">＋</span></button>
+  <div class="acc-b">
+    <p><b>一桩千年公案</b>：历代对"六经"究竟是什么争论不休——经络说、脏腑说、气化说、阶段层次说、八纲说……各执一端。</p>
+    <p><b>现代主流理解</b>：六经不必死扣"是不是经络"，更宜看作<b>疾病阶段 + 正邪态势</b>的概括，落点在"该用什么治法"。抓住这一点，读条文就不会被名相绊住。</p>
+    <p><b>怎么研习这本书</b>：① 先听名家讲解（郝万山、刘渡舟等）建立框架；② 记牢核心方证（什么人、什么证、用什么方）；③ 再回原文读条文；④ 试着用六经看一次感冒发热的演变。</p>
+    <p><b>延伸</b>：《金匮要略》专讲杂病，与本论同出仲景、可互参；日本"汉方医学"与现代"经方派"皆由此发源。</p>
+  </div></div>
+</div>
+
+<div class="block quiz"><h3><span class="badge">测</span>小测</h3>
+<div class="q"><p>1. "观其脉证，知犯何逆，随证治之"概括了《伤寒论》的什么核心思想？</p><button onclick="toggleA(this)">看答案</button><div class="a">辨证论治——依据当下的脉象与证候来立法处方，而非一病一方。</div></div>
+<div class="q"><p>2. 《伤寒论》里的"伤寒"指什么？</p><button onclick="toggleA(this)">看答案</button><div class="a">广义的外感热病（多种发热性疾病的统称），不是西医所说的肠伤寒。</div></div>
+</div>
+`},
+};
+
+/* ---------- 占位课大纲 ---------- */
+const OUTLINE = {
+4:["五行不是五种物质，而是一张关系网","相生与相克：两种基本关系","五行配五脏：肝心脾肺肾","用五行解释身体的连锁反应"],
+5:["五脏不是五个解剖器官，而是五大功能系统","心主血脉藏神、肝主疏泄藏血","脾主运化、肺主气司呼吸、肾主藏精"],
+6:["六腑：胆胃小肠大肠膀胱三焦","'脏'与'腑'的分工：藏与通","奇恒之腑简介","脏腑表里关系一图看懂"],
+7:["气、血、津液：身体的三种'资源'","气为血之帅，血为气之母","津液的生成、输布与代谢","三者失常对应的常见问题"],
+8:["经络是连接全身的网络","十二正经与奇经八脉概览","经络与脏腑的对应","为针灸、推拿打下概念基础"],
+9:["六淫：风寒暑湿燥火","七情内伤：情绪如何致病","饮食劳逸失度","痰饮、瘀血：病理产物又成新病因"],
+10:["邪正盛衰决定病势","虚与实的判断","升降失常与寒热转化","病机十九条的现代理解"],
+11:["望诊：神色形态","重点·望舌：舌质与舌苔怎么看","闻诊：听声音、嗅气味"],
+12:["问诊：十问歌的现代用法","切诊入门：寸关尺与三部九候","常见脉象：浮沉迟数虚实"],
+13:["八纲：阴阳、表里、寒热、虚实","八纲是一切辨证的骨架","如何把症状归入八纲"],
+14:["脏腑辨证：把症状串成一个完整故事","各脏常见证型举例","虚证与实证的脏腑表现"],
+15:["六经辨证（伤寒）概览","卫气营血辨证（温病）概览","三焦辨证概览","为读经典铺路"],
+16:["治则：治病求本、扶正祛邪、调整阴阳","八法：汗吐下和温清消补","因人因地因时制宜"],
+17:["四气：寒热温凉","五味：辛甘酸苦咸","归经与升降浮沉","中药如何'对症'"],
+18:["按功效分类记忆常用中药","解表药、清热药、补益药代表","安全用药与十八反十九畏常识"],
+19:["方剂为何讲究配伍","君臣佐使的结构","剂型与煎服法","经方与时方的区别"],
+20:["经典名方解析（一）","桂枝汤·小柴胡汤·四君子汤","结构拆解与适用思路"],
+21:["经典名方解析（二）","白虎汤·二陈汤·血府逐瘀汤","清热/祛湿/理气活血的代表"],
+22:["九种体质辨识","你是哪一种？自测要点","体质与调养方向"],
+23:["二十四节气养生要点","食疗的基本原则","起居、运动、情志的日常落点"],
+24:["《黄帝内经》《伤寒论》导读","学院派名家与经方传承","学完之后，如何继续深入"],
+25:["先理结构：原书《素问》《灵枢》各81篇、为汇编体，按现代研究先归出理论板块（阴阳五行/藏象/经络/病机/诊法/治则/养生/运气）","成书：非一人一时，集战国至西汉之大成","在结构框架内逐块解读核心理念：整体观、天人相应","金句选读：'上工治未病''法于阴阳，和于术数'","对后世全部理论的奠基性影响"],
+26:["先理结构：八十一难以问答编排，可归为脉学/经络/藏象/腧穴/针法五大板块","成书：补《黄帝内经》之未备","在板块框架内展开核心理念：独取寸口的脉诊、命门与三焦学说","对脉学与针灸的深远影响"],
+27:["先理结构：全书以六经病为主线，每经按'提纲→本证→兼变证→类证'编排","成书：张仲景痛于宗族死于伤寒，勤求古训","在结构框架内逐经精讲：辨证论治、六经辨证、方证相应","金句选读：'观其脉证，知犯何逆，随证治之'","对经方与临床的开山影响"],
+28:["先理结构：以'三品分类'（上品养命/中品养性/下品治病）为骨架，载药365种","成书：托名神农，约成于汉，本草学奠基","在三品框架内解读核心理念：四气五味、君臣佐使、七情和合","对《本草纲目》及后世药学的影响"],
+};
+
+/* ---------- 渲染逻辑 ---------- */
+const store = {
+  get done(){ try{return JSON.parse(localStorage.getItem('tcm_done')||'[]');}catch(e){return [];} },
+  set done(v){ localStorage.setItem('tcm_done', JSON.stringify(v)); },
+  get fav(){ try{return JSON.parse(localStorage.getItem('tcm_fav')||'[]');}catch(e){return [];} },
+  set fav(v){ localStorage.setItem('tcm_fav', JSON.stringify(v)); },
+  note(id){ return localStorage.getItem('tcm_note_'+id)||''; },
+  setNote(id,v){ localStorage.setItem('tcm_note_'+id, v); },
+  get last(){ return parseInt(localStorage.getItem('tcm_last')||'1'); },
+  set last(v){ localStorage.setItem('tcm_last', v); },
+  get version(){ return localStorage.getItem('tcm_version')||'std'; },
+  set version(v){ localStorage.setItem('tcm_version', v); },
+};
+
+function setVersion(v){
+  store.version = v;
+  document.body.classList.toggle('deep', v==='deep');
+  document.getElementById('verStd').classList.toggle('on', v==='std');
+  document.getElementById('verDeep').classList.toggle('on', v==='deep');
+  document.getElementById('verHint').textContent = v==='deep'
+    ? '深入版：在标准内容之外，增加原文选读、更深机理与扩展概念。'
+    : '标准版：抓主干，深浅适中，适合系统建立框架。';
+}
+
+const ALL_IDS = PARTS.flatMap(p=>p.lessons);
+
+function titleOf(id){ return LESSONS[id]?LESSONS[id].title : ({
+  4:"五行",5:"藏象（上）",6:"藏象（下）",7:"气血津液",8:"经络",9:"病因",10:"病机",
+  11:"四诊（一）",12:"四诊（二）",13:"八纲辨证",14:"脏腑辨证",15:"其他辨证法概览",
+  16:"治则治法·八法",17:"中药入门",18:"常用中药巡礼",19:"方剂原理",20:"经典名方（一）",
+  21:"经典名方（二）",22:"体质辨识",23:"节气养生与食疗",24:"经典与名家",
+  25:"《黄帝内经》",26:"《难经》",27:"《伤寒论》",28:"《神农本草经》"
+}[id]); }
+
+function subOf(id){ return LESSONS[id]?LESSONS[id].sub : ({
+  4:"一张关系网，不是五种东西",5:"五脏不是五个器官",6:"六腑与脏腑关系",7:"身体里流动的资源",
+  8:"连接全身的网络（概览）",9:"六淫·七情·饮食劳逸",10:"邪正·虚实·痰瘀",11:"望与闻",
+  12:"问与切（脉象入门）",13:"辨证总纲",14:"把症状串成一个故事",15:"六经·卫气营血·三焦",
+  16:"汗吐下和温清消补",17:"四气五味与归经",18:"分类记忆",19:"君臣佐使",
+  20:"解表·和解·补益",21:"清热·祛湿·理气活血",22:"先认识你自己",23:"把中医用进日常",24:"以及怎么继续走下去",
+  25:"中医理论的源头活水",26:"补《内经》之未备",27:"方书之祖，辨证论治的开山",28:"本草学的奠基之作"
+}[id]); }
+
+function buildNav(){
+  const done = store.done;
+  const nav = document.getElementById('nav');
+  nav.innerHTML = PARTS.map(p=>{
+    const links = p.lessons.map(id=>{
+      const ready = !!LESSONS[id];
+      const isDone = done.includes(id);
+      const isFav = store.fav.includes(id);
+      return `<div class="lesson-link ${ready?'':'locked'}" data-id="${id}" ${ready?`onclick="openLesson(${id})"`:''}>
+        <span class="chk">${isDone?'✔':''}</span>
+        <span class="num">${id}</span>
+        <span>${titleOf(id)} ${isFav?'<span class="pin">⚑</span>':''} ${ready?'':'<span style="font-size:11px;color:#b3a484">· 待开</span>'}</span>
+      </div>`;
+    }).join('');
+    return `<div class="part-title">${p.name.replace(/^第.{1,2}部 · |^序章/, m=>m)}</div>${links}`;
+  }).join('');
+  // 进度
+  const total = ALL_IDS.length;
+  const n = done.length;
+  document.getElementById('pctText').textContent = n+' / '+total;
+  document.getElementById('barFill').style.width = (n/total*100)+'%';
+}
+
+function openLesson(id){
+  store.last = id;
+  document.querySelectorAll('.lesson-link').forEach(el=>el.classList.toggle('active', +el.dataset.id===id));
+  const c = document.getElementById('content');
+  window.scrollTo(0,0);
+  if(document.getElementById('sidebar').classList.contains('open')) document.getElementById('sidebar').classList.remove('open');
+
+  if(LESSONS[id]){
+    const L = LESSONS[id];
+    const done = store.done.includes(id);
+    const fav = store.fav.includes(id);
+    c.innerHTML = `
+      <div class="l-part">${L.part}　·　第 ${id} 课</div>
+      <h1 class="l-title">${L.title}</h1>
+      <div class="l-sub">${L.sub}</div>
+      <div class="ver-tag-line">
+        <span class="vt vt-std">标准版</span>
+        <span class="vt vt-deep">深入版 · 含 ${L.deepCount||0} 节深入精讲</span>
+      </div>
+      <hr class="rule">
+      ${L.body}
+      <div class="note-area">
+        <label>我的笔记</label>
+        <textarea id="noteBox" placeholder="随手记下心得、疑问或想验证的点…" oninput="store.setNote(${id}, this.value)">${store.note(id)}</textarea>
+      </div>
+      <div class="lesson-foot">
+        <div style="display:flex;gap:10px;">
+          ${prevId(id)?`<button class="btn nav" onclick="openLesson(${prevId(id)})">← 上一课</button>`:''}
+          ${nextReady(id)?`<button class="btn nav" onclick="openLesson(${nextReady(id)})">下一课 →</button>`:''}
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn ghost" onclick="toggleFav(${id})">${fav?'已收藏 ⚑':'收藏 ⚐'}</button>
+          <button class="btn" onclick="toggleDone(${id})">${done?'已学完 ✔ 取消':'标记学完 ✔'}</button>
+        </div>
+      </div>`;
+  } else {
+    const items = (OUTLINE[id]||[]).map(t=>`<li>${t}</li>`).join('');
+    c.innerHTML = `
+      <div class="l-part">第 ${id} 课</div>
+      <h1 class="l-title">${titleOf(id)}</h1>
+      <div class="l-sub">${subOf(id)}</div>
+      <hr class="rule">
+      <div class="placeholder">
+        <div class="big">本课将在后续各期中写就</div>
+        <p>这是第一期样章，先呈现「序章 + 气 + 阴阳」三课的完整观感。<br>本课已规划好提纲如下：</p>
+        <ul class="outline">${items}</ul>
+      </div>`;
+  }
+}
+
+function prevId(id){ const i=ALL_IDS.indexOf(id); return i>0?ALL_IDS[i-1]:null; }
+function nextReady(id){ const i=ALL_IDS.indexOf(id); return i<ALL_IDS.length-1?ALL_IDS[i+1]:null; }
+
+function toggleDone(id){
+  let d = store.done;
+  d.includes(id) ? d=d.filter(x=>x!==id) : d.push(id);
+  store.done = d; buildNav(); openLesson(id);
+}
+function toggleFav(id){
+  let f = store.fav;
+  f.includes(id) ? f=f.filter(x=>x!==id) : f.push(id);
+  store.fav = f; buildNav(); openLesson(id);
+}
+function toggleA(btn){
+  const a = btn.nextElementSibling;
+  a.classList.toggle('show');
+  btn.textContent = a.classList.contains('show')?'收起':'看答案';
+}
+function accToggle(h){ h.parentElement.classList.toggle('open'); }
+function ddJump(btn, idx){
+  const dd = btn.closest('.deepdive');
+  const accs = dd.querySelectorAll('.acc');
+  if(accs[idx]){ accs[idx].classList.add('open'); accs[idx].scrollIntoView({behavior:'smooth', block:'start'}); }
+}
+
+setVersion(store.version);
+buildNav();
+openLesson(store.last && LESSONS[store.last] ? store.last : 1);
+</script>
+</body>
+</html>
