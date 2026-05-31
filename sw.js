@@ -1,5 +1,5 @@
 // 我的学习库 Service Worker —— 离线缓存
-const CACHE = "study-wiki-v1";
+const CACHE = "study-wiki-v2";
 const CORE = [
   "./",
   "./index.html",
@@ -26,6 +26,9 @@ self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
+
+  // 只处理本站请求；跨域请求（如 GitHub API）直接放行，不拦截
+  if (url.origin !== self.location.origin) return;
 
   // catalog.json + html 页面：优先网络（拿到最新），失败再用缓存
   const isFresh = url.pathname.endsWith("catalog.json") ||

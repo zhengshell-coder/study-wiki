@@ -524,7 +524,7 @@ async function cacheAllOffline(){
   const st=document.getElementById("offlineStatus");
   const urls=["./","./index.html","./catalog.json","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-180.png"];
   data.pages.forEach(p=>urls.push(pathFor(p)));
-  let cache; try{ cache=await caches.open("study-wiki-v1"); }catch(e){ st.textContent="无法访问缓存。"; return; }
+  let cache; try{ cache=await caches.open("study-wiki-v2"); }catch(e){ st.textContent="无法访问缓存。"; return; }
   let ok=0,fail=0;
   for(let i=0;i<urls.length;i++){ st.innerHTML=`正在缓存 <b>${i+1}/${urls.length}</b> …`;
     try{ const r=await fetch(urls[i],{cache:"reload"}); if(r.ok){ await cache.put(urls[i], r.clone()); ok++; } else fail++; }catch(e){ fail++; } }
