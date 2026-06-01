@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>西方哲学史 · 时间线学习框架</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --paper:#fbf9f4; --ink:#2b2722; --ink-soft:#5c554b;
+    --line:#ddd5c7; --accent:#8a5a2b; --accent-soft:#b98a52;
+    --gold:#b08328; --rule:#c9bda6;
+    --t1:#9b4722; --t2:#2f6b6b; --t3:#5a4a86;
+    --shadow:0 1px 3px rgba(60,50,30,.08),0 8px 24px rgba(60,50,30,.06);
+    --serif:"Songti SC","STSong","Noto Serif SC",Georgia,serif;
+    --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75;}
+  a{cursor:pointer}
+  .app{display:flex;align-items:flex-start;}
+  .side{width:300px;flex:none;position:sticky;top:0;height:100vh;overflow-y:auto;
+    background:var(--paper);border-right:1px solid var(--line);padding:24px 16px 50px;}
+  .brand{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--accent);letter-spacing:.03em;}
+  .brand small{display:block;font-family:var(--sans);font-size:11px;color:var(--accent-soft);letter-spacing:.32em;margin-top:4px;font-weight:400;}
+  .threads-mini{margin:14px 0;padding:11px 0;border-top:1px dashed var(--rule);border-bottom:1px dashed var(--rule);}
+  .threads-mini .tt{font-size:11px;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;}
+  .threads-mini .tr{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft);margin:4px 0;}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .d1{background:var(--t1)} .d2{background:var(--t2)} .d3{background:var(--t3)}
+  .nav{margin-top:4px}
+  .navov{display:block;font-family:var(--serif);color:var(--accent);font-size:14px;padding:7px 8px;border-radius:7px;text-decoration:none;margin-bottom:6px}
+  .navov:hover,.navov.on{background:#f3ead7}
+  .navgrp{margin:1px 0}
+  .grphead{display:flex;gap:7px;align-items:flex-start;padding:7px 8px;border-radius:7px;color:var(--ink);font-size:13.5px;text-decoration:none;position:relative}
+  .grphead .gi{color:var(--accent-soft);font-size:11px;flex:none;width:14px;text-align:center;margin-top:3px;transition:.15s}
+  .grphead:hover{background:#f3ecdd}
+  .grphead .gt{font-weight:600}
+  .grphead .gy{display:block;font-size:10px;color:var(--accent-soft);font-weight:400;margin-top:1px}
+  .navgrp.on>.grphead{color:var(--accent);background:#f3ead7}
+  .navgrp.open>.grphead .gi{transform:rotate(90deg);color:var(--accent)}
+  .subnav{display:none;margin:2px 0 6px 20px;border-left:1px solid var(--line);padding-left:8px}
+  .navgrp.open .subnav{display:block}
+  .subi{display:block;font-size:12.5px;color:var(--ink-soft);padding:5px 7px;border-radius:6px;text-decoration:none}
+  .subi:hover{background:#f3ecdd;color:var(--ink)}
+  .subi.on{color:var(--accent);font-weight:700;background:#f3ead7}
+  .subi .si{color:var(--accent-soft);font-size:11px;margin-right:5px}
+  .main{flex:1;min-width:0;}
+  #page{max-width:940px;margin:0 auto;padding:38px 38px 100px;}
+  .crumb{font-size:13px;color:var(--accent-soft);margin-bottom:12px}
+  .crumb a{color:var(--accent);text-decoration:none}
+  .crumb a:hover{text-decoration:underline}
+  .chead .chnum{font-family:var(--serif);font-size:13px;color:var(--accent-soft);letter-spacing:.2em;}
+  .chead .chperiod{float:right;font-size:13px;color:#fff;background:var(--accent);padding:3px 12px;border-radius:14px;}
+  .chead h2{font-family:var(--serif);font-size:30px;font-weight:600;margin:6px 0 4px;letter-spacing:.02em;}
+  .tags{margin:12px 0 4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tag{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff;}
+  .tag1{background:var(--t1)} .tag2{background:var(--t2)} .tag3{background:var(--t3)}
+  .geotag{font-size:12px;color:#fff;background:var(--t2);padding:2px 11px;border-radius:11px;}
+  .geotag::before{content:"📍";font-size:11px;margin-right:3px}
+  .cq{font-family:var(--serif);font-size:19px;color:var(--accent);border-left:3px solid var(--gold);padding:8px 0 8px 18px;margin:18px 0;font-style:italic;line-height:1.7}
+  .block{margin:22px 0;}
+  .blabel{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:8px;}
+  .blabel::before{content:"❖ ";color:var(--accent-soft);}
+  .block p{font-size:15.5px}
+  .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px dashed var(--rule);border-radius:12px;overflow:hidden;background:#fff;}
+  .flow .step{padding:14px 16px;position:relative;}
+  .flow .step:not(:last-child){border-right:1px dashed var(--rule);}
+  .flow .step h4{font-family:var(--serif);font-size:14px;margin-bottom:5px;}
+  .flow .s1 h4{color:var(--t1)} .flow .s2 h4{color:var(--gold)} .flow .s3 h4{color:var(--t2)}
+  .flow .step p{font-size:13.5px;color:var(--ink-soft);}
+  .flow .step::after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--accent-soft);font-size:18px;background:#fff;z-index:2;}
+  .flow .step:last-child::after{display:none}
+  .lineage{background:#f7f2e8;border-radius:8px;padding:13px 16px;font-size:14.5px;color:var(--ink-soft);}
+  .lineage b{color:var(--accent);font-family:var(--serif);}
+  .test{border-top:1px solid var(--line);margin-top:22px;padding-top:14px;}
+  .test summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.1em;list-style:none;}
+  .test summary::-webkit-details-marker{display:none}
+  .test summary::before{content:"▸ ";}
+  .test[open] summary::before{content:"▾ ";}
+  .test ol{margin:12px 0 4px 20px;color:var(--ink-soft);font-size:14px;}
+  .test li{margin:6px 0;}
+  /* deep / debate / impact / concepts */
+  .deep{margin:16px 0}
+  .deep h4{font-family:var(--serif);font-size:17px;color:var(--accent);margin-bottom:5px}
+  .deep p{font-size:15px;color:var(--ink);line-height:1.85}
+  .deep.deb h4{color:var(--t1)} .deep.imp h4{color:var(--t2)}
+  .concepts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .concept{background:#fff;border:1px solid var(--line);border-left:3px solid var(--t3);border-radius:8px;padding:10px 13px}
+  .concept b{font-family:var(--serif);color:var(--t3);display:block;margin-bottom:3px;font-size:14.5px}
+  .concept span{font-size:13.5px;color:var(--ink-soft)}
+  .quote{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;}
+  .quote .q{font-family:var(--serif);font-size:16px;}
+  .quote .who{font-size:12.5px;color:var(--accent);margin-top:4px;}
+  .quote .plain{font-size:13.5px;color:var(--ink-soft);margin-top:8px;border-top:1px dotted var(--rule);padding-top:8px;}
+  .quote .plain b{color:var(--accent);}
+  /* sub-chapter cards */
+  .subcards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .subcard{background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent-soft);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
+  .subcard:hover{border-left-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-1px)}
+  .subcard .sid{font-size:11px;color:var(--accent-soft);letter-spacing:.12em}
+  .subcard h4{font-family:var(--serif);font-size:16px;color:var(--ink);margin:3px 0 5px}
+  .subcard p{font-size:13px;color:var(--ink-soft);line-height:1.6}
+  /* sub page locator */
+  .locmap{width:320px;max-width:42%;float:right;margin:2px 0 14px 20px;border-radius:10px;background:#d4e3ea;border:1px solid var(--line)}
+  .land{fill:#e7dcc4}
+  .rmini{fill:none;stroke:#cdbb98;stroke-width:2;stroke-dasharray:5 5;opacity:.5}
+  .rdone{fill:none;stroke:#b78a45;stroke-width:2.4;opacity:.7}
+  .rstep{fill:none;stroke:var(--accent);stroke-width:3.4;stroke-linecap:round;}
+  .cdot{fill:#fff;stroke:var(--accent-soft);stroke-width:2;cursor:pointer;transition:.2s}
+  .cdot.cur{fill:var(--accent);stroke:#fff;animation:pulse 1.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{r:7}50%{r:10.5}}
+  .clab{font-size:13px;fill:#5c544a;font-family:var(--sans);pointer-events:none;transition:.2s}
+  .clab.cur{fill:var(--accent);font-weight:700;font-size:14px}
+  /* explore (chapter overview): sticky map + vertical timeline */
+  .explore{display:grid;grid-template-columns:minmax(260px,0.88fr) 1.12fr;gap:20px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+  .mapwrap{position:sticky;top:16px;align-self:start;}
+  .cmap{width:100%;height:auto;display:block;border-radius:10px;background:#d4e3ea;border:1px solid var(--line);}
+  .maphint{font-size:12px;color:var(--accent-soft);margin-top:8px;text-align:center}
+  .vtlhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .vtlhead .h{font-size:12px;color:var(--accent);letter-spacing:.06em;font-weight:700}
+  .vplay{font-family:var(--sans);font-size:12px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:7px;padding:5px 11px;cursor:pointer;transition:.15s}
+  .vplay:hover,.vplay.playing{background:var(--accent);color:#fff}
+  .vtl{position:relative;}
+  .vstop{display:grid;grid-template-columns:60px 26px 1fr;cursor:pointer;}
+  .vyear{font-size:12.5px;color:var(--accent-soft);text-align:right;padding:2px 8px 0 0;font-weight:700;white-space:nowrap}
+  .vrail{position:relative}
+  .vrail::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--rule);transform:translateX(-50%)}
+  .vstop:first-child .vrail::before{top:9px}
+  .vstop:last-child .vrail::before{bottom:auto;height:9px}
+  .vdot{position:absolute;left:50%;top:5px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:2px solid var(--accent-soft);transform:translateX(-50%);transition:.18s;z-index:1}
+  .vstop:hover .vdot{border-color:var(--accent)}
+  .vstop.active .vdot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px rgba(138,90,43,.18)}
+  .vbody{padding:0 0 18px 12px}
+  .vschool{display:inline-block;font-size:11px;color:var(--t3);background:#ece8f3;border:1px solid #ddd5ea;padding:1px 9px;border-radius:9px;margin-bottom:3px}
+  .vbody h4{font-family:var(--serif);font-size:16px;color:var(--ink);font-weight:600;margin:2px 0 4px}
+  .vstop.active .vbody h4{color:var(--accent)}
+  .vcity{font-size:11px;color:#fff;background:var(--t2);padding:1px 8px;border-radius:8px;font-family:var(--sans);font-weight:400;margin-left:4px}
+  .vbody p{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+  .navbtns{display:flex;justify-content:space-between;gap:10px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line);}
+  .navbtns button{font-family:var(--sans);font-size:14px;color:var(--accent);background:#f3ead7;border:1px solid var(--line);border-radius:8px;padding:9px 15px;cursor:pointer;transition:.15s;max-width:48%;text-align:left}
+  .navbtns button:hover{background:var(--accent);color:#fff}
+  .navbtns button:disabled{opacity:.35;cursor:default}
+  .navbtns button .nbk{display:block;font-size:11px;opacity:.7}
+  /* overview time machine */
+  .ov-kicker{letter-spacing:.45em;font-size:12px;color:var(--accent);text-transform:uppercase;}
+  .ov-h1{font-family:var(--serif);font-size:38px;font-weight:600;margin:12px 0 10px;}
+  .ov-sub{color:var(--ink-soft);font-size:16px;max-width:700px;margin-bottom:18px}
+  .ovmap{width:100%;height:auto;display:block;border-radius:14px;background:#d4e3ea;border:1px solid var(--line);box-shadow:var(--shadow);}
+  .ovlab{font-size:12.5px;fill:#6b6354;font-family:var(--sans)}
+  .ovdot{fill:#fff;stroke:var(--accent-soft);stroke-width:1.8;cursor:pointer;transition:.25s}
+  .ovdot.visited{fill:var(--accent-soft)}
+  .ovdot.cur{fill:var(--accent);stroke:#fff;stroke-width:2}
+  .ovmarker{fill:var(--accent);stroke:#fff;stroke-width:2.5;filter:drop-shadow(0 1px 3px rgba(138,90,43,.5))}
+  .ovcap{margin:14px 0 6px;background:#f7f2e8;border-radius:10px;padding:14px 18px;min-height:74px;border-left:4px solid var(--gold)}
+  .ovcap .oc-top{font-size:12.5px;color:var(--accent-soft);letter-spacing:.08em}
+  .ovcap .oc-t{font-family:var(--serif);font-size:21px;color:var(--ink);margin:3px 0 5px}
+  .ovcap .oc-t b{color:var(--accent)}
+  .ovcap .oc-d{font-size:14px;color:var(--ink-soft)}
+  .ov-axis{display:flex;gap:2px;position:relative;margin:18px 2px 6px;overflow-x:auto;padding-top:4px}
+  .ov-axis::before{content:"";position:absolute;left:8px;right:8px;top:10px;height:2px;background:var(--rule)}
+  .tick{flex:1;min-width:46px;display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;padding:0}
+  .tkdot{width:12px;height:12px;border-radius:50%;background:var(--paper);border:2px solid var(--accent-soft);z-index:1;transition:.15s}
+  .tick:hover .tkdot{border-color:var(--accent)}
+  .tick.active .tkdot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(138,90,43,.18)}
+  .tick.visited .tkdot{background:var(--accent-soft)}
+  .tky{font-size:10px;color:var(--accent-soft);margin-top:5px;text-align:center;line-height:1.2}
+  .tick.active .tky{color:var(--accent);font-weight:700}
+  .ov-ctrl{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .ov-ctrl button{font-family:var(--sans);font-size:13.5px;color:var(--accent);background:#f3ead7;border:1px solid var(--line);border-radius:8px;padding:9px 18px;cursor:pointer;transition:.15s}
+  .ov-ctrl button:hover{background:var(--accent);color:#fff}
+  .ov-ctrl #ovplay.playing{background:var(--accent);color:#fff}
+  .ov-hint{font-size:13px;color:var(--accent-soft);margin-top:14px}
+  #bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--t1),var(--gold),var(--t3));width:0;z-index:99;transition:width .15s;}
+  @media(max-width:880px){
+    .app{flex-direction:column}
+    .side{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--line)}
+    #page{padding:24px 18px 80px}
+    .explore{grid-template-columns:1fr}
+    .mapwrap{position:static}
+    .flow{grid-template-columns:1fr}
+    .flow .step:not(:last-child){border-right:none;border-bottom:1px dashed var(--rule)}
+    .flow .step::after{content:"↓";right:50%;top:auto;bottom:-10px;transform:translateX(50%)}
+    .ov-h1{font-size:30px}
+    .subcards,.concepts{grid-template-columns:1fr}
+    .locmap{float:none;max-width:100%;width:100%;margin:0 0 14px}
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <path id="land-geo" d="M 15.4 289.9 L 21.2 285.8 L 27.8 283.5 L 31.8 291.3 L 41.2 291.3 L 44 289.3 L 53.3 289.9 L 57.8 297.9 L 50.4 302.2 L 50.2 314.7 L 47.6 317 L 46.9 324.6 L 40 325.9 L 46.4 335.5 L 42 346 L 47.5 350.8 L 45.3 355.1 L 39.4 361.1 L 40.7 366.4 L 34.3 370.6 L 25.9 368.3 L 17.6 370.1 L 20.1 357.6 L 18.6 347.7 L 11.4 346.3 L 7.6 340.2 L 8.8 329.7 L 15.2 323.9 L 16.4 317.5 L 19.7 307.8 L 19.3 301.1 L 16.1 295.3 L 15.4 289.9 Z M 15.4 289.9 L 16.2 278.5 L 9.7 271.6 L 32.3 260 L 51.9 262.9 L 73.4 262.8 L 90.4 265.5 L 103.7 264.7 L 129.6 265.2 L 136 271.5 L 165.4 278.7 L 171.2 275.3 L 189.2 282.5 L 207.8 280.4 L 208.6 289.7 L 193.5 300.4 L 173 303.8 L 171.5 309.1 L 161.7 318 L 155.5 331 L 161.8 340.2 L 152.5 347.3 L 149.1 357.7 L 137 360.9 L 125.7 373.2 L 105.3 373.5 L 90.1 373.2 L 80.1 378.8 L 74 384.9 L 66.1 383.5 L 60.2 378.1 L 55.7 368.9 L 40.7 366.4 L 39.4 361.1 L 45.3 355.1 L 47.5 350.8 L 42 346 L 46.4 335.5 L 40 325.9 L 46.9 324.6 L 47.6 317 L 50.2 314.7 L 50.4 302.2 L 57.8 297.9 L 53.3 289.9 L 44 289.3 L 41.2 291.3 L 31.8 291.3 L 27.8 283.5 L 21.2 285.8 L 15.4 289.9 Z M 313 285.6 L 307.7 297.9 L 300.4 294.7 L 296.7 283.9 L 299.9 278 L 310.2 271.8 L 313 285.6 Z M 217.4 153.9 L 228.6 161.5 L 236.8 160.2 L 250.8 167.5 L 254.4 168.9 L 259 168.6 L 266.5 172.8 L 289.6 175.7 L 281.5 186.7 L 279.5 198.1 L 275.1 200.8 L 267.8 199.3 L 268.3 203.4 L 256.6 212.4 L 256.4 219.6 L 264 217.1 L 269.5 224.1 L 268.8 228.7 L 273.5 234.7 L 268 239.5 L 272.1 251.9 L 280.8 254 L 279 260.9 L 264.5 269.9 L 232.9 265.6 L 209.6 270.8 L 207.8 280.4 L 189.2 282.5 L 171.2 275.3 L 165.4 278.7 L 136 271.5 L 129.6 265.2 L 137.9 255.6 L 140.9 223.8 L 124.4 207 L 112.6 198.9 L 88.1 192.7 L 86.5 181.1 L 107.3 177.6 L 134.1 181.7 L 129.1 163.6 L 144.2 170.4 L 181.4 158 L 186.2 144.9 L 200.2 141.6 L 202.5 147.3 L 210 147.5 L 217.4 153.9 Z M 408.3 348.3 L 402.6 360.9 L 405 365.9 L 401.6 374.1 L 389.4 368.1 L 381.2 366.3 L 358.9 358.2 L 361.1 350 L 379.9 351.4 L 396.2 349.7 L 408.3 348.3 Z M 307.4 300.6 L 317 312 L 314.7 333.2 L 307.4 332.2 L 300.9 337.5 L 294.9 333.3 L 294.2 313.9 L 290.6 304.8 L 299.4 305.6 L 307.4 300.6 Z M 358 211.7 L 380.9 215.9 L 379.2 223.7 L 383 230.5 L 370.3 228.2 L 357.3 233.9 L 358.1 241.8 L 356.2 246.4 L 361.4 254.5 L 376.4 262.6 L 384.5 275.8 L 402.3 288.7 L 414.8 288.6 L 418.7 292.2 L 414.2 295.3 L 428.6 301.1 L 440.3 306 L 454 314.3 L 455.7 317.3 L 452.7 323 L 443.8 315.6 L 429.9 312.9 L 423.2 323.3 L 434.7 329.2 L 432.8 337.6 L 426.2 338.5 L 417.6 352.2 L 410.9 353.5 L 411 348.6 L 414.3 340 L 417.7 336.6 L 411.5 327.3 L 406.6 319.2 L 400 317.2 L 395.3 310.3 L 385 307.4 L 378 301 L 366.2 300 L 353.7 292.7 L 339.1 282.3 L 328.2 273.1 L 323.2 257.3 L 315.2 255.4 L 302.2 250.1 L 294.9 252.3 L 285.6 259.7 L 279 260.9 L 280.8 254 L 272.1 251.9 L 268 239.5 L 273.5 234.7 L 268.8 228.7 L 269.5 224.1 L 276.4 227.6 L 284.1 226.8 L 293.1 221.4 L 295.8 223.9 L 303.5 223.4 L 306.9 217 L 318.8 219 L 325.8 216.3 L 327.1 209.7 L 336.8 212 L 338.6 208.9 L 354.4 206.2 L 358 211.7 Z M 213 138.5 L 224.8 139.7 L 239.6 136.4 L 249.7 143.4 L 258.5 147.1 L 256.7 158 L 252.5 158.6 L 250.8 167.5 L 236.8 160.2 L 228.6 161.5 L 217.4 153.9 L 210 147.5 L 202.5 147.3 L 200.2 141.6 L 213 138.5 Z M 257.2 103.8 L 270.5 104.3 L 273.5 109.7 L 269.5 124.3 L 265.4 130.4 L 255.8 130.4 L 258.5 147.1 L 249.7 143.4 L 239.6 136.4 L 224.8 139.7 L 213 138.5 L 221.3 134.1 L 235.3 110.5 L 257.2 103.8 Z M 318.8 80.3 L 319 86.5 L 335.2 90.2 L 335 95.9 L 351.3 92.9 L 360.3 88.5 L 378.4 94.8 L 385.9 99.9 L 389.7 108 L 385.2 112.3 L 391 118 L 395 126.6 L 393.7 132.1 L 400.3 142.3 L 393.1 144 L 388.9 142.1 L 384.9 145.2 L 373.4 148.3 L 367.5 152.3 L 355.8 155.7 L 358.6 160.5 L 360.3 167.2 L 368.5 171.1 L 377.5 178 L 371.9 185.3 L 366.1 187.4 L 368.4 197.8 L 366.9 200.5 L 361.9 197.2 L 354.3 196.8 L 342.8 199.6 L 328.7 198.9 L 326.4 203.2 L 318.3 198.7 L 313.5 199.6 L 296.4 194.7 L 293.1 198.2 L 279.5 198.1 L 281.5 186.7 L 289.6 175.7 L 266.5 172.8 L 259 168.6 L 259.9 161.6 L 256.7 158 L 258.5 147.1 L 255.8 130.4 L 265.4 130.4 L 269.5 124.3 L 273.5 109.7 L 270.5 104.3 L 273.6 100.9 L 287 100 L 289.9 103.6 L 300.8 95.7 L 297.2 89.7 L 296.4 80.6 L 308.5 82.7 L 318.8 80.3 Z M 69.4 87.1 L 60.8 98.1 L 48.7 94.8 L 38.8 95 L 42.1 86.5 L 38.8 77.9 L 52.3 77.2 L 69.4 87.1 Z M 111.9 21.8 L 94.8 39.2 L 111.1 37 L 128.7 37 L 124.5 50.1 L 110.1 64.4 L 126.6 65.4 L 127.9 67.1 L 142.2 86 L 153.1 88.6 L 163 106.8 L 167.5 113.1 L 186.9 116.2 L 185 126.4 L 176.8 131.1 L 183.2 139.4 L 168.8 147.7 L 147.4 147.6 L 120.2 152 L 112.7 148.8 L 102.1 156.3 L 87.3 154.5 L 76.1 160.6 L 67.6 157.4 L 91 140.6 L 105.4 137.2 L 105.2 137.2 L 80.3 134.5 L 75.7 128.1 L 92.4 123.2 L 83.7 114.6 L 86.7 104.1 L 110.5 105.5 L 110.5 105.5 L 112.9 96.2 L 102.2 86.4 L 101.9 86.2 L 82.5 83.3 L 78.7 79 L 84.5 71.9 L 79.2 67.5 L 70.6 75 L 69.7 59.6 L 61.6 51.4 L 67.4 34.9 L 79.8 21.9 L 92.6 23.2 L 111.9 21.8 Z M 539.2 388.7 L 547.9 394.1 L 560.4 393.2 L 572.3 394.3 L 571.9 397.1 L 580.6 395.2 L 578.6 399.9 L 555.6 401.3 L 555.8 398.6 L 536.2 395.5 L 539.2 388.7 Z M 585.7 295 L 580.7 305 L 576.9 306.8 L 567.2 306.4 L 558.8 304.8 L 539.4 309 L 550.5 318 L 542.4 320.6 L 533.5 320.6 L 525 312.4 L 522 315.9 L 525.6 325.5 L 533.6 333 L 527.6 336.5 L 536.5 343.8 L 544.4 348.5 L 544.6 357.5 L 529.8 353.3 L 534.6 361.4 L 524.4 363.1 L 530.5 377.2 L 519.8 377.4 L 506.7 370.5 L 500.7 357.7 L 497.9 347 L 491.7 339.7 L 483.5 330.6 L 482.4 326 L 489.8 318.2 L 490.8 313 L 496 310.7 L 496.3 306.5 L 506.8 305.1 L 512.9 301.6 L 521.6 301.9 L 524.2 299.1 L 527.2 298.6 L 539.1 299.1 L 551.9 294.7 L 563.2 300.2 L 577.7 298.7 L 577.9 290.8 L 585.7 295 Z M 60.8 98.1 L 63.5 109.5 L 51.4 123.8 L 23 133.3 L 0.4 130.9 L 13.3 114.2 L 5 97.9 L 26.8 85.4 L 38.8 77.9 L 42.1 86.5 L 38.8 95 L 48.7 94.8 L 60.8 98.1 Z M 313.5 199.6 L 314.1 202.4 L 311.7 206.4 L 318.9 209.3 L 327.1 209.7 L 325.8 216.3 L 318.8 219 L 306.9 217 L 303.5 223.4 L 295.8 223.9 L 293.1 221.4 L 284.1 226.8 L 276.4 227.6 L 269.5 224.1 L 264 217.1 L 256.4 219.6 L 256.6 212.4 L 268.3 203.4 L 267.8 199.3 L 275.1 200.8 L 279.5 198.1 L 293.1 198.2 L 296.4 194.7 L 313.5 199.6 Z M 431.7 190 L 430.5 196.6 L 421.4 196.6 L 424.5 200.1 L 419.2 210.4 L 416.2 213.1 L 402.2 213.5 L 394.1 217.1 L 380.9 215.9 L 358 211.7 L 354.4 206.2 L 338.6 208.9 L 336.8 212 L 327.1 209.7 L 318.9 209.3 L 311.7 206.4 L 314.1 202.4 L 313.5 199.6 L 318.3 198.7 L 326.4 203.2 L 328.7 198.9 L 342.8 199.6 L 354.3 196.8 L 361.9 197.2 L 366.9 200.5 L 368.4 197.8 L 366.1 187.4 L 371.9 185.3 L 377.5 178 L 389.4 183.1 L 398.4 176.6 L 404.1 175.4 L 416.5 180.3 L 424 179.4 L 431.4 182.4 L 430.1 184.5 L 431.7 190 Z M 431.4 182.4 L 424 179.4 L 416.5 180.3 L 404.1 175.4 L 398.4 176.6 L 389.4 183.1 L 377.5 178 L 368.5 171.1 L 360.3 167.2 L 358.6 160.5 L 355.8 155.7 L 367.5 152.3 L 373.4 148.3 L 384.9 145.2 L 388.9 142.1 L 393.1 144 L 400.3 142.3 L 407.9 147.4 L 419.8 148.8 L 418.8 153.2 L 427.5 156.5 L 429.9 152.4 L 440.9 154.2 L 442.4 159.2 L 454.3 160.2 L 461.7 168.1 L 456.9 168.1 L 454.4 171 L 450.7 171.7 L 449.7 175.3 L 446.6 176.1 L 446.2 177.5 L 440.7 179.2 L 433.6 178.9 L 431.4 182.4 Z M 400.3 142.3 L 393.7 132.1 L 395 126.6 L 391 118 L 385.2 112.3 L 389.7 108 L 385.9 99.9 L 396.8 95.2 L 421.8 87.8 L 442 82.4 L 457.9 85.1 L 459.1 89 L 474.6 89.2 L 494.3 91 L 523.7 90.8 L 531.9 92.5 L 535.7 97.4 L 536.4 104.5 L 540.9 110.6 L 540.8 116.9 L 531.2 120.2 L 536.1 127.6 L 536.4 134.7 L 544.5 148.7 L 542.8 153.2 L 534.8 155.1 L 520.3 168.4 L 524.4 175.6 L 520.9 174.6 L 505.7 168.5 L 494.2 170.7 L 486.7 169.1 L 477.2 172.5 L 469.1 166.9 L 462.6 169 L 461.7 168.1 L 454.3 160.2 L 442.4 159.2 L 440.9 154.2 L 429.9 152.4 L 427.5 156.5 L 418.8 153.2 L 419.8 148.8 L 407.9 147.4 L 400.3 142.3 Z M 750.6 298.6 L 773.6 304.8 L 792.2 302.4 L 806 303.8 L 808 302.9 L 808 367.4 L 792.4 372.5 L 779.2 372.6 L 770.7 369.6 L 753.1 374 L 747.8 370.9 L 747 379.8 L 742.7 383.4 L 738.4 386.9 L 732.5 379.6 L 738.6 373.6 L 728.8 375 L 715.4 371.3 L 704.4 380.5 L 680.1 382.3 L 667.2 373.7 L 649.9 373.2 L 646.3 379.8 L 635.2 381.7 L 619.7 373.2 L 602.3 373.5 L 592.8 357.5 L 581.1 348.7 L 588.9 336.2 L 578.7 328.6 L 596.5 313.3 L 621.1 312.6 L 627.8 300.5 L 658.3 302.6 L 677.6 292.2 L 696.2 287.7 L 722.7 287.4 L 750.6 298.6 Z M 595.1 309 L 581.7 317.6 L 576.7 310.1 L 576.9 306.8 L 580.7 305 L 585.7 295 L 577.9 290.8 L 594.2 285.7 L 607.9 287.9 L 609.8 294 L 623.8 299.2 L 620.9 303.1 L 601.9 304 L 595.1 309 Z M 461.7 168.1 L 462.6 169 L 469.1 166.9 L 477.2 172.5 L 486.7 169.1 L 494.2 170.7 L 505.7 168.5 L 520.9 174.6 L 516.5 178.8 L 513.4 185.2 L 510 186.9 L 492.8 182 L 487.6 183 L 483.8 186.8 L 476.3 188.8 L 474.6 187.7 L 466.8 190.2 L 460.4 190.7 L 459.1 193.9 L 445.7 195.9 L 439.8 194.1 L 431.7 190 L 430.1 184.5 L 431.4 182.4 L 433.6 178.9 L 440.7 179.2 L 446.2 177.5 L 446.6 176.1 L 449.7 175.3 L 450.7 171.7 L 454.4 171 L 456.9 168.1 L 461.7 168.1 Z M 419.2 210.4 L 424.5 200.1 L 421.4 196.6 L 430.5 196.6 L 431.7 190 L 439.8 194.1 L 445.7 195.9 L 459.1 193.9 L 460.4 190.7 L 466.8 190.2 L 474.6 187.7 L 476.3 188.8 L 483.8 186.8 L 487.6 183 L 492.8 182 L 510 186.9 L 513.4 185.2 L 522.3 189.6 L 523.4 193.9 L 513.6 197.2 L 506 208.1 L 496.4 218.9 L 483.5 222 L 473.5 221.3 L 461.3 225.5 L 455.3 227.8 L 442.1 224.8 L 430.1 217.9 L 425 215.9 L 421.9 210.5 L 419.2 210.4 Z M 363 70.2 L 353.4 83.2 L 336.7 74.2 L 334.5 67.5 L 357.9 62.2 L 363 70.2 Z M 334.6 56.7 L 330.7 62.7 L 325.9 61 L 314.4 72.5 L 318.8 80.3 L 308.5 82.7 L 296.4 80.6 L 289.9 71.7 L 289.4 55.4 L 292.1 51 L 296.7 46.2 L 310.8 45.2 L 316.4 40.8 L 329.3 36.3 L 328.7 44.5 L 324 49.8 L 325.9 54.2 L 334.6 56.7 Z M 449.1 -8 L 460.6 -1.3 L 445.9 16.7 L 429.3 20.5 L 423.2 47.3 L 414.1 62.3 L 394.7 60.8 L 385.6 73.5 L 367.1 74.2 L 362 59.1 L 348.6 40.9 L 336.4 18.3 L 343.5 9.1 L 356.8 -1.9 L 358.5 -8 Z M 358.5 -8 L 356.8 -1.9 L 343.5 9.1 L 336.4 18.3 L 325.7 8.5 L 294.1 27 L 272.8 30.7 L 250.7 22.6 L 244.9 5.4 L 243.1 -8 Z M 607.8 -8 L 580.1 -6.8 L 551.9 -0.9 L 525.9 2.5 L 516.7 -6.3 L 511.5 -8 Z M 380.9 215.9 L 394.1 217.1 L 402.2 213.5 L 416.2 213.1 L 419.2 210.4 L 421.9 210.5 L 425 215.9 L 412.3 220.2 L 410.7 226.7 L 405.2 228.3 L 405.2 232.8 L 399 232.5 L 393.5 229.8 L 390.6 232.5 L 379.4 232 L 383 230.5 L 379.2 223.7 L 380.9 215.9 Z M 461.3 225.5 L 465.2 231.7 L 470.2 236.2 L 464.1 242.2 L 456.9 238.7 L 445.8 238.9 L 432 236.3 L 424.6 236.6 L 421.1 239.9 L 415.3 236.3 L 412 242.9 L 419.8 250.4 L 423.3 255.3 L 430.7 261.3 L 436.8 264.9 L 442.8 271.5 L 457 277.6 L 455.2 280.3 L 440.2 274.4 L 430.9 268.6 L 416.2 263.9 L 402.8 252.1 L 406 250.9 L 398.7 244.2 L 398.4 238.8 L 388.1 236.3 L 383.2 243.2 L 378.5 237.8 L 378.9 232.3 L 379.4 232 L 390.6 232.5 L 393.5 229.8 L 399 232.5 L 405.2 232.8 L 405.2 228.3 L 410.7 226.7 L 412.3 220.2 L 425 215.9 L 430.1 217.9 L 442.1 224.8 L 455.3 227.8 L 461.3 225.5 Z M 464.1 242.2 L 469.9 242.2 L 465.9 249.2 L 473.6 255.4 L 471.3 262.9 L 467.5 263.6 L 464.5 265.1 L 459.3 268.8 L 457 277.6 L 442.8 271.5 L 436.8 264.9 L 430.7 261.3 L 423.3 255.3 L 419.8 250.4 L 412 242.9 L 415.3 236.3 L 421.1 239.9 L 424.6 236.6 L 432 236.3 L 445.8 238.9 L 456.9 238.7 L 464.1 242.2 Z M 494 233.3 L 503.7 237.1 L 505 243.7 L 514.3 248.3 L 519.3 244.8 L 523.3 246.8 L 519.6 249.5 L 522.5 252.2 L 518.6 255.9 L 520 261.7 L 527.8 268.6 L 521.7 273.6 L 519 278.7 L 520.7 280.6 L 518.1 282.9 L 510.7 283.1 L 505.2 284.1 L 504.7 282.9 L 506.6 281 L 508.4 277.1 L 506.1 277.2 L 503 274.2 L 500.4 273.4 L 498.3 270.9 L 495.3 269.9 L 493 267.6 L 490.2 268.5 L 487.9 273.8 L 484.1 275 L 485.4 273.6 L 479.3 270.3 L 474.1 268.6 L 471.7 266.4 L 467.5 263.6 L 471.3 262.9 L 473.6 255.4 L 465.9 249.2 L 469.9 242.2 L 464.1 242.2 L 470.2 236.2 L 465.2 231.7 L 461.3 225.5 L 473.5 221.3 L 483.5 222 L 492.2 228.2 L 494 233.3 Z M 476.8 280 L 475.8 277 L 468.9 284.9 L 469.9 290 L 466.6 288.7 L 462.1 283.5 L 455.2 280.3 L 457 277.6 L 459.3 268.8 L 464.5 265.1 L 467.5 263.6 L 471.7 266.4 L 474.1 268.6 L 479.3 270.3 L 485.4 273.6 L 484.1 275 L 481.1 278.6 L 476.8 280 Z M 489.4 290.3 L 487.4 295.8 L 489.7 302.6 L 496.3 306.5 L 496 310.7 L 490.8 313 L 489.8 318.2 L 482.4 326 L 479.7 324.9 L 479.4 321.4 L 470.5 316 L 469.1 308.4 L 470.5 297.4 L 472.6 292.5 L 469.9 290 L 468.9 284.9 L 475.8 277 L 476.8 280 L 481.1 278.6 L 484.5 282.9 L 488.4 284.5 L 489.4 290.3 Z M 489.4 290.3 L 491.5 290.4 L 492.2 287.2 L 501.6 284.7 L 505.2 284.1 L 510.7 283.1 L 518.1 282.9 L 526.1 288 L 527.2 298.6 L 524.2 299.1 L 521.6 301.9 L 512.9 301.6 L 506.8 305.1 L 496.3 306.5 L 489.7 302.6 L 487.4 295.8 L 489.4 290.3 Z M 523.4 193.9 L 530.3 190.5 L 540.2 192.2 L 550.4 192.3 L 557.9 196.2 L 563.3 193.7 L 575.1 192.2 L 579.2 188.5 L 585.9 188.5 L 590.8 190 L 595.7 194.8 L 600.8 201.5 L 610 211 L 610.6 218.1 L 608.9 224.9 L 611.7 232.2 L 618.9 235.1 L 626.4 232.6 L 633.7 235.3 L 634 239.4 L 626.3 242.9 L 621.4 241.4 L 616.9 260.7 L 607.5 259 L 595.9 253.2 L 577 256.9 L 569.1 261 L 545.6 260.1 L 533.3 257.6 L 527.1 258.8 L 522.5 252.2 L 519.6 249.5 L 523.3 246.8 L 519.3 244.8 L 514.3 248.3 L 505 243.7 L 503.7 237.1 L 494 233.3 L 492.2 228.2 L 483.5 222 L 496.4 218.9 L 506 208.1 L 513.6 197.2 L 523.4 193.9 Z M 522.5 252.2 L 527.1 258.8 L 533.3 257.6 L 545.6 260.1 L 569.1 261 L 577 256.9 L 595.9 253.2 L 607.5 259 L 616.9 260.7 L 608.6 267.3 L 602.8 278.8 L 607.9 287.9 L 594.2 285.7 L 577.9 290.8 L 577.7 298.7 L 563.2 300.2 L 551.9 294.7 L 539.1 299.1 L 527.2 298.6 L 526.1 288 L 518.1 282.9 L 520.7 280.6 L 519 278.7 L 521.7 273.6 L 527.8 268.6 L 520 261.7 L 518.6 255.9 L 522.5 252.2 Z M 668.6 126.4 L 674.6 127 L 678.6 123.4 L 683.5 124.2 L 700 122.6 L 710.3 131.7 L 706.3 134.9 L 707.6 139.9 L 720.4 140.7 L 726 147.6 L 725.7 150.8 L 746 156.4 L 758.3 153.9 L 768.2 161.3 L 777.5 161.2 L 801.1 166.4 L 801.3 171.1 L 794.8 179.5 L 798.3 188.3 L 795.8 193.6 L 780.3 194.8 L 772.1 199.3 L 771.6 206.4 L 758.8 207.6 L 748.2 212.8 L 733.2 213.7 L 719.4 219.6 L 720.3 229.6 L 728.2 233.4 L 744.5 232.5 L 741.4 238.2 L 723.8 241 L 702.1 250.2 L 693.2 247 L 696.8 239.4 L 679.3 234.8 L 682.1 231.7 L 697.4 226.4 L 692.8 222.7 L 667.9 218.7 L 666.8 212.7 L 652 214.7 L 646 223.5 L 633.7 235.3 L 626.4 232.6 L 618.9 235.1 L 611.7 232.2 L 615.8 230.4 L 618.6 225 L 622.9 219.9 L 621.8 217 L 625.2 215.7 L 626.7 217.9 L 636.2 218.4 L 640.4 217.2 L 637.4 215.6 L 638.5 213.2 L 633 209.1 L 630.6 202.5 L 624.8 199.8 L 626 194.4 L 618.7 190.1 L 612.2 189.5 L 600.4 184.5 L 589.7 186.1 L 585.9 188.5 L 579.2 188.5 L 575.1 192.2 L 563.3 193.7 L 557.9 196.2 L 550.4 192.3 L 540.2 192.2 L 530.3 190.5 L 523.4 193.9 L 522.3 189.6 L 513.4 185.2 L 516.5 178.8 L 520.9 174.6 L 524.4 175.6 L 520.3 168.4 L 534.8 155.1 L 542.8 153.2 L 544.5 148.7 L 536.4 134.7 L 544.1 134.1 L 552.8 129.8 L 565.2 129.4 L 581.4 130.7 L 599.3 134.5 L 611.9 134.8 L 617.9 137.2 L 623.9 134.4 L 628.1 138.1 L 642.5 137.3 L 648.9 138.9 L 649.9 130.8 L 654.8 127.3 L 668.6 126.4 Z M 703.6 399.1 L 704.1 400.4 L 687.7 406.9 L 679.8 404.8 L 676.1 398.3 L 683.7 397.8 L 686.7 398.6 L 691.1 397.2 L 694.1 397.4 L 695.3 398.4 L 695.6 400 L 696.4 399.4 L 698.8 399.7 L 701.9 398.5 L 703.6 399.1 Z M 393.1 386.4 L 392.5 386.9 L 391 386.9 L 389.6 386 L 389.6 384.3 L 391.2 384.7 L 392.6 385.8 L 393.1 386.4 Z M 389 383.6 L 388.1 383.8 L 387.1 383.3 L 386.9 383 L 388.2 382.8 L 388.9 383 L 389.1 383.4 L 389 383.6 Z M 76.9 387.9 L 86.5 394.7 L 101.8 393.6 L 118.3 397.1 L 125.3 397.3 L 131.3 407.6 L 132.3 417.3 L 137.8 434.2 L 142 437.6 L 139.1 443.8 L 118.1 446.5 L 110.9 452.4 L 101.6 453.8 L 101 465.6 L 82.2 472 L 76.1 480 L 63 484.3 L 47.1 486.7 L 44.3 488 L 0 488 L 7 481.1 L 3 461.2 L 9 447.4 L 11.2 439 L 21.5 428.2 L 37.5 420.8 L 49.4 414.2 L 60.1 397.7 L 65.1 387.8 L 76.9 387.9 Z M 44.3 488 L 47.1 486.7 L 63 484.3 L 76.1 480 L 82.2 472 L 101 465.6 L 101.6 453.8 L 110.9 452.4 L 118.1 446.5 L 139.1 443.8 L 142 437.6 L 137.8 434.2 L 132.3 417.3 L 131.3 407.6 L 125.3 397.3 L 140.7 388.6 L 158 385.8 L 168.1 379.2 L 183.5 374.3 L 210.6 371.5 L 237.1 370.2 L 245.1 372.5 L 260.2 366.2 L 277.3 366.1 L 283.8 369.8 L 294.7 368.9 L 291.5 377.1 L 294 392.3 L 290.3 405.5 L 280.4 414.4 L 281.8 426.5 L 294.9 436 L 295 439.9 L 304.9 446.4 L 311.7 475.1 L 316.4 488 Z M 311.7 475.1 L 304.9 446.4 L 295 439.9 L 294.9 436 L 281.8 426.5 L 280.4 414.4 L 290.3 405.5 L 294 392.3 L 291.5 377.1 L 294.7 368.9 L 312.2 362.4 L 323.4 364.3 L 322.9 372.4 L 336.5 366.5 L 337.6 369.6 L 329.6 377.4 L 329.5 384.8 L 335 388.8 L 332.9 402.7 L 322.4 410.7 L 325.4 419.4 L 333.7 419.7 L 337.7 427.3 L 343.8 429.8 L 342.9 442.1 L 335.1 446.7 L 330.2 451.8 L 319.2 458 L 320.9 464.6 L 319.5 471.4 L 311.7 475.1 Z M 316.4 488 L 311.7 475.1 L 319.5 471.4 L 320.9 464.6 L 319.2 458 L 330.2 451.8 L 335.1 446.7 L 342.9 442.1 L 343.8 429.8 L 362.6 435.3 L 369.3 433.9 L 382.7 436.6 L 403.9 443.8 L 411.4 458 L 425.8 461.1 L 448.3 467.8 L 465.4 475.7 L 473.2 471.6 L 480.9 464.2 L 477.1 452 L 482.1 444.2 L 493.7 436.7 L 504.7 434.5 L 526.3 437.8 L 531.8 444.9 L 537.7 445 L 542.8 447.7 L 558.7 449.6 L 562.6 454.9 L 556.8 462.6 L 559.3 469.4 L 555.2 479.3 L 558.4 488 Z M 718.8 488 L 718.7 488 L 681.6 488 L 678.8 482.4 L 677.1 483.8 L 678.8 488 L 558.4 488 L 555.2 479.3 L 559.3 469.4 L 556.8 462.6 L 562.6 454.9 L 583.9 454.6 L 599.3 458.9 L 615.2 463.6 L 622.6 466.1 L 634.9 461 L 641.5 456.4 L 655.6 455.1 L 667 457.1 L 671.4 465.1 L 675.1 459.8 L 687.9 463.6 L 700.4 464.5 L 708.2 460.5 L 718.8 488 Z M 256.7 158 L 259.9 161.6 L 259 168.6 L 254.4 168.9 L 250.8 167.5 L 252.5 158.6 L 256.7 158 Z M 535.7 97.4 L 551.2 97.5 L 568.6 91.5 L 572.3 82.4 L 585.4 77.3 L 583.9 70.2 L 593.6 67.5 L 610.8 61.3 L 627.7 65.3 L 629.9 69.3 L 638.3 67.4 L 654 71.2 L 655.5 78.7 L 652.1 83 L 662.2 93.5 L 668.7 96.4 L 667.7 99.3 L 678.5 102.1 L 683.1 106.4 L 676.9 109.9 L 664 109.3 L 660.9 110.8 L 664.6 116.1 L 668.6 126.4 L 654.8 127.3 L 649.9 130.8 L 648.9 138.9 L 642.5 137.3 L 628.1 138.1 L 623.9 134.4 L 617.9 137.2 L 611.9 134.8 L 599.3 134.5 L 581.4 130.7 L 565.2 129.4 L 552.8 129.8 L 544.1 134.1 L 536.4 134.7 L 536.1 127.6 L 531.2 120.2 L 540.8 116.9 L 540.9 110.6 L 536.4 104.5 L 535.7 97.4 Z M 523.7 90.8 L 522.4 86.7 L 524.1 82.3 L 517.1 79.8 L 500.3 77 L 496.9 63.5 L 515.2 58.6 L 542.1 59.6 L 557.8 58 L 560 61.4 L 568.5 62.4 L 583.9 70.2 L 585.4 77.3 L 572.3 82.4 L 568.6 91.5 L 551.2 97.5 L 535.7 97.4 L 531.9 92.5 L 523.7 90.8 Z M 496.9 63.5 L 497.4 51.5 L 505.3 41.4 L 520.4 35.9 L 533.1 47.9 L 545.9 47.6 L 549 35.3 L 562.6 32.5 L 569.6 34.4 L 583.4 40.4 L 596.6 40.4 L 604.3 44.1 L 605.7 51.9 L 610.8 61.3 L 593.6 67.5 L 583.9 70.2 L 568.5 62.4 L 560 61.4 L 557.8 58 L 542.1 59.6 L 515.2 58.6 L 496.9 63.5 Z M 549 35.3 L 550.9 25.9 L 545 27.9 L 534.8 22.2 L 533.4 13 L 553.7 8.5 L 573.8 6.2 L 591.2 8.9 L 607.7 8.4 L 610.1 11.2 L 598.7 20.4 L 603.5 35.3 L 596.6 40.4 L 583.4 40.4 L 569.6 34.4 L 562.6 32.5 L 549 35.3 Z"/>
+  <filter id="ls" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#5b4a2a" flood-opacity="0.22"/>
+  </filter>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8a5a2b"/>
+  </marker>
+</defs></svg>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand">西方哲学史<small>TIMELINE OF THOUGHT</small></div>
+    <div class="threads-mini">
+      <div class="tt">三条暗线</div>
+      <div class="tr"><span class="dot d1"></span>变化 ↔ 不变(本体论)</div>
+      <div class="tr"><span class="dot d2"></span>理性 ↔ 经验(认识论)</div>
+      <div class="tr"><span class="dot d3"></span>个体 ↔ 整体(价值政治)</div>
+    </div>
+    <div class="nav" id="nav"></div>
+  </aside>
+  <main class="main"><div id="page"></div></main>
+</div>
+
+<script>
+const chapters=[
+{
+ num:"第 1 章", period:"约前600–前450", year:"前6世纪",
+ title:"万物的本原是什么?", threads:[1],
+ cq:"如果世界不是神随意造的,那它究竟由什么构成、又凭什么规律运转?",
+ bg:"在米利都等爱奥尼亚商业城邦,航海与贸易让人见多识广,神话解释开始失效。第一批「哲人」试图只用自然本身解释自然,这是理性第一次脱离神谱独立发言。",
+ flow:{
+   legacy:"此前一切由神话承担:闪电是宙斯发怒,海啸是波塞冬震怒。解释万能,却无法预测、无法追问。",
+   trigger:"城邦繁荣、文字普及、与埃及巴比伦的天文几何交流,催生出「凡事要有自然原因」的新态度。",
+   shift:"泰勒斯说本原是「水」——重点不在答案对错,而在第一次用一个自然要素去统一万物。问题模式从『谁造的』变成『由什么构成』。"
+ },
+ figs:[
+   ["泰勒斯","万物源于水;开启用单一本原解释世界的传统。"],
+   ["赫拉克利特","『一切皆流』,世界是永恒燃烧的火,变化才是实在。"],
+   ["巴门尼德","『存在者存在,非存在者不存在』,变化是幻觉,真实唯一且不动。"],
+   ["德谟克利特","万物由不可分的原子与虚空构成,为后世唯物论奠基。"]
+ ],
+ quotes:[
+   {q:"人不能两次踏进同一条河流。",who:"赫拉克利特",plain:"河水一直在流,所谓『同一条河』只是名字。<b>实在的本质是变化</b>——这是『变化』一线的源头。"},
+   {q:"能被思想者和能存在者是同一的。",who:"巴门尼德",plain:"凡能被一致思考的才真实存在;变化里藏着矛盾,故不真实。<b>『不变』一线由此立论</b>,与赫拉克利特正面对峙。"}
+ ],
+ lineage:"赫拉克利特与巴门尼德撕开的『变化 vs 不变』裂缝无法自行弥合,逼出一个新问题:既然感官给我们的是变动的世界,我们到底该如何生活、如何确知?<b>这把追问从『世界』转向了『人』——第 2 章登场。</b>",
+ test:["『水是本原』这个答案错了,为什么仍被视为哲学的开端?","赫拉克利特与巴门尼德的对立,分别对应『三条暗线』中的哪一条?","原子论如何同时回应了『变』与『不变』两种诉求?"]
+},
+{
+ num:"第 2 章", period:"前470–前322", year:"前5–4世纪",
+ title:"我应该如何生活、如何认知?", threads:[1,2],
+ cq:"如果连善恶、正义这些词我都说不清,我凭什么说自己活得对?",
+ bg:"雅典民主鼎盛又动荡,智者派教人靠雄辩取胜,真理似乎沦为口才。苏格拉底逆流而上,把哲学从天上拉回街头,追问人该如何过好一生。",
+ flow:{
+   legacy:"前人忙于解释自然,却没人能说清『正义』『勇敢』到底是什么;智者派更宣称真理因人而异。",
+   trigger:"民主辩论、审判与城邦危机,使『定义清楚价值』成了生死攸关的现实需要。",
+   shift:"苏格拉底用诘问法逼人承认无知,柏拉图据此提出『理念』作为不变的真知对象,亚里士多德再把它拉回经验世界。<b>哲学的重心从本原转向人、知识与德性。</b>"
+ },
+ figs:[
+   ["苏格拉底","『认识你自己』;以诘问法揭示人的无知,追求普遍定义。"],
+   ["柏拉图","理念论:可感世界是摹本,真知指向永恒的理念;洞穴比喻。"],
+   ["亚里士多德","创立逻辑学,主张形式寓于质料;德性是『中道』,幸福即合乎理性的活动。"]
+ ],
+ quotes:[
+   {q:"未经省察的人生不值得过。",who:"苏格拉底",plain:"活着不等于活得明白。<b>哲学是一种持续的自我审视</b>,这句话奠定了西方『反思』传统。"},
+   {q:"哲学始于惊异。",who:"亚里士多德",plain:"对习以为常之事感到奇怪,才会去追问。这把第 1 章的『惊异自然』扩展为对一切的系统探究。"}
+ ],
+ lineage:"柏拉图把真理放在彼岸的理念,亚里士多德把它拉回此岸的经验——<b>『理性 vs 经验』这条暗线就此正式拉开。</b>但当雅典城邦崩塌、马其顿与罗马接管世界,宏大的真理体系突然无处安放,哲学被迫转向:<b>个人如何在失控的世界里安顿自己?(第 3 章)</b>"
+,test:["苏格拉底为何说自己『唯一知道的就是自己无知』?","柏拉图的理念与亚里士多德的形式,关键分歧在哪?","『德性即中道』如何指导今天的一个具体选择?"]
+},
+{
+ num:"第 3 章", period:"前322–公元200", year:"前4世纪–公元2世纪",
+ title:"如何在乱世中安顿内心?", threads:[3],
+ cq:"当我无法改变外部世界,我还能掌控什么、靠什么获得平静?",
+ bg:"亚历山大帝国与罗马崛起,城邦消亡,个人被抛入庞大而陌生的世界。哲学不再追问宇宙体系,而变成一门『过好日子』的生活技艺。",
+ flow:{
+   legacy:"柏拉图、亚里士多德的体系以城邦公民为前提;城邦没了,『如何参与公共德性生活』的答案随之失重。",
+   trigger:"政治失控、个人渺小、命运无常,人们急需一套能立刻安顿身心的实践方案。",
+   shift:"斯多葛区分『可控与不可控』,伊壁鸠鲁追求无纷扰的快乐,怀疑论以悬置判断求安宁。<b>哲学从『认识世界』转为『治理自我』——最贴近现代人的实用智慧。</b>"
+ },
+ figs:[
+   ["爱比克泰德 / 马可·奥勒留","斯多葛:顺应自然与理性,只在意能掌控之事。"],
+   ["伊壁鸠鲁","快乐是『身体无痛、心灵无扰』,而非纵欲。"],
+   ["皮浪派","对一切下判断保持悬置,以此获得心灵的宁静(ataraxia)。"],
+   ["普罗提诺","新柏拉图主义:万物从『太一』流溢,哲学是灵魂的回归之路。"]
+ ],
+ quotes:[
+   {q:"有些事在我们能力之内,有些则不在。",who:"爱比克泰德",plain:"困扰我们的不是事情本身,而是我们对事情的看法。<b>把注意力收回到可控之物</b>,正是现代认知疗法的古老原型。"},
+   {q:"死亡对我们无足轻重:我们在时它不在,它在时我们已不在。",who:"伊壁鸠鲁",plain:"对死亡的恐惧建立在误解上。<b>祛除虚假恐惧,快乐自然显现。</b>"}
+ ],
+ lineage:"这些哲学把人心安顿在『理性顺应自然』或『太一』之中。当罗马衰落、基督教兴起,这个『至高的一』被人格化为唯一的上帝——<b>哲学的终极对象从『太一』变成『上帝』,理性必须面对信仰(第 4 章)。</b>",
+ test:["斯多葛的『可控/不可控』二分,如何缓解今天的焦虑?","伊壁鸠鲁的『快乐』和我们日常说的享乐有何不同?","新柏拉图主义如何成为古代哲学通向中世纪的桥梁?"]
+},
+{
+ num:"第 4 章", period:"约200–1400", year:"公元2–14世纪",
+ title:"信仰与理性能否共存?", threads:[2,1],
+ cq:"如果真理已由神启示,理性还有什么用?二者冲突时听谁的?",
+ bg:"基督教成为西方主导世界观,哲学的任务变成:用希腊理性去理解、论证乃至捍卫信仰。被低估的一千年,把逻辑与论证磨得极其锋利。",
+ flow:{
+   legacy:"希腊化哲学把『太一/神圣』作为归宿,却没有一部经典、一个人格上帝;基督教带来了启示真理这一全新前提。",
+   trigger:"教会需要回应异端与质疑,亚里士多德著作经阿拉伯世界回传欧洲,带来强大的论证工具。",
+   shift:"奥古斯丁先以内省调和柏拉图与信仰,阿奎那再用亚里士多德为信仰搭建理性阶梯。<b>理性不再独立追问世界,而成为信仰的仆人与盟友。</b>"
+ },
+ figs:[
+   ["奥古斯丁","『信仰以求理解』;内省、原罪与时间的主观性。"],
+   ["托马斯·阿奎那","以『五路』论证上帝存在,主张信仰与理性同源不悖。"],
+   ["共相之争","唯实论(共相真实存在)vs 唯名论(共相只是名称),预演近代经验论与理性论之争。"]
+ ],
+ quotes:[
+   {q:"你为自己造了我们,我们的心若不安息于你,便不得安宁。",who:"奥古斯丁《忏悔录》",plain:"人心的躁动源于尚未归向神。<b>哲学第一次如此深入『内在自我』</b>,开启了西方的内省传统。"},
+   {q:"信仰寻求理解。",who:"安瑟伦 / 奥古斯丁传统",plain:"先信,再用理性去理解所信。<b>这界定了整个中世纪『理性服务信仰』的基调。</b>"}
+ ],
+ lineage:"唯名论强调『只有个别事物真实存在,共相只是名称』,悄悄把目光从天国拉回个别的、可观察的世界。<b>这股力量加上对经院繁琐论证的厌倦,孕育出文艺复兴『回到人与自然』的冲动(第 5 章)。</b>",
+ test:["奥古斯丁的『信仰以求理解』与近代『先怀疑后相信』有何根本不同?","阿奎那为何要费力用理性证明本可凭信仰接受的上帝?","共相之争如何预演了后来的理性派与经验派之争?"]
+},
+{
+ num:"第 5 章", period:"约1400–1650", year:"15–17世纪",
+ title:"认识世界的新工具是什么?", threads:[2],
+ cq:"既然权威和经典会出错,我们凭什么方法才能获得可靠的新知识?",
+ bg:"文艺复兴与科学革命重置了世界图景:地球不再是中心,自然成了一本『用数学写成的书』。哲学重心从上帝转回人与自然,为近代认识论铺路。",
+ flow:{
+   legacy:"经院哲学依赖亚里士多德与教会权威,擅长论证既定真理,却无力产生新的自然知识。",
+   trigger:"印刷术、地理大发现、哥白尼-伽利略的天文观测,接连击碎旧世界图景,『方法』成为新的焦点。",
+   shift:"培根提出归纳实验法,伽利略主张自然以数学书写。<b>真理的来源从『权威与经典』转向『观察、实验与理性方法』——近代哲学的大门由此打开。</b>"
+ },
+ figs:[
+   ["弗朗西斯·培根","『知识就是力量』;以归纳法和实验破除『四假象』。"],
+   ["伽利略","自然之书以数学语言写就;实验与测量是通往真理的路径。"],
+   ["人文主义者","重新发现古典,把人的尊严与现世生活置于中心。"]
+ ],
+ quotes:[
+   {q:"知识就是力量。",who:"弗朗西斯·培根",plain:"知识的价值在于能改造自然、服务人类,而非仅供沉思。<b>知识从『静观真理』转向『实用与控制』。</b>"},
+   {q:"自然这本大书是用数学语言写成的。",who:"伽利略",plain:"要读懂自然,先得懂数学。<b>这为后来理性派的『清晰明确』标准埋下伏笔。</b>"}
+ ],
+ lineage:"科学革命证明了方法的威力,却也带来新的不安:如果感官和旧权威都可能骗我,我如何找到绝对可靠的起点?<b>这一焦虑直接催生笛卡尔的方法论怀疑——理性派登场(第 6 章)。</b>",
+ test:["为什么说『方法』是这一时期哲学的真正主题?","培根的归纳法与亚里士多德的演绎逻辑有何不同?","哥白尼革命为何不只是天文学事件,更是哲学事件?"]
+},
+{
+ num:"第 6 章", period:"1637–1716", year:"17世纪",
+ title:"确定性从哪里来?(理性派)", threads:[2],
+ cq:"如果一切都可怀疑,有没有一个怀疑不掉的、绝对可靠的起点?",
+ bg:"科学革命要求可靠的基础。理性派主张:真正的知识不靠易错的感官,而靠理性自身的清晰明确观念,如同几何学从公理推出定理。",
+ flow:{
+   legacy:"第 5 章证明了方法的力量,却暴露感官与权威皆可怀疑,知识缺一个不可动摇的地基。",
+   trigger:"几何学的确定性成为典范——能否像欧几里得那样,从无可怀疑的第一原理推演出整个知识体系?",
+   shift:"笛卡尔以『我思故我在』找到怀疑不掉的支点,斯宾诺莎、莱布尼茨各自建起理性演绎的宏大体系。<b>知识的根基被安放在理性而非经验之上。</b>"
+ },
+ figs:[
+   ["笛卡尔","方法论怀疑;『我思故我在』;身心二元论。"],
+   ["斯宾诺莎","唯一实体即『神即自然』;以几何方式推演伦理学。"],
+   ["莱布尼茨","世界由无数『单子』构成;充足理由律;『可能世界中最好的一个』。"]
+ ],
+ quotes:[
+   {q:"我思故我在。",who:"笛卡尔",plain:"我可以怀疑一切,却无法怀疑『正在怀疑的我』存在。<b>近代哲学由此把『主体/自我』立为知识的阿基米德点。</b>"},
+   {q:"不哭、不笑、不愤怒,只求理解。",who:"斯宾诺莎",plain:"面对人事,先理解其必然原因而非情绪反应。<b>理性派对『清明理解』的极致信任。</b>"}
+ ],
+ lineage:"理性派把一切建在『天赋观念』上,但海峡对岸的人不买账:既然婴儿心中并无几何公理,这些观念从哪来?<b>洛克回答——全部来自经验。经验派由此与理性派正面对撞(第 7 章)。</b>",
+ test:["『我思故我在』为何能充当不可怀疑的起点?","身心二元论留下了什么至今未解的难题?","为什么说理性派把几何学当成了知识的样板?"]
+},
+{
+ num:"第 7 章", period:"1689–1740", year:"17–18世纪",
+ title:"知识的边界在哪里?(经验派)", threads:[2],
+ cq:"如果一切观念都来自经验,那超出经验的东西(上帝、因果、自我)我们真的知道吗?",
+ bg:"经验派主张心灵原是白板,一切知识来自感官经验。这条路走到休谟手里,竟把因果、自我乃至科学的根基都一一动摇,逼出近代哲学最大危机。",
+ flow:{
+   legacy:"理性派的『天赋观念』无法解释观念的实际来源,也难以验证;它的体系越宏大,离经验越远。",
+   trigger:"科学日益依赖观察归纳,『一切知识源于经验』成了更自然的主张。",
+   shift:"洛克立白板说,贝克莱推向『存在即被感知』,休谟最终指出:因果不过是习惯性联想,自我只是知觉束。<b>经验主义走到尽头,反而摧毁了确定性本身。</b>"
+ },
+ figs:[
+   ["洛克","心灵是白板;知识源于感觉与反省;区分第一性质与第二性质。"],
+   ["贝克莱","『存在即被感知』,否认独立于心灵的物质实体。"],
+   ["休谟","因果只是习惯;自我是知觉之束;事实与价值不能互推。"]
+ ],
+ quotes:[
+   {q:"存在就是被感知。",who:"贝克莱",plain:"事物的『存在』只意味着它被某个心灵感知。<b>经验主义推到极致,物质世界竟变得可疑。</b>"},
+   {q:"理性是、且只应是激情的奴隶。",who:"休谟",plain:"单凭理性推不出任何行动目标,行动的动力来自情感。<b>这动摇了『理性指导人生』的古老信念。</b>"}
+ ],
+ lineage:"休谟的怀疑论让笛卡尔的确定性与牛顿科学的根基同时悬空——理性派与经验派双双触礁。<b>康德自言被休谟『从独断的迷梦中惊醒』,他要在两条路之间另辟新径(第 8 章)。</b>",
+ test:["洛克的白板说如何直接反对理性派的天赋观念?","休谟说『因果只是习惯』,为何这对科学是致命一击?","『事实推不出价值』(休谟之叉)在今天有何现实意义?"]
+},
+{
+ num:"第 8 章", period:"1781", year:"18世纪末",
+ title:"我们到底能认识什么?(康德的革命)", threads:[2,1],
+ cq:"如果知识既不全来自理性、也不全来自经验,真相会不会是:是我们塑造了世界的样子?",
+ bg:"康德是全书的枢纽。他调和理性派与经验派:经验提供材料,心灵的先天形式赋予秩序。我们能认识的只是『现象』,而非『物自体』。",
+ flow:{
+   legacy:"理性派与经验派互相拆台:前者脱离经验,后者(休谟)摧毁确定性。知识似乎要么空洞,要么不可能。",
+   trigger:"康德被休谟惊醒,同时不愿放弃牛顿科学的普遍必然性——必须解释科学何以可能。",
+   shift:"康德来了一场『哥白尼式革命』:不是认识符合对象,而是对象符合我们的认识形式。<b>主体从被动接受者变成世界秩序的构造者——之前所有水流汇于此,之后再分流。</b>"
+ },
+ figs:[
+   ["康德 · 认识论","时间空间是直观形式,范畴是知性形式;知识限于现象界。"],
+   ["康德 · 伦理学","道德律即『绝对命令』:只按你愿其成为普遍法则的准则行动。"],
+   ["物自体","独立于我们的『物本身』不可被认识,为信仰与自由留出地盘。"]
+ ],
+ quotes:[
+   {q:"要这样行动:使你意志的准则永远能成为一条普遍立法的原则。",who:"康德",plain:"判断对错的标准:如果人人都这么做会怎样?<b>道德建立在理性自律而非后果或神命之上。</b>"},
+   {q:"我必须悬置知识,以便为信仰留出地盘。",who:"康德",plain:"既然理性认识不了物自体,关于上帝、自由的事就交给实践理性与信仰。<b>给科学与信仰各自划定领地。</b>"}
+ ],
+ lineage:"康德留下一道裂缝:既然『物自体』不可知,它还存在吗?后人不满于这个『不可知的彼岸』,索性取消它,让精神/理性自己生成全部实在。<b>德国古典哲学由此把康德推向顶峰(第 9 章)。</b>",
+ test:["『哥白尼式革命』在认识论上颠倒了什么?","为何说现象与物自体的区分既是康德的解法、也是他的难题?","绝对命令与休谟『理性是激情的奴隶』如何针锋相对?"]
+},
+{
+ num:"第 9 章", period:"1794–1831", year:"19世纪初",
+ title:"历史有没有方向?", threads:[1,3],
+ cq:"如果实在不是静止的物,而是一个不断自我展开、自我超越的过程呢?",
+ bg:"德国古典哲学把康德推向顶峰。黑格尔主张:实在是『绝对精神』通过历史的辩证运动逐步实现自我认识的过程。理性主义在此抵达极限。",
+ flow:{
+   legacy:"康德留下不可知的『物自体』和现象/本体的鸿沟,后人视之为体系的未竟之处。",
+   trigger:"法国大革命与拿破仑战争让人强烈感到『历史在剧变中前进』,呼唤一种能容纳变化与历史的哲学。",
+   shift:"费希特、谢林取消物自体,黑格尔用『正—反—合』的辩证法,把矛盾本身变成前进的动力。<b>『不变的存在』被改写为『不断生成的过程』——第 1 章的变化与不变在此被辩证统一。</b>"
+ },
+ figs:[
+   ["费希特 / 谢林","以『自我』或『绝对同一』取代物自体,推进德国观念论。"],
+   ["黑格尔 · 辩证法","矛盾推动发展:正题、反题、合题;扬弃中前进。"],
+   ["黑格尔 · 历史哲学","世界历史是自由意识的进步,绝对精神在其中实现自我认识。"]
+ ],
+ quotes:[
+   {q:"凡是合乎理性的都是现实的,凡是现实的都是合乎理性的。",who:"黑格尔",plain:"现实并非偶然堆积,而是理性按内在逻辑展开的结果。<b>历史被赋予方向与意义。</b>"},
+   {q:"密涅瓦的猫头鹰在黄昏起飞。",who:"黑格尔",plain:"智慧总在一个时代行将结束时才看清它。<b>哲学是对已成形之物的反思,而非预言。</b>"}
+ ],
+ lineage:"黑格尔的体系太过宏大、太过乐观:它把个体吞进『绝对精神』,把苦难说成理性的必要环节。<b>下一代人从四个方向同时反叛——这个体系是否压垮了真实的、受苦的、要做选择的个人?(第 10 章)</b>",
+ test:["辩证法如何把『矛盾』从逻辑错误变成前进动力?","黑格尔说历史有方向,这与今天我们对历史的看法有何张力?","为什么说黑格尔体系既是理性主义的顶峰、也是它的危机?"]
+},
+{
+ num:"第 10 章", period:"1818–1900", year:"19世纪",
+ title:"理性是不是一场骗局?", threads:[3,2],
+ cq:"如果驱动人和历史的根本不是理性,而是意志、欲望、阶级或权力呢?",
+ bg:"四位思想家从不同方向反抗黑格尔的宏大体系,共同把目光从『理性总体』转向被它遮蔽的东西:盲目意志、个体抉择、经济基础、生命本能。",
+ flow:{
+   legacy:"黑格尔把一切纳入理性进程,个体、身体、非理性被吞没;『历史必然合理』显得粉饰苦难。",
+   trigger:"工业化的剥削、宗教的式微、对体系哲学的厌倦,使人转而追问理性背后的真实驱力。",
+   shift:"叔本华揭示盲目『意志』,马克思指出『经济基础』决定意识,克尔凯郭尔强调个体的『信仰之跃』,尼采宣告『上帝已死』与权力意志。<b>哲学的重心从『总体理性』转向意志、个体与权力。</b>"
+ },
+ figs:[
+   ["叔本华","世界是盲目意志的表象;苦难源于欲望,救赎在于否定意志。"],
+   ["马克思","不是意识决定存在,而是社会存在决定意识;哲学要改变世界。"],
+   ["克尔凯郭尔","真理是主体性;个体须以『信仰之跃』面对生存的抉择与焦虑。"],
+   ["尼采","上帝已死;重估一切价值;以权力意志和『超人』肯定生命。"]
+ ],
+ quotes:[
+   {q:"哲学家们只是用不同方式解释世界,问题在于改变世界。",who:"马克思",plain:"哲学不应止于沉思,而要成为变革现实的力量。<b>『个体↔整体』暗线在此化为现实政治。</b>"},
+   {q:"上帝死了……是我们杀死了他。",who:"尼采",plain:"传统价值的根基已崩塌,人必须自己创造意义。<b>这宣告了现代『虚无』问题,直通存在主义。</b>"}
+ ],
+ lineage:"这些反叛拆掉了『理性总体』的安全网,把人单独留在一个没有现成意义的世界里。<b>20 世纪的哲学必须回答:在上帝已死、体系崩塌之后,『存在』本身意味着什么?(第 11 章)</b>",
+ test:["这四位思想家分别用什么取代了黑格尔的『理性』?","尼采『上帝已死』说的究竟是什么死了?","马克思的『存在决定意识』如何颠倒了以往的哲学次序?"]
+},
+{
+ num:"第 11 章", period:"1900–1960", year:"20世纪上半叶",
+ title:"存在本身意味着什么?", threads:[3,2],
+ cq:"在科学解释了一切『是什么』之后,为什么『我存在着』这件事仍让人眩晕?",
+ bg:"现象学要求『回到事物本身』,悬置成见去描述意识经验;存在主义接力追问:既然没有先定的本质,人就必须在自由与焦虑中自己创造自己。",
+ flow:{
+   legacy:"尼采等人摧毁了客观意义的根基;同时实证科学把世界对象化,却说不清『体验着的我』。",
+   trigger:"两次世界大战的荒诞与残酷,使『人的存在与意义』成为最迫切的问题。",
+   shift:"胡塞尔回到意识的第一人称经验,海德格尔追问『存在』本身,萨特断言『存在先于本质』。<b>哲学从『认识对象』转回『生存体验』,从第三人称转向第一人称。</b>"
+ },
+ figs:[
+   ["胡塞尔","现象学:悬置自然态度,回到意识如何构成意义。"],
+   ["海德格尔","人是『此在』,在『被抛』与『向死而生』中领会存在。"],
+   ["萨特","存在先于本质;人被判定为自由;自欺是逃避自由。"],
+   ["加缪","面对世界的荒诞,反抗而非自杀或盲信,是活着的方式。"]
+ ],
+ quotes:[
+   {q:"存在先于本质。",who:"萨特",plain:"人不像刀子那样先有用途定义;人先存在,再通过选择定义自己。<b>自由是无可推卸的重负。</b>"},
+   {q:"人是被判处自由的。",who:"萨特",plain:"我们无法选择『不选择』,连不行动也是一种选择。<b>把第 10 章的『个体』推向极致的自由与责任。</b>"}
+ ],
+ lineage:"存在主义把意义押在个体的内在体验上;而海峡与大西洋另一边,一批哲学家怀疑:我们连『存在』这个词都没用清楚,这类追问会不会只是语言的误用?<b>分析哲学的语言转向另起炉灶(第 12 章)。</b>",
+ test:["现象学的『悬置』和笛卡尔的怀疑有何异同?","『存在先于本质』如何区别于以往一切人性论?","海德格尔的『向死而生』为何不是消极而是本真?"]
+},
+{
+ num:"第 12 章", period:"1879–1960", year:"19世纪末–20世纪",
+ title:"语言能说清世界吗?", threads:[2],
+ cq:"很多哲学争论会不会根本不是事实之争,而是我们把语言用糊涂了?",
+ bg:"英美哲学的主线。弗雷格、罗素创立现代逻辑,主张哲学问题应通过分析语言来澄清;维特根斯坦两度转向,既划定语言界限,又揭示意义在于使用。",
+ flow:{
+   legacy:"传统形而上学(包括观念论与部分存在主义)被怀疑充满含混乃至无意义的命题。",
+   trigger:"数理逻辑的诞生提供了精确分析语言的新工具,使『让问题在语言层面变清晰』成为可能。",
+   shift:"弗雷格、罗素把哲学问题翻译成逻辑形式,前期维特根斯坦划定『可说与不可说』,维也纳学派以可证实性为意义标准,后期维特根斯坦提出『语言游戏』。<b>哲学的核心任务从『认识世界』转为『分析语言』——这是『语言转向』。</b>"
+ },
+ figs:[
+   ["弗雷格 / 罗素","创立现代逻辑;以逻辑分析澄清语言与思想结构。"],
+   ["维也纳学派","逻辑实证主义:有意义的命题须可经验证实或为逻辑真理。"],
+   ["维特根斯坦","前期:语言为世界图像,不可说者当沉默;后期:意义即用法,语言游戏。"]
+ ],
+ quotes:[
+   {q:"凡不可说的,必须保持沉默。",who:"维特根斯坦《逻辑哲学论》",plain:"语言只能描述事实;伦理、人生意义等超出其界限,应以沉默对待。<b>给『可说的』划定边界。</b>"},
+   {q:"一个词的意义就是它在语言中的用法。",who:"后期维特根斯坦",plain:"别问词『指什么』,看人们怎么用它。<b>意义来自生活实践,而非孤立定义——他推翻了自己的前期立场。</b>"}
+ ],
+ lineage:"语言分析澄清了概念,却也让人追问:语言、知识、规范背后是否藏着权力与历史的塑造?<b>当代哲学把目光投向真理与正义如何被制度、权力和差异所建构(第 13 章)。</b>",
+ test:["『语言转向』到底转向了什么?","维特根斯坦前后期立场的关键差异在哪?","逻辑实证主义的『可证实原则』自身能被证实吗?这暴露了什么?"]
+},
+{
+ num:"第 13 章", period:"约1960至今", year:"20世纪后期–当代",
+ title:"谁在定义真理与正义?", threads:[3,2],
+ cq:"我们以为中立客观的真理、知识与正义,背后是否藏着权力、历史和谁的视角?",
+ bg:"全书收束于仍在进行的争论。后结构主义质疑一切宏大叙事与中立真理,政治哲学重建正义的根据,心灵哲学则追问意识能否被科学解释。",
+ flow:{
+   legacy:"语言转向澄清了概念,却悬置了价值与权力;存在主义的个体自由也需要在社会结构中重新落地。",
+   trigger:"二战后的解殖、民权、女性主义与信息社会,使『谁的真理、谁的正义』成为无法回避的问题。",
+   shift:"福柯揭示知识与权力共生,德里达解构文本中的固定意义,罗尔斯用『无知之幕』重建正义。<b>哲学从追问『真理是什么』转向追问『真理与正义如何被建构、又该如何安排』——三条暗线在此交汇。</b>"
+ },
+ figs:[
+   ["福柯","知识与权力相互生产;主体由历史性的话语与规训塑造。"],
+   ["德里达","解构:文本意义永远延异,没有终极的在场与中心。"],
+   ["罗尔斯","正义即公平;在『无知之幕』后设计人人可接受的制度。"],
+   ["心灵哲学","意识的『难题』:主观体验能否被物理科学完全解释?"]
+ ],
+ quotes:[
+   {q:"权力生产知识;二者直接相互蕴含。",who:"福柯",plain:"知识不是中立的,它在权力关系中被生产,也再生产权力。<b>『客观真理』的纯洁性被打上问号。</b>"},
+   {q:"设想各方在『无知之幕』后选择正义原则。",who:"罗尔斯",plain:"若你不知自己将生在何种处境,你会选怎样的社会规则?<b>用理性程序为公平奠基,回应现代多元社会。</b>"}
+ ],
+ lineage:"从泰勒斯问『万物由什么构成』,到今天问『真理与正义由谁、如何构成』——追问的对象从外部世界,经由人的认知,最终回到我们自己建立的意义与制度。<b>这场对话仍未结束,而你现在站在它的最前沿。</b>",
+ test:["福柯的『知识/权力』如何挑战了我们对客观真理的信念?","罗尔斯的『无知之幕』凭什么能推出公平?","回看全书:三条暗线在当代各自走到了哪里?"]
+}
+];
+
+// ---------- geography data ----------
+const cities={
+  miletus:{x:597,y:360,n:"米利都",a:"end"},
+  athens:{x:539,y:352,n:"雅典",a:"middle",dy:16},
+  alexandria:{x:638,y:461,n:"亚历山大里亚",a:"end"},
+  rome:{x:360,y:290,n:"罗马"},
+  hippo:{x:285,y:370,n:"希波·北非"},
+  paris:{x:197,y:178,n:"巴黎"},
+  florence:{x:340,y:262,n:"佛罗伦萨"},
+  amsterdam:{x:238,y:122,n:"阿姆斯特丹"},
+  london:{x:158,y:140,n:"伦敦"},
+  edinburgh:{x:109,y:66,n:"爱丁堡"},
+  konigsberg:{x:488,y:85,n:"柯尼斯堡",a:"middle",dy:-10},
+  berlin:{x:374,y:118,n:"柏林"},
+  jena:{x:340,y:150,n:"耶拿",a:"end"},
+  copenhagen:{x:362,y:69,n:"哥本哈根",a:"middle",dy:-10},
+  freiburg:{x:286,y:196,n:"弗莱堡"},
+  vienna:{x:430,y:189,n:"维也纳"},
+  cambridge:{x:166,y:122,n:"剑桥",dy:-12},
+  usa:{x:22,y:150,n:"美国·哈佛"}
+};
+const geo=[
+ {ids:["miletus"],primary:"miletus",where:"爱琴海东缘的商港 · 爱奥尼亚",
+  econ:"米利都是希腊世界最繁忙的港口之一,连通埃及、巴比伦与希腊。海上贸易带回异域的天文、几何与计量技术,也带来务实、见多识广的商人心态。<b>财富与信息的汇集,让『用自然本身解释自然』第一次成为可能</b>——理性在商港而非神庙里诞生。"},
+ {ids:["athens"],primary:"athens",where:"海上霸主与民主财富中心 · 雅典",
+  econ:"希波战争后,雅典凭海上同盟与贸易称霸爱琴海,财富供养出有闲暇思考的市民阶层。民主制让公共辩论成为日常,智者派靠教授辩术谋生。<b>是城邦的财富与政治参与,把哲学的焦点从星空拉向人、正义与城邦生活。</b>"},
+ {ids:["rome","alexandria"],primary:"rome",where:"帝国都会 · 亚历山大里亚与罗马",
+  econ:"亚历山大东征打通希腊与东方,催生出亚历山大里亚(拥有大图书馆)这样的世界都会与罗马帝国的庞大版图。个人从城邦公民变成帝国中渺小、流动、失根的一员。<b>正是这种『大世界、小个人』的经济政治格局,催生了关注个人内心安顿的哲学。</b>"},
+ {ids:["paris","rome","hippo"],primary:"paris",where:"修道院与新生大学 · 巴黎",
+  econ:"西罗马崩溃后经济与人口萎缩,修道院成为保存知识的孤岛,教会是唯一的跨地域组织。十字军与地中海商路重启后,亚里士多德著作经阿拉伯-西班牙(托莱多)回传,大学在复苏的城市(巴黎)兴起。<b>知识的载体从城邦市民变成教会与大学,哲学因而服务于信仰。</b>"},
+ {ids:["florence","rome"],primary:"florence",where:"银行与贸易富城 · 佛罗伦萨",
+  econ:"地中海贸易使意大利城邦(佛罗伦萨、威尼斯)富甲一方,银行家如美第奇家族资助艺术与古典复兴。印刷术与大航海打破了教会对知识的垄断。<b>商业资本积累起的世俗财富与自信,把目光从天国转回人与现世。</b>"},
+ {ids:["amsterdam","paris"],primary:"amsterdam",where:"宽容的商业共和国 · 荷兰 / 法国",
+  econ:"17世纪的荷兰共和国是全球贸易与金融中心,阿姆斯特丹出版自由、思想多元,庇护了笛卡尔与斯宾诺莎等异端思想家。<b>商业共和国的自由与秩序,为『从理性公理出发、像几何那样推演世界』的体系提供了温床。</b>"},
+ {ids:["london","edinburgh"],primary:"london",where:"议会与海贸社会 · 不列颠",
+  econ:"英国的议会传统、海外贸易与新兴中产阶级,培育出重经验、重个体权利的思想气质。洛克为辉格党立论,休谟身处商业繁荣的爱丁堡(苏格兰启蒙)。<b>一个靠经验做生意、靠契约定权利的商业社会,自然孕育出经验主义哲学。</b>"},
+ {ids:["konigsberg"],primary:"konigsberg",where:"书信与书籍网络的枢纽 · 柯尼斯堡",
+  econ:"康德终身未离开东普鲁士的港口大学城柯尼斯堡,却处在英国经验论、法国启蒙与德国理性论的交汇点上,靠书籍与书信吸收四方思想。<b>正是这种『身处边缘、广纳百川』的位置,使他得以综合理性派与经验派。</b>"},
+ {ids:["jena","berlin"],primary:"jena",where:"大学与民族国家 · 耶拿 / 柏林",
+  econ:"拿破仑战争与普鲁士改革之际,国家主导的德意志大学(耶拿、柏林)供养起一批职业哲学家,哲学成为民族精神的事业。<b>政治剧变与国家建制,催生出把历史看作理性自我展开的辩证哲学。</b>"},
+ {ids:["london","berlin","copenhagen"],primary:"london",where:"工业革命的心脏 · 伦敦与中欧",
+  econ:"工业革命使伦敦成为世界工厂与金融心脏,也制造出工人阶级和尖锐的贫富对立——马克思正是在伦敦写《资本论》。市场社会的异化与宗教退潮,激起对理性乐观主义的全面反叛。<b>是工业资本主义的矛盾,点燃了意志、阶级与生命对体系的反抗。</b>"},
+ {ids:["freiburg","paris"],primary:"paris",where:"两次大战的创伤地带 · 弗莱堡与巴黎",
+  econ:"20世纪上半叶的欧洲是两次世界大战的战场。德国的大学(弗莱堡)与被占领、抵抗中的巴黎,成为追问存在与自由的现场。<b>战争与极权把抽象问题逼成切身问题:在荒诞中,个人如何选择如何存在。</b>"},
+ {ids:["vienna","cambridge"],primary:"vienna",where:"逻辑与科学之都 · 维也纳 / 剑桥",
+  econ:"世纪之交的维也纳是数学、物理与逻辑的中心(维也纳学派),剑桥的罗素与维特根斯坦推进逻辑分析。纳粹迫害迫使大批学者流亡英美。<b>科学的精确理想加上学者的跨国流动,把『分析语言』的哲学带向整个英语世界。</b>"},
+ {ids:["paris","usa"],primary:"paris",where:"全球化下的跨大西洋 · 巴黎与美国",
+  econ:"战后法国(巴黎)的后结构主义与美国(哈佛-罗尔斯)的政治哲学隔洋并峙。解殖、民权、女性主义与冷战格局,加上媒体与全球化,使『谁的真理、谁的正义』成为跨大西洋的共同议题。<b>权力与话语的全球流动,本身就是当代哲学的主题。</b>"}
+];
+// ---------- extra historical sites ----------
+Object.assign(cities,{
+  ephesus:{x:597.4,y:352.8,n:"以弗所",a:"end"},
+  elea:{x:402.4,y:317.4,n:"埃利亚"},
+  abdera:{x:559.5,y:304.8,n:"阿布德拉",a:"end"},
+  mainz:{x:292.3,y:160,n:"美因茨"},
+  hannover:{x:315.8,y:122.1,n:"汉诺威"},
+  dublin:{x:59.8,y:106.4,n:"都柏林"},
+  tubingen:{x:305,y:183.7,n:"图宾根"},
+  frankfurt:{x:298.9,y:158.2,n:"法兰克福"},
+  basel:{x:281.4,y:199,n:"巴塞尔"}
+});
+// ---------- extra historical sites ----------
+Object.assign(cities,{
+  ephesus:{x:597.4,y:352.8,n:"以弗所",a:"end"},
+  elea:{x:402.4,y:317.4,n:"埃利亚"},
+  abdera:{x:559.5,y:304.8,n:"阿布德拉",a:"end"},
+  mainz:{x:292.3,y:160,n:"美因茨"},
+  hannover:{x:315.8,y:122.1,n:"汉诺威"},
+  dublin:{x:59.8,y:106.4,n:"都柏林"},
+  tubingen:{x:305,y:183.7,n:"图宾根"},
+  frankfurt:{x:298.9,y:158.2,n:"法兰克福"},
+  basel:{x:281.4,y:199,n:"巴塞尔"}
+});
+const PRIM=geo.map(g=>cities[g.primary]);
+// ---------- per-chapter vertical timelines (year / school / figure / city / reading) ----------
+const subtl=[
+ [ {y:"前585",s:"米利都学派·自然哲学",t:"泰勒斯",city:"miletus",d:"提出『水是万物本原』。要点不在答案,而在第一次假定自然有可被理性把握的统一本原(archē),据传他还用几何与天文知识预言了一次日食。"},
+   {y:"前500",s:"变化论",t:"赫拉克利特",city:"ephesus",d:"『人不能两次踏进同一条河流』;以『火』与『逻各斯』喻永恒流变中的秩序——对立面相互转化、彼此依存,变化才是实在。"},
+   {y:"前480",s:"爱利亚学派·不变论",t:"巴门尼德",city:"elea",d:"以纯推理论证:能被思考的与能存在的同一,故存在唯一、不变、不可分;生灭与多只是感官的幻觉,开理性主义先河。"},
+   {y:"前440",s:"原子论",t:"德谟克利特",city:"abdera",d:"万物由无限多、不可分的原子在虚空中聚散而成;以纯机械原因解释一切,连灵魂与感觉亦由原子构成,为唯物论奠基。"} ],
+ [ {y:"前432",s:"智者派",t:"普罗塔哥拉",city:"athens",d:"『人是万物的尺度』——真理随人随境而变;智者以教授修辞谋生,把哲学拉向相对主义,逼出苏格拉底对『普遍定义』的追求。"},
+   {y:"前399",s:"苏格拉底方法",t:"苏格拉底受审",city:"athens",d:"以反诘法层层追问德性的定义,被控『腐蚀青年、不敬城邦神』;拒绝逃亡、从容受死,以生命证明哲学是一种生活方式。"},
+   {y:"前387",s:"理念论",t:"柏拉图建学园",city:"athens",d:"创立西方第一所『学园』;主张可感事物只是永恒『理念』的不完美摹本,真知关于不变的理念,以洞穴比喻刻画哲学的觉醒。"},
+   {y:"前335",s:"逍遥学派",t:"亚里士多德建吕克昂",city:"athens",d:"形式内在于质料而非彼岸;创立形式逻辑与『四因说』,主张幸福是合乎德性(中道)的、终生的理性活动。"} ],
+ [ {y:"前306",s:"伊壁鸠鲁派",t:"伊壁鸠鲁的花园",city:"athens",d:"在雅典办『花园』,招收包括女性与奴隶;主张快乐即身体无痛、心灵无扰,靠节制欲望与祛除对神和死亡的恐惧而得。"},
+   {y:"前300",s:"斯多葛派",t:"芝诺创斯多葛",city:"athens",d:"在『画廊(Stoa)』讲学;宇宙由神圣理性支配,幸福在于顺应自然、专注于唯一真正可控的——自己的判断与意愿。"},
+   {y:"前280",s:"希腊化学术",t:"亚历山大里亚图书馆",city:"alexandria",d:"希腊化世界的知识中心,汇聚数学、天文、医学;个体成为庞大帝国中流动而失根的一员,催生治心安顿之学。"},
+   {y:"172",s:"晚期斯多葛",t:"马可·奥勒留《沉思录》",city:"rome",d:"罗马皇帝在征战途中写给自己的斯多葛札记,示范在权力与无常的顶端如何持守理性、克制与责任。"} ],
+ [ {y:"397",s:"教父哲学",t:"奥古斯丁《忏悔录》",city:"hippo",d:"以深刻内省剖析时间、记忆与意志的挣扎;『信仰以求理解』,把哲学第一次如此深地转向内心,开创西方内省传统。"},
+   {y:"1078",s:"早期经院·唯实论",t:"安瑟伦本体论证明",city:"paris",d:"从『上帝是可设想的最伟大者』这一概念本身推出其必然存在;关于普遍概念地位的共相之争随之升温。"},
+   {y:"1265",s:"经院哲学集大成",t:"阿奎那《神学大全》",city:"paris",d:"以亚里士多德为信仰搭建理性阶梯,区分理性可证与唯赖启示的真理,提出从运动、因果到目的的『五路』论证。"} ],
+ [ {y:"1440",s:"人文主义条件",t:"古登堡印刷术",city:"mainz",d:"活字印刷使书籍廉价普及,知识传播挣脱教会与抄本的垄断,为人文主义、宗教改革与科学革命提供基础设施。"},
+   {y:"1486",s:"人文主义",t:"皮科《论人的尊严》",city:"florence",d:"人文主义宣言——人没有固定本性,可凭自由意志自我塑造,把人的尊严与现世生活置于世界中心。"},
+   {y:"1620",s:"经验归纳法",t:"培根《新工具》",city:"london",d:"以归纳实验取代经院演绎;列举扭曲认识的『四假象』,提出『知识就是力量』,重定知识的方法与目的。"},
+   {y:"1632",s:"科学革命",t:"伽利略《对话》",city:"florence",d:"以望远镜观测与实验支持日心说;区分客观的第一性质与主观的第二性质,主张自然之书以数学语言写成。"} ],
+ [ {y:"1637",s:"理性主义",t:"笛卡尔《方法谈》",city:"amsterdam",d:"以系统怀疑求确定性,『我思故我在』确立主体为知识的阿基米德点;遗留心灵与身体如何互动的二元论难题。"},
+   {y:"1677",s:"理性主义·泛神论",t:"斯宾诺莎《伦理学》",city:"amsterdam",d:"以几何方式推演;唯一实体『神即自然』,万物依必然展开,真正的自由在于以理性理解这种必然。"},
+   {y:"1714",s:"理性主义·单子论",t:"莱布尼茨《单子论》",city:"hannover",d:"实在是无数无窗、靠『预定和谐』协调运作的精神单子;依充足理由律论证这是『一切可能世界中最好的一个』。"} ],
+ [ {y:"1689",s:"经验主义",t:"洛克《人类理解论》",city:"london",d:"反对天赋观念,主张心灵是白板,一切观念源于感觉与反省;区分第一性质与第二性质,并据此支撑权利与同意的政治哲学。"},
+   {y:"1710",s:"主观唯心经验论",t:"贝克莱《人类知识原理》",city:"dublin",d:"『存在即被感知』;我们只经验到观念而非其外的物质,故否认独立于心灵的物质实体,以上帝的永恒感知保证万物长存。"},
+   {y:"1739",s:"怀疑论经验主义",t:"休谟《人性论》",city:"edinburgh",d:"因果只是习惯性联想而非可观察的必然,自我只是一束流动的知觉,『是』推不出『应当』——经验论走到悬崖,动摇科学根基。"} ],
+ [ {y:"1781",s:"批判哲学·先验唯心论",t:"《纯粹理性批判》",city:"konigsberg",d:"哥白尼式革命:不是认识符合对象,而是对象符合我们先天的认识形式(时空与范畴);知识因而限于现象、止步于物自体。"},
+   {y:"1785",s:"道德形而上学",t:"《道德形而上学奠基》",city:"konigsberg",d:"道德源于理性的自律而非后果或神命;绝对命令要求准则可普遍化,并永远把人当作目的而非仅仅手段。"},
+   {y:"1790",s:"目的论·美学",t:"《判断力批判》",city:"konigsberg",d:"以审美判断与自然目的论沟通『自然必然』与『自由』两大领域,为整个批判体系封顶。"} ],
+ [ {y:"1794",s:"德国观念论",t:"费希特《知识学》",city:"jena",d:"取消康德不可知的物自体,以能动的『自我』设定自身与非我,把世界理解为精神自我实现的产物。"},
+   {y:"1800",s:"同一哲学",t:"谢林《先验观念论》",city:"tubingen",d:"主张自然与精神是同一『绝对』的两面,在自然哲学与艺术中寻求二者的统一。"},
+   {y:"1807",s:"绝对观念论",t:"黑格尔《精神现象学》",city:"jena",d:"意识经辩证运动(正—反—合)与主奴、苦恼意识诸环节,逐步走向绝对知识;『真理是全体』。"},
+   {y:"1821",s:"历史哲学",t:"黑格尔《法哲学》",city:"berlin",d:"『凡合理的都是现实的』;世界历史是绝对精神实现自由意识的进程,个人激情被『理性的狡计』所利用。"} ],
+ [ {y:"1818",s:"唯意志论",t:"叔本华《意志与表象的世界》",city:"frankfurt",d:"世界的内核是盲目、无尽的生命意志,理智只是其仆人;人生在欲求之苦与满足之无聊间摆荡,解脱靠审美静观与否定意志。"},
+   {y:"1843",s:"存在主义先声",t:"克尔凯郭尔《非此即彼》",city:"copenhagen",d:"真理是主体性;面对无法被体系担保的人生抉择,个体须以恐惧战栗中的『信仰之跃』亲自承担。"},
+   {y:"1867",s:"历史唯物主义",t:"马克思《资本论》",city:"london",d:"把黑格尔辩证法『倒过来』:社会存在决定意识,经济基础决定上层建筑;哲学要改变世界,而非仅仅解释世界。"},
+   {y:"1883",s:"生命哲学·权力意志",t:"尼采《查拉图斯特拉》",city:"basel",d:"『上帝已死』,最高价值崩塌而面临虚无;追溯道德谱系,呼吁重估一切价值,以权力意志与『超人』姿态肯定生命。"} ],
+ [ {y:"1900",s:"现象学",t:"胡塞尔《逻辑研究》",city:"freiburg",d:"创立现象学,主张『回到事物本身』,以悬置与意向性描述意识如何构成意义,反对把意识化约为心理或物理过程。"},
+   {y:"1927",s:"存在论",t:"海德格尔《存在与时间》",city:"freiburg",d:"从能追问存在的『此在』入手;人被抛于世、沉沦于『常人』,唯有『向死而生』方能本真地承担自己的存在。"},
+   {y:"1942",s:"荒诞哲学",t:"加缪《西西弗神话》",city:"paris",d:"面对世界的荒诞(无意义却渴望意义),拒绝自杀与盲信,主张以清醒的反抗活着——『必须想象西西弗是幸福的』。"},
+   {y:"1943",s:"存在主义",t:"萨特《存在与虚无》",city:"paris",d:"『存在先于本质』,人被判定为自由、凭选择定义自身;否认这份自由、假装被处境决定,即是『自欺』。"} ],
+ [ {y:"1879",s:"现代逻辑",t:"弗雷格《概念文字》",city:"jena",d:"创立现代谓词逻辑,区分涵义与指称,为以逻辑分析语言、进而分析思想提供了精确工具与基础。"},
+   {y:"1921",s:"逻辑原子论",t:"维特根斯坦《逻辑哲学论》",city:"cambridge",d:"『图像论』——命题是事实的逻辑图像;语言的界限即世界的界限,伦理与意义在界限之外,『不可说者应保持沉默』。"},
+   {y:"1929",s:"逻辑实证主义",t:"维也纳学派宣言",city:"vienna",d:"提出『可证实原则』——有意义须可经验证实或为逻辑真理,据此宣判大量形而上学命题无意义;而该原则自身却难以自证。"},
+   {y:"1953",s:"日常语言哲学",t:"《哲学研究》",city:"cambridge",d:"后期维特根斯坦推翻自己:意义即用法,语言是嵌入生活的多样『语言游戏』,哲学不是建理论而是消解困惑的治疗。"} ],
+ [ {y:"1966",s:"后结构主义",t:"福柯《词与物》",city:"paris",d:"各时代有其『知识型』规定何为真理;知识与权力相互生产,监狱、学校等『规训』技术塑造现代主体,瓦解中立真理的表象。"},
+   {y:"1967",s:"解构主义",t:"德里达《论文字学》",city:"paris",d:"解构西方文本所依赖的等级二元对立;意义经『延异』而生、从不完全在场,质疑一切终极中心与根据。"},
+   {y:"1971",s:"政治自由主义·正义论",t:"罗尔斯《正义论》",city:"usa",d:"在『无知之幕』后选择正义原则:平等的基本自由优先,且社会不平等须最有利于最不利者(差别原则),为公平奠基。"} ]
+];
+
+const deep=[
+ [ {h:"从神话到『自然』的飞跃",p:"前苏格拉底哲人最革命之处不在答案,而在提问方式。在他们之前,世界由诸神的意志解释:打雷因为宙斯发怒。米利都学派第一次假定——自然有其内在的、可被理性把握的秩序(physis),不必诉诸神的任性。『现象背后有统一而稳定的本原(archē)』这个念头本身,正是科学与哲学共同的起点。泰勒斯说本原是水未必正确,但用一种自然要素去统一万物的雄心,从此改变了人类追问世界的方式。"},
+   {h:"变与不变:两种世界观的对决",p:"赫拉克利特与巴门尼德把一个形而上学的根本张力推到极致。赫拉克利特说稳定是假象,实在的本质是永恒流变与对立的统一,逻各斯使万物在张力中保持秩序。巴门尼德则用纯粹推理反驳:『非存在』无法被思考也无法被言说,所以存在唯一、不变、不可分,我们看到的生灭只是感官的欺骗。一个押注于感官经验,一个押注于理性推理——这条裂缝(变动的可感世界 vs 不变的可思实在)将一路贯穿柏拉图、近代乃至现代物理学。"},
+   {h:"调和的尝试:多元论与原子论",p:"面对巴门尼德『存在不能生灭』的逻辑铁律,后来者寻求调和。恩培多克勒的四根、阿那克萨戈拉的种子,都主张基本元素本身不生不灭(满足巴门尼德),变化只是它们的重新组合(挽救赫拉克利特的经验)。德谟克利特的原子论最为彻底:不可分的原子(满足不变)在虚空中运动聚散(解释变化),连灵魂与感觉都由原子构成。这套唯物—机械的世界观沉睡两千年后,在近代科学中复活。"} ],
+ [ {h:"苏格拉底的『无知』与诘问法",p:"苏格拉底自称唯一知道的就是自己无知,这不是谦虚而是方法。他在街头拦住自认懂『正义』『勇敢』的人,层层追问其定义,直到对方陷入自相矛盾(aporia)。这套反诘法(elenchus)的要害是:行动若没有清晰、普遍、经得起追问的定义为基础,就只是意见而非知识。他把哲学从『世界由什么构成』转向『我们该如何生活、能否真正知道善』,并以生命为代价——拒绝逃亡、从容饮鸩——证明:未经省察的人生不值得过。"},
+   {h:"柏拉图的理念论:为知识寻找不变的对象",p:"柏拉图继承巴门尼德的洞见:真正的知识必须关于不变者。可感事物生灭无常,无法成为确定知识的对象,因此真知指向超越的『理念』——美本身、正义本身、善本身;具体的美的事物只是分有美的理念的不完美摹本。洞穴比喻把人比作背对火光、只见墙上影子的囚徒,哲学家的使命是转身走出洞穴、直面理念之光(尤其是善的理念),再回到洞中启蒙他人。"},
+   {h:"亚里士多德的转向:把理念拉回大地",p:"亚里士多德反对老师把理念悬置彼岸:形式不在另一个世界,而内在于具体事物之中(形式与质料结合)。他创立形式逻辑(三段论)、奠定生物学与物理学的观察传统,并以『四因说』解释事物的生成。在伦理学上,他主张幸福(eudaimonia)是合乎德性、贯穿一生的理性活动,而德性是介于过与不及之间、由理性把握的『中道』,须经习惯养成。柏拉图重数学与超越,亚里士多德重经验与目的,二人为后世理性派与经验派埋下了分流。"} ],
+ [ {h:"哲学重心:从城邦转向个人",p:"城邦消亡后,『如何做好公民』的古典问题失去依托,哲学转而回答更私人的问题:在无法掌控的命运面前,如何获得不被扰动的内心安宁。这一转向使哲学从理论体系变成『生活的技艺』与『灵魂的治疗』。斯多葛、伊壁鸠鲁与怀疑论提供的都是可日常操练的方案,这也是它们至今仍被现代人(乃至认知疗法)借用的原因。"},
+   {h:"斯多葛 vs 伊壁鸠鲁:两条通往宁静的路",p:"斯多葛派认为宇宙由神圣理性贯通、一切依必然发生;幸福在于按理性生活,并清醒区分『在我们能力之内的(判断、意愿)』与『不在的(财富、名声、生死)』,只对前者负责。伊壁鸠鲁派则是原子论者与经验主义者:快乐(身体无痛、心灵无扰)是唯一的善,但真正的快乐靠节制欲望、祛除对神与死亡的非理性恐惧而得——『死亡与我们无关』。一个教人顺从必然,一个教人审慎计算,殊途同归于不动心。"},
+   {h:"通往中世纪的桥:新柏拉图主义",p:"普罗提诺综合柏拉图,提出万物从超越一切规定的『太一』层层流溢而出:太一→努斯(理智)→灵魂→物质世界;哲学的任务是灵魂沿此阶梯逆向回归、与太一神秘合一。这套等级森严、以『超越的一』为顶点的体系,极易被基督教神学吸收——奥古斯丁正是借它来理解上帝。古代哲学就此把接力棒交给了信仰的时代。"} ],
+ [ {h:"信仰寻求理解:奥古斯丁的内转",p:"奥古斯丁把哲学的目光第一次如此深地转向内心。在《忏悔录》里他剖析记忆、时间、意志与欲望,提出著名的时间之问:过去已不在、未来尚未来、当下无延展,时间究竟『在』哪里?他的答案是,时间存在于心灵的『延展』之中。在认识论上他主张『信仰以求理解』:先信,理性再去阐明所信。这种以第一人称内省通达真理的路径,深刻影响了从笛卡尔到现象学的整个西方传统。"},
+   {h:"共相之争:中世纪的『认识论预演』",p:"看似烦琐的『共相』问题其实关乎根本:像『人』『红』这样的普遍概念,是独立于个别事物而真实存在(唯实论),还是仅仅是名称或心智的抽象(唯名论)?唯实论上承柏拉图理念,把普遍当作更真实的存在;唯名论强调只有个别事物真实存在,普遍只是我们用来归类的语词。这场争论训练出极其精密的逻辑分析,并预演了近代理性派(重普遍、天赋观念)与经验派(重个别、经验抽象)的对立。"},
+   {h:"阿奎那的大综合:理性与信仰的分工",p:"十三世纪亚里士多德全集经阿拉伯哲学(阿威罗伊、阿维森纳)回传,既是思想资源也是异端威胁。阿奎那的工作是把亚里士多德的理性哲学与基督教信仰整合:有些真理(上帝存在、灵魂)理性可证,有些(三位一体、道成肉身)只能靠启示;二者同源于上帝,不会真正冲突。他的『五路』从运动、因果、偶然性、完善等级与目的论证一个第一因的存在。这标志着理性在信仰框架内获得了空前的尊严与自主。"} ],
+ [ {h:"世界图景的重置:从封闭宇宙到无限空间",p:"哥白尼把太阳置于中心,伽利略用望远镜发现木星的卫星与月面的环形山,一起击碎了亚里士多德—托勒密『地球居中、天界完美不变』的封闭宇宙。世界不再是为人类量身定做的有限剧场,而成为遵循同一套数学规律、向无限延展的均质空间。这不仅是天文学事件,更是哲学事件:人类失去了宇宙中心的地位,却获得了用数学统一描述天与地的雄心。"},
+   {h:"新方法的诞生:培根的归纳与实验",p:"培根批判经院哲学只会从权威前提演绎、不产生新知。他主张知识应从系统的观察与实验中归纳出普遍规律,并警惕扭曲认识的『四假象』——种族、洞穴、市场、剧场,即人类天性、个人偏见、语言含混与盲从学说带来的错误。『知识就是力量』宣告:知识的目的不再是静观,而是改造自然、增进人类福祉。这把哲学的价值标准从沉思转向了实用与控制。"},
+   {h:"自然之书以数学写成",p:"伽利略提出一个影响深远的区分:物体的『第一性质』(形状、大小、运动)是客观、可数学化的,而『第二性质』(颜色、气味、声音)只存在于感知者心中,真正的科学只研究可测量的第一性质。『自然之书用数学语言写成』——要读懂它必先懂几何。这一信念为笛卡尔『清晰明确的观念』、为整个近代以数学为真理范型的认识论铺平了道路,也留下了『被抽空了颜色与意义的世界』这一现代难题。"} ],
+ [ {h:"笛卡尔的怀疑与阿基米德点",p:"笛卡尔要为知识找一个不可动摇的地基。他系统地怀疑一切:感官会骗人、梦境难辨真假、甚至可能有一个『恶魔』持续欺骗他。但有一点怀疑不掉——正在怀疑(思考)的『我』必定存在:我思故我在。由这一确定起点出发,他重建知识:凡被『清晰而明确地』知觉到的就为真。然而他留下了身心二元论的难题:不可分的心灵与有广延的身体,如何彼此作用?这成了近代哲学挥之不去的『心身问题』。"},
+   {h:"斯宾诺莎:一个实体,即神即自然",p:"斯宾诺莎把『实体』的逻辑推到底:实体是自因、无限、不依赖他物者,因此只能有一个,他称之为『神即自然』。万物只是这唯一实体的『样态』,思想与广延是同一实体的两种属性。一切依必然而发生,没有偶然与自由意志;真正的自由是通过理性理解这种必然,从被动的情感转为主动的认识。他以几何学的公理—定理方式写《伦理学》,追求在『永恒的形式下』观看世界的澄明与平静。"},
+   {h:"莱布尼茨:单子、预定和谐与可能世界",p:"莱布尼茨认为终极实在是无数无广延、无窗户的精神性『单子』:每个单子按内在程序展开、彼此不直接作用,却因上帝的『预定和谐』而协调一致,如同无数同步的钟。依据『充足理由律』(任何事都有其所以然)与『无差别者同一』,他论证上帝在无限可能世界中选择了最好的一个。这套乐观主义体系既是理性主义的巅峰建构,也招来了伏尔泰《老实人》的辛辣嘲讽。"} ],
+ [ {h:"洛克:推倒天赋观念,心灵是白板",p:"洛克针锋相对地反对理性派的『天赋观念』:若有人人生而具有的观念,为何儿童与未受教育者对之一无所知?他主张心灵原是白板(tabula rasa),一切观念都来自经验——外部的『感觉』与内省的『反省』,复杂观念由简单观念组合而成。他继承伽利略,区分第一性质(真在物中)与第二性质(只是物在我们心中引起的感觉)。这套经验论也支撑了他的政治哲学:权利与同意,而非天赋等级。"},
+   {h:"贝克莱:存在就是被感知",p:"贝克莱顺着经验论追问:我们经验到的只是观念(颜色、形状、软硬),从未经验到观念之外那个『物质实体』。既然如此,假定一个不可知的物质既多余,又会通向怀疑论与无神论。他于是断言:可感事物的存在就在于被感知(esse est percipi);当无人感知时万物仍存在,因为它们永恒地被上帝所感知。这并非否认世界真实,而是否认『独立于一切心灵的物质』,把经验论推向彻底的观念论。"},
+   {h:"休谟:经验论的悬崖",p:"休谟把经验论贯彻到底,结果令人震撼:我们说 A『导致』B,经验中其实只看到 A 与 B 恒常相继,从未观察到『必然联系』本身——因果不过是心理习惯造成的期待。同理,反观内心只见一束流动的知觉,找不到一个恒常不变的『自我』;他还指出『是』推不出『应当』。这意味着归纳与科学的根基缺乏理性证明。休谟并非要人停止生活,而是说支撑我们的是习惯与人性,而非纯粹理性——正是这一结论,把康德从『独断的迷梦』中惊醒。"} ],
+ [ {h:"哥白尼式革命:不是心灵符合对象,而是对象符合心灵",p:"康德要在理性派(知识来自理性)与经验派(知识来自经验、却被休谟引向怀疑)之间另辟新路。他的逆转是:与其问知识如何符合外物,不如设想外物如何符合我们认识的形式。时间、空间是我们直观的先天形式,因果、实体等『范畴』是知性整理经验的先天框架。于是『先天综合判断』成为可能:数学与物理的普遍必然性,来自主体加诸经验的结构,而非来自经验归纳。这既挽救了科学的确定性,也为知识划定了界限。"},
+   {h:"现象与物自体:知识的边界",p:"代价是:我们只能认识『现象』(事物对我们显现的样子),而非『物自体』(事物自身)。当理性试图越过经验去把握无条件的整体——灵魂、世界整体、上帝——就陷入无法判定的『二律背反』。康德因此说:『我必须悬置知识,以便为信仰留出地盘。』上帝、自由、不朽不是知识的对象,却是实践理性的必要预设。这条现象/物自体的界线,既是康德的解法,也是他留给后人的最大难题:物自体既不可知,又何以言其存在?"},
+   {h:"绝对命令:理性为自己立法",p:"在伦理学上,康德主张道德不能建立在后果、情感或上帝命令之上,而须源于理性自身。真正的道德法则是『绝对命令』:只按你能同时愿其成为普遍法则的准则去行动;并要永远把人当作目的,而非仅仅当作手段。道德的核心是『自律』——理性存在者服从自己理性所立的法,这正是人的尊严与自由所在。这与休谟『理性是激情的奴隶』针锋相对,确立了义务论伦理学的典范。"} ],
+ [ {h:"取消物自体:观念论的激进化",p:"康德那个『不可知的物自体』令后继者难以忍受:一个既不可认识、又被说成在刺激我们感官的东西,自相矛盾。费希特干脆取消它,把一切奠基于能动的『自我』:自我设定自身,又设定『非我』(外部世界)作为自身活动的界限与对象,世界因此被理解为精神自我实现的产物。德国观念论由此从『认识的批判』转向『绝对者的建构』,体系规模越来越宏大。"},
+   {h:"辩证法:矛盾是发展的引擎",p:"黑格尔的核心创见,是把『矛盾』从逻辑错误变成前进的动力。任何概念或现实(正题)内部都含有否定自身的因素(反题),冲突推动它『扬弃』(Aufhebung)到更高的统一(合题),如此螺旋上升。在《精神现象学》里,意识从最朴素的『感性确定性』,经主奴辩证、苦恼意识等环节,逐步走向『绝对知识』。真理不是某个静止的命题,而是这整个自我展开、自我认识的过程——『真理是全体』。"},
+   {h:"历史有理性:绝对精神的自我实现",p:"黑格尔把这一逻辑投射到历史:世界历史是『绝对精神』通过各民族、各时代逐步实现自由意识的进程,『凡合理的都是现实的,凡现实的都是合理的』。个人的激情(哪怕是拿破仑的野心)被『理性的狡计』所利用,服务于更高的历史目的。这套把一切纳入理性总体的乐观体系达到了理性主义的顶峰;但它把个体、苦难与偶然都『扬弃』进必然——也正是这一点,激起了下一代人的全面反叛。"} ],
+ [ {h:"揭穿理性的面具:意志、欲望与无意识",p:"叔本华第一个系统地反转黑格尔:世界的内核不是理性,而是盲目、无目的、永不满足的『生命意志』,理智不过是意志的仆人。欲望得不到满足是痛苦,满足之后是无聊,人生在二者间摇摆;解脱之道在于审美静观与否定意志(近于佛教)。这一『理性背后是非理性力量』的洞见,经尼采的『权力意志』直通弗洛伊德的无意识,瓦解了『人是理性动物』的古老自画像。"},
+   {h:"颠倒黑格尔:存在决定意识",p:"马克思保留了黑格尔的辩证法,却把它倒过来:推动历史的不是精神的自我展开,而是物质生产方式与阶级斗争。不是意识决定存在,而是社会存在决定意识;宗教、法律、哲学都是建立在经济基础之上的『上层建筑』。哲学的任务也随之改变——『哲学家们只是用不同方式解释世界,问题在于改变世界』。他把『个体↔整体』这条暗线推入现实政治,深刻影响了之后一个世纪的历史进程。"},
+   {h:"上帝已死与价值重估",p:"尼采宣告『上帝已死』——这不是简单的无神论,而是一个诊断:支撑西方两千年的最高价值(基督教—柏拉图主义的彼岸真理与道德)已失去可信性,留下虚无主义的深渊。他追溯道德的『谱系』,指出善恶并非天经地义,而有其权力与心理的起源(主人道德 vs 出于怨恨的奴隶道德)。出路是『重估一切价值』,以肯定生命的权力意志和敢于承担命运的『超人』姿态去创造新的意义。克尔凯郭尔则从另一端反叛:真理是主体性,个体须在恐惧战栗中以无法被体系担保的『信仰之跃』作出抉择。"} ],
+ [ {h:"回到事物本身:现象学的方法",p:"面对十九世纪的心理主义与实证主义化约,胡塞尔主张哲学应成为严格的科学,方法是『回到事物本身』——悬置(epoché)一切关于『外部世界是否真实』的自然假定,直接描述意识经验如何呈现。意识的根本特征是『意向性』:意识总是『关于某物』的意识。通过这种描述,现象学试图揭示意义如何在第一人称经验中被构成,把哲学从对象化的科学态度,拉回到活生生的体验。"},
+   {h:"此在与向死而生",p:"海德格尔转而追问被整个传统遗忘的问题:『存在』本身究竟是什么意思?他从那个能追问存在的特殊存在者——人(此在/Dasein)入手。此在总是已经『被抛』进一个世界、『在世界之中存在』,以操劳的方式与他人和器物打交道,并常常沉沦于『常人(das Man)』的平均状态而遗忘本己。唯有直面『向死而生』——领会死亡是自己最本己、不可替代、不可逾越的可能性——此在才可能从沉沦中觉醒,本真地承担自己的存在。"},
+   {h:"存在先于本质:自由的重负",p:"萨特把这一思路推向伦理与政治:对人而言『存在先于本质』——人不像裁纸刀那样先有被设计好的用途,人先存在,然后通过选择定义自己。因此人是『被判定为自由的』,连不选择也是一种选择;逃避这份自由、假装自己被角色或处境所决定,就是『自欺(bad faith)』。加缪则面对『世界无意义而人渴望意义』的荒诞,主张既不自杀也不盲信,而以清醒的反抗活着。自由不再是恩赐,而是无可推卸、令人眩晕的责任。"} ],
+ [ {h:"语言转向:把哲学问题翻译成语言问题",p:"弗雷格、罗素创立现代谓词逻辑,提供了精确分析命题结构的工具。罗素的『摹状词理论』示范:像『当今法国国王是秃头』这种看似指称却无对象的句子,可经逻辑分析化解其困惑,而不必假定一个虚幻的实体。由此产生一个信念:许多传统形而上学难题其实源于被日常语言误导,澄清语言的逻辑结构就能消解(而非解决)它们。这一『语言转向』重新界定了英美哲学的任务。"},
+   {h:"早期维特根斯坦与维也纳学派:可说与不可说",p:"早期维特根斯坦在《逻辑哲学论》中提出『图像论』:有意义的命题是事实的逻辑图像,语言的界限就是世界(可被描述者)的界限;伦理、人生意义、形而上学超出此界,『对于不可说的,必须保持沉默』。维也纳学派据此发展出逻辑实证主义的『可证实原则』:一个陈述有认知意义,当且仅当它可被经验证实或为逻辑真理——并据此宣布大量形而上学命题为『无意义』。但这条原则自身既不可经验证实、也非逻辑真理,埋下了自我瓦解的种子。"},
+   {h:"后期维特根斯坦:意义即用法",p:"维特根斯坦后来推翻了自己:语言不是单一的逻辑图像系统,而是嵌入生活的多样『语言游戏』;一个词的意义不在于它指称什么,而在于它在具体实践中如何被使用。寻找词背后统一的本质是误入歧途——不同用法之间只有『家族相似』。他还以『私人语言论证』质疑笛卡尔式纯内在的自我。哲学因此不是建立理论,而是一种治疗:解开语言制造的思想痉挛,『让苍蝇飞出捕蝇瓶』。"} ],
+ [ {h:"知识/权力:被建构的『真理』",p:"福柯不问『什么是真理』,而问『真理如何被生产、由谁、通过什么实践』。他考察疯癫、医学、监狱与性等领域,揭示每个时代都有其『知识型(épistémè)』与话语规则,决定什么能被说、被当作真;知识与权力相互生产——监狱、学校、医院的『规训』技术,塑造出现代意义上的『主体』。这并非否认一切真理,而是把看似中立客观的知识重新置于历史与权力的语境中考察,瓦解其表面的纯洁性。"},
+   {h:"解构:意义的延异",p:"德里达承袭并激进化结构主义:意义来自符号之间的差异,而所指从不『在场』地完全到位,总被无限地『延异(différance)』——既是差异又是延迟。他细读西方哲学文本,揭示它们依赖一系列等级二元对立(言语/文字、在场/缺席、理性/感性),而这些对立往往能被文本自身的逻辑所颠覆。解构不是摧毁,而是显示:任何意义的稳定与中心都是被建构、可被松动的——对一切『终极根据』保持警惕。"},
+   {h:"重建公共理性:罗尔斯的正义论",p:"与欧陆的怀疑相对,英美政治哲学试图为多元社会重建公平的规范基础。罗尔斯设想一个『原初状态』:各方在『无知之幕』后——不知自己将是富是穷、何种天赋与信仰——选择社会的基本规则。他论证理性者会选择两条正义原则:平等的基本自由优先,以及社会经济的不平等须最有利于处境最差者(差别原则)。这用一个理性程序为『正义即公平』奠基,回应现代社会『如何在价值分歧中公正共处』的核心难题,与福柯式的权力批判构成当代哲学的两极张力。"} ]
+];
+
+const concepts=[
+ [ {t:"archē(本原)",d:"万物由之产生、又复归于之的终极根据与统一原理。"},
+   {t:"physis(自然)",d:"事物自身生长、运作的内在秩序,与人为约定(nomos)相对。"},
+   {t:"逻各斯(logos)",d:"赫拉克利特用以指支配万物流变的理性法则与尺度。"},
+   {t:"原子与虚空",d:"德谟克利特的两个终极实在:不可分的充实微粒,与让其运动的空。"} ],
+ [ {t:"反诘法(elenchus)",d:"通过连续提问暴露对方信念中的矛盾,以逼近更可靠的定义。"},
+   {t:"理念/相(Forms)",d:"独立、永恒、完美的普遍本质,可感事物因分有它而存在。"},
+   {t:"四因",d:"质料因、形式因、动力因、目的因——亚里士多德解释事物的四重原因。"},
+   {t:"中道(mean)",d:"德性是在两个极端之间、由理性把握的适度,如勇敢介于鲁莽与怯懦。"} ],
+ [ {t:"ataraxia(不动心)",d:"免于纷扰的心灵平静,伊壁鸠鲁与怀疑论共同追求的目标。"},
+   {t:"二分法(斯多葛)",d:"区分可控与不可控,只把幸福系于可控的内在判断与意愿。"},
+   {t:"快乐计算",d:"伊壁鸠鲁主张以长远的无痛无扰为准,衡量并节制眼前欲望。"},
+   {t:"太一与流溢",d:"普罗提诺的终极本原,万物由其层层溢出、又渴望回归。"} ],
+ [ {t:"信仰以求理解",d:"先信而后以理性阐明所信(credo ut intelligam),奥古斯丁的认识次序。"},
+   {t:"共相(universals)",d:"普遍概念;唯实论视其为真实存在,唯名论视其为名称。"},
+   {t:"自然神学",d:"仅凭理性(不依启示)论证关于上帝的真理,如阿奎那的五路。"},
+   {t:"启示 vs 理性真理",d:"阿奎那对两类真理领域的区分与协调:同源于上帝,不相冲突。"} ],
+ [ {t:"日心说",d:"哥白尼提出太阳居中,动摇地球与人类的宇宙中心地位。"},
+   {t:"归纳法",d:"从观察与实验中概括普遍规律的方法,培根用以取代经院演绎。"},
+   {t:"四假象",d:"培根列举的四类系统性认识偏误:种族、洞穴、市场、剧场。"},
+   {t:"第一/第二性质",d:"可数学化的客观性质,与依赖感知者的主观性质之分。"} ],
+ [ {t:"方法论怀疑",d:"为求确定性而主动怀疑一切可疑之物的策略。"},
+   {t:"cogito(我思)",d:"我思故我在——怀疑不掉的自我存在,知识的起点。"},
+   {t:"实体(substance)",d:"能独立自存者;斯宾诺莎主张只有一个,莱布尼茨主张无数单子。"},
+   {t:"充足理由律",d:"凡存在或发生者皆有其充分理由,莱布尼茨的核心原则。"} ],
+ [ {t:"白板(tabula rasa)",d:"心灵初始无内容,一切观念皆源于经验。"},
+   {t:"观念的来源",d:"感觉(外部)与反省(内省)是经验的两个源泉。"},
+   {t:"恒常连接",d:"休谟对因果的分析:我们只见规律相继,未见必然性。"},
+   {t:"是/应当问题",d:"从事实陈述无法逻辑地推出价值规范(休谟之叉)。"} ],
+ [ {t:"先天综合判断",d:"既扩展知识又具普遍必然性的判断,康德论证其何以可能。"},
+   {t:"现象/物自体",d:"事物对我们的显现,与事物自身;知识只及于前者。"},
+   {t:"二律背反",d:"理性越界把握整体时陷入的、正反双方皆可论证的矛盾。"},
+   {t:"绝对命令",d:"无条件的道德律令,要求准则可普遍化、永远视人为目的。"} ],
+ [ {t:"绝对者",d:"德国观念论中作为一切之根据的无限主体或精神。"},
+   {t:"辩证法",d:"正—反—合,通过矛盾的扬弃推动概念与历史前进。"},
+   {t:"扬弃(Aufhebung)",d:"同时否定、保留并提升的辩证运动。"},
+   {t:"理性的狡计",d:"历史借个人激情实现自身理性目的的机制。"} ],
+ [ {t:"生命意志",d:"叔本华所说盲目、无尽的求生冲动,世界的内在本质。"},
+   {t:"历史唯物主义",d:"以物质生产与阶级关系解释历史与意识的理论。"},
+   {t:"上帝已死",d:"最高价值失效、社会面临虚无主义的时代诊断。"},
+   {t:"信仰之跃",d:"克尔凯郭尔指个体超越理性论证、以激情承担的抉择。"} ],
+ [ {t:"意向性",d:"意识总是指向、关于某个对象的根本结构。"},
+   {t:"悬置(epoché)",d:"暂时搁置关于世界存在的自然判断,以纯粹描述经验。"},
+   {t:"此在(Dasein)",d:"能领会自身存在的人的存在方式,在世界之中存在。"},
+   {t:"自欺(bad faith)",d:"否认自身自由、把自己当作被决定之物的逃避。"} ],
+ [ {t:"语言转向",d:"把哲学问题重构为语言分析问题的二十世纪取向。"},
+   {t:"摹状词理论",d:"罗素分析含摹状词语句的逻辑方法,消解虚假指称。"},
+   {t:"可证实原则",d:"有认知意义须可经验证实或为逻辑真理(逻辑实证主义)。"},
+   {t:"意义即用法",d:"词义在于其在生活实践中的使用方式,语言是语言游戏。"} ],
+ [ {t:"知识型(épistémè)",d:"某一历史时期决定何为知识与真理的潜在话语规则。"},
+   {t:"规训",d:"通过监视、规范与训练塑造顺从主体的现代权力技术。"},
+   {t:"延异(différance)",d:"意义经由差异与延迟而生、永不完全在场。"},
+   {t:"无知之幕",d:"罗尔斯设想的选择情境,屏蔽自身处境以保证规则公平。"} ]
+];
+
+const debate=[
+ [ {h:"本原能是单一的吗?",p:"米利都学派假定万物出自一种本原,但水如何变成火与土?『一变多』的机制始终说不清。这一困难推动了多元论(四根、种子)与原子论:与其追问唯一本原,不如承认多种不生不灭的要素及其组合。"},
+   {h:"理性与感官,谁更可信?",p:"巴门尼德为逻辑一致性不惜否定整个可感世界,这在常识看来荒谬;赫拉克利特则似乎让知识失去稳定对象。两端都太极端,真正的难题——如何既承认变化又保住确定知识——要等柏拉图区分两个世界、康德区分现象与物自体才有系统回应。"} ],
+ [ {h:"理念论的『第三人』难题",p:"柏拉图晚年在《巴门尼德篇》中自我反省:若具体的美的事物因『分有』美的理念而美,那么这事物与理念之间的相似,是否又需要第三个理念来说明?如此无穷后退。亚里士多德正是抓住这一点,反对把普遍当作独立存在的实体。"},
+   {h:"德性可教吗?知识就是美德吗?",p:"苏格拉底主张『无人有意作恶』,作恶只因无知,故美德即知识、可教。但人明知故犯(意志薄弱)的现象似乎反驳了他;亚里士多德因此强调德性不只是知识,更需通过习惯与实践养成。这场关于『知与行』的争论延续至今。"} ],
+ [ {h:"宿命之下还有自由吗?",p:"斯多葛说一切依必然发生,又要人为自己的判断负责——若万事注定,这种『负责』如何可能?斯多葛以『软决定论』回应:外部事件注定,但我们对它的态度仍属于我们。这一张力是后世自由意志辩论的早期版本。"},
+   {h:"快乐主义会导向纵欲吗?",p:"伊壁鸠鲁常被误解为享乐纵欲,实则他主张最大的快乐来自最简朴的生活与友谊。但批评者(尤其斯多葛与基督教)仍指责其把善等同于快乐、贬低了德性追求。快乐到底该不该作伦理的基础,至今仍是功利主义争论的核心。"} ],
+ [ {h:"理性能证明信仰吗?",p:"阿奎那相信理性可证明上帝存在,但其后的奥卡姆等唯名论者认为,神的全能与自由超出理性范围,试图用逻辑捆绑上帝既僭越又徒劳。信仰与理性该如何划界这一中世纪核心争论,实际松动了经院综合,为近代『信仰归信仰、知识归知识』埋下伏笔。"},
+   {h:"共相究竟存不存在?",p:"唯实论若成立,普遍(如『人性』)比个人更真实,易滑向把抽象当实体;唯名论若彻底,则共同本质只是名称,知识的普遍性又成问题。奥卡姆的剃刀(如无必要勿增实体)倾向唯名论,深刻影响了近代经验主义的简约精神。"} ],
+ [ {h:"被抽空的世界:第二性质去哪了?",p:"若颜色、气味、声音只是心中的第二性质,那么科学描述的『真实世界』就成了无色无味的数学骨架,而我们鲜活的经验世界反倒不真实。这一『科学图景与生活世界的分裂』,被怀特海称为『自然的两岔』,至今困扰着心灵哲学。"},
+   {h:"归纳法可靠吗?",p:"培根寄望以归纳从经验上升到普遍规律,但休谟随后指出归纳本身缺乏理性保证(过去如此,不蕴含未来必如此)。归纳的合理性问题(波普尔后来以『证伪』作出回应)成为科学哲学的长期难题。"} ],
+ [ {h:"心身如何互动?(笛卡尔难题)",p:"若心灵是无广延的思维实体、身体是有广延的物质,二者本质迥异,它们如何在松果腺『相互作用』?这个连笛卡尔自己也答不好的问题,催生了偶因论、平行论乃至当代心灵哲学的种种立场,至今悬而未决。"},
+   {h:"天赋观念真的存在吗?",p:"理性派主张某些观念(上帝、无限、几何公理)是天赋的、非经验所能给予;经验派(洛克)则反问:若是天赋,为何并非人人自明、连儿童也懂?这场理性 vs 经验的正面交锋,正是康德试图调和的起点。"} ],
+ [ {h:"贝克莱真的否认了外部世界吗?",p:"『存在即被感知』常被讥为荒谬(约翰逊踢石头以示反驳)。但贝克莱并不否认桌椅真实,只否认『独立于一切心灵的物质』;难点在于无人观察时事物何以持存——他诉诸上帝的永恒感知,这又把经验论引回神学。"},
+   {h:"休谟问题:科学还有根基吗?",p:"若因果只是习惯、归纳无法被理性证明,那么整个自然科学岂非建立在心理惯性之上?这一『休谟问题』是科学哲学的根本挑战,康德的先天范畴、波普尔的证伪主义,都是对它的不同回应。"} ],
+ [ {h:"物自体悖论",p:"康德说物自体不可知,却又用它来解释感官经验的来源——可既然『因果』只是适用于现象的范畴,说物自体『导致』现象就自相矛盾。这一漏洞被费希特、黑格尔抓住,直接推动了取消物自体的德国观念论。"},
+   {h:"绝对命令太空洞、太僵硬?",p:"批评者指出:形式化的『可普遍化』标准本身推不出具体义务,且在『为救人是否可以撒谎』这类情境中显得僵硬、不近人情(贡斯当与康德有过著名争论)。义务论与后果论的张力由此长期存在。"} ],
+ [ {h:"辩证法是真逻辑还是文字游戏?",p:"黑格尔声称矛盾推动现实发展,但批评者(如罗素、波普尔)指责辩证法模糊、可被任意套用,且容忍逻辑矛盾、为既存秩序(乃至专制)辩护(『凡现实的都是合理的』)。辩证法是深刻的历史方法还是思辨的烟雾,至今争论不休。"},
+   {h:"历史真有方向与终点吗?",p:"黑格尔式的『历史有理性目的、走向自由的实现』,在二十世纪两次大战与极权灾难之后备受质疑;但它又以福山『历史的终结』等形式反复回归。历史是否有内在逻辑,仍是历史哲学的核心争点。"} ],
+ [ {h:"上帝死后,虚无主义能被克服吗?",p:"尼采诊断了虚无主义,却未必给出公认的解药:『超人』『权力意志』『永恒回归』究竟是有力的肯定,还是另一种神话?如何在没有绝对价值的情况下重建意义,成了二十世纪存在主义与后现代的共同课题。"},
+   {h:"历史唯物主义是科学还是信仰?",p:"马克思宣称揭示了历史的客观规律,但波普尔批评其『不可证伪』因而不算科学;其经济决定论是否低估了观念、文化与个人的作用,也是马克思主义内部(如葛兰西)持续反思的问题。"} ],
+ [ {h:"绝对自由是否过度?",p:"萨特说人完全自由、要对一切负责,但批评者指出这忽视了社会结构、身体与历史对选择的真实限制(后来萨特本人也转向马克思主义以补足)。自由与处境(facticity)的张力,是存在主义内部的核心争论。"},
+   {h:"海德格尔的哲学与政治污点",p:"海德格尔在1933年公开支持纳粹,其《黑色笔记》更暴露反犹倾向。其深刻的存在之思与其政治选择之间是否相关,成为持续至今、难以回避的争论,也提醒人们:伟大的思想不等于道德上的可靠。"} ],
+ [ {h:"可证实原则的自我反驳",p:"逻辑实证主义宣称『不可证实的命题无意义』,但这条原则本身既不能被经验证实、也不是逻辑真理——按它自己的标准,岂非也无意义?这一致命的自指难题,加上奎因对『分析/综合』二分的瓦解,使逻辑实证主义在二十世纪中叶走向衰落。"},
+   {h:"语言分析是解决还是回避了哲学问题?",p:"批评者(尤其欧陆传统)质疑:把伦理、人生意义等划为『不可说』,究竟是澄清了问题,还是逃避了它?分析哲学的精确,是否以牺牲哲学的重大关切为代价?这一英美—欧陆的分裂至今未弭。"} ],
+ [ {h:"若真理由权力建构,批判还能站在哪里?",p:"福柯式分析揭示真理与权力的纠缠,却引来自指诘问:你的批判本身不也是一种权力话语吗?它凭什么更真?哈贝马斯就批评后结构主义陷入『施为性矛盾』,无法为自身的规范立场辩护。这是后现代与批判理论的著名交锋。"},
+   {h:"无知之幕能推出唯一的正义吗?",p:"罗尔斯假定无知之幕后的人会选择他那两条原则,但诺齐克(自由至上主义)、社群主义者(桑德尔)与女性主义者都质疑:这一『中立』程序其实暗藏了特定的人性假设与个人主义偏见。何为正义,远未达成共识。"} ]
+];
+
+const impact=[
+ [ {h:"自然科学的胚胎",p:"『自然有可被理性与数学把握的统一规律』这一前苏格拉底假定,是整个自然科学的前提。德谟克利特的原子论更在两千年后被道尔顿、玻尔兹曼的近代原子理论部分印证,被誉为古代最具预见性的猜想。"},
+   {h:"贯穿哲学史的母题",p:"变与不变、一与多、表象与实在——这些在此首次提出的对立,成为柏拉图理念论、亚里士多德实体学说乃至现代形而上学反复处理的母题。可以说,后世哲学很大程度上是在回答前苏格拉底人提出的问题。"} ],
+ [ {h:"为西方思想立下框架",p:"怀特海有名言:整部西方哲学不过是『对柏拉图的一系列脚注』。理念论开启了理性主义、本质主义与基督教神学;亚里士多德的逻辑学统治逻辑领域两千年,他的物理学、伦理学、政治学是中世纪大学的核心教材。"},
+   {h:"教育与方法的遗产",p:"苏格拉底的诘问法成为现代『启发式教学』与法学院『苏格拉底教学法』的原型;柏拉图学园被视为西方大学的雏形;亚里士多德的德性伦理学在二十世纪经麦金太尔等人复兴,至今是规范伦理学的三大传统之一。"} ],
+ [ {h:"两千年后的心理自助",p:"斯多葛的『区分可控与不可控』『困扰你的不是事情,而是你对事情的看法』,直接启发了现代认知行为疗法(CBT)与当代盛行的斯多葛主义自助潮流;《沉思录》至今仍是畅销书。"},
+   {h:"原子论与世俗世界观的火种",p:"伊壁鸠鲁的原子论与『神不干预世界』经罗马诗人卢克莱修《物性论》保存,在文艺复兴时重被发现,影响了伽桑狄、霍布斯,乃至近代世俗、无神论与科学世界观的兴起。"} ],
+ [ {h:"逻辑与大学的锻造",p:"经院哲学把论证、区分、反驳的技艺磨到极致,锻造出严密的逻辑与术语体系,并催生了博洛尼亚、巴黎、牛津等中世纪大学——现代学术建制的直接祖先。"},
+   {h:"奥古斯丁式内省的回响",p:"奥古斯丁对内在自我、时间意识与意志的剖析,经笛卡尔的『我思』、卢梭的《忏悔录》直到胡塞尔的现象学不断回响;他的时间之问至今仍是时间哲学的经典起点。"} ],
+ [ {h:"现代科学的方法论根基",p:"培根的实验—归纳精神与伽利略的数学化自然观,共同奠定了近代科学方法,直接促成英国皇家学会的成立与科学共同体的兴起;『知识就是力量』成为技术文明的座右铭。"},
+   {h:"人的自我理解的转折",p:"哥白尼革命把人逐出宇宙中心,被弗洛伊德列为人类自恋遭受的『第一次重创』(后两次是达尔文与精神分析);而人文主义对人之尊严与自由的肯定,则成为现代个人主义与人权观念的源头之一。"} ],
+ [ {h:"现代『主体』的确立",p:"笛卡尔以『我思』把自我意识立为知识的第一基础,确立了近代哲学的『主体转向』,影响了从康德到现象学的整个传统;『主客二分』也成为现代思维(及其批评者)的基本框架。"},
+   {h:"理性与宽容的政治回声",p:"斯宾诺莎对自由思想与政教分离的辩护,是近代自由主义与世俗国家的先声;莱布尼茨的二进制与『普遍符号语言』构想,则被视为现代计算与逻辑学的远祖之一。"} ],
+ [ {h:"启蒙、自由主义与美国建国",p:"洛克的经验论、自然权利与『政府基于被治者同意』的学说,直接写进了美国《独立宣言》,塑造了现代自由民主的制度想象;其宽容思想是政教分离的理论支柱。"},
+   {h:"唤醒康德,奠基实证科学",p:"休谟的怀疑论『惊醒』了康德,直接催生《纯粹理性批判》;其经验主义与对形而上学的不信任,又经孔德、维也纳学派一脉,成为实证主义与现代分析哲学的精神源头。"} ],
+ [ {h:"现代哲学的分水岭",p:"康德几乎是后世一切哲学绕不开的枢纽:德国观念论、新康德主义、现象学,乃至当代的罗尔斯(其正义论明显带康德色彩)都从他出发;『人是目的』成为现代人权与生命伦理的基石。"},
+   {h:"科学与自由的双重遗产",p:"他对科学知识之普遍必然性的辩护影响了科学哲学;而把道德、自由、信仰从科学认识中划出、交给实践理性的做法,既为宗教与人文价值保留了空间,也定义了现代『事实与价值二分』的格局。"} ],
+ [ {h:"左右两脉的共同源头",p:"黑格尔的遗产一分为二:青年黑格尔派经费尔巴哈通向马克思与整个左翼革命传统;其国家与历史学说又被保守主义与民族主义吸收。二十世纪两大意识形态,都能在他那里找到根。"},
+   {h:"辩证思维的广泛渗透",p:"『正—反—合』的思维模式深入社会理论、心理学(发展阶段论)、历史叙事乃至日常话语;法兰克福学派的批判理论、存在主义与解释学,也都在与黑格尔的对话中成形。"} ],
+ [ {h:"重塑二十世纪的思想与政治",p:"马克思直接塑造了二十世纪的革命、国家与社会运动,影响波及全球数十亿人;尼采则深刻影响了存在主义、精神分析、后现代主义与现代文艺——二人是理解现代性的两把钥匙。"},
+   {h:"『怀疑的解释学』",p:"利科把马克思、尼采、弗洛伊德并称『怀疑的大师』:他们教会现代人对一切表面意义保持警觉,去追问其背后的经济利益、权力意志或无意识动机。这种『揭穿式』的批判姿态,已成为现代人文社科的底色。"} ],
+ [ {h:"渗入大众文化的哲学",p:"存在主义是少数真正『走出学院』的哲学:『存在先于本质』『他人即地狱』『荒诞』成为战后一代理解自我、自由与意义的语言,深刻影响了文学、戏剧、电影与心理治疗(如存在主义心理学)。"},
+   {h:"现象学的长尾",p:"胡塞尔—海德格尔的现象学经梅洛-庞蒂(身体)、列维纳斯(他者伦理)、伽达默尔(解释学)开枝散叶,至今仍是欧陆哲学、认知科学(具身认知)与质性研究方法论的活水源头。"} ],
+ [ {h:"塑造英美学术与计算时代",p:"现代逻辑(弗雷格、罗素)不仅重塑了英美哲学,更直接催生了图灵、哥德尔的工作与计算机科学的理论基础;分析哲学的清晰与论证标准,至今主导着英语世界的哲学训练。"},
+   {h:"语言转向的外溢",p:"『意义即用法』『语言游戏』经后期维特根斯坦影响了语言学、人类学、社会学(如温奇)乃至法律解释;对『语言如何塑造思想与实践』的关注,成为整个二十世纪人文学科的共同主题。"} ],
+ [ {h:"重塑当代人文与社会批判",p:"福柯、德里达深刻影响了文学理论、性别研究、后殖民研究、史学与艺术批评,『话语』『权力/知识』『解构』成为人文学科的通用词汇;无论赞成与否,当代批判思维很大程度上是在他们设定的议程上展开的。"},
+   {h:"正义论复兴政治哲学",p:"罗尔斯《正义论》被公认让一度沉寂的规范政治哲学起死回生,激起关于平等、自由与分配正义的持续大讨论,深刻影响了当代自由主义、福利国家辩论与公共政策思考。这场对话至今仍未结束——而你正站在它的最前沿。"} ]
+];
+const subs=[];
+subs[0]=[
+  {
+    id:"1.1",
+    t:"米利都学派:自然哲学的诞生",
+    lead:"当人们第一次不再用神话回答「万物从何而来」,而是寻找一个统一的自然本原时,哲学就诞生了。",
+    city:"miletus",
+    body:[
+      {h:"泰勒斯:为什么是水?",p:"亚里士多德把泰勒斯尊为「第一位哲学家」,关键不在他说出「万物的本原是水」这个答案,而在他提出问题的方式。他追问的是:在千变万化的现象背后,是否有一种始终如一的「本原」(arché)?他之所以选水,是因为生命离不开水分、种子在湿润中萌发、热的东西也靠湿气维持。这一步看似朴素,却完成了一次思维革命:用一种可观察的自然物去解释万物,而不再诉诸宙斯发怒或河神显灵。哲学的起点,是用「自然解释自然」。"},
+      {h:"阿那克西曼德:从具体物到「无定」",p:"泰勒斯的学生阿那克西曼德发现一个难题:如果本原是水这种具体的东西,那它怎么能变成与自己对立的火?于是他提出本原是「无定」(apeiron)——一种无限、无规定、不可穷尽的东西。万物从「无定」中分离出来,又终将复归于它,如同欠下债又偿还。这是哲学史上第一个真正抽象的概念:本原不必是任何一种已知元素,反而要超越一切具体性才能生出一切。他还画出了第一张世界地图,并猜想人由鱼演化而来。"},
+      {h:"阿那克西美尼:气与凝聚稀薄",p:"第三代的阿那克西美尼似乎「退回」到具体物——他说本原是气。但他真正的贡献是提出了一个量变机制:气稀薄时变成火,凝聚时依次变成风、云、水、土、石。这第一次用「程度的差异」来解释「种类的差异」,把质的变化还原为量的变化。比起前两人,他更关心的是「如何变」而非「是什么」,这种对转化机制的追问,成了后来一切自然科学的雏形。"}
+    ],
+    concepts:[
+      {t:"本原(arché)",d:"万物由之生成、又复归于它的那个始终不变的根据。"},
+      {t:"无定(apeiron)",d:"无限而无规定的本原,因不属于任何具体元素,才能生出一切。"},
+      {t:"自然哲学",d:"用自然自身的原因解释万物,而不诉诸神话与超自然力量。"}
+    ],
+    quote:{q:"万物充满神灵。",who:"泰勒斯(残篇,据亚里士多德转述)",plain:"在他看来,自然本身就蕴含着生成与运动的力量,无需外在神祇推动。"}
+  },
+  {
+    id:"1.2",
+    t:"赫拉克利特:万物流变、对立统一与逻各斯",
+    lead:"如果一切都在流动,那么「不变」是否只是幻觉?而流动之中,又是什么保证了世界不至于一片混乱?",
+    city:"ephesus",
+    body:[
+      {h:"人不能两次踏进同一条河流",p:"赫拉克利特最著名的断言是:你第二次踏进河里时,河水已经流走,你触到的是新的水流。深一层看,变的不只是河,你也已不是先前的你。他由此提出一个激进的世界观:存在的真相不是「物」,而是「过程」;不是静止的实体,而是永恒的转化。火是他偏爱的象征——火看似是一个东西,其实是持续不断的燃烧,它的「存在」恰恰就是「不停地变」。这与米利都学派寻找一个稳定本原的思路正相反。"},
+      {h:"对立统一:战争是万物之父",p:"流变之所以不混乱,是因为它遵循对立面的张力。弓与琴之所以有用,正因为弦被向相反方向拉紧——对立产生了和谐。健康因疾病才显得可贵,饱足因饥饿才有意义,白天与黑夜本是一体两面。赫拉克利特说「战争(冲突)是万物之父」,意思是对立的斗争才是生成万物、维系秩序的根本动力。这是辩证思维的源头:真理不在消除矛盾,而在看见矛盾双方如何互相依存、互相转化。"},
+      {h:"逻各斯:流变背后的尺度",p:"既然万物皆流,凭什么说世界有规律可言?赫拉克利特给出「逻各斯」(logos)这一关键概念——它既是支配万物变化的内在法则、尺度与比例,也是人能用理性把握的「道理」。火的燃烧不是任意的,而是「按一定分寸燃烧、按一定分寸熄灭」。逻各斯是公共的、人人共有的,可惜多数人「视而不见、听而不闻」,像睡着了一样各行其是。这个词后来深刻影响了斯多葛派乃至《约翰福音》开篇的「道」(太初有道)。"}
+    ],
+    concepts:[
+      {t:"逻各斯(logos)",d:"支配万物流变的内在法则与尺度,也指人可用理性把握的道理。"},
+      {t:"对立统一",d:"对立双方互相依存、互相转化,冲突本身即是和谐与生成的根源。"},
+      {t:"流变(panta rhei)",d:"万物皆流,存在的本质是过程而非静止的实体。"}
+    ],
+    quote:{q:"我们踏进又踏不进同一条河流;我们存在又不存在。",who:"赫拉克利特·残篇49a",plain:"在持续的流变中,同一性与差异、存在与不存在同时成立。"}
+  },
+  {
+    id:"1.3",
+    t:"巴门尼德与爱利亚学派:不变的「存在」与芝诺悖论",
+    lead:"如果赫拉克利特说一切皆变,巴门尼德则反其道而行:真正存在的东西绝不可能变化、也不可能不存在。",
+    city:"elea",
+    body:[
+      {h:"存在者存在,非存在者不存在",p:"巴门尼德用一条看似简单的逻辑链颠覆了感官世界:你只能思考和谈论「存在的东西」,因为「不存在」既无法被思考也无法被言说——你一旦想它,它就成了思想的对象,也就「是」了。由此他推断:存在是唯一的、不生不灭的、连续不可分、永恒不动的。因为「生成」意味着从「无」中来,而「无」根本不存在;「变化」意味着从「是」变成「不是」,这同样不可能。于是感官呈现的多样与运动,统统被判为幻觉,只有理性把握的「一」才是真理之路。"},
+      {h:"两条道路:真理与意见",p:"巴门尼德把认识分为两条路:「真理之路」依靠纯粹理性,得出存在唯一不变的结论;「意见之路」依靠感官,描述凡人所见的生灭流变的世界。这是西方哲学第一次明确把「现象」与「实在」、「感觉」与「理性」对立起来,并断然把理性置于感觉之上。这一区分影响极深——柏拉图的理念世界、近代理性主义对清晰理性的信任,都能在此找到源头。难点在于:若感官全是幻觉,我们又如何解释这个明明在动、在变的世界?"},
+      {h:"芝诺悖论:为不动辩护",p:"巴门尼德的弟子芝诺不正面证明「存在不动」,而是反证「运动与多」会导致荒谬。最著名的「阿基里斯追不上乌龟」:飞毛腿阿基里斯要追上领先的乌龟,必先到达乌龟的出发点,可那时乌龟又前进了一点,如此无穷,他永远差那么一点点。「飞矢不动」则指出:箭在每一个瞬间都占据一个与自身等大的空间,即静止不动,无数个静止相加怎能构成运动?这些悖论的深刻在于,它逼人正视无穷可分、连续与瞬间的关系——直到微积分与极限理论出现,数学才给出严格回应。"}
+    ],
+    concepts:[
+      {t:"存在(to eon)",d:"唯一、不生不灭、连续不动的真实者,只能被理性把握。"},
+      {t:"真理之路与意见之路",d:"前者凭理性认识不变的存在,后者凭感官描述生灭的现象。"},
+      {t:"芝诺悖论",d:"用归谬法揭示「运动」与「多」蕴含的逻辑困难,以捍卫存在的不动与统一。"}
+    ],
+    quote:{q:"能被思想的与能存在的是同一回事。",who:"巴门尼德·残篇3",plain:"思维与存在相通——凡可被理性思考者方为真实,不可思者即不存在。"}
+  },
+  {
+    id:"1.4",
+    t:"多元论与原子论:如何调和变与不变",
+    lead:"巴门尼德断言「无中不能生有」,可世界明明在变。后人接受了这条原则,却要救回运动——办法是:让不变的「多」重新组合。",
+    city:"abdera",
+    body:[
+      {h:"恩培多克勒:四根与爱憎",p:"恩培多克勒接受巴门尼德的核心要求——真正的存在不生不灭,但他把「一」拆成「多」:土、水、火、气四种永恒不变的「根」。万物的生灭其实只是四根按不同比例的混合与分离,就像画家用几种颜料调出无数图画,颜料本身并不增减。推动混合与分离的是两种力量:「爱」使元素结合,「憎(争)」使元素分离,二者轮流主导,构成宇宙的循环。这样,变化得以保留,而「无中生有」被避免——变的是组合,不变的是根本元素。"},
+      {h:"阿那克萨戈拉:种子与心灵(nous)",p:"阿那克萨戈拉走得更彻底:他认为存在无限多种性质不同的「种子」(后人称之为同质体),且「一切之中皆有一切」——一块面包里也潜藏着血肉骨骼的种子,故能滋养身体;事物显现为什么,取决于哪种种子占多数。最具开创性的是,他第一次引入一个独立的精神性原因——「心灵」(nous)。最初万物混沌一团,是心灵发动旋转、使种子分离聚合,才有了有序的宇宙。这是西方思想中「精神安排世界」观念的雏形,虽然苏格拉底曾抱怨他没把这一原则贯彻到底。"},
+      {h:"留基伯与德谟克利特:原子与虚空",p:"原子论是古代自然哲学的高峰。德谟克利特主张:存在是无数不可再分的微粒「原子」,它们形状、大小各异,在「虚空」中永恒运动、碰撞、勾连组合,形成万物。注意这里大胆地承认了「虚空」(非存在)的实在性——正是巴门尼德所否认的——因为没有空隙,原子就无处运动。万物的差别只是原子的形状、排列与位置不同,如同字母组成不同的词。这套理论彻底机械化、唯物化:没有目的、没有设计,只有原子与虚空。它经伊壁鸠鲁传至罗马的卢克莱修,并在近代科学中重获新生。"}
+    ],
+    concepts:[
+      {t:"四根",d:"恩培多克勒提出的土、水、火、气四种不变元素,万物由其混合分离而成。"},
+      {t:"心灵(nous)",d:"阿那克萨戈拉引入的精神性动因,负责发动并安排宇宙的有序运动。"},
+      {t:"原子与虚空",d:"不可分的实心微粒在空无中运动组合,差别仅在形状、排列与位置。"}
+    ],
+    quote:{q:"惯例上有甜,惯例上有苦……而真实中只有原子和虚空。",who:"德谟克利特·残篇9",plain:"颜色、味道等感觉性质是约定的现象,世界的真实底层只是原子在虚空中的运动。"}
+  }
+];
+
+subs[1]=[
+  {
+    id:"2.1",
+    t:"智者运动:相对主义与「人是万物的尺度」",
+    lead:"当哲学的目光从星空转向人世,第一批职业教师登场了——他们教人辩论、说服与成功,也第一次系统地动摇了「绝对真理」。",
+    city:"athens",
+    body:[
+      {h:"从自然到人事的转向",p:"公元前五世纪的雅典是民主城邦,公民要在公民大会和法庭上靠言辞取胜,于是出现了收费传授修辞、论辩与从政技艺的「智者」(sophistēs,本义即「智慧者、有专长的人」)。他们把哲学的焦点从「宇宙本原」转向「人、社会、法律与语言」。这本身是一大功绩:伦理、政治、知识论问题第一次成为讨论中心。但因他们重「说服」甚于「求真」,「智者」一词后来才染上「诡辩」的贬义。"},
+      {h:"普罗塔哥拉:人是万物的尺度",p:"普罗塔哥拉的名言是:「人是万物的尺度——是存在者存在的尺度,也是不存在者不存在的尺度。」同一阵风,怕冷的人觉得冷,健壮的人觉得不冷,那么风「本身」到底冷不冷?他的回答是:没有脱离感受者的「本身」,事物就是它向每个人显现的样子。这是相对主义的经典表述:真理因人而异,没有超越个人的绝对标准。它的解放意义在于尊重多元经验,难点也随之而来——若人人皆对,那「普罗塔哥拉自己的主张」是否也只是他个人的意见,凭什么要我们接受?"},
+      {h:"高尔吉亚:三个否定命题",p:"高尔吉亚把怀疑推向极致,提出三个层层递进的命题:第一,无物存在;第二,即使有物存在,也不可被认识;第三,即使可被认识,也不可被传达给他人。最后一点尤其犀利:我用语言传递的只是「词」,而非事物本身,你接收到的也只是你头脑中的理解,语言与实在、人与人之间始终隔着一层。无论他是在严肃论证还是在炫技,这都尖锐地揭示了语言、认识与存在之间的鸿沟,逼出了后世知识论的核心难题。"}
+    ],
+    concepts:[
+      {t:"智者(sophist)",d:"古希腊收费传授修辞与论辩术的职业教师,后引申出「诡辩」的贬义。"},
+      {t:"相对主义",d:"主张真理、价值因人或因境而异,不存在普遍绝对的标准。"},
+      {t:"修辞术(rhetoric)",d:"以言辞说服他人的技艺,智者视之为公共生活中最有用的能力。"}
+    ],
+    quote:{q:"人是万物的尺度:是存在者存在的尺度,也是不存在者不存在的尺度。",who:"普罗塔哥拉(据柏拉图《泰阿泰德》转述)",plain:"事物没有脱离人的「本来面目」,它对每个人就是它所显现的样子。"}
+  },
+  {
+    id:"2.2",
+    t:"苏格拉底:诘问法、无知之知与受审而死",
+    lead:"他一生未写一字,却被尊为西方道德哲学的奠基者;他自称一无所知,却被神谕称作最智慧的人。",
+    city:"athens",
+    body:[
+      {h:"无知之知:智慧始于承认无知",p:"德尔斐神谕说没有人比苏格拉底更智慧,他大惑不解,便去盘问那些自认有智慧的政治家、诗人、工匠,结果发现他们其实都不真正懂自己以为懂的东西。他由此领悟:自己之所以更智慧,只因「我知道我不知道」,而别人「不知道却自以为知道」。这就是著名的「无知之知」——它不是消极的自谦,而是一切真求知的起点:唯有先意识到无知,才会真正去探究。"},
+      {h:"诘问法:助产术式的追问",p:"苏格拉底的方法(elenchus)是不断提问:你说勇敢是临阵不退,那临阵不退却愚蠢送死也算勇敢吗?对方修正定义,他再追问,直到暴露原定义的矛盾,迫使对方承认自己其实并不真懂。他把这比作「助产术」——自己不生产知识,只帮别人把心中本有的真理「接生」出来。其哲学预设是:真理需要每个人自己经由理性去发现,而非被灌输。这种通过对话逼近定义、检验信念的方式,塑造了西方理性论辩的范式。"},
+      {h:"美德即知识与受审而死",p:"苏格拉底主张「美德即知识」:没有人会明知善而故意作恶,人作恶只因无知、误把恶当成了对自己好的东西;因此真正认识了善,就必然行善。这把道德问题转化为认识问题。公元前399年,他被控「不敬城邦诸神、败坏青年」,在陪审团前他拒不妥协,称「未经省察的人生不值得过」,宁可饮鸩而死也不放弃哲学。他的死成为哲学史上最具象征性的事件:一个人为了理性与良知,甘愿以生命为代价。"}
+    ],
+    concepts:[
+      {t:"无知之知",d:"承认自己的无知,这种自觉构成真正智慧与求知的起点。"},
+      {t:"诘问法(elenchus)",d:"通过连续提问暴露对方信念中的矛盾,助其逼近真定义的对话方法。"},
+      {t:"美德即知识",d:"善行源于对善的真知,无人明知善而故意为恶,作恶皆因无知。"}
+    ],
+    quote:{q:"未经省察的人生是不值得过的。",who:"苏格拉底(柏拉图《申辩篇》)",plain:"不去反思追问、只随波逐流地活着,就辜负了作为理性存在者的人生。"}
+  },
+  {
+    id:"2.3",
+    t:"柏拉图(上):理念论、洞穴比喻与知识何以可能",
+    lead:"我们看到无数张不完美的桌子,却都知道它们是「桌子」——这个让一切个别事物得以被理解的「桌子本身」,究竟在哪里?",
+    city:"athens",
+    body:[
+      {h:"理念论:为何需要「理型」",p:"柏拉图融合了两位前辈:从赫拉克利特那里他接受感官世界永恒流变、无可靠知识;从巴门尼德那里他接受真知须以不变者为对象。于是他设想:在变动的感官世界之上,另有一个永恒不变的「理念(理型,eidos/idea)」世界。每张具体的床都会朽坏,但「床本身」这个理念完美、永恒;一切美的事物会消逝,但「美本身」不变。个别事物之所以是其所是,是因为它「分有」或「摹仿」了相应的理念。理念才是真正的实在,感官事物只是它的影子。"},
+      {h:"洞穴比喻:从影子到太阳",p:"柏拉图设想一群囚徒自幼被锁在洞穴中,只能看见身后火光投在墙上的影子,便以为影子就是全部真实。若有人挣脱锁链转身,会被火光刺痛;若被拖出洞外,起初被阳光灼得睁不开眼,渐渐才看清真实的事物,最后能直视太阳——太阳象征「善的理念」,是一切存在与可知的最高根源。这个比喻同时讲了三件事:认识的层级、教育是「灵魂的转向」、以及哲人重返洞穴启蒙众人却可能遭嘲弄甚至杀害(暗指苏格拉底之死)。"},
+      {h:"知识即回忆:学习何以可能",p:"在《美诺篇》里,苏格拉底引导一个未学过几何的童奴,仅靠提问就让他「答出」正方形面积的难题。柏拉图据此论证:学习并非从外界获得全新知识,而是灵魂「回忆」起它在出生前、于理念世界中早已见过的真理。这解决了一个古老悖论(美诺悖论):你若完全不知某物,根本无从寻找;若已知,又何须寻找?「回忆说」给出折中——我们潜在地已知,学习只是把它唤醒。它也支撑了灵魂不朽与理念先在的学说。"}
+    ],
+    concepts:[
+      {t:"理念/理型(idea)",d:"永恒不变、完美的真实存在,个别事物因分有它才成其所是。"},
+      {t:"分有与摹仿",d:"感官事物通过分有或摹仿相应理念,而获得自身的性质与可理解性。"},
+      {t:"回忆说",d:"学习是灵魂回忆起出生前在理念世界中已知的真理,而非全新获取。"}
+    ],
+    quote:{q:"在可知世界中最后看见、且费力才能见到的,是善的理念。",who:"柏拉图《理想国》第七卷",plain:"善是认识的终极目标与万物可知的根源,如太阳照亮一切,却最难直视。"}
+  },
+  {
+    id:"2.4",
+    t:"柏拉图(下):理想国、灵魂三分与爱(厄洛斯)",
+    lead:"什么样的城邦才是正义的?柏拉图的回答出人意料:正义的城邦,其结构竟与一个正义灵魂的结构如出一辙。",
+    city:"athens",
+    body:[
+      {h:"灵魂三分与个人正义",p:"柏拉图把灵魂分为三部分:理性(追求真理、能审慎权衡)、激情(blood的意气,如愤怒、荣誉感)、欲望(对食色财货的渴求)。他用一个生动的图景说明冲突:口渴的人却因某种考虑而忍着不喝,说明体内有两股力量在角力。所谓「正义」,就是三者各司其职、和谐有序——理性主导,激情辅助理性、节制欲望。这把道德从外在规范内化为「灵魂内部秩序」的问题,正义于是成了灵魂的健康。"},
+      {h:"理想国:哲人王与三阶级",p:"在《理想国》中,城邦与灵魂同构:统治者对应理性,护卫者(军人)对应激情,生产者(农工商)对应欲望。城邦的正义就是这三个阶级各守其分、互不僭越。柏拉图最大胆的主张是「哲人王」——除非哲学家成为君王,或君王研习哲学,城邦的祸患永无止息,因为唯有认识了善之理念的人,才配真正掌权治理。他甚至为护卫者设计公有财产、共同生育以杜绝私心。这套设计因其反民主、近乎极权的色彩,两千年来争议不断。"},
+      {h:"厄洛斯:爱是向上的阶梯",p:"在《会饮篇》中,柏拉图借女祭司第俄提玛之口阐述爱(erōs)的本质:爱是对「美与不朽」的渴求,是介于匮乏与丰盈之间的中间状态。他描绘一架「爱的阶梯」:人最初爱某个美的身体,继而领悟一切身体之美相通,再上升到爱美的心灵、美的制度与知识,最终直观「美本身」——那永恒、绝对、不增不减的美的理念。这就是后世所说的「柏拉图式的爱」的真义:它不是无性之爱,而是从感性之美出发、被引领着上升至理念的灵魂飞升。"}
+    ],
+    concepts:[
+      {t:"灵魂三分",d:"灵魂含理性、激情、欲望三部分,正义即三者各司其职、理性主导的和谐。"},
+      {t:"哲人王",d:"唯有认识善之理念的哲学家执政,城邦才能真正实现正义与善治。"},
+      {t:"厄洛斯(erōs)",d:"对美与不朽的渴求,可由爱具体之美上升到对美本身(理念)的观照。"}
+    ],
+    quote:{q:"除非哲学家成为城邦的王,或者现今的君王真诚地研究哲学……否则城邦永无宁日。",who:"柏拉图《理想国》第五卷",plain:"只有让真正认识善的人掌权,政治的根本祸患才能终结。"}
+  },
+  {
+    id:"2.5",
+    t:"亚里士多德:逻辑、四因说、实体与德性中道",
+    lead:"柏拉图把真实放在另一个世界,他的学生亚里士多德却坚持:真实就在我们脚下这个可观察、可分析的世界之中。",
+    city:"athens",
+    body:[
+      {h:"逻辑与三段论:思维的形式",p:"亚里士多德是形式逻辑的奠基者。他发现:推理的有效与否,不取决于内容,而取决于形式。经典的三段论——「凡人皆有死;苏格拉底是人;所以苏格拉底有死」——只要前提为真且形式正确,结论必然为真。他系统整理了概念、判断与推理的规则,提出同一律、矛盾律、排中律等思维基本法则。这套逻辑学统治西方思维近两千年,直到近代才被进一步扩展,堪称他对人类理性最持久的贡献。"},
+      {h:"四因说与实体:事物为何如此",p:"要完整解释一事物,亚里士多德认为须问四个「为什么」,即四因:质料因(由什么构成,如青铜)、形式因(是什么样式,如雕像的形状)、动力因(由谁造成,如雕塑家)、目的因(为了什么,如供人瞻仰)。其中目的因尤为关键——万物都朝向其内在目的(telos)而运动,橡子的「目的」就是长成橡树。他还批评老师的理念论:共相(形式)不在另一个世界,而内在于个别事物之中。真正的「实体」(ousia)是这一个个具体的、形式与质料结合的存在,如这匹马、这个人。"},
+      {h:"德性即中道:幸福在于实现潜能",p:"在伦理学上,亚里士多德主张人生的终极目的是「幸福」(eudaimonia),但它不是快感,而是「灵魂合乎德性的实现活动」——是充分实现人之为人的理性潜能。德性不是天生的,而是通过反复践行养成的稳定品格,如同弹琴靠多弹才会。其核心是「中道」:勇敢是怯懦与鲁莽之间的适度,慷慨是吝啬与挥霍之间的适度。中道不是机械的折中,而是在恰当的时间、对恰当的对象、以恰当的方式做出恰当之事——这需要实践智慧(phronesis)来权衡,因人因境而异。"}
+    ],
+    concepts:[
+      {t:"三段论",d:"由两个前提推出结论的演绎推理形式,有效性取决于形式而非内容。"},
+      {t:"四因说",d:"用质料、形式、动力、目的四种原因完整解释一事物的存在与生成。"},
+      {t:"中道(mesotēs)",d:"德性在于两个极端之间的恰当适度,须由实践智慧因境而定。"}
+    ],
+    quote:{q:"我们因做公正之事而成为公正的人,因做节制之事而成为节制的人。",who:"亚里士多德《尼各马可伦理学》",plain:"德性不是知道就有,而是靠反复实践培养出的稳定品格。"}
+  }
+];
+
+subs[2]=[
+  {
+    id:"3.1",
+    t:"伊壁鸠鲁主义:原子、快乐计算与无惧死亡",
+    lead:"在动荡的希腊化时代,哲学不再追问宇宙本原,而要回答一个更切身的问题:人怎样才能活得安宁而幸福?",
+    city:"athens",
+    body:[
+      {h:"原子论与「偏斜」:为自由留出空间",p:"伊壁鸠鲁继承德谟克利特的原子论:万物由原子在虚空中运动组合而成,灵魂也是精细原子构成,人死则原子离散。但他做了一个关键修改——原子在下落中会发生微小的、无原因的「偏斜」(clinamen)。这一改动有深意:若原子只按既定轨迹机械运动,世界就是彻底决定论的,人便无自由可言;而偏斜引入了不确定性,为人的自由意志保留了余地。他的物理学服务于伦理学——理解自然,是为了消除迷信带来的恐惧。"},
+      {h:"快乐主义:快乐是无痛的宁静",p:"伊壁鸠鲁说快乐是幸福的开端与归宿,却常被误解为纵欲。实际上他追求的是「静态快乐」——身体的无痛(aponia)与灵魂的无扰(ataraxia),而非感官的强烈刺激。后者往往带来更大的痛苦与依赖。他主张精明地「计算」苦乐:有些短暂快乐会招致长久痛苦,就该放弃;有些一时痛苦能换来更大安宁,就该接受。他还区分欲望:自然且必要的(如食、友谊)应满足,自然但不必要的(如美食)可适度,既不自然也不必要的(如名利)应戒除。简朴知足,才是通向宁静之路。"},
+      {h:"无惧死亡:死亡与我们无关",p:"伊壁鸠鲁提出一个著名论证消解死亡恐惧:「死亡和我们没有关系,因为当我们存在时,死亡尚未来临;当死亡来临时,我们已不存在。」既然灵魂随原子离散而消亡,死后既无知觉也无痛苦,那就无可恐惧——恐惧的只是「想象中正在体验死亡的自己」,而那个自己根本不存在。同理,神虽存在却居于天界、不干预人事,故无需畏惧神罚。破除对神与死亡这两大恐惧,人才能获得真正的心灵宁静。"}
+    ],
+    concepts:[
+      {t:"宁静(ataraxia)",d:"灵魂不受困扰的平静状态,是伊壁鸠鲁所追求的最高快乐。"},
+      {t:"偏斜(clinamen)",d:"原子下落中无原因的微小偏离,用以打破决定论、为自由意志留地。"},
+      {t:"快乐计算",d:"权衡苦乐的长远后果以选择行动,追求无痛宁静而非感官刺激。"}
+    ],
+    quote:{q:"死亡和我们没有关系;因为我们存在时,死亡不在;死亡来临时,我们已不在。",who:"伊壁鸠鲁《致美诺寇的信》",plain:"既然死后毫无知觉,死亡便不是任何人能体验到的祸患,故不必恐惧。"}
+  },
+  {
+    id:"3.2",
+    t:"斯多葛主义:命运、理性与「可控/不可控」二分",
+    lead:"如果许多事根本不由我们决定,智慧或许就在于:分清什么在我们能力之内,什么不在,并只为前者负责。",
+    city:"rome",
+    body:[
+      {h:"宇宙逻各斯与命运",p:"斯多葛派认为整个宇宙是一个由神圣理性(逻各斯)贯通、安排的有机整体,一切都按必然的因果链条发生,这就是「命运」(heimarmene)。神不在世界之外,而就是这内在于万物的理性本身,因此宇宙的运行是合理而善的。人作为宇宙的一部分,身上分有同一份理性。这套世界观的实践推论是:既然万事自有其位、皆出于宇宙理性的安排,智者就应顺应自然、顺应命运,而非徒劳地抗拒不可改变之事。"},
+      {h:"可控与不可控的二分",p:"爱比克泰德《手册》开篇即是斯多葛实践的核心:「有些事在我们能力之内,有些不在。」在我们能力之内的,是我们的判断、意愿、欲求与态度;不在的,是身体、财产、名声、官位乃至他人的看法。痛苦的根源,在于我们误把不可控之物当成可控、并执着于它。智慧在于:对不可控之事坦然接受,把全部努力投向唯一真正属于我们的东西——内心的判断与选择。这一区分简单却极有力,正是现代认知疗法的思想源头之一。"},
+      {h:"德性即幸福与情感的治理",p:"斯多葛派主张「德性是唯一的善」:健康、财富、声名都是「无关紧要之物」(adiaphora),它们本身无所谓好坏,唯有合乎理性与德性的品格才真正决定幸福。由此,真正的智者即使身陷困厄也能安然不动,因为幸福全系于他自身可控的德性。他们追求「不动心」(apatheia),即不被那些源于错误判断的激情(如过度的恐惧、贪欲、悲伤)所奴役——这不是冷漠无情,而是让理性主导情感,在风浪中保持内心的自主与平静。"}
+    ],
+    concepts:[
+      {t:"二分法",d:"区分在我们能力之内(判断、意愿)与之外(身体、外物)的事,只为前者负责。"},
+      {t:"顺应自然",d:"顺从宇宙理性所安排的命运,与整体的合理秩序保持一致。"},
+      {t:"不动心(apatheia)",d:"以理性驾驭源于错误判断的激情,达到内心的自主与平静。"}
+    ],
+    quote:{q:"有些事在我们能力之内,有些事不在我们能力之内。",who:"爱比克泰德《手册》第一节",plain:"分清可控与不可控,把心力只投向真正属于自己的判断与选择。"}
+  },
+  {
+    id:"3.3",
+    t:"怀疑主义:悬置判断(epoché)以求宁静",
+    lead:"如果每一种主张都能找到同样有力的反对意见,那么或许最明智的做法,是干脆不下判断。",
+    city:"athens",
+    body:[
+      {h:"从皮浪到学园派",p:"怀疑主义的鼻祖皮浪据说随亚历山大东征,见识了各地迥异的风俗信仰,深感人无法断定何为真相。后来的怀疑论分为两支:皮浪派(以塞克斯都·恩披里柯为集大成者)与一度主导柏拉图学园的「学园怀疑派」(如阿尔克西劳、卡尔涅阿德斯)。他们共同的矛头,指向斯多葛与伊壁鸠鲁这类自信掌握真理的「独断论者」。怀疑主义不是宣称「什么都不存在」(那也是一种独断),而是对一切超出现象的论断保持审慎与开放。"},
+      {h:"对立等效与悬置判断",p:"怀疑派的核心技艺,是对任一命题都找出势均力敌的正反论据,使之「等效对立」(isostheneia),理性既无法偏向任何一方,便只好「悬置判断」(epoché)——既不肯定也不否定。比如蜂蜜:它尝起来甜,可对病人却是苦的,那它「本身」究竟甜不甜?我们只能说「它向我显得甜」,而无法断言它本质如何。塞克斯都还整理出多条「论式」(如感官因人因境而异、无穷后退、循环论证等),系统地动摇一切独断的认识根基。"},
+      {h:"悬置之后:宁静不期而至",p:"怀疑主义最有趣的地方在于它的目的不是认识论上的瘫痪,而是心灵的安宁(ataraxia)。塞克斯都讲了一个比喻:画家阿佩莱斯怎么也画不好马嘴的泡沫,一气之下把海绵掷向画布,反而偶然画成了。怀疑者本想通过判断真假来求得安宁,屡求不得,索性悬置判断,宁静却如影随形地降临了——因为不再为「事物本身是好是坏」而焦虑。在生活中,怀疑者并不瘫痪:他依循现象、习俗与本能行事,只是不对其真理性下断言。"}
+    ],
+    concepts:[
+      {t:"悬置判断(epoché)",d:"对一切超出现象的论断既不肯定也不否定,保持中止的态度。"},
+      {t:"等效对立(isostheneia)",d:"任一命题都有势均力敌的正反论据,使理性无法偏向任何一方。"},
+      {t:"独断论",d:"怀疑派对自信宣称已掌握真理之学说(如斯多葛、伊壁鸠鲁)的统称。"}
+    ],
+    quote:{q:"对每一个论断,都有一个相等的论断与之对立。",who:"塞克斯都·恩披里柯《皮浪学说概要》",plain:"既然正反双方旗鼓相当,理性只能悬置判断,反而获得了内心的宁静。"}
+  },
+  {
+    id:"3.4",
+    t:"新柏拉图主义:太一、流溢与通向中世纪的桥",
+    lead:"古代哲学的最后一次伟大综合:万物如何从一个绝对的「一」中涌流而出,人又如何沿原路返回与它合一?",
+    city:"rome",
+    body:[
+      {h:"太一:超越存在的本原",p:"普罗提诺(Plotinus)把柏拉图的善之理念推向极致,提出最高本原是「太一」(to Hen)。太一是绝对的统一与单纯,它甚至超越了「存在」与「思想」——因为任何描述、任何属性都会给它带来多样性,而它是纯粹的「一」。我们无法正面言说它是什么,只能说它「不是什么」(否定神学的源头)。太一不匮乏、不欲求,却因其无限丰盈而自然地溢出——这为基督教那个超越一切、不可言说的上帝提供了哲学语言。"},
+      {h:"流溢说:从一到多的下降",p:"普罗提诺用「流溢」(emanation)解释万物如何从太一生成,而太一自身却毫无减损,如同太阳放出光芒、源泉涌出活水。这是一个层层下降的等级序列:太一首先溢出「理智」(nous,其中含有全部理念),理智再溢出「灵魂」(包括世界灵魂与个体灵魂),灵魂再赋形于「物质」世界。越接近太一越完满、越光明,越远离则越多样、越晦暗,物质处于流溢的最末端,接近于纯粹的匮乏与黑暗(恶不是实体,而是善的缺失)。"},
+      {h:"回归与通向中世纪的桥",p:"流溢是下降之路,人生的意义则在于「回归」(epistrophe)上升之路:灵魂应转离感官与物质,经由净化、沉思,层层上溯,最终在罕见的「出神」(ecstasy)时刻与太一神秘合一。这套「太一—流溢—回归」的图式,深刻塑造了奥古斯丁的思想,经由伪狄奥尼修斯传入中世纪神学,影响了从神秘主义到阿奎那的整个传统。新柏拉图主义因此成为连接古希腊哲学与基督教中世纪的关键桥梁,是古典理性的余晖,也是新时代的序曲。"}
+    ],
+    concepts:[
+      {t:"太一(to Hen)",d:"超越存在与思想的绝对本原,纯粹的统一,只能以否定方式言说。"},
+      {t:"流溢(emanation)",d:"万物如光自源头层层涌出而源头不减,构成由完满到晦暗的等级序列。"},
+      {t:"回归(epistrophe)",d:"灵魂转离物质、经沉思上溯,最终在出神中与太一合一的上升之路。"}
+    ],
+    quote:{q:"太一是万物之源,自身却不是万物中的任何一个。",who:"普罗提诺《九章集》",plain:"作为一切的本原,太一超越于它所生出的一切之上,无法用任何具体属性来规定。"}
+  }
+];
+subs[3]=[
+  {
+    id:"4.1",
+    t:"奥古斯丁:内省、原罪、时间之问与意志",
+    lead:"当一个人不再向外追问世界由什么构成,而是转身向内追问「我是谁、我为何作恶」,西方哲学就第一次有了真正的「内在性」深度。",
+    city:"hippo",
+    body:[
+      {h:"向内转的方法:在记忆与自我中寻找上帝",p:"奥古斯丁的《忏悔录》开创了一种全新的哲学姿态:不再像希腊人那样凝视星空与自然,而是回到自己的内心。他著名地说,真理就居住在内在的人之中。这种内省不是心理学式的自我观察,而是一条上升之路:通过审视自己的记忆、判断与渴望,人发现自己的心灵中竟有一些超出自身、永恒不变的真理,比如数学与道德标准。这些真理不可能由有限多变的我创造,于是它们指向一个永恒的源头。内省因此成了通往上帝的阶梯,而「认识你自己」被改写成「在自己之内认识神」。"},
+      {h:"原罪与意志的扭曲:偷梨的故事",p:"奥古斯丁追问的核心是:恶从何而来?如果上帝全善,世界为何有恶?他给出的答案是:恶不是一种实体,而是善的缺失与意志的偏斜。在《忏悔录》里他反复咀嚼少年时偷梨的小事——梨子并不好吃,他偷只是因为偷本身的快感、为了作恶而作恶。这个看似微小的例子被他放大为人性的隐喻:人的意志已经被原罪扭曲,会无缘无故地背离善。这就解释了为何「我赞同更好的,却追随更坏的」——人不是无知而作恶,而是明知故犯,意志本身病了。"},
+      {h:"时间之问:它存在于何处?",p:"奥古斯丁在《忏悔录》第十一卷提出了哲学史上最迷人的难题之一:时间是什么?他坦白:没人问我时我清楚,一旦要解释就茫然了。过去已不存在,未来尚未存在,现在又是无延展的一瞬——那么时间究竟在哪里?他的革命性回答是:时间存在于心灵之中。过去是当下的记忆,未来是当下的期待,现在是当下的注视。时间不是外在世界的客观刻度,而是心灵的一种延展或张力。这一思路深刻影响了后来的康德、胡塞尔乃至海德格尔对时间的探讨。"},
+      {h:"恩典与自由意志的张力",p:"奥古斯丁一生都在两端拉扯:一方面强调人有自由意志,因而要为罪负责;另一方面又坚持人被原罪败坏,无法仅凭自力得救,必须依靠上帝白白赐下的恩典。这一张力在他与佩拉纠派的论战中达到顶点:如果得救全靠恩典,自由还有意义吗?如果靠自由,恩典岂非多余?奥古斯丁没有提供圆满的逻辑解,而是把它留作信仰的奥秘。这个难题此后贯穿整个西方思想,从宗教改革的「因信称义」一直回响到现代关于决定论与自由的争论。"}
+    ],
+    concepts:[
+      {t:"原罪",d:"人因始祖堕落而承袭的意志败坏倾向,使人天生偏离善而需恩典救赎。"},
+      {t:"恶是善的缺失",d:"恶并非独立实体,而是本应存在的善的欠缺与意志的偏斜。"},
+      {t:"心灵中的时间",d:"过去、现在、未来作为记忆、注视与期待,统一栖居于心灵的延展之中。"}
+    ],
+    quote:{q:"你为我们造了我们自己,我们的心如不安息在你怀中,便不会安宁。",who:"奥古斯丁·《忏悔录》",plain:"人内心的躁动本身就是指向某种超越者的渴望,只有在它那里才能真正安顿。"}
+  },
+  {
+    id:"4.2",
+    t:"早期经院与共相之争(波爱修、安瑟伦本体论证明)",
+    lead:"「红色」「人」「正义」这些普遍词,究竟是真实存在的东西,还是只是名字?这场看似抽象的争吵,实则关乎实在的根本结构。",
+    city:"paris",
+    body:[
+      {h:"波爱修:从希腊到中世纪的桥梁",p:"在西罗马崩溃的废墟上,波爱修立志把柏拉图与亚里士多德的全部著作译成拉丁文。他没能完成,却翻译并注解了亚里士多德的逻辑学与波菲利的《导论》,几乎以一己之力为后世几百年的学术保存了逻辑工具。正是在注解波菲利时,他转述了那个引爆千年争论的问题:种和属(如「人」「动物」)是真实存在的事物,还是仅仅是心灵中的概念?它们若存在,是有形的还是无形的?这就是共相问题的起点。他还在狱中写下《哲学的慰藉》,以哲学女神之口探讨命运、自由与至善,成为中世纪最受欢迎的书之一。"},
+      {h:"共相之争:实在论与唯名论的对垒",p:"问题的实质是:像「人性」这样的普遍者(共相)有没有独立的实在性?极端实在论者(承袭柏拉图)认为共相先于个体而真实存在,个别的人之所以是人,是因为分有了「人性」这个实在;唯名论者则认为只有个别事物真实存在,共相不过是我们用来归类的名称或声音。这场争论远不只是文字游戏:它牵涉到上帝创世时心中是否先有「理念」、三位一体如何可能、个体与种类孰先孰后等神学与形而上学的根本问题。后世的温和方案(如阿奎那)主张共相既不先于也不脱离个体,而是存在于个体之中并由理智抽象出来。"},
+      {h:"安瑟伦的本体论证明:从概念跃向存在",p:"坎特伯雷的安瑟伦提出了哲学史上最著名也最具争议的论证。他把上帝定义为「无法设想有比之更伟大者」。接着他推论:即便是不信神的「愚人」,心中也理解这个概念,所以上帝至少存在于理解之中。但若上帝仅存在于理解中而不存在于现实中,那我们就能设想一个更伟大的——一个真实存在的它——这就自相矛盾了。因此,上帝必然也存在于现实之中。这个论证的惊人之处在于:它声称仅凭对「上帝」概念的分析,就能推出它必然存在,完全不诉诸经验。"},
+      {h:"高尼罗的反驳与论证的余响",p:"同时代的修士高尼罗立刻反击:照此逻辑,我也能设想一座「最完美的岛屿」,难道它就因此必然存在吗?显然不能,所以从概念推不出存在。这触及了论证的要害——「存在」是否像一个属性那样能被加进概念里。康德后来给出了经典批判:存在不是一个真正的谓词,说一物存在并没有给它的概念增添任何内容。然而本体论证明并未因此消亡:笛卡尔、莱布尼茨重新激活它,现代逻辑学家(如哥德尔、普兰丁格)还用模态逻辑加以重构,它至今仍是检验「概念与实在关系」的试金石。"}
+    ],
+    concepts:[
+      {t:"共相",d:"如「人」「红」等普遍者,争论其究竟独立实在还是仅为名称概念。"},
+      {t:"实在论与唯名论",d:"前者认为共相真实存在,后者认为只有个别事物存在、共相只是名字。"},
+      {t:"本体论证明",d:"仅凭对「上帝即无法设想更伟大者」这一概念的分析推出其必然存在。"}
+    ],
+    quote:{q:"我并非理解了才信仰,而是信仰了才能理解。",who:"安瑟伦·《宣讲》",plain:"信仰不是理性的对立面,而是开启理解的前提;先信,才看得见道理。"}
+  },
+  {
+    id:"4.3",
+    t:"阿奎那:理性与信仰的大综合与「五路」",
+    lead:"当亚里士多德的全部著作经阿拉伯世界重返欧洲,基督教世界面临抉择:把这位异教哲人当作威胁烧掉,还是把他纳入信仰?阿奎那选择了第三条路——综合。",
+    city:"paris",
+    body:[
+      {h:"信仰与理性各有其域,又彼此印证",p:"阿奎那的根本立场是:真理只有一个,所以正确运用的理性绝不会与真信仰冲突。他区分出两类真理:一类是理性单凭自身就能证明的(如上帝存在),另一类是超出理性、只能靠启示得知的(如三位一体、道成肉身)。理性和信仰因此不是敌人,而是通向同一真理的两条路径;哲学是神学的婢女,但是一个被尊重、被善用的婢女。这种分工既给了理性独立的空间,又为信仰保留了不可化约的领域,化解了「亚里士多德威胁论」,成就了中世纪最宏大的思想综合。"},
+      {h:"五路:从经验世界回溯第一因",p:"在《神学大全》中,阿奎那提出五条证明上帝存在的路径,全都从可经验的世界出发(这正与安瑟伦的纯概念论证相反)。前三路是核心:其一,凡运动者皆被他物推动,不能无穷后退,故必有一不动的推动者;其二,因果链不能无穷上溯,故必有第一因;其三,万物皆可能存在也可能不存在,但若一切都偶然,曾经必有「全无」之时,那现在就不该有任何东西,故必有一个自身必然的存在者。后两路则从等级与目的性出发,推向至善与终极设计者。这五路最终都把那个终点称为「上帝」。"},
+      {h:"为何不能无穷后退:论证的关键支点",p:"五路的说服力全押在一个前提上:本质性的因果序列不能无限后退。阿奎那的区分很精妙:他不否认时间上的无穷链条(如父生子、子生孙可以无限),而是针对「当下同时起作用」的从属性序列——比如手推棍、棍推石,若没有第一个施力者,整条链当下就动不起来。把这个例子放大到存在本身:万物此刻的存在都依赖于他者维系,若没有一个自身就存在、不依赖任何他者的根基,整个存在的「链条」当下就会坍塌。批评者(如休谟)则质疑:凭什么整个序列也需要一个外在原因?"},
+      {h:"类比之路:我们如何谈论上帝",p:"一个深刻难题是:既然上帝无限超越,我们用「善」「智慧」这些来自有限世界的词去说它,岂非全然不当?阿奎那的解决是「类比谓述」:这些词用于上帝和用于受造物,既非完全同义(否则把上帝降为受造物),也非完全异义(否则我们对上帝一无所知、连说都不能说),而是类比地使用。说上帝是善的,意味着它以一种超越而完满的方式是其善之源。这一语言哲学上的洞见,为有限的人类如何有意义地谈论无限者提供了精巧的中间道路。"}
+    ],
+    concepts:[
+      {t:"五路",d:"从运动、因果、偶然性、等级、目的五个经验出发证明上帝存在的论证。"},
+      {t:"哲学为神学之婢",d:"理性独立有效,但最终服务于、并印证启示真理。"},
+      {t:"类比谓述",d:"对上帝的语词既非同义也非异义,而以类比方式指向其超越的完满。"}
+    ],
+    quote:{q:"恩典不废除自然,而是成全自然。",who:"阿奎那·《神学大全》",plain:"信仰不是要否定人的理性与天性,而是把它们提升到更完满的境地。"}
+  },
+  {
+    id:"4.4",
+    t:"唯名论与经院的黄昏(司各脱、奥卡姆剃刀)",
+    lead:"当阿奎那的大综合刚刚建成,一批锋利的头脑就开始拆解它:也许实在并不像那座精密的理性大厦,而是更偶然、更个别、也更不可被纯逻辑捕捉。",
+    city:"paris",
+    body:[
+      {h:"司各脱:此性与意志的优先",p:"邓斯·司各脱被称为「精微博士」,他的思想以细密著称。两个核心贡献值得记住。其一是「此性」:他追问,是什么使苏格拉底成为这个独一无二的苏格拉底,而不只是「一个人」?共相解释不了个体性,于是他提出每个个体都有一种使其成为「这一个」的形式规定性。这把哲学的目光从普遍者拉向了不可重复的个别。其二是意志对理智的优先:上帝之所以命令某事为善,不是因为它本身先天为善,而是因为上帝意志如此。这种「意志主义」削弱了世界的理性必然性,埋下了后世强调自由与偶然的种子。"},
+      {h:"奥卡姆剃刀:如无必要,勿增实体",p:"奥卡姆的威廉提出了那条著名的方法论原则:不应在没有必要时增加存在物的数目;能用更少的东西解释的,就不要用更多。这把「剃刀」并非说简单的就一定是真的,而是一条节俭原则:在解释力相同的两个理论中,选假设更少的那个。奥卡姆用它大刀阔斧地削去经院哲学里堆积的抽象实体——比如那些被实在论者当作真实存在的共相。在他看来,普遍者根本不在世界之中,世界里只有一个个具体的个别事物;共相只是心灵中的概念、用来指代许多个体的符号。"},
+      {h:"唯名论的冲击:知识与信仰的分离",p:"奥卡姆的唯名论带来连锁后果。既然只有个别事物真实存在,而上帝又是绝对自由、全能的,它本可以创造任何样子的世界,那么我们就无法仅凭理性必然地推断出世界为何如此、上帝意欲如何。于是阿奎那式「理性能证明信仰内容」的乐观被瓦解:许多原本以为可被论证的神学命题,如今只能靠信仰接受。理性与信仰被推开,各归各家。这看似削弱了哲学,实则解放了它——既然神学结论无法理性证明,人就更有理由转向对个别事物的经验观察。"},
+      {h:"黄昏还是黎明:通向近代的伏笔",p:"称为「经院的黄昏」既对也不对。一方面,那座融贯一切的理性神学大厦确实开始解体,确定性的疆域收缩。另一方面,唯名论留下的遗产恰恰滋养了近代:对个别经验事物的重视预示了经验主义,意志主义对偶然与自由的强调通向了近代的自由观,而「世界本可不同、唯有观察才知其实然」的态度,正是实验科学的精神前提。从培根到霍布斯,近代思想的不少根须都扎在这片看似衰败的土壤里。"}
+    ],
+    concepts:[
+      {t:"此性",d:"司各脱用以指使个体成为「这一个」而非泛泛一类的独特规定性。"},
+      {t:"奥卡姆剃刀",d:"解释力相同时,选择假设更少、不必要地增加实体最少的理论。"},
+      {t:"意志主义",d:"主张上帝(或人)的意志先于并决定何为善,而非善先天给定。"}
+    ],
+    quote:{q:"切勿在没有必要时增加存在物的数目。",who:"奥卡姆的威廉(传)",plain:"解释一件事时,能少用假设就少用,别凭空堆砌看不见的东西。"}
+  }
+];
+
+subs[4]=[
+  {
+    id:"5.1",
+    t:"人文主义:人的尊严与古典复兴(皮科、伊拉斯谟)",
+    lead:"中世纪把人安放在宇宙等级的固定一格;文艺复兴的人文主义者却问:倘若人根本没有固定位置,而是可以自我塑造,那会怎样?",
+    city:"florence",
+    body:[
+      {h:"何谓人文主义:回到本源",p:"文艺复兴的人文主义首先是一场教育与文化运动,口号是「回到本源」——直接研读古希腊罗马的原典,而非经院注疏。人文主义者重视语法、修辞、诗歌、历史与道德哲学,合称「人文学科」,目的是培养完整、雄辩、德行兼备的人。这种转向看似只是品味之变,实则暗含哲学立场:它把关注重心从抽象的形而上学与神学论辩,转向人在此世的生活、语言、行动与可能性。人不再只是等待救赎的罪人,而是有能力通过学问与德行来完善自身的存在者。"},
+      {h:"皮科:人的尊严在于无固定本性",p:"皮科·德拉·米兰多拉的《论人的尊严》被誉为文艺复兴的宣言。他设想上帝在造完万物后对亚当说:别的造物都有固定的本性与位置,唯独你没有——我把你放在世界的中央,你可以自由地把自己塑造成你愿意成为的样子。你既能堕落为禽兽,也能上升为神明,全凭你的选择。这是一个石破天惊的观念:人的尊严恰恰不在于他占据了某个崇高的等级,而在于他没有被固定的本性,是自由的自我塑造者。这一思想越过几百年,直接呼应了存在主义「存在先于本质」的命题。"},
+      {h:"伊拉斯谟:基督教人文主义与温和的讽刺",p:"伊拉斯谟代表人文主义与基督教信仰的结合。他校勘希腊文《新约》,主张回到福音的朴素精神,反对僵化的仪式与神学繁琐。在《愚人颂》中,他借「愚神」之口,以反讽的笔调嘲弄了从神学家到教士的种种自负与虚伪——这种以幽默与博学并行的批判,本身就是人文主义自信而宽容的气质体现。但当宗教改革爆发,伊拉斯谟与路德就「自由意志」激烈交锋:他坚持人尚有选择善的余地,反对路德把一切归于上帝的绝对预定,体现了人文主义对人之能动性的珍视。"}
+    ],
+    concepts:[
+      {t:"人文主义",d:"以研读古典原典、重视人文学科与此世生活为核心的文艺复兴文化运动。"},
+      {t:"人的尊严",d:"皮科主张人之可贵在于没有固定本性,可自由地自我塑造与提升。"},
+      {t:"回到本源",d:"绕开中世纪注疏,直接回到希腊罗马与圣经原典的研读态度。"}
+    ],
+    quote:{q:"我未给你固定的居所,也未给你专属的形貌,你可按自己的意愿,自行塑造自己。",who:"皮科·《论人的尊严》(上帝对亚当语)",plain:"人没有被预定的本性,他的本质要靠自己的选择去创造。"}
+  },
+  {
+    id:"5.2",
+    t:"哥白尼革命:从封闭宇宙到无限空间",
+    lead:"把地球从宇宙中心挪开,看似只是天文学的技术调整,却在不知不觉间动摇了人在万物中的位置——这是一场宇宙观与人生观的双重地震。",
+    city:"florence",
+    body:[
+      {h:"旧宇宙:封闭、分层、以人为中心",p:"在哥白尼之前,主流是托勒密的地心模型与亚里士多德的宇宙观:地球静居中心,日月星辰镶嵌在层层旋转的水晶天球上,最外层是恒星天,整个宇宙是有限而封闭的。更重要的是,这是一个有等级、有意义的宇宙:月上世界由完美的以太构成、永恒不变,月下世界则生灭无常。人居中心,既被理解为最卑下的位置(离天最远),也象征着造物关注的焦点。这套体系与神学、日常经验和肉眼观感都吻合,因而稳固了上千年。"},
+      {h:"哥白尼的转动:为了更简洁的和谐",p:"哥白尼在《天体运行论》中提出日心说,让地球既绕轴自转又绕太阳公转。值得注意的是,他的动机并不全是新观测,而很大程度上是对数学和谐与简洁的追求——托勒密体系为吻合观测堆砌了大量本轮,显得笨拙,而日心安排能更优雅地解释行星的逆行等现象。这里藏着科学革命的一个深层信念:自然的真相应当是简洁而和谐的,数学上的优美是真理的线索。哥白尼本人仍保留了完美圆周轨道,革命尚未彻底,但中心已被悄然挪移。"},
+      {h:"打破天球:布鲁诺与无限宇宙",p:"哥白尼之后,旧的封闭结构开始崩裂。布鲁诺大胆推演:既然地球只是一颗普通行星,太阳只是一颗普通恒星,那么宇宙没有理由有边界或中心,它应是无限的,布满无数个像太阳系一样的世界。这个想象既令人振奋又令人眩晕:从一个温暖、有限、为人而设的家园,人类突然被抛入一个没有边界、没有中心、对人漠不关心的无限空间。帕斯卡尔后来那句「这些无限空间的永恒沉默使我恐惧」,正是对这场宇宙观巨变的深刻心理回响。"},
+      {h:"革命的意义:人的去中心化",p:"哥白尼革命的真正分量是哲学性的。康德把自己在认识论上的颠倒称为「哥白尼式革命」,可见其象征地位。一方面,它确立了一种新的认知态度:不能轻信感官直观(我们明明看见太阳在动),而要服从理性与数学论证,哪怕结论违反常识与传统。另一方面,它启动了一连串「去中心化」:人不再处于宇宙中心,后来达尔文又把人从生物的中心拉下,弗洛伊德再把意识从心灵的中心拉下。人类不断被迫学习一件事:世界并非围绕我们而设。"}
+    ],
+    concepts:[
+      {t:"日心说",d:"哥白尼提出太阳居中、地球与行星绕日运行的宇宙模型,取代地心说。"},
+      {t:"封闭宇宙到无限空间",d:"宇宙观从有限分层、以人为中心,转向无边界、无中心的无限空间。"},
+      {t:"去中心化",d:"科学革命把人从宇宙中心移开,开启此后一系列对人之特殊地位的瓦解。"}
+    ],
+    quote:{q:"这些无限空间的永恒沉默使我恐惧。",who:"帕斯卡尔·《思想录》",plain:"在无垠而沉默的宇宙面前,渺小的人感到深深的孤独与不安。"}
+  },
+  {
+    id:"5.3",
+    t:"培根:四假象、归纳法与「知识就是力量」",
+    lead:"如果说哥白尼改变了我们看天的方式,培根则要改变我们求知的方式:扔掉古人的权威与空洞的演绎,让心灵谦卑地走向自然本身。",
+    city:"london",
+    body:[
+      {h:"知识就是力量:科学的实用转向",p:"培根那句名言「知识就是力量」标志着对知识目的的重新定义。在古希腊,知识(尤其是沉思真理)被视为自足的、为求知而求知的高贵活动;培根却宣告,真正的知识应当能改善人类的物质生活、增进人对自然的支配。求知不是为了静观,而是为了行动与造福。这一转向把科学与技术、理论与应用紧紧绑在一起,奠定了近代科学的实践品格。他设想的「新大西岛」中有一座「所罗门宫」,那几乎就是现代科研机构的雏形——集体的、有组织的、面向实用的探索。"},
+      {h:"四假象:清除心灵的偏见",p:"培根认为,人在认识自然前,必须先清扫心灵中扭曲真相的成见,他称之为四种「假象」。「种族假象」根植于人性本身,如总倾向于看到秩序、被情感左右判断;「洞穴假象」源于个人的性情、教育与经历,使每人都像困在自己的小洞穴里看世界;「市场假象」来自语言——含混的词语会绑架思维,让人争论根本不存在的东西;「剧场假象」则是盲从既有的哲学体系与权威教条,如同接受了舞台上虚构的剧本。先识破这四重幻象,心灵才能如其所是地接近自然。"},
+      {h:"新工具:归纳法的革命",p:"培根的《新工具》直接挑战亚里士多德以演绎三段论为核心的旧逻辑。他认为演绎只能整理已有的知识,无法发现新真理;真正的方法应是从大量经验观察出发,谨慎地、逐步地上升到普遍原理,这就是归纳法。他强调不能急于跳到最高的概括,而要先系统地收集事例,尤其重视「反面事例」——能推翻假设的例子往往最有价值。他还提出可以设计实验主动「拷问自然」,而非被动等待观察。这套强调经验、实验与渐进归纳的方法,成为近代科学方法论的奠基性纲领。"}
+    ],
+    concepts:[
+      {t:"四假象",d:"种族、洞穴、市场、剧场四类扭曲认识的成见,求知前须先清除。"},
+      {t:"归纳法",d:"从大量经验观察谨慎上升到普遍原理,并重视反例的求知方法。"},
+      {t:"知识就是力量",d:"知识的价值在于增进人对自然的支配与对人类生活的改善。"}
+    ],
+    quote:{q:"对自然的支配,只能通过服从自然来获得。",who:"培根·《新工具》",plain:"想驾驭自然,先得谦卑地认识并遵循自然的规律,而非凭空命令。"}
+  },
+  {
+    id:"5.4",
+    t:"伽利略:数学化的自然与第一/第二性质之分",
+    lead:"伽利略不仅用望远镜看见了新的天空,更提出一个更激进的主张:自然这本大书是用数学写成的——而这意味着,世界的真相也许与我们感官所见大不相同。",
+    city:"florence",
+    body:[
+      {h:"自然这本书用数学写成",p:"伽利略最具革命性的信念是:宇宙是一本用数学语言写就的书,字母是三角形、圆和其他几何图形;不懂这语言的人,只能在黑暗中徘徊。这与亚里士多德式的自然哲学截然不同——后者关心事物的「目的」「本性」与质的描述,伽利略则要把自然现象还原为可测量、可用数学关系表达的量。他研究落体不再问「重物为何趋向其自然位置」,而是测量距离与时间的精确关系,发现落体距离正比于时间的平方。自然科学由此从定性的解释转向定量的、可用公式表达的规律。"},
+      {h:"第一性质与第二性质之分",p:"为了让世界可数学化,伽利略作了一个影响深远的区分。他认为,物体真正客观拥有的,只是那些可测量的属性:形状、大小、数目、运动、位置——这是「第一性质」,它们独立于观察者而存在于物体本身。而颜色、气味、声音、冷热、味道等「第二性质」,并不真正在物体之中,而是物体的微粒作用于我们感官时,在心灵里产生的感受。他有句尖锐的话:若把有感觉的生物移走,这些气味、滋味与声音就只剩空名了。世界本身只是运动着的、无色无味的几何粒子。"},
+      {h:"感官的降格与近代认识论的开端",p:"这个区分的后果极为深远。它意味着我们日常经验中那个充满色彩、声音和气味的丰富世界,在某种意义上是「主观的幻象」;真实的物理世界是冷峻、无声、纯由可测量属性构成的。感官不再是通往真相的可靠窗口,真理要靠数学和理性来把握。这一立场被洛克明确继承并系统化,又招致贝克莱的猛烈反驳:贝克莱质问,既然第二性质的论证(它们随知觉而变)同样适用于第一性质,那凭什么说形状大小就更客观?这场争论直接催生了近代认识论的核心难题:我们所知的,究竟是世界本身,还是世界在我们心中的表象?"}
+    ],
+    concepts:[
+      {t:"自然的数学化",d:"把自然现象还原为可测量的量,用数学关系表达其规律。"},
+      {t:"第一性质",d:"形状、大小、运动等客观存在于物体本身的可测量属性。"},
+      {t:"第二性质",d:"颜色、气味、声音等并非物体固有、而由感官在心中产生的感受。"}
+    ],
+    quote:{q:"哲学写在这部宏伟的书中——我指的是宇宙——它用数学的语言写成。",who:"伽利略·《试金者》",plain:"要读懂自然,得用数学这把钥匙,而不是日常的感官印象。"}
+  }
+];
+
+subs[5]=[
+  {
+    id:"6.1",
+    t:"笛卡尔:方法论怀疑、我思故我在与心身问题",
+    lead:"如果你想为知识找一块绝对牢靠的地基,就得先把一切可疑的东西统统推倒——笛卡尔正是用最彻底的怀疑,去寻找最不可怀疑的起点。",
+    city:"amsterdam",
+    body:[
+      {h:"方法论怀疑:为知识寻找阿基米德点",p:"笛卡尔面对的是一个信念崩塌的时代:经院权威动摇,新科学方兴未艾,什么才是确定的?他的策略是「普遍怀疑」——凡是有一丝可疑的,都暂且当作假的,看看是否还剩下绝对确定之物。感官会骗人(远处的塔看似圆其实方),所以感官知识可疑;梦中的经验栩栩如生却是假的,所以我或许此刻正在做梦;最极端地,他假设有一个全能的「恶魔」,处心积虑地在我每一次判断时都欺骗我,连「二加三等于五」都可能是它植入的错觉。这不是为怀疑而怀疑,而是一种以退为进的方法,目的是逼出那个连恶魔也无法撼动的基点。"},
+      {h:"我思故我在:不可动摇的第一原理",p:"在怀疑的废墟中,笛卡尔发现了一件无法被怀疑的事:我正在怀疑。即便恶魔在全力欺骗我,要被欺骗,也总得有一个「我」在被骗、在思考。我可以怀疑一切,唯独不能怀疑「我正在怀疑」这件事本身;因为怀疑「我在思考」本身就是一种思考。于是他得出那个著名命题:我思,故我在。只要我在思考,我就必定存在。注意它的精妙:这不是一个三段论推理,而是一种当下的自明——每当我说出或想到它时,它就必然为真。这块基石的特别之处在于:它把确定性的根基,牢牢安放在了思维主体的自我意识之上。"},
+      {h:"心身二元论:两种全然不同的实体",p:"从「我思」出发,笛卡尔界定了「我」的本质:我是一个「思维的东西」,其本质属性是思想,完全不依赖于身体或任何物质。由此他提出二元论:世界由两种根本不同的实体构成——心灵(其本质是思想,不占空间)和物质(其本质是广延,即占据空间)。心灵无形而自由,物质则像机器一样遵循机械规律。这一区分一举把广阔的物质世界交给了数学物理学去研究,又为人的自由意志和灵魂保留了独立的领地,可谓近代「科学与人文」分工的哲学源头。"},
+      {h:"心身问题:松果腺解决不了的难题",p:"二元论却带来一个棘手的遗留问题,至今仍是心灵哲学的核心:如果心灵不占空间、物质纯属机械,二者本质如此不同,它们如何相互作用?我的意志(心灵)如何能让手臂(物质)抬起?针刺(物质)又如何引起疼痛(心灵)?笛卡尔含糊地诉诸大脑中的「松果腺」作为交汇点,但这等于把问题往后推了一步——一个非物质的东西怎么可能推动物质?这个「心身互动难题」直接催生了斯宾诺莎、莱布尼茨等人各异的回应,并一路延伸到今天关于意识与大脑关系的争论。"}
+    ],
+    concepts:[
+      {t:"方法论怀疑",d:"暂且把一切可疑之物当作假,以求逼出绝对确定的知识起点。"},
+      {t:"我思故我在",d:"只要我在思考,我就必然存在;此乃不可怀疑的第一原理。"},
+      {t:"心身二元论",d:"心灵(思想、不占空间)与物质(广延、机械)是两种根本不同的实体。"}
+    ],
+    quote:{q:"我思,故我在。",who:"笛卡尔·《谈谈方法》",plain:"哪怕怀疑一切,我正在思考这件事本身就证明了我的存在。"}
+  },
+  {
+    id:"6.2",
+    t:"斯宾诺莎:唯一实体、神即自然与自由即理解必然",
+    lead:"笛卡尔留下心物如何互动的难题;斯宾诺莎索性釜底抽薪——若万物本就是同一个实体的不同面相,互动的鸿沟也就根本不存在了。",
+    city:"amsterdam",
+    body:[
+      {h:"唯一实体:神即自然",p:"斯宾诺莎在《伦理学》中以几何学的方式层层推演,得出一个惊人结论:整个宇宙只有一个实体,它无限、自因、永恒,既可称为「神」,也可称为「自然」。笛卡尔有心灵、物质、上帝多个实体,斯宾诺莎则认为真正自足、不依赖他物而存在的实体只能有一个——若有两个无限实体,它们就会彼此限制,从而都不再是无限的。这唯一实体有无穷多种「属性」,我们人类只能认识其中两种:思想与广延。心灵与物质不是两样东西,而是同一个实体从两个不同角度被理解。心身问题就此消解:它们本就是一回事的两面。"},
+      {h:"泛神论与「在神之内」",p:"斯宾诺莎的神不是一位居于世界之外、按意志创世的人格神,而就是自然本身的无限整体。万物都不是被神「从外部」创造,而是作为神之本性的必然结果而「内在于」神。他区分「能产的自然」(作为创生力量的神)与「所产的自然」(由此必然流出的万物)。这意味着没有任何东西能在神之外存在,一切都遵循神即自然的必然法则展开,没有偶然,也没有超自然的目的或奇迹。正因这种泛神论把神等同于自然、剥去了人格与意志,他在当时被斥为「无神论者」,遭犹太社群逐出教门。"},
+      {h:"必然性与自由的重新定义",p:"在斯宾诺莎的体系里,一切皆由神之本性必然决定,因此严格说来没有自由意志——人以为自己自由,只是因为意识到自己的欲望,却不知道决定这欲望的原因,就像一块被抛出的石头若有意识,也会以为是自己愿意飞行。但他并不因此陷入消极:他重新定义自由。自由不是「能够任意妄为」,而是「依照自己本性的必然性而行动」,以及在更深处——理解你被决定的方式。当你看清情绪与处境背后的因果必然,你便不再被它们盲目奴役,这就是真正的自由与解脱。"},
+      {h:"在永恒的相下:理智对至福的救赎",p:"斯宾诺莎的《伦理学》归根结底是一部关于如何获得心灵安宁与幸福的书。被动的情感(如恐惧、嫉妒、希望)源于我们对事物的混乱、片面的认识,使我们成为外部因素的奴隶。出路在于知识:当我们以理性「在永恒的相下」去理解万物的必然联系,被动的激情就转化为主动的理解,痛苦的束缚就松开了。最高境界是「对神的理智之爱」——以理性认识并热爱那作为整体的自然秩序。这是一种没有人格神、却充满宗教情怀的智慧,把哲学认识本身当作通往至福与自由的救赎之路。"}
+    ],
+    concepts:[
+      {t:"唯一实体",d:"宇宙只有一个无限、自因、永恒的实体,即神或自然。"},
+      {t:"泛神论",d:"神不在世界之外,而就是自然整体本身,万物内在于神。"},
+      {t:"自由即理解必然",d:"自由不是任意而为,而是依本性必然行动并理解决定自己的原因。"}
+    ],
+    quote:{q:"自由的人最少想到死,他的智慧不是对死的默念,而是对生的沉思。",who:"斯宾诺莎·《伦理学》",plain:"真正自由的人不被对死亡的恐惧支配,而把心思放在如何充分地理解与生活。"}
+  },
+  {
+    id:"6.3",
+    t:"莱布尼茨:单子、预定和谐与「最好的可能世界」",
+    lead:"如果实体不能彼此推动,世界又何以如此井然有序?莱布尼茨给出一个奇异而精巧的答案:无数封闭的灵魂,却奏出一曲早已谱好的交响乐。",
+    city:"hannover",
+    body:[
+      {h:"单子:没有窗户的精神原子",p:"莱布尼茨认为,组成世界的终极实体既不是物质微粒(它可无限分割,故非真正的单一),而必须是没有部分、不可分割的精神性单位——他称之为「单子」。每个单子都是一个独立的、有知觉的小宇宙,从自身内部展开其全部状态。最著名的比喻是:单子「没有窗户」,任何东西都不能从外部进出。这意味着没有一个单子能真正作用于另一个单子,它们彼此完全隔绝。这是对笛卡尔互动难题的极端回应:既然实体间的因果作用难以理解,那就干脆否认它,假设每个单子都只是自身内在程序的展开。"},
+      {h:"预定和谐:两座完美同步的钟",p:"但若单子彼此隔绝,我们经验到的协调一致(我决定抬手,手就抬起)从何而来?莱布尼茨提出「预定和谐」:上帝在创世之初,就把每一个单子都设定好,使它们各自独立展开的状态恰好彼此完美对应,如同钟表匠造出无数座钟,各走各的却分秒不差。我的心灵单子「决定抬手」与我的身体单子「手臂抬起」并无因果作用,只是上帝预先调校得严丝合缝。这是一个大胆而精巧的形而上学构想:整个宇宙是一部上帝预先编排好的、所有声部完美和声的巨型乐谱。"},
+      {h:"充足理由律与最好的可能世界",p:"莱布尼茨的体系建立在两条根本原理上:矛盾律(自相矛盾者必假)和「充足理由律」——任何事物之所以如此而非别样,必有充足的理由。由此他追问:上帝为何创造这个世界而非别的?上帝在创世前,心中可设想无数个「可能世界」(只要内部不矛盾即可能),作为全善全智全能者,它必定依充足理由选择其中最好的一个。所以,我们所在的这个世界,尽管有种种缺陷,却必是「一切可能世界中最好的」——因为任何更好的世界都已被全善的上帝优先选中了。"},
+      {h:"乐观主义的难题与伏尔泰的嘲讽",p:"「最好的可能世界」这一论断意在为世间的恶辩护(神义论):个别的恶或许是成就整体最大善所必需的代价,如同画中的阴影衬托出整体的明亮。然而它招致了尖锐的反驳。1755年里斯本大地震夺去数万人命,伏尔泰在小说《老实人》中辛辣嘲讽:经历了战争、地震、瘟疫还说这是最好的世界,岂非自欺?这场争论触及一个永恒难题:全善全能的上帝与世间的苦难如何并存?莱布尼茨的乐观主义虽逻辑精巧,却在现实的惨痛面前显得苍白,也促使后人更严肃地直面恶的问题。"}
+    ],
+    concepts:[
+      {t:"单子",d:"不可分割、没有窗户、各自独立展开的精神性终极实体。"},
+      {t:"预定和谐",d:"上帝预先调校所有单子,使彼此隔绝的它们呈现完美的协调一致。"},
+      {t:"充足理由律",d:"任何事物之所以如此而非别样,都必有一个充足的理由。"}
+    ],
+    quote:{q:"为什么是有而不是无?",who:"莱布尼茨·《以理性为基础的自然与神恩的原理》",plain:"存在本身需要一个理由——世界为何存在而非什么都没有,这是最根本的追问。"}
+  },
+  {
+    id:"6.4",
+    t:"理性主义的纲领与困境:天赋观念之争",
+    lead:"理性派共享一个大胆信念:仅凭理性,人就能洞穿实在的根本结构。但这份自信的支点——「天赋观念」——恰恰成了它最受攻击的软肋。",
+    city:"amsterdam",
+    body:[
+      {h:"理性主义的共同纲领",p:"笛卡尔、斯宾诺莎、莱布尼茨虽体系迥异,却共享一套基本信念,合称理性主义。其一,真正可靠的知识来自理性而非感官:感官杂乱易欺,唯有理性的清晰明确才是真理的标准。其二,存在「天赋观念」——某些根本概念(如上帝、实体、因果、数学公理)并非来自经验,而是心灵本有的。其三,他们偏爱以几何学为典范的方法:从少数自明的公理出发,通过演绎推出整个知识体系(斯宾诺莎的《伦理学》干脆写成几何学的样式)。其四,他们相信世界本身是理性、可被充分理解的,实在的结构与理智的结构相契合。"},
+      {h:"天赋观念之争:这观念从何而来",p:"争论的核心在于:有没有天赋观念?理性派的理由是:有些观念,其内容远远超出任何经验所能提供的。比如「完满的上帝」「无限」「绝对必然」,我们在有限、不完满的经验世界里从未遇到过,那这观念从何而来?笛卡尔由此推断它必是与生俱来、由上帝植入的。又如数学真理具有严格的必然性与普遍性,而经验只能告诉我们「迄今为止如此」,给不出「必然如此」。这种必然性,理性派认为只能源自心灵的先天结构,而非后天归纳。"},
+      {h:"经验派的反击:心灵是白板",p:"洛克为首的经验派针锋相对:根本没有天赋观念。他的核心论据是,如果某观念是天赋的,它就该为所有人(包括婴儿与未开化者)所共有,可事实上连「上帝」「同一律」这类观念也并非人人皆有。他提出著名的「白板」说:心灵生来如一张白纸,一切观念归根结底都来自经验——外部的感觉和内部的反省。所谓「无限」「上帝」等复杂观念,不过是心灵把来自经验的简单观念加以组合、放大的产物。这场对峙,正是理性主义与经验主义两大阵营的分水岭。"},
+      {h:"困境与康德的调停",p:"理性主义的困境不止于此。它对理性能力的自信走向极端,便有了独断的危险:仅凭演绎就敢断言上帝、实体、世界整体的本性,却难以验证。而它对天赋观念的依赖,又始终无法回应「这些观念真能符合心灵之外的实在吗」的诘问。这场理性派与经验派的世纪之争,最终由康德试图调停:他承认知识必须始于经验(向经验派让步),又坚持心灵带有先天的认识形式去整理经验(向理性派让步)——天赋的不是现成的观念,而是加工经验的框架。理性派的纲领由此被扬弃,转化为对「认识何以可能」的全新追问。"}
+    ],
+    concepts:[
+      {t:"天赋观念",d:"并非来自经验、而被认为是心灵生来本有的根本概念,如上帝、因果。"},
+      {t:"几何学方法",d:"从自明公理出发演绎推出整个知识体系的理性主义典范方法。"},
+      {t:"白板说",d:"洛克主张心灵生来如白纸,一切观念皆源自后天经验。"}
+    ],
+    quote:{q:"凡在理智中的,无不先在感觉中——除了理智自身。",who:"莱布尼茨(回应洛克)",plain:"经验固然是知识的来源,但理智本身那套加工经验的能力,并非来自经验。"}
+  }
+];
+subs[6]=[
+  {
+    id:"7.1",
+    t:"洛克:白板说、观念的来源与两种性质",
+    lead:"如果心灵生来一无所有,那么我们知道的一切又是从何而来?洛克要把全部知识追溯回经验这一个源头。",
+    city:"london",
+    body:[
+      {h:"白板与对天赋观念的清算",p:"洛克在《人类理解论》开篇就否定了笛卡尔式的天赋观念:心灵生来是一块「白板」(tabula rasa),没有任何先天刻印的原则。他的反驳很实在:如果上帝、矛盾律这些观念真是人人天生就有,为什么儿童、白痴和未开化民族对它们一无所知?所谓「全人类普遍同意」其实是经验和教育后天养成的。这一步看似只是认识论的清场,实则把人的心灵重新定义为后天经验的产物,为整个经验主义奠基。"},
+      {h:"两种经验:感觉与反省",p:"观念既不天生,就只能来自经验,而经验有两个出口。一是「感觉」(sensation):外物刺激感官,给我们颜色、声音、冷热等观念;二是「反省」(reflection):心灵转过头来观察自己的运作,产生知觉、怀疑、意愿等观念。一切复杂观念——哪怕是「无限」「上帝」这样宏大的概念——都由这些简单观念经组合、比较、抽象而成。洛克想说明:人类知识的版图再辽阔,其原材料都来自这两口井,心灵只是加工者,不是发明者。"},
+      {h:"第一性质与第二性质的区分",p:"洛克进一步追问:我们感知到的性质,有多少真在物体身上?他区分两类。「第一性质」如广延、形状、运动、数目,是物体本身固有的,我们的观念与之相似;「第二性质」如颜色、气味、声音,并不真在物体里,只是物体微粒凭借第一性质在我们心中激起的感觉。一个例子:同一盆温水,冷手插入觉热、热手插入觉冷——可见冷热并非水的客观属性。这一区分把世界劈成「客观可量化的」与「主观感受的」两半,既支持了新兴的机械自然科学,也埋下了贝克莱据以反击的引信。"}
+    ],
+    concepts:[
+      {t:"白板说(tabula rasa)",d:"心灵生来空无所有,一切观念皆由后天经验书写。"},
+      {t:"简单观念与复杂观念",d:"经验直接给予的不可再分的观念,与由心灵组合加工而成的观念。"},
+      {t:"第一性质 / 第二性质",d:"前者(形状、运动)为物体固有且与观念相似,后者(颜色、声音)只是物体在心中激起的感觉。"}
+    ],
+    quote:{q:"我们的全部知识都建立在经验之上,并最终从经验中来。",who:"洛克·《人类理解论》",plain:"没有任何观念是凭空生出来的,追到底都是经验给的。"}
+  },
+  {
+    id:"7.2",
+    t:"贝克莱:存在即被感知与彻底的观念论",
+    lead:"如果第二性质只存在于心中,凭什么相信第一性质就客观存在?贝克莱顺着洛克的逻辑,把整个物质世界一并取消了。",
+    city:"dublin",
+    body:[
+      {h:"拆掉物质实体这根支柱",p:"贝克莱抓住洛克的软肋:你说颜色、气味只是心中的观念,可形状、广延同样是我们感知到的——离开了感知，谁见过一个无人感知的「纯广延」?既然第一性质也只能在被感知中被把握,那么把它们安放其上的「物质实体」就成了一个我们永远无法经验到、因而无意义的假设。贝克莱的目标很明确:取消物质这个看不见摸不着的底座,从而堵死唯物论与无神论的根。"},
+      {h:"存在即被感知",p:"由此得出他最著名的命题:「存在就是被感知」(esse est percipi)。一张桌子,无非是某种颜色、硬度、形状等观念的集合;说它「存在」,意思就是它正被某个心灵感知,或可能被感知。这并不是说世界是幻觉——贝克莱坚持事物真实、稳定、可预测,只是它们的存在方式是「观念」而非「物质」。常见的反驳是:我闭上眼,房间里的桌子难道就消失了?这正是下面要回答的难点。"},
+      {h:"上帝作为永恒的感知者",p:"为了让世界在无人观看时仍然存在,贝克莱请出了上帝:当一切有限心灵都不再感知某物时,它仍被上帝这一无所不在的心灵感知着,因而持续存在。自然规律之所以恒常可靠,正因为它们是上帝在我们心中有秩序地引发观念的方式。这一步既保住了世界的客观稳定,又把自然神学纳入认识论。难点在于:这等于用一个更大的形而上学假设(上帝)替换了被他批为多余的另一个(物质),其经济性是否真的更高,历来聚讼纷纭。"}
+    ],
+    concepts:[
+      {t:"存在即被感知(esse est percipi)",d:"可感事物的存在不外乎被某个心灵所感知。"},
+      {t:"非物质论(immaterialism)",d:"否认独立于心灵的物质实体,世界由心灵与观念构成。"},
+      {t:"观念的秩序",d:"自然规律即上帝在诸心灵中有规则地激起观念的恒常方式。"}
+    ],
+    quote:{q:"天上的星辰,地上的万物,构成世界这一巨大框架的一切存在物,在心灵之外都没有任何实存。",who:"贝克莱·《人类知识原理》",plain:"一切事物的存在,都离不开被某个心灵感知。"}
+  },
+  {
+    id:"7.3",
+    t:"休谟(上):因果只是习惯、归纳问题与自我之束",
+    lead:"我们最确信的两件事——因果联系与稳定的自我——经得起经验主义的彻底盘问吗?休谟的回答是冷峻的「不」。",
+    city:"edinburgh",
+    body:[
+      {h:"印象与观念:意义的检验标准",p:"休谟把洛克的「观念」再细分:鲜活直接的感受是「印象」,印象在记忆与想象中的微弱摹本才是「观念」。规则是:任何观念若有意义,必能追溯到它所源出的印象。这成了一把锋利的剃刀——遇到「实体」「必然联系」这类大词,就追问:对应的印象在哪里?找不到印象,这个观念就是空洞的。休谟用它来逐一审查形而上学的核心概念。"},
+      {h:"因果:看不见的「必然联系」",p:"我们以为因果之间有一种「必然联系」,可休谟用台球作例:白球撞向红球,我们看到的只是「白球运动—接触—红球运动」这一连串前后相继的事件,从未看到任何把它们捆在一起的「必然性」印象。所谓因果,不过是同类现象反复出现后,心灵养成的一种「习惯性期待」——见到原因就预期结果。因果性因此不在外物之中,而在我们心理的联想习惯里。这并非否认因果有用,而是揭穿它没有理性所要求的那种逻辑必然性。"},
+      {h:"归纳问题与自我之束",p:"由此引出归纳问题:我们凭过去推断未来(太阳一直升起,所以明天也会升),靠的是「自然齐一性」的假定;可这个假定本身又只能靠归纳来支持,陷入循环,无法被理性证成。同样的剃刀转向自我:我反省内心,只能捕捉到一个个流动的知觉——冷、热、爱、恨——却从未发现一个恒常不变的「我」。所以自我不是一个实体,而是「一束知觉」(a bundle of perceptions),像舞台上接连登场的演员,舞台本身却找不到。休谟由此把经验主义推到了怀疑论的悬崖边。"}
+    ],
+    concepts:[
+      {t:"印象与观念",d:"鲜活的直接感受为印象,其在心中的摹本为观念;无对应印象的观念即空洞。"},
+      {t:"恒常会合(constant conjunction)",d:"因果感来自两类事件反复相继出现所养成的心理习惯,而非可观察的必然联系。"},
+      {t:"自我之束(bundle theory)",d:"自我并非不变实体,而是一连串流动知觉的集合。"}
+    ],
+    quote:{q:"理性是、并且也应当是激情的奴隶。",who:"休谟·《人性论》",plain:"光靠推理推不出该不该;真正驱动行动的是欲望与情感。"}
+  },
+  {
+    id:"7.4",
+    t:"休谟(下):情感、道德情感主义与「是/应当」鸿沟",
+    lead:"既然理性连因果都担保不了,它还能告诉我们什么是善吗?休谟把道德的根从理性挪到了情感。",
+    city:"edinburgh",
+    body:[
+      {h:"理性是激情的奴隶",p:"休谟提出一个颠覆性论断:理性本身从不驱动行动。理性只能做两件事——发现观念间的逻辑关系,或确认事实——但单凭事实和逻辑推不出任何目的。是欲望、情感(他称之为「激情」)设定了我们追求的目标,理性只负责盘算如何达到。所以「理性是、并且也应当是激情的奴隶」。这并非贬低理性,而是给它划界:它是工具,不是动力源。"},
+      {h:"道德情感主义:善恶是一种感受",p:"既然理性不发动行动,道德判断也就不可能纯由理性得出。当我们说某行为「邪恶」,休谟说,你在那个行为里找不到一个叫「邪恶」的客观事实;你找到的,是它在你心中引起的一种特定的「不赞许之感」。道德区分源于一种普遍的人类情感——「同情」(sympathy)让我们能感受他人的苦乐,从而对有利于公共福祉的品质生出赞许之情。善恶因此更像颜色:不在事物本身,而在合格观察者心中被激起的反应。"},
+      {h:"是与应当的鸿沟",p:"休谟最深远的遗产是那段「是—应当」的著名段落:他注意到道德论者总是先陈述一连串「是」与「不是」(事实),然后悄悄换成「应当」与「不应当」(规范),却从不解释这一跳跃如何可能。从纯粹的事实描述,逻辑上推不出任何价值结论——这道鸿沟后世称为「休谟法则」或「自然主义谬误」的先声。它的意义巨大:它意味着科学描述世界「是怎样」,永远无法独力告诉我们「应当怎样」,价值问题需要另一套来源。这至今仍是元伦理学争论的起点。"}
+    ],
+    concepts:[
+      {t:"道德情感主义",d:"道德判断的根据是赞许/不赞许的情感,而非理性认知。"},
+      {t:"同情(sympathy)",d:"使人能感通他人苦乐、从而对利他品质生出赞许的人性机制。"},
+      {t:"是—应当鸿沟",d:"从事实陈述(是)逻辑上推不出规范结论(应当)。"}
+    ],
+    quote:{q:"恶与德绝非对象的性质,而是心灵的知觉。",who:"休谟·《人性论》",plain:"善恶不是事物自带的属性,而是它在你心里激起的感受。"}
+  }
+];
+
+subs[7]=[
+  {
+    id:"8.1",
+    t:"哥白尼式革命:先天综合判断如何可能",
+    lead:"休谟的怀疑论惊醒了康德。要想救回科学与因果,他必须彻底翻转认识论的提问方式。",
+    city:"konigsberg",
+    body:[
+      {h:"被休谟惊醒的独断迷梦",p:"康德自述,是休谟把他从「独断论的迷梦」中唤醒。休谟证明因果必然性无法从经验中获得,这等于宣判牛顿物理学失去了理性根基。康德不愿放弃科学的普遍必然性,但他承认休谟的诊断是对的:必然性确实不来自经验。于是他换了一个问题:如果必然性不来自外部对象,会不会来自认识主体本身?整部《纯粹理性批判》就是对这一可能性的系统展开。"},
+      {h:"哥白尼式的翻转",p:"传统认识论假定知识必须符合对象——心灵被动地摹写外物。康德把它倒过来:不是知识符合对象,而是对象符合我们认识的形式。正如哥白尼不再让天体绕观察者转、改让观察者随地球转动而解释了天象,康德让对象「绕着」主体的认识结构转。这意味着:空间、时间、因果这些框架不是从世界里抽取的,而是主体加诸经验的先天形式;我们之所以能先天地确知一切现象都处于因果之中,正因为是我们自己用因果范畴去构成经验的。"},
+      {h:"先天综合判断如何可能",p:"康德把判断分两组维度交叉:「分析/综合」看谓词是否已含于主词(「单身汉是未婚的」是分析,不增新知;「物体有重量」是综合,扩展知识),「先天/后天」看是否独立于经验。难题在于「先天综合判断」:既扩展知识又具普遍必然性,如「7+5=12」「凡变化皆有原因」。经验主义说不可能,但数学和物理偏偏满是这种判断。康德的整个批判就是要回答:它们究竟如何可能?答案的轮廓已在哥白尼式翻转里:正因为主体先天地提供了构成经验的形式,这些判断才能既必然又关乎世界。"}
+    ],
+    concepts:[
+      {t:"哥白尼式革命",d:"不是认识符合对象,而是对象符合主体的认识形式。"},
+      {t:"先天综合判断",d:"既扩展新知、又具普遍必然性的判断,如数学命题与因果原理。"},
+      {t:"先验(transcendental)",d:"研究使经验得以可能的那些先天条件,而非超越经验的玄思。"}
+    ],
+    quote:{q:"思想无内容则空,直观无概念则盲。",who:"康德·《纯粹理性批判》",plain:"光有概念没经验材料是空的,光有感官印象没概念整理是乱的——知识要两者合作。"}
+  },
+  {
+    id:"8.2",
+    t:"先验感性论与知性范畴:知性为自然立法",
+    lead:"经验进入心灵之前,先要穿过哪几道「先天的滤镜」?康德要逐层拆解认识的机器。",
+    city:"konigsberg",
+    body:[
+      {h:"先验感性论:空间与时间是直观形式",p:"认识的第一层是「感性」,负责接收材料。康德论证:空间与时间不是从经验中归纳出的外在事物,而是我们接收一切感官材料的先天「直观形式」。任何外部经验都必然呈现为空间中的,任何内部经验都必然呈现为时间中的——你无法想象一个无空间的物体或无时间的事件。正因为空间时间是主体自带的形式,几何学(关于空间)与算术(关于时间序列)才能是先天综合的:它们描述的不是偶然的外物,而是经验必然采取的形式。"},
+      {h:"知性的十二范畴",p:"光有感性给的杂多材料还不成知识,还需「知性」用概念去综合判断。康德从判断的逻辑形式推出十二个最基本的纯粹概念即「范畴」,分为量、质、关系、模态四组——其中就包括「实体」与「因果」。范畴是知性自带的整理框架:正如感性把材料塞进空间时间,知性把材料归摄到这些范畴之下,才形成「对象」。休谟找不到的因果必然性,在这里得到安置:它不是从台球碰撞中读出的,而是知性把现象组织成经验时所必用的规则。"},
+      {h:"知性为自然立法",p:"由此得出康德最大胆的命题:「知性为自然立法。」我们所说的「自然」,即一切现象按规律联结而成的总体,其普遍法则(如因果律)并非自然界自己拥有再被我们发现的,而是知性把范畴运用于现象时所先天规定的。这不是说我每个人随意造法,而是说一切有限理性者共有的认识结构,先天地决定了任何可能经验必须服从的形式法则。意义在于:科学的普遍必然性由此得救,但代价是——我们认识的只是被我们的形式所塑造的「现象」,而非物自身。这正引向下一节的界限问题。"}
+    ],
+    concepts:[
+      {t:"直观形式",d:"空间与时间,是主体接收一切感性材料的先天框架。"},
+      {t:"范畴(category)",d:"知性据以综合经验的十二个纯粹概念,含实体、因果等。"},
+      {t:"知性为自然立法",d:"自然的普遍规律源于知性将范畴运用于现象时的先天规定。"}
+    ],
+    quote:{q:"知性的诸法则不是知性从自然中得来的,而是知性给自然规定的。",who:"康德·《未来形而上学导论》",plain:"自然规律的普遍必然性,其实是我们的认识结构事先给世界定下的。"}
+  },
+  {
+    id:"8.3",
+    t:"先验辩证论:物自体、二律背反与理性的界限",
+    lead:"当理性想越过经验去追问灵魂、世界、上帝时,它会陷入无可避免的幻象。康德要为认识画出不可逾越的边界。",
+    city:"konigsberg",
+    body:[
+      {h:"现象与物自体",p:"既然空间、时间、范畴都是主体强加于经验的形式,那么我们认识到的一切只是「现象」(物对我们显现的样子),而物「自身是什么」(物自体,Ding an sich)永远在认识之外。范畴只有运用于感性给予的材料才有效;一旦脱离经验去谈论超感官对象,就是空转。这条界限是康德整个体系的枢纽:它一方面把知识牢牢限定在可能经验之内,另一方面为信仰留出地盘——上帝、自由、不朽既不能被证明,也不能被反驳。"},
+      {h:"二律背反:理性自我矛盾的暴露",p:"当理性不甘于现象,试图把范畴(如因果、整体)运用到「世界整体」这个永远无法被经验给予的对象上时,就会陷入「二律背反」:正反两个命题都能被同样有力地证明。例如:「世界在时间上有开端」与「世界无开端」都可论证;「存在自由因」与「一切皆受必然律支配」也同样成立。这种自相矛盾不是逻辑错误,而是理性越界的必然症状。它像一个警报,提醒我们:世界整体不是一个经验对象,不能像处理现象那样去裁决它。"},
+      {h:"先验幻象与理性的合法用途",p:"康德把灵魂、世界、上帝称为理性必然产生的三个「理念」。理性天生有把一切条件追溯到「无条件者」的冲动,于是不可避免地生出这三个理念——这是结构性的「先验幻象」,无法根除,只能识破。但理念并非全无用处:它们不能构成知识(无对应直观),却可作为「调节性」原则,引导我们在科学中不断追求更高的统一与完整,像永远趋近却不可达的地平线。理性的伟大与谦卑在此交汇:它必须知道自己能认识什么、必须止步于什么。"}
+    ],
+    concepts:[
+      {t:"物自体(Ding an sich)",d:"独立于我们认识形式的物之自身,永远不可被认识。"},
+      {t:"二律背反(antinomy)",d:"理性越出经验运用于世界整体时,正反命题均可被证明的矛盾。"},
+      {t:"调节性理念",d:"灵魂、世界、上帝等理念不构成知识,只引导理性追求系统统一。"}
+    ],
+    quote:{q:"我不得不悬置知识,以便为信仰腾出地盘。",who:"康德·《纯粹理性批判》",plain:"正因为承认理性无法证明上帝与自由,才反而为道德信念留下了空间。"}
+  },
+  {
+    id:"8.4",
+    t:"实践理性:绝对命令、意志自律与「人是目的」",
+    lead:"理论理性证明不了自由,实践理性却必须以自由为前提。道德从这里重新挺立起来。",
+    city:"konigsberg",
+    body:[
+      {h:"善良意志与义务",p:"在《道德形而上学奠基》开篇,康德断言:世上唯一无条件善的,是「善良意志」。聪明、勇敢、财富都可能被滥用,唯有出于义务而行动的意志本身是纯粹的善。关键区分在于「合乎义务」与「出于义务」:一个商人童叟无欺,若只是为了招揽生意,行为虽合规却无道德价值;唯有出于「应当诚实」的义务感而诚实,才是真正的道德行为。道德的尺度因此不在行为的后果,而在行动的准则与动机。"},
+      {h:"绝对命令",p:"道德法则采取「绝对命令」的形式——它无条件地命令,不像「假言命令」那样以某个目的为前提(若想健康,就该锻炼)。其第一公式是普遍法则公式:「要只按照你同时能愿意它成为普遍法则的那条准则去行动。」检验「我可以撒谎脱困吗」:设想「人人需要时都撒谎」成为普遍法则,那么承诺本身就失去意义,准则自我瓦解——故撒谎在道德上不可允许。绝对命令不告诉你具体做什么,而提供一个判定准则能否普遍化的形式程序,把道德奠基于理性自身的一致性。"},
+      {h:"人是目的与意志自律",p:"绝对命令的第二公式是「人是目的」:「你要如此行动,无论对自己还是对他人的人格中的人性,你都始终同时当作目的,而绝不只当作手段。」利用他人为工具(如欺骗、奴役)之所以错,正因它否定了对方作为理性存在者自己设定目的的尊严。这通向康德伦理学的顶点——「意志自律」:道德法则不是上帝、习俗或欲望从外部强加的(那是「他律」),而是理性存在者自己为自己立的法。人既是立法者又是守法者,服从道德正是服从自己的理性,自由与法则在此合一。这就是人之尊严的根据。"},
+      {h:"自由作为实践理性的悬设",p:"理论理性无法证明自由(它落在物自体一侧),但道德的「应当」预设了「能够」——若无自由,责任与义务皆无意义。于是康德提出三个「实践理性的悬设」:自由、灵魂不朽、上帝存在。它们不是被认识的知识对象,而是道德实践之所以可能必须接受的前提。这巧妙地兑现了上一节「为信仰腾出地盘」的承诺:理论理性证明不了的,实践理性以道德的名义合理地假定。意义在于,道德不再依附于神学或经验,而是植根于理性主体的自我立法。"}
+    ],
+    concepts:[
+      {t:"绝对命令(categorical imperative)",d:"无条件成立的道德法则,核心是准则可普遍化。"},
+      {t:"人是目的",d:"任何人格中的人性都应被当作目的本身,而非仅仅手段。"},
+      {t:"意志自律",d:"道德法则由理性存在者自己为自己确立,自由与服从法则合一。"}
+    ],
+    quote:{q:"有两样东西,愈是反复思索,愈是激起内心常新而日增的赞叹与敬畏:头顶的星空和心中的道德律。",who:"康德·《实践理性批判》",plain:"外在的浩瀚宇宙与内在的道德法则,同样令人肃然起敬。"}
+  },
+  {
+    id:"8.5",
+    t:"判断力批判:美、崇高、自然目的论与体系封顶",
+    lead:"自然(必然)与自由(道德)之间裂开一道深渊,康德要靠「判断力」在两岸之间架桥。",
+    city:"konigsberg",
+    body:[
+      {h:"沟通自然与自由的第三批判",p:"前两部批判留下一道鸿沟:理论理性管「自然」的必然领域,实践理性管「自由」的道德领域,二者互不相干,可道德又要求自由能在自然中实现。《判断力批判》要在二者间搭桥。它处理的是「反思判断力」——不是把现成规则套到个别事物上(那是「规定判断力」),而是面对个别事物去寻找尚未给定的普遍规则。审美与目的论,正是这种判断力的两大用武之地。"},
+      {h:"美与崇高",p:"康德分析「美」有四个契机:它是「无利害的愉悦」(我欣赏一朵花的美,不占有它、不问它有何用);它「无概念而具普遍性」(我说花美时要求人人赞同,却无法用概念证明);它呈现「无目的的合目的性」(对象仿佛为我们的认识能力而设计,却没有实际目的);它带有「无概念的必然性」。「崇高」则不同:面对惊涛骇浪、无垠星空这类超出想象力把握的对象,我们先感到自身渺小的挫败,继而理性唤起对自身超感性使命(道德人格)的崇敬——崇高之感最终指向人内心的道德力量。"},
+      {h:"自然目的论与体系封顶",p:"在目的论部分,康德讨论有机体:一棵树的每个部分既是手段又是目的,互为因果,无法用纯机械因果完全解释,我们不得不把它「仿佛」看作有内在目的的整体。但康德谨慎地把目的论限定为「反思的」原则——它是我们理解有机自然不可或缺的视角,而非关于自然客观构造的知识断言。由此,自然被「仿佛」设想为一个合目的的系统,最终指向道德存在者(人)作为创造的终极目的。三大批判到此合龙:认识、道德、判断三种能力被统摄进一个宏大体系,自然与自由的鸿沟被「合目的性」的桥所沟通。这正是德国观念论将要继续建造的地基。"}
+    ],
+    concepts:[
+      {t:"反思判断力",d:"由个别去寻求尚未给定的普遍规则的判断能力,运作于审美与目的论。"},
+      {t:"无目的的合目的性",d:"审美对象仿佛为我们的认识能力而设计,却不服务于任何实际目的。"},
+      {t:"崇高(das Erhabene)",d:"对象超出想象力把握时,反而激起对人自身超感性(道德)使命的敬畏。"}
+    ],
+    quote:{q:"美是德性—善的象征。",who:"康德·《判断力批判》",plain:"对美的无私愉悦,与道德上的善有内在的呼应。"}
+  }
+];
+
+subs[8]=[
+  {
+    id:"9.1",
+    t:"费希特与谢林:取消物自体之后的观念论",
+    lead:"康德留下的「物自体」既不可知又必须假定,后继者觉得这是个累赘。把它一刀砍掉,会发生什么?",
+    city:"jena",
+    body:[
+      {h:"物自体的两难与费希特的决断",p:"康德的物自体陷入两难:它若是现象之外的原因,就违背了「因果只能用于现象」的禁令;它若不可知,又何以断言它存在?费希特断然取消它:一切都从「自我」出发。在《全部知识学的基础》中,他以「绝对自我」为第一原理——自我设定自身,又设定一个与之对立的「非我」(即被认识的世界),最后在二者的相互限制中达成统一。世界不再是外在给定的,而是自我为了实现自身、展开道德行动而设定出来的舞台。观念论由此从「认识如何可能」转向「自我如何能动地建构一切」。"},
+      {h:"谢林:自然作为可见的精神",p:"费希特把一切归于自我,谢林觉得这过于偏重主体而冷落了自然。在「自然哲学」中,他主张自然不是自我的单纯设定物,而是一个能动的、有内在生命的、向着精神层层上升的有机整体——「自然是可见的精神,精神是不可见的自然」。在「先验观念论体系」中,他又论证主体与客体、精神与自然本是「绝对同一」的两面。这一「同一哲学」想超越费希特的主体片面性,把自然恢复为与精神平等的另一极。"},
+      {h:"通向绝对的不同路径",p:"费希特与谢林的分歧标志着康德之后观念论的内在张力:如何在取消物自体后,既保住主体的能动性,又不把客观世界还原为主体的影子。费希特偏向道德实践的自我,谢林偏向审美直观把握的绝对同一(他认为艺术天才能在作品中直观地呈现主客统一)。两人都把康德那个谦逊的、设界限的「先验自我」膨胀为一个能动地产生全部实在的「绝对」。这条把有限主体推向绝对的路,正由黑格尔以辩证法集大成。"}
+    ],
+    concepts:[
+      {t:"绝对自我",d:"费希特哲学的第一原理,自我设定自身并由此派生非我(世界)。"},
+      {t:"自然哲学",d:"谢林视自然为能动的、向精神上升的有机整体,而非死寂的对象。"},
+      {t:"同一哲学",d:"谢林主张主体与客体、精神与自然在「绝对」中本为同一。"}
+    ],
+    quote:{q:"自然应是可见的精神,精神应是不可见的自然。",who:"谢林·《自然哲学观念》",plain:"自然和精神不是两个世界,而是同一个绝对的内外两面。"}
+  },
+  {
+    id:"9.2",
+    t:"黑格尔(上):辩证法与《精神现象学》",
+    lead:"真理不是一开始就握在手里的现成命题,而要经历整个曲折历程才显现。黑格尔让哲学「动」了起来。",
+    city:"jena",
+    body:[
+      {h:"辩证法:矛盾是发展的动力",p:"黑格尔反对把概念看作彼此孤立、固定不变的。他的「辩证法」主张:每一个概念在被彻底思考时,都会暴露出自身的片面与矛盾,从而向对立面转化,再在更高层次上被「扬弃」(Aufhebung——同时含否定、保留、提升三义)而综合。这不是「正—反—合」的机械套路,而是概念因自身内在张力而自我推进的运动。矛盾在这里不是要消灭的逻辑错误,而是一切发展的内在动力。真理因此是一个过程,而非静止的结论。"},
+      {h:"意识形态的辩证攀登",p:"《精神现象学》是这一方法的壮丽演示:它追踪「意识」从最幼稚的「感性确定性」一路上升到「绝对知识」的全程。意识先以为最确定的是「这一个、这里、现在」的直接感觉,可一分析就发现「这里」「现在」都是空洞普遍的,于是被迫前进;每一形态都因自身矛盾而崩塌,催生下一更丰富的形态。这部书写的是精神的「成长史」与「受难史」——它必须经历每一种片面立场并体验其破产,才能抵达真理。"},
+      {h:"实体即主体,真理是全体",p:"黑格尔提出两个纲领性命题。其一,「实体即主体」:终极实在(绝对)不是一个静止的基底,而是一个能动地自我展开、自我认识的过程,像一颗种子必须长成全树才实现自身。其二,「真理是全体」:任何孤立的环节都只是抽象的片面,唯有把整个发展历程作为一个有机整体来把握,真理才显现。意义在于:黑格尔把康德割裂的主客、有限与无限,统摄进一个自我运动、自我和解的精神总体——哲学的任务,就是在思想中重演并把握这一全过程。"}
+    ],
+    concepts:[
+      {t:"辩证法",d:"概念因自身内在矛盾而向对立面转化、再在更高层次综合的运动。"},
+      {t:"扬弃(Aufhebung)",d:"既否定又保留并提升,旧环节被克服却以更高形态保存。"},
+      {t:"实体即主体",d:"绝对不是静止基底,而是能动地自我展开、自我认识的过程。"}
+    ],
+    quote:{q:"真理是全体。",who:"黑格尔·《精神现象学》序言",plain:"片面的环节都不是真理,唯有把握整个发展过程的总体才是。"}
+  },
+  {
+    id:"9.3",
+    t:"黑格尔(下):逻辑学、客观精神与历史哲学",
+    lead:"如果世界的根底是理性,那么逻辑、国家与历史就该是同一个理性的层层展开。黑格尔要建一座包罗一切的体系。",
+    city:"berlin",
+    body:[
+      {h:"逻辑学:绝对理念的自我运动",p:"在《逻辑学》中,黑格尔展示纯粹概念(范畴)如何自我演化:从最贫乏、最抽象的「存在」开始——纯存在因毫无规定性而等同于「无」,二者的矛盾运动产生「变易」,如此层层推进,概念不断丰富,最终抵达「绝对理念」。这套「逻辑」不是形式推理的工具,而被黑格尔视为「上帝在创世之前的思想」——即实在本身的理性骨架。著名口号「凡合乎理性的就是现实的,凡现实的就是合乎理性的」,正表达了理性与实在在他眼中的根本同一。"},
+      {h:"客观精神:从抽象法到伦理国家",p:"精神不止于个人内心(主观精神),还要外化为制度,这就是「客观精神」。在《法哲学原理》中,黑格尔让自由概念逐级展开:先是「抽象法」(财产、契约中的个人权利),再是「道德」(个人内心的良知与意图),二者各有片面,最终被「伦理」(Sittlichkeit)所扬弃——自由落实于家庭、市民社会、国家这些活生生的伦理共同体之中。其中「市民社会」是各自逐利的需要体系,而「国家」则被他视为伦理理念的现实化、个体自由与普遍意志的统一。这把自由从康德的内心准则,推向了制度性的客观实现。"},
+      {h:"历史哲学:自由意识的进展",p:"历史在黑格尔眼中不是偶然事件的堆积,而是「世界精神」自我实现的舞台,其主线是「自由意识的进展」:东方专制只有一人(君主)自由,希腊罗马是部分人自由,日耳曼—基督教世界才认识到人本身皆自由。推动历史的是「理性的狡计」——拿破仑这样的「世界历史人物」自以为在追逐个人野心,实则被理性当作实现普遍目的的工具,激情成了精神前进的燃料。这一宏大叙事既有把握历史整体意义的雄心,也因其目的论与「为现存辩护」的倾向,招致后世(尤其马克思与存在主义)的猛烈批判。"}
+    ],
+    concepts:[
+      {t:"绝对理念",d:"逻辑学的终点,概念自我运动所达成的、实在的完整理性结构。"},
+      {t:"伦理(Sittlichkeit)",d:"自由在家庭、市民社会、国家等伦理共同体中的客观实现。"},
+      {t:"理性的狡计",d:"理性借个体的激情与野心,暗中实现历史的普遍目的。"}
+    ],
+    quote:{q:"世界历史无非是自由意识的进展。",who:"黑格尔·《历史哲学》",plain:"整部人类史的主线,就是人类对自身自由的认识不断扩展的过程。"}
+  },
+  {
+    id:"9.4",
+    t:"主奴辩证法、异化与黑格尔的政治回响",
+    lead:"自我意识为何非要在他人那里才能成立?黑格尔关于承认与劳动的一段分析,日后点燃了马克思与整个左派传统。",
+    city:"berlin",
+    body:[
+      {h:"承认与生死斗争",p:"《精神现象学》中「主人与奴隶」一节论证:自我意识不能孤立成立,它必须被另一个自我意识「承认」,才能确证自身。两个自我相遇,各要对方承认自己,于是爆发「生死斗争」。不惧死亡、宁可冒生命之险的一方成为「主人」,贪生而屈服、选择活命的一方成为「奴隶」。这段分析的革命性在于:它把「自我」奠基于人与人之间的相互承认关系,而非孤立的笛卡尔式我思——主体性从一开始就是社会性的。"},
+      {h:"主奴关系的辩证翻转",p:"故事的精彩在于结局的反转。主人让奴隶替自己劳动、享用其成果,看似胜利,却陷入两个困境:他获得的承认来自一个他瞧不起的奴隶,因而是空洞的;他脱离劳动、只知消费,反而丧失了与世界打交道的能力,变得依赖。奴隶则相反:他在恐惧中体验了否定性,又在「劳动」中改造对象、把自己的意图对象化于产品,从而陶冶自身、获得独立的自我意识。于是真正发展出自由意识的,竟是奴隶而非主人。劳动在此被赋予了塑造人、解放人的哲学分量。"},
+      {h:"异化与左派的回响",p:"黑格尔的「异化」(Entfremdung)指精神把自身外化为对立的客体、再认出那其实是自己、从而回归自身的过程——异化是精神自我实现的必经环节。青年马克思接过这把钥匙却把它「翻转」:在《1844年经济学哲学手稿》中,劳动者本应在产品中实现自己,可在资本主义下,产品、劳动过程、人的类本质乃至人与人的关系全都变成与他敌对的异己力量——这是不该有、必须被革命扬弃的「异化劳动」。从主奴辩证法到劳动异化,黑格尔为马克思提供了思想母体;存在主义(科耶夫的讲座尤为关键)也从「承认斗争」中读出了人之自由与他者的根本纠缠。黑格尔由此成为现代政治与社会批判的源头之一。"}
+    ],
+    concepts:[
+      {t:"承认(Anerkennung)",d:"自我意识必须被另一自我意识承认才能确证自身;主体性本质上是社会性的。"},
+      {t:"主奴辩证法",d:"主奴关系的翻转:在劳动中陶冶自身的奴隶反而发展出独立的自我意识。"},
+      {t:"异化(Entfremdung)",d:"主体把自身外化为对立客体;黑格尔视为必经环节,马克思视为须被扬弃之恶。"}
+    ],
+    quote:{q:"正是通过劳动,奴隶的意识才回到了它自身。",who:"黑格尔·《精神现象学》",plain:"奴隶在改造世界的劳动中塑造并发现了真正自由的自我。"}
+  }
+];
+subs[9]=[
+{ id:"10.1", t:"叔本华:作为意志与表象的世界、苦难与解脱", lead:"如果世界的内核不是理性,而是一股盲目、永不满足的冲动,人生还能指望什么?", city:"frankfurt",
+  body:[
+    {h:"两副面孔的世界", p:"叔本华接过康德的「现象与物自体」之分,却给出大胆的回答:世界作为「表象」,是被我们的认识形式(时空与因果)所组织的、被主体所看见的样子——没有眼睛就没有太阳。但这只是世界的外壳。当我向内反观自己的身体,我不只是从外部观察它,我还从内部直接体验到它的活动,这就是「意志」。叔本华由此推断:那个在我身上显现为意志的东西,就是整个世界的物自体。石头的下落、植物的生长、动物的本能、人的欲求,本质上都是同一股力量的不同等级的客体化。"},
+    {h:"意志即苦难的根源", p:"这股意志是盲目的、无目的的、永不停歇的冲动——它不为什么而欲求,它只是欲求本身。问题在于:欲求意味着匮乏,匮乏即痛苦;而一旦欲求被满足,随之而来的不是持久的幸福,而是无聊。于是人生像钟摆,在痛苦与无聊之间摆动。这不是某个人的不幸,而是意志本性的结构性后果。叔本华的悲观主义因此不是情绪,而是一个从形而上学前提推出的结论。"},
+    {h:"两条解脱之路", p:"既然苦难源于意志的奴役,解脱就在于挣脱意志。第一条是审美的暂停:当我们沉浸于一件艺术品、一段音乐,我们暂时成为「无意志的纯粹认识主体」,欲求的针扎暂时停歇——尤其音乐,在叔本华看来直接摹写了意志本身。第二条是更彻底的道德与禁欲之路:通过同情,我穿透「个体化原理」的幻象,认出他人的苦就是我的苦;最终在圣徒式的「意志否定」中,意志转身否定自己。这里叔本华引入了他对印度哲学的吸收。"},
+    {h:"难点与回响", p:"一个尖锐的疑问是:如果意志是唯一的实在,那个能「否定意志」的力量从何而来?叔本华的体系在此似乎自相矛盾。但他的影响极为深远:尼采从他出发又反叛他,弗洛伊德的无意识、瓦格纳的歌剧、乃至现代对「欲望—满足—空虚」循环的洞察,都能听见叔本华的回声。他第一个严肃地把「人生是否值得过」当作哲学的核心问题。"}
+  ],
+  concepts:[
+    {t:"个体化原理", d:"时空使万物显现为彼此分离的个体,但这只是表象层面的划分,在意志层面万物本是一体。"},
+    {t:"意志的客体化", d:"同一股盲目意志在不同等级上显现为自然力、植物、动物与人,等级越高,自我撕裂的苦难越深。"},
+    {t:"意志的否定", d:"通过看穿个体化幻象与禁欲,意志转向否定自身,达致一种近乎涅槃的寂静。"}
+  ],
+  quote:{q:"人生在痛苦与无聊之间像钟摆一样来回摆动,这两者实际上也就是人生的两种最后成分。", who:"叔本华·《作为意志与表象的世界》", plain:"欲望得不到满足时是痛苦,得到满足后又陷入无聊——人很难真正停在幸福里。"}
+},
+{ id:"10.2", t:"克尔凯郭尔:三种人生境界、焦虑与信仰之跃", lead:"当哲学体系试图把一切纳入理性时,那个必须独自做出选择、独自面对上帝的「单个的人」去了哪里?", city:"copenhagen",
+  body:[
+    {h:"对黑格尔体系的反叛", p:"克尔凯郭尔的全部思想,起点是对黑格尔那种无所不包的「绝对体系」的愤怒。他讥讽道:黑格尔建造了一座宏伟的思想宫殿,自己却住在旁边的茅屋里——体系解释了世界历史,却唯独安顿不了「我该如何生活、我该如何成为我自己」这个最切身的问题。真理不是客观体系里的一个命题,而是「主观性」:是我用整个生命去委身、去活出来的东西。"},
+    {h:"三种人生境界", p:"克尔凯郭尔描绘了存在的三个阶段。审美境界中的人追求当下的享受、新奇与可能性,像唐璜一样不断追逐,却终因没有持续的自我而陷入绝望。伦理境界中的人选择承担责任、做出承诺(如婚姻),用普遍的道德法则塑造自己,获得了连续的自我。但伦理仍可能不够——当亚伯拉罕被命献子,普遍的伦理无法解释这道命令。于是有了宗教境界:个体在与上帝的绝对关系中,可能要「目的论地悬置伦理」。"},
+    {h:"焦虑:自由的眩晕", p:"克尔凯郭尔对焦虑的分析极为深刻。焦虑不同于恐惧——恐惧有确定的对象,焦虑却面对「无」。它是当人意识到自己拥有自由、面对无数可能性时的那种眩晕:站在悬崖边,既怕坠落,又被「我可以纵身一跃」的可能性所吸引。焦虑因此是自由的标志,是精神觉醒的代价。它既令人不安,又是人成为自己的必经之路。"},
+    {h:"信仰之跃", p:"理性在最高处会撞上「悖论」:永恒的上帝竟成为时间中的个人(道成肉身),这无法被理性消化。信仰不是理性论证的结论,而是在客观不确定性面前的纵身一跃——它要求人「凭借荒谬」去相信。亚伯拉罕之所以是「信仰之父」,正因为他在伦理上看来如同杀人犯,却凭信仰相信他将以荒谬的方式重得以撒。这种孤注一掷的个人决断,是任何体系都无法代替的。克尔凯郭尔由此被尊为存在主义的先驱。"}
+  ],
+  concepts:[
+    {t:"主观性即真理", d:"对于人生最要紧的真理,关键不在命题客观为真,而在主体以何种激情与委身去把握并活出它。"},
+    {t:"目的论地悬置伦理", d:"在与上帝的绝对关系中,个体可能被要求暂时搁置普遍的伦理义务,如亚伯拉罕献以撒。"},
+    {t:"信仰之跃", d:"面对理性无法消化的悖论,凭着激情纵身一跃地相信,而非等待证明。"}
+  ],
+  quote:{q:"焦虑是自由的眩晕。", who:"克尔凯郭尔·《焦虑的概念》", plain:"当你真切意识到自己有无限可能、必须自己选择时,那种头晕目眩的不安就是焦虑。"}
+},
+{ id:"10.3", t:"马克思:历史唯物主义、异化与意识形态", lead:"哲学家们只是用不同方式解释世界,而问题在于改变世界——但要改变,先要看清是什么真正推动了历史。", city:"london",
+  body:[
+    {h:"把黑格尔倒过来", p:"马克思承认黑格尔的辩证法抓住了历史是一个充满矛盾、不断运动的过程,但他认为黑格尔「头足倒置」:不是观念(绝对精神)推动物质世界,而是物质生产方式决定了人们的观念。这就是历史唯物主义的核心。人首先得吃饭、穿衣、有住处,才能从事政治、艺术与哲学。因此,社会的「经济基础」(生产力与生产关系)决定了它的「上层建筑」(法律、政治、宗教、哲学)。历史的真正引擎不是思想,而是生产方式的演变及其内部矛盾。"},
+    {h:"异化劳动", p:"在《1844年经济学哲学手稿》中,青年马克思分析了资本主义下的异化。劳动本应是人确证自己本质的活动,但在雇佣劳动中:工人与劳动产品相异化(产品成了压迫他的资本)、与劳动过程相异化(劳动成了被迫的、痛苦的)、与自己的「类本质」相异化(自由的创造沦为谋生手段)、人与人相异化。这个例子很直观:工厂工人造出无数商品,自己却一无所有,且越生产,资本越强大、自己越被支配。异化揭示的不是个别的不公,而是这套制度的内在逻辑。"},
+    {h:"意识形态与虚假意识", p:"如果经济基础决定上层建筑,那么一个社会的主流观念,往往是「统治阶级的观念」。意识形态不是简单的谎言,而是一套让现存秩序显得自然、永恒、合理的观念系统——它让被剥削者把不平等当作天经地义。马克思的批判力量在于:他要求我们追问每一种「普世真理」背后的物质利益与阶级位置。难点也在此:若一切意识都被阶级位置决定,马克思自己的理论又如何能宣称为真?"},
+    {h:"历史的方向与争议", p:"马克思预言:资本主义内部矛盾(生产社会化与占有私人化)将激化,最终被无产阶级革命所扬弃,走向无阶级的共产主义。这套「历史规律」赋予了马克思主义巨大的动员力,也带来最大的争议——它究竟是科学预测,还是一种世俗化的救赎叙事?二十世纪的历史既部分印证了他对资本主义危机的洞察,也对其历史必然论提出了严峻质疑。无论如何,马克思永久改变了我们看待社会、权力与历史的方式。"}
+  ],
+  concepts:[
+    {t:"历史唯物主义", d:"物质生产方式是历史的基础,经济基础决定法律、政治、宗教等上层建筑。"},
+    {t:"异化", d:"在资本主义下,劳动者与其产品、劳动过程、人的类本质以及他人相疏离对立。"},
+    {t:"意识形态", d:"使现存统治秩序显得自然合理的观念系统,常是统治阶级利益的表达。"}
+  ],
+  quote:{q:"哲学家们只是用不同的方式解释世界,而问题在于改变世界。", who:"马克思·《关于费尔巴哈的提纲》", plain:"光是在书斋里给世界下定义还不够,真正要紧的是动手去改造它。"}
+},
+{ id:"10.4", t:"尼采(上):上帝已死、虚无主义与视角主义", lead:"如果支撑西方两千年价值的那个最高根基已经崩塌,而大多数人还没听见崩塌的回响,接下来会发生什么?", city:"basel",
+  body:[
+    {h:"一桩谋杀案的宣告", p:"「上帝已死」常被误读为无神论的口号,但尼采笔下那个提着灯笼在大白天闯进市场的疯子,带来的不是欢呼而是惊恐:「我们把他杀了——你们和我!」尼采宣告的不是上帝不存在,而是一个文化事件:在科学、启蒙与现代性的冲击下,基督教上帝作为价值与意义的最终担保人,已经不再被真正信仰。问题在于,人们仍依赖着由这个根基支撑起来的道德、真理与目的——绳子断了,而走钢丝的人还没察觉。「我们是否听见了掘墓人埋葬上帝的声音?」"},
+    {h:"虚无主义的来临", p:"上帝之死的直接后果是虚无主义:最高价值自行贬黜,「为什么」找不到答案。尼采的深刻之处在于,他认为虚无主义不是外来的灾难,而是基督教—柏拉图主义道德的内在结果。这套传统教人鄙视此世、追求一个「真正的彼岸世界」,并把「求真」奉为至高义务;而正是这种诚实的求真意志,最终戳破了上帝与彼岸世界本身的虚构。于是西方文化如同吞下了自己的解药。虚无主义因此是必须穿越、而非绕过的关口。"},
+    {h:"消极与积极的虚无主义", p:"尼采区分了两种应对。消极的虚无主义是疲惫的退缩:既然无意义,便随波逐流,或扑向各种廉价的替代信仰(民族主义、对舒适的崇拜——他称之为「末人」的安逸)。积极的虚无主义则把价值崩塌当作机会:既然没有现成的意义,那就由我们自己来创造价值。这里埋下了「重估一切价值」与「超人」的种子。关键不是哀悼旧神,而是问:我们能否成为配得上这片自由空地的创造者?"},
+    {h:"视角主义:没有事实,只有解释", p:"尼采对「客观真理」发起釜底抽薪式的质疑:不存在脱离一切视角的「上帝之眼」。一切认识都是从某个生命位置、某种利益与权力关系出发的解释——「没有事实,只有解释,而这本身也是一种解释」。这并非廉价的相对主义(怎么说都行),而是说:视角越多元,我们对一个对象的认识就越丰富、越客观。难点在于:这个论断本身是否也只是尼采的一个视角?尼采坦然接受这种自反性,把哲学从对终极真理的独断,转向对生命与价值的诚实拷问。"}
+  ],
+  concepts:[
+    {t:"上帝已死", d:"指基督教上帝作为价值与意义最终根基的可信性已经瓦解,这是一桩深远的文化事件。"},
+    {t:"虚无主义", d:"最高价值自行贬黜、目的与意义失落的状态,尼采视之为西方道德传统的内在结局。"},
+    {t:"视角主义", d:"一切认识皆出自某一视角与利益,不存在无视角的绝对真理;视角越多,认识越完整。"}
+  ],
+  quote:{q:"上帝死了!上帝真的死了!是我们把他杀死的!", who:"尼采·《快乐的科学》第125节", plain:"不是说从来没有上帝,而是说现代人已经不再真心信他了——可我们还没准备好面对这个空缺。"}
+},
+{ id:"10.5", t:"尼采(下):道德谱系、权力意志、永恒回归与超人", lead:"我们引以为荣的「善」与「恶」,会不会本是弱者对强者的一次成功复仇?而如果你必须无数次重活这一生,你敢吗?", city:"basel",
+  body:[
+    {h:"道德的谱系学:主人道德与奴隶道德", p:"尼采不问「什么是善」,而问「善这个观念是怎么来的、为谁的利益服务」。他给出一段惊人的考古:最初,强健、高贵、有创造力的人自我肯定地称自己为「好」(主人道德,好—坏之分),把平庸软弱称为「坏」。但被压迫的弱者(他追溯到祭司与早期基督教)无力反抗,便发动了一场「奴隶起义」:他们出于怨恨,把强者的力量、骄傲、自我肯定重新命名为「恶」,再把自己的无能美化为谦卑、忍耐、温顺的「善」(奴隶道德,善—恶之分)。我们今日的道德,在尼采看来,正是这场怨恨之战的胜利成果。"},
+    {h:"怨恨、内疚与禁欲理想", p:"这场颠覆的心理动力是「怨恨」:无力在行动中报复的人,在想象中报复,并把这种想象包装成道德优越感。当攻击性无法向外释放,它便转向内部,成为「良心谴责」与内疚——人开始折磨自己,把本能视为罪。禁欲理想(僧侣式的自我否定)则给了痛苦一个意义:「你受苦,是因为你有罪」。尼采承认这套机制深化了人的内在性,却警告它以摧残生命力为代价。理解这一点的意义在于:它逼我们追问,自己珍视的德性究竟滋养生命,还是暗中敌视生命。"},
+    {h:"权力意志:生命的根本驱力", p:"尼采用「权力意志」取代叔本华那盲目的「生存意志」。生命的根本冲动不只是求生存,而是求扩张、求克服、求成长、求支配——首先是支配和超越自己。这不该被简化为政治暴力;艺术家创作、思想家求知、运动员突破极限,都是权力意志的升华形态。一切价值,归根结底都是某种权力意志的表达。由此尼采提出「重估一切价值」:用「是否提升生命、是否使人更强健丰盈」作为新的评判尺度,取代彼岸的、否定生命的旧标准。"},
+    {h:"永恒回归与超人", p:"尼采抛出他最严酷的思想实验:假设一个魔鬼告诉你,这一生连同每一个痛苦、每一个细节都将无数次重演,丝毫不差——你会诅咒它,还是说「这是我所渴望的」?永恒回归是一块试金石:唯有真正热爱自己生命、能对存在说出「是」的人,才承受得起。能担起这重负的,便是「超人」——不是金发野兽,而是自我立法、自我创造、在无神的世界里为自己生成意义的人。与之相对的是「末人」:只求安逸、不再有渴望与冒险的可怜虫。超人是大地的意义,是人对自身的克服。其难点与危险也正在此:谁来界定何为「提升生命」?这一开放性,既是它的魅力,也是它被滥用的入口。"}
+  ],
+  concepts:[
+    {t:"奴隶道德", d:"出自弱者怨恨的价值评价:把强者之力贬为恶,把自身无能美化为善,与主人道德的好—坏之分相对。"},
+    {t:"权力意志", d:"生命求扩张、克服、成长与自我超越的根本驱力,可升华为创造、求知等高级形态。"},
+    {t:"永恒回归", d:"设想此生将无数次原样重演的思想实验,用以检验人是否能全心肯定自己的存在。"},
+    {t:"超人", d:"克服了虚无与旧道德、为自己立法并创造意义的人,是「大地的意义」。"}
+  ],
+  quote:{q:"那不能杀死我的,使我更强大。", who:"尼采·《偶像的黄昏》", plain:"经历过而没把你击垮的苦难,会成为让你更坚韧、更丰盈的养分。"}
+}
+];
+subs[10]=[
+{ id:"11.1", t:"胡塞尔:现象学方法、意向性与悬置", lead:"哲学若想成为真正严格的科学,该从哪里重新开始?胡塞尔的答案是:回到事物本身,回到意识如何呈现世界。", city:"freiburg",
+  body:[
+    {h:"回到事物本身", p:"胡塞尔面对的处境是:心理主义把逻辑还原为心理规律,自然主义把意识还原为物理过程,而这都丢失了意义与有效性本身。他的口号「回到事物本身」意味着:悬置一切现成的理论与偏见,去如其所是地描述现象如何在意识中被给予。现象学不研究心理学事实,也不研究外部世界的存在与否,而是研究「显现」这件事的结构——一杯咖啡是如何作为一杯咖啡向我呈现的。这是一门关于意识经验本质结构的严格描述科学。"},
+    {h:"意向性:意识总是关于某物的意识", p:"胡塞尔从老师布伦塔诺那里继承并改造了「意向性」这一核心概念:意识从来不是一个封闭的容器,它本质上是指向性的——看总是看某物,想总是想某事,恐惧总是恐惧某个东西。每一个意识行为(noesis)都内在地关联着一个被意指的对象(noema)。这破除了一个根深蒂固的二元论图景:不是先有一个孤立的内在心灵,再去碰运气地接触外部世界;意识与世界从一开始就是相关的。这个洞见后来成为整个现象学—存在主义传统的地基。"},
+    {h:"现象学的悬置", p:"为了纯粹地描述显现,胡塞尔提出「悬置」(epoché)的方法:我们不否认外部世界存在,而是「加上括号」,暂时中止对其存在的自然信念,把注意力转向「它是如何被给予我的」。这叫「现象学还原」。一个例子:平时我直接断定「桌上有本书」;悬置之后,我转而细察「书」这一意义是怎样通过一系列侧显、视角、预期而在我意识中被构造出来的。剩下的不是怀疑,而是被纯化的、可供描述的经验流。"},
+    {h:"先验自我与未竟的纲领", p:"在还原的尽头,胡塞尔抵达「先验自我」——那个构造一切意义的纯粹意识极。他由此走向一种先验唯心论:世界的意义是由意识构造的。这一步引发了巨大争议,连他最杰出的学生海德格尔也由此分道扬镳。胡塞尔晚年又转向「生活世界」,反思科学如何遗忘了它赖以生根的前科学经验土壤。现象学因此不是一个封闭体系,而是一种不断自我修正的方法与精神,它深刻塑造了二十世纪的哲学走向。"}
+  ],
+  concepts:[
+    {t:"意向性", d:"意识的本质特征:意识总是「关于某物」的意识,行为与对象内在相关。"},
+    {t:"悬置", d:"暂时中止对世界存在的自然信念,把它加上括号,以纯粹描述现象如何被给予。"},
+    {t:"生活世界", d:"一切科学与理论赖以奠基的、前科学的、被直接经验到的日常世界。"}
+  ],
+  quote:{q:"我们必须回到事物本身。", who:"胡塞尔·《逻辑研究》", plain:"别急着套用现成理论,先老老实实去看现象本身是怎样呈现给我们的。"}
+},
+{ id:"11.2", t:"海德格尔:此在、在世存在、沉沦与向死而生", lead:"两千年来哲学一直在追问「存在者是什么」,却遗忘了那个最基本的问题:「存在」本身意味着什么?", city:"freiburg",
+  body:[
+    {h:"重提存在问题", p:"海德格尔的《存在与时间》开篇即指控西方哲学犯了「存在的遗忘」:它忙于研究各种存在者(桌子、上帝、原子),却从未真正追问「存在」(Sein)本身是什么意思。要重新打开这个问题,得找一个特殊的入口——那个会追问存在、其存在本身就是个问题的存在者,即我们自己。海德格尔故意不用「人」「主体」「意识」这些已被传统污染的词,而称之为「此在」(Dasein),字面意思是「在那里存在」,强调人始终是「在场地、有所领会地存在着」。"},
+    {h:"在世存在", p:"海德格尔的关键突破是「在世存在」(In-der-Welt-sein):此在不是先有一个孤立心灵再去认识外部世界,而是从一开始就已经沉浸、操劳、处身于一个意义关联的世界之中。他用「上手」与「现成」之分来说明:平时锤子对我是「上手的」——我用它钉钉子,根本不把它当作一个有属性的对象来观察,它隐没在我的实践目的里;只有当锤子坏了、用不了了,它才作为一个「现成的」对象凸显出来供我打量。理论性的认识是派生的,实践性的「操劳」才是更原初的与世界打交道的方式。"},
+    {h:"沉沦与常人", p:"此在在日常中往往不是本真地活着,而是「沉沦」于「常人」(das Man)之中:我们按照「人们都这么做」「大家都这么想」去生活、去说话(闲谈)、去追逐新奇(好奇)、去模糊一切(两可)。「常人」是个谁也不是的匿名主体,它替我们卸下了选择的重负,也悄悄剥夺了我们成为自己的可能。这不是道德谴责,而是对一种普遍生存状态的描述:我们大多数时候,是「被生活」着,而非自己在生活。"},
+    {h:"向死而生与本真性", p:"什么能把此在从「常人」中唤回?是「畏」(Angst)与死亡。死亡是此在「最本己的、无所关联的、不可逾越的」可能性——没人能替我去死,它把我从一切社会角色中孤立出来。逃避死亡(「人总有一死,但暂时还轮不到我」)是非本真的;而「向死而生」则是清醒地、先行地把死亡承担为自己存在的界限,由此领会到生命的有限与紧迫,从而本真地、负责地去筹划自己。难点在于:海德格尔后期转向语言与「存在」的更隐秘运思,加之其政治上的污点,使他成为二十世纪最深刻也最有争议的哲学家。"}
+  ],
+  concepts:[
+    {t:"此在(Dasein)", d:"那个其存在本身成为问题、会追问存在意义的存在者,即作为生存活动的人。"},
+    {t:"在世存在", d:"此在并非孤立主体,而是始终已经处身、操劳于一个意义关联世界之中的存在方式。"},
+    {t:"向死而生", d:"清醒地先行承担死亡这一最本己的可能性,从而本真地领会并筹划有限的生命。"}
+  ],
+  quote:{q:"此在在它的存在中,对这个存在本身有所作为。", who:"海德格尔·《存在与时间》", plain:"人活着不是被动地存在,而是时时刻刻在为「怎么存在」操心、选择、负责。"}
+},
+{ id:"11.3", t:"萨特:存在先于本质、绝对自由、自欺与他人", lead:"如果没有上帝预先为人写好剧本,那么人就被判处了自由——这究竟是福音还是重负?", city:"paris",
+  body:[
+    {h:"存在先于本质", p:"萨特用一个公式概括了无神论存在主义:对人而言,「存在先于本质」。一把裁纸刀是「本质先于存在」——工匠先有了它的概念与用途,才造出它。传统上帝造人也被设想为如此。但若没有上帝,就没有人性的预先蓝图。人首先存在、出现于世,然后才通过自己的选择和行动去定义自己是什么。没有给定的人性,没有借口:你做的选择的总和,就是你。这把责任完全压在了个人肩上。"},
+    {h:"被判处自由", p:"由此,「人是被判处自由的」——一旦被抛入世界,人就要为自己所做的一切负责。自由不是一种轻松的特权,而是无可推卸的处境:即使「不选择」也是一种选择。萨特用对意识的分析支撑这一点:意识(自为的存在)本质上是一种「虚无化」的力量,它能从既定情境中后退、否定、设想别样的可能,所以它永远不被过去或本性所决定。一个例子:赌徒昨天下了戒赌的决心,今天面对牌桌时却发现,那个决心拦不住此刻的他——他必须重新地、当下地再选择一次。"},
+    {h:"自欺", p:"自由如此沉重,人于是普遍地逃避它,这就是「自欺」(mauvaise foi)。自欺是对自己撒谎:假装自己没有选择的自由,把自己当作一个被角色、本性或处境所固定的「物」。萨特那个著名的咖啡馆侍者,动作过分殷勤、僵硬,仿佛在「扮演一个侍者」,以此把自己等同于这个角色,逃避「我其实可以不这样」的自由。自欺的诱惑无处不在——「我天生就是这样的人」「我没办法」都可能是它的面具。本真则意味着诚实地承担自己的自由。"},
+    {h:"他人即地狱", p:"自由还遭遇一个根本限制:他人的目光。当他人注视我,我体验到自己被对方「对象化」——我从一个自由的主体,沦为他眼中一个被定型、被评判的客体(「他者的注视把我凝固」)。在《禁闭》中,三个亡魂被困一室、彼此审视,萨特借此说出「他人即地狱」:不是说他人本身可恶,而是说当我们的自我认知被卷入他人的目光与评判时,人际关系便成了一场争夺主体地位的冲突。这构成了萨特对主体间性既深刻又略显悲观的洞察。"}
+  ],
+  concepts:[
+    {t:"存在先于本质", d:"人没有预先给定的本质,先存在,再通过自由选择定义自己是什么。"},
+    {t:"自欺", d:"对自身自由的逃避与自我欺骗,把自己当作被角色或本性固定的物。"},
+    {t:"注视(他者的目光)", d:"他人的注视把我对象化、凝固为客体,这是主体间冲突与「他人即地狱」的根源。"}
+  ],
+  quote:{q:"人是被判处自由的。", who:"萨特·《存在主义是一种人道主义》", plain:"既然没有谁替你安排好人生,你就别无选择地必须自己选,并为选择负全责。"}
+},
+{ id:"11.4", t:"加缪与梅洛-庞蒂:荒诞与反抗、身体的现象学", lead:"当世界对我们的意义之问报以沉默,我们该自杀、跳入信仰,还是带着清醒继续推石上山?而那个在思考的「我」,首先难道不是一具身体?", city:"paris",
+  body:[
+    {h:"荒诞:人与世界的断裂", p:"加缪从一个最尖锐的问题出发:既然人生或许无意义,「自杀」是不是唯一严肃的哲学问题?他指出「荒诞」不在世界本身,也不在人本身,而产生于两者的「对峙」——人心渴望意义、统一与永恒,而世界却报以非理性的沉默与冷漠。荒诞正是这一裂缝。加缪拒绝两种逃避:生理的逃避(自杀)和哲学的逃避(像克尔凯郭尔那样跳入信仰,他称之为「哲学性的自杀」)。真正的态度是直面荒诞而不消解它。"},
+    {h:"反抗与西西弗斯", p:"那么如何在荒诞中活?加缪的答案是「反抗」:既不否认荒诞,也不向它投降,而是带着清醒持续地活下去、热爱这有限的生命。他重写了西西弗斯的神话——这个被诸神罚以永远推石上山、石头永远滚落的人,本是惩罚的象征。但加缪说,当西西弗斯走下山去重新推石的那一刻,他清醒地看清自己的命运而不抱幻想,这份清醒本身就是对诸神的蔑视和胜利。「我们必须想象西西弗斯是幸福的。」反抗不许诺意义,却赋予生命以尊严。"},
+    {h:"梅洛-庞蒂:我们首先是身体", p:"梅洛-庞蒂反对一切把人首先当作「思维的心灵」的传统(从笛卡尔到部分胡塞尔)。他主张:我们与世界打交道的最原初方式,不是意识的反思,而是身体的知觉。我不是「拥有」一具身体,我就「是」我的身体——是「身体—主体」。一个例子:我伸手去够杯子,根本不需要先在脑中计算坐标,我的身体「知道」如何调整、如何把握,这是一种先于反思的「身体图式」与「运动意向性」。知觉不是被动接收感觉数据,而是身体与世界的活生生的对话。"},
+    {h:"含混的世界与意义", p:"由身体出发,梅洛-庞蒂得出一种「含混」的存在论:主体与客体、心灵与身体、自我与世界,从来不是两个被截然分开再去拼接的东西,而是彼此交织、相互渗透的——他后期用「肉」(la chair)这个概念来表达这种原初的交织。意义不是先在心灵里再投射到世界,而是在身体与世界的具身相遇中生成的。这一思路纠正了萨特过于强调自由意识、几乎无视身体与处境厚度的倾向,也深刻影响了后来的认知科学、心理学与艺术理论。"}
+  ],
+  concepts:[
+    {t:"荒诞", d:"人对意义的渴求与世界沉默冷漠之间无法弥合的对峙,既非纯属世界亦非纯属人心。"},
+    {t:"反抗", d:"清醒地直面荒诞而不逃避、不投降,持续地热爱与活出有限生命的态度。"},
+    {t:"身体—主体", d:"人首先不是思维的心灵而是身体,身体是我们知觉并介入世界的原初方式。"}
+  ],
+  quote:{q:"向着高处挣扎本身,就足以充实一个人的心灵。我们必须想象西西弗斯是幸福的。", who:"加缪·《西西弗斯神话》", plain:"哪怕努力注定看不到终点,这份清醒而执着的挣扎本身,就已经让生命值得。"}
+}
+];
+subs[11]=[
+{ id:"12.1", t:"弗雷格与罗素:现代逻辑、涵义/指称与摹状词理论", lead:"如果哲学的许多混乱其实来自语言的误导,那么先把语言和逻辑弄清楚,会不会是哲学的新起点?", city:"cambridge",
+  body:[
+    {h:"逻辑的革命", p:"弗雷格几乎单枪匹马创立了现代数理逻辑。传统亚里士多德逻辑用「主词—谓词」分析命题,无力处理多重一般性(如「每个人都爱某个人」)。弗雷格引入「函数与变元」「量词」(所有、存在)的框架,使逻辑获得了前所未有的表达力,足以刻画数学推理。他的雄心是「逻辑主义」:证明算术可以完全还原为逻辑——数不是经验抽象,也不是心理产物,而是逻辑对象。这场革命为整个分析哲学奠定了工具与精神底色:追求清晰、形式化与论证的严格。"},
+    {h:"涵义与指称", p:"弗雷格提出一个影响深远的区分。考虑「晨星」与「昏星」:两者指的是同一颗金星(指称相同),但「晨星就是昏星」却是一个有信息量的天文发现,而「晨星就是晨星」毫无信息。差别从何而来?弗雷格说:一个表达式既有「指称」(它所指的对象),又有「涵义」(把握该对象的方式、呈现的角度)。两个名称指称相同而涵义不同,所以同一性陈述可以是有内容的认识。这一区分至今仍是语言哲学的核心议题。"},
+    {h:"摹状词理论", p:"罗素用他著名的「摹状词理论」解决了一个棘手难题:「当今的法国国王是秃头」这句话,在没有法国国王的今天,是真是假?若说假,似乎就承认「当今法国国王不秃」为真,可同样荒谬;若说它无意义,又不合直觉。罗素的解法是揭示其逻辑形式:这句话其实断言了「存在唯一一个x是当今法国国王,且x是秃头」。既然不存在这样的x,整句话就是假的——而无需假定有一个「不存在的国王」作为指称。语法形式骗了我们,逻辑形式才是真相。"},
+    {h:"语言的逻辑分析作为方法", p:"罗素由此提出一个纲领性主张:许多哲学困惑源于被表层语法误导,把不指称任何东西的表达式当成了名称(从而虚构出「金山」「圆的方」这类可疑实体)。哲学的任务,就是通过逻辑分析揭示陈述的真实逻辑形式,从而消解这些虚假问题。摹状词理论被誉为「哲学分析的典范」。它确立了分析哲学的一个核心信念:逻辑是哲学的解剖刀,澄清语言就是澄清思想。"}
+  ],
+  concepts:[
+    {t:"涵义与指称", d:"指称是表达式所指的对象,涵义是把握该对象的方式;两名称可指称同一对象而涵义不同。"},
+    {t:"摹状词理论", d:"罗素主张「那个F」并非名称,而应分析为「恰有一个F且它如何如何」的存在断言。"},
+    {t:"逻辑主义", d:"弗雷格与罗素的纲领:算术(乃至数学)可以还原为纯逻辑。"}
+  ],
+  quote:{q:"一个专名(词、记号、记号的结合)表达它的涵义,指称或标示它的指称。", who:"弗雷格·《论涵义与指称》", plain:"一个名字一方面指向某个对象,另一方面也包含我们是「以什么角度」想到这个对象的。"}
+},
+{ id:"12.2", t:"早期维特根斯坦:图像论与「不可说者应沉默」", lead:"语言为何能描述世界?如果语言的界限就是世界的界限,那么最重要的东西会不会恰恰落在界限之外?", city:"cambridge",
+  body:[
+    {h:"语言图示世界", p:"《逻辑哲学论》的核心是「图像论」:命题之所以能描述事实,是因为它是事实的一幅「逻辑图像」。正如一张地图与它所表示的地形必须共享某种结构,一个有意义的命题与它所描述的事态必须共享同样的「逻辑形式」——命题中的名称对应世界中的对象,命题的结构投射出事态的结构。世界是事实的总和(而非物的总和),语言是命题的总和,两者凭借共同的逻辑形式相互对应。这是一幅极为精致、近乎晶体般的语言—世界对应图景。"},
+    {h:"可说与显示之分", p:"由图像论推出一个惊人结论:能被有意义地说出的,只有描述事实的、原则上可真可假的命题(典型地,即自然科学的命题)。而逻辑形式本身、伦理、美、人生的意义、上帝——这些都不是世界中的事实,因而无法被有意义地「说」,但它们可以「显示」自己。维特根斯坦的关键区分是:有些东西不可说,却能显现。逻辑命题(重言式)不说任何关于世界的事,却显示了语言与世界的逻辑结构。"},
+    {h:"哲学是一种活动", p:"这彻底改变了哲学的自我理解。传统哲学命题(关于实体、灵魂、善本身)大多是越界的胡话——它们试图说那不可说的东西,因而无意义(但「无意义」不等于「无价值」,这是常被忽略的微妙处)。于是哲学不再是一套学说,而是一种澄清活动:它的任务是划定有意义语言的界限,把命题分析清楚,让胡话现形。「凡可说的,都能说清楚。」一个例子:许多形而上学争论之所以无解,正因为双方都在界限之外说话却以为在描述事实。"},
+    {h:"沉默与神秘", p:"全书以那句著名的话收尾:「对于不可说的东西,我们必须保持沉默。」这绝非冷漠的逻辑禁令。维特根斯坦本人在战壕中写就此书,他真正看重的恰恰是那些不可说的「神秘之物」——伦理与人生的意义。他的意思是:这些最重要的东西无法被语言捕捉,妄图言说只会糟蹋它们,它们要在沉默中、在如何生活中显现。这本薄薄的书一度让他认为哲学问题已被解决,而其深刻的张力,也为他后来的彻底转向埋下伏笔。"}
+  ],
+  concepts:[
+    {t:"图像论", d:"命题是事实的逻辑图像,凭借与事态共享逻辑形式而能够描述世界。"},
+    {t:"可说/显示", d:"事实可被有意义地说出,而逻辑形式、伦理与人生意义不可说,只能显示自身。"},
+    {t:"重言式", d:"逻辑命题永真却不说任何关于世界的事,它只显示语言的逻辑结构。"}
+  ],
+  quote:{q:"对于不可说的东西,我们必须保持沉默。", who:"维特根斯坦·《逻辑哲学论》", plain:"凡是语言无法清楚说出的(如人生意义),硬要去说反而糟蹋它,不如以沉默和行动去对待。"}
+},
+{ id:"12.3", t:"维也纳学派:逻辑实证主义、可证实原则及其衰落", lead:"如果一句话既不能被经验检验、又不是逻辑推演,它还算说了什么吗?——一把想清除全部形而上学的剃刀。", city:"vienna",
+  body:[
+    {h:"科学世界观与可证实原则", p:"二十世纪二三十年代,一群科学家与哲学家在维也纳定期聚会(维也纳学派),立志以现代逻辑加经验主义来重塑哲学。他们的核心武器是「可证实原则」:一个陈述有认知意义,当且仅当它要么是分析的(逻辑或数学的重言式,凭定义为真),要么原则上能被经验观察所证实。两类之外的句子——关于上帝、绝对、物自体的形而上学断言——既非分析又不可经验检验,因而不真不假,而是「无认知意义」的伪命题,该被清除。"},
+    {h:"激进的后果", p:"这把剃刀锋利得惊人。卡尔纳普写下《通过语言的逻辑分析清除形而上学》,断言海德格尔「无之无化」这类句子根本不表达任何可判定的东西。伦理判断(「杀人是错的」)被分析为不描述事实、只表达情感与态度(情感主义)。哲学的全部正当工作,被压缩为对科学语言的逻辑分析与澄清。一个例子:「上帝存在」既无法被任何可能的观察证实或证伪,在逻辑实证主义看来,它和「上帝不存在」一样是没有认知内容的——这激怒了许多人,却也逼出了关于「意义」的深刻讨论。"},
+    {h:"原则的自我瓦解", p:"问题恰恰出在这把剃刀自身。「可证实原则」这句话本身,既不是逻辑重言式,又无法被任何经验观察证实——那么按它自己的标准,它岂不是也成了无意义的形而上学?这个自反性难题始终未能化解。此外,普遍科学定律(「所有金属受热膨胀」)涵盖无穷情形,无法被有限观察彻底证实;为此原则一再被弱化(从「可证实」退到「可确证」),却越改越松,失去了原本的清除力。"},
+    {h:"衰落与遗产", p:"内外夹击之下,逻辑实证主义作为一个纲领走向衰落。波普尔釜底抽薪,主张科学的标志不是「可证实」而是「可证伪」;蒯因否定了它赖以立足的「分析/综合」二分。然而它的遗产极为丰厚:它把「意义」「证实」「科学与非科学的划界」推到舞台中央,催生了现代科学哲学,也塑造了分析哲学重论证、重清晰、警惕空话的气质。它的失败,本身就是二十世纪哲学最有教益的故事之一。"}
+  ],
+  concepts:[
+    {t:"可证实原则", d:"陈述有认知意义,当且仅当它是分析命题或原则上能被经验证实。"},
+    {t:"情感主义", d:"道德判断不描述事实,而是表达说话者的情感与态度,故无真假可言。"},
+    {t:"自反性难题", d:"可证实原则本身既非分析命题又不可经验证实,按其自身标准竟成无意义之语。"}
+  ],
+  quote:{q:"凡是能够说的,都能够说清楚;凡是不能谈论的,就应该对它保持沉默。", who:"维也纳学派引以为纲(语出维特根斯坦)", plain:"学派把这句话理解为:说不清、查不证的话(尤其形而上学)不如干脆不说。"}
+},
+{ id:"12.4", t:"后期维特根斯坦:语言游戏、意义即用法与私人语言论证", lead:"如果意义不在于图像式的对应,而在于我们用词语「做」了什么——那么哲学的全部困惑会不会都是语言度假时生的病?", city:"cambridge",
+  body:[
+    {h:"对自己早期思想的反叛", p:"维特根斯坦回到哲学后,推翻了《逻辑哲学论》的根本假设。早期他以为语言只有一种本质功能——图示事实;现在他认为这是一个被理论绑架的幻觉。语言有无数种功能:命令、提问、感谢、诅咒、祈祷、讲笑话、报告……以为它们背后藏着一个统一本质,正是哲学误入歧途的根源。《哲学研究》以一种格言式、对话式的写法,不再建构体系,而是「治疗」我们被语言图景所迷惑的思维。"},
+    {h:"语言游戏与意义即用法", p:"他提出两个关键隐喻。其一是「语言游戏」:语言总是嵌在具体的活动与生活形式之中,词的意义由它在这套实践中的角色决定,正如棋子的意义由下棋规则决定。其二,「在大多数情况下,一个词的意义就是它在语言中的用法」——别问「这个词指称什么」,要看「人们用它来做什么」。一个例子:「板!」在建筑工地上意味着「递块板来」,它的意义不在于对应某个心理图像,而在于它在协作中触发的行动。意义被从神秘的内在领域,拉回到公共的、可观察的实践。"},
+    {h:"家族相似", p:"那么各种「游戏」(棋牌、球类、独自掷骰)有没有共同本质?维特根斯坦说:没有一个所有游戏共享的定义性特征,有的只是一张交错重叠的相似性之网,就像一个家族的成员——这个有父亲的眼睛,那个有母亲的鼻子,却没有人人共有的那一项。这「家族相似」概念瓦解了从苏格拉底以来「为每个概念寻找一个本质定义」的执念,提示我们许多概念是开放的、边界模糊的,却依然好用。"},
+    {h:"私人语言论证", p:"最精妙也最受争议的是「私人语言论证」。设想一种原则上只有我自己懂、用来记录纯私人感觉的语言:我把某种感觉叫「S」,每次它出现就记下「S」。维特根斯坦追问:我凭什么确定今天的「S」和上次是「同一种」感觉?没有任何独立于我的标准来检验我用对了没有——「于是,凡我觉得对的就是对的。而这恰恰意味着,这里根本谈不上对与错。」遵守规则必须是公共的、可被纠正的实践,意义离不开共同体。这一论证有力反对了笛卡尔式的内在私密心灵图景,把语言与意义彻底「公共化」,深远影响了心灵哲学与对私人感受的整个理解。"}
+  ],
+  concepts:[
+    {t:"语言游戏", d:"语言总嵌在具体活动与生活形式中,词义由其在这一实践中的角色决定。"},
+    {t:"意义即用法", d:"一个词的意义大多不在于指称某物,而在于它在语言实践中被如何使用。"},
+    {t:"家族相似", d:"许多概念无共同本质,其实例只靠交错重叠的相似性相连,如一个家族的成员。"},
+    {t:"私人语言论证", d:"原则上只有自己懂的私人感觉语言不可能成立,因缺乏公共的正误标准。"}
+  ],
+  quote:{q:"哲学问题具有这样的形式:我找不到出路。", who:"维特根斯坦·《哲学研究》", plain:"许多哲学难题不是要解答,而是要解开——像被语言迷了路,需要被领着走出迷宫。"}
+}
+];
+subs[12]=[
+{ id:"13.1", t:"福柯:知识型、权力/知识与规训", lead:"我们以为知识是中立的、权力是压制性的——但如果知识与权力本就交织一体,默默地生产着「正常」与「我们自己」呢?", city:"paris",
+  body:[
+    {h:"知识型:思想的隐秘地基", p:"福柯早期做的是一种「知识考古学」。他发现,每个时代的知识并非自由漂浮的真理,而是受一套深层的、无意识的规则系统支配,他称之为「知识型」(épistémè)——它规定了在那个时代,什么样的陈述才可能被当作「真」来对待、什么算作「科学」。比如「人」这个概念,在福柯看来并非永恒对象,而是相当晚近的知识型的产物,他甚至预言「人将像海边沙滩上的一张脸,被海浪抹去」。这是对「真理超越历史」的根本质疑。"},
+    {h:"权力/知识", p:"福柯最具颠覆性的洞见是把「权力」与「知识」连成一个词:权力/知识。他反对把权力只理解为「自上而下的压制」(国王砍头)。现代权力更多是「生产性」的:它生产知识、生产话语、生产关于人的「真理」(谁是疯子、谁是罪犯、谁是正常人),并通过这些知识来规范和塑造人。反过来,知识也总是嵌在权力关系中。没有不带权力的纯粹知识,也没有不生产知识的权力——精神病学、犯罪学、性科学,都既是知识又是权力的运作。"},
+    {h:"规训社会与全景敞视监狱", p:"在《规训与惩罚》中,福柯描绘了现代社会的运作方式从「酷刑」转向「规训」。他借用边沁设计的「全景敞视监狱」(Panopticon)作为隐喻:一座环形监狱,中央有一座瞭望塔,囚犯永远不知道自己此刻是否被监视,于是只能时刻假定被看着,最终把监视内化——自己监督自己。福柯说,现代的学校、医院、工厂、军营都遵循同样的逻辑:通过持续的观察、检查、规范化,把人训练成「驯顺而有用的身体」。权力不再主要靠暴力,而靠让人自我规训。"},
+    {h:"主体的诞生与解放的难题", p:"福柯由此颠倒了启蒙的自我形象:我们珍视的「自主主体」「内心真相」,在很大程度上是被规训实践和话语生产出来的效果,而非天然的起点。这带来一个尖锐难题:如果连「我」和「我对自由的渴望」都是权力的产物,那么反抗与解放从何谈起?福柯晚年转向「自我的技术」与「生存美学」,试图在被建构的处境中,重新探寻自我塑造与抵抗的可能空间。他留给我们的,是一种永不放松的警惕:对一切自称中立、自然、必然的东西,追问它的历史与权力。"}
+  ],
+  concepts:[
+    {t:"知识型", d:"某一时代支配何为「真」、何为「科学」的深层无意识规则系统。"},
+    {t:"权力/知识", d:"权力与知识彼此交织、相互生产,现代权力主要是生产性而非纯压制性的。"},
+    {t:"规训", d:"通过持续观察、检查与规范化,把人塑造成驯顺而有用的身体的现代权力技术。"}
+  ],
+  quote:{q:"灵魂是身体的监狱。", who:"福柯·《规训与惩罚》", plain:"颠倒了柏拉图——不是肉体困住灵魂,而是被规训塑造出的「内在自我」反过来束缚着身体。"}
+},
+{ id:"13.2", t:"德里达:解构、延异与逻各斯中心主义", lead:"如果意义从来不在场、永远在滑动,西方两千年对「在场」「本源」「确定基础」的渴望,是不是一个无法兑现的梦?", city:"paris",
+  body:[
+    {h:"逻各斯中心主义", p:"德里达诊断出西方形而上学的一个深层倾向,称为「逻各斯中心主义」:它总在追寻一个「在场的」、自足的、确定的意义本源——上帝、理性、真理、自我意识——以此作为一切意义的最终担保。与之相连的是「在场的形而上学」与对「言语优于文字」的偏爱(认为说话时意义直接在场,文字只是其苍白替身)。德里达要做的,不是从外部推翻它,而是从其内部揭示:这个梦想从未真正实现过,它总是自我拆解。"},
+    {h:"二元对立及其颠覆", p:"西方思想充满等级化的二元对立:言语/文字、在场/缺席、自然/文化、男/女、灵魂/肉体——前者总被设为本源与优越,后者是派生与次等。解构的策略分两步:先颠倒这一等级(显示所谓「次等项」其实是「优越项」的条件),再越出这个对立框架本身,显示二者相互依存、彼此渗透,根本立不住那条干净的界线。一个例子:德里达论证「文字」所具有的延迟、缺席、可重复等特征,其实也内在于「言语」——所以言语并不比文字更「直接在场」。"},
+    {h:"延异:意义的永恒滑动", p:"支撑解构的核心是德里达生造的词「延异」(différance)。它一语双关地融合了「差异」(differ)与「延迟」(defer)。其一,词的意义来自它与其他词的差异(承自索绪尔):「猫」之所以有意义,是因为它不是「狗」「帽」……意义是关系性的,没有哪个词自带饱满的在场意义。其二,这种由差异确定意义的过程永无终点——你查一个词,得到的是更多的词,意义被无限地延迟、推迟,从不抵达一个最终的、完全在场的「所指」。意义因此总是「踪迹」的游戏,永远在途中。"},
+    {h:"误解、争议与意义", p:"解构常被误解为「怎么读都行」的虚无主义或文字游戏,德里达本人坚决否认:解构不是摧毁,而是一种极为细致、负责任的阅读,它尊重文本、紧贴文本的逻辑,直到文本自身暴露出无法弥合的张力。它的意义在于:培养对一切「自明的基础」「自然的等级」的警觉,为被压抑的「次等项」(他者、边缘、差异)开辟空间——这对伦理、政治、性别与后殖民思想都有深远影响。难点在于其晦涩与自反性:若无确定意义可言,德里达自己的文本又如何被理解?这恰是解构故意保持的开放与悖论。"}
+  ],
+  concepts:[
+    {t:"逻各斯中心主义", d:"西方形而上学执着于一个在场、自足、确定的意义本源(理性、真理、上帝)的倾向。"},
+    {t:"延异", d:"德里达的造词,兼指意义来自差异、又被无限延迟,故意义永不完全在场。"},
+    {t:"解构", d:"一种贴近文本的细读策略,颠覆并越出其内部二元等级,揭示其自我拆解的张力。"}
+  ],
+  quote:{q:"文本之外别无他物。", who:"德里达·《论文字学》", plain:"并非说世界不存在,而是说我们对一切的理解都已被语言与意义之网所中介,无法跳到一个赤裸的「文本之外」。"}
+},
+{ id:"13.3", t:"罗尔斯:正义即公平、无知之幕与差别原则", lead:"如果让你来设计社会的基本规则,却事先不知道自己将生为谁——富或穷、强或弱——你会选择什么样的规则?", city:"usa",
+  body:[
+    {h:"复兴政治哲学", p:"二十世纪中叶,在功利主义独大、规范政治哲学几近沉寂之际,罗尔斯1971年的《正义论》以一部恢弘的体系重振了这一领域。他的根本对手是功利主义:后者主张以「最大多数人的最大幸福」为标准,但这可能为了总量幸福而牺牲少数人(比如以个别人的苦难换取多数人的快乐)。罗尔斯坚持「每个人都拥有一种基于正义的不可侵犯性,即使以社会整体福利之名也不能逾越」。正义,而非效率或总和,是社会制度的首要美德。"},
+    {h:"原初状态与无知之幕", p:"如何找到公正的原则?罗尔斯设计了一个思想实验:「原初状态」。设想一群理性的人聚在一起为社会立约,但他们处在「无知之幕」之后——不知道自己的阶级、天赋、种族、性别、宗教,甚至不知道自己的人生观。既然不知道自己将落在哪个位置,出于理性的审慎,他们就不会设计任何可能让自己沦为牺牲品的规则。无知之幕巧妙地把「公平」内置进了选择程序:它剥离了一切可能导致偏私的信息,因此在其后达成的原则,必定是公平的。这就是「正义即公平」。"},
+    {h:"两个正义原则", p:"罗尔斯论证,在无知之幕后人们会选出两条原则。第一,每个人都享有一套平等的基本自由(言论、信仰、政治权利等),且这一原则优先,不能为经济利益而牺牲。第二,社会与经济的不平等只有满足两个条件才被允许:(a) 依附于在公平机会平等下向所有人开放的职位;(b) 符合「差别原则」——即这种不平等必须使社会中处境最不利者获得最大利益。换言之,只有当让强者多得也能最大限度地改善最弱者的处境时,不平等才正当。"},
+    {h:"差别原则的深意与争论", p:"差别原则的哲学根据极为深刻:一个人的天赋(智力、家世、运气)在道德上是「任意的」——你不配也不该因偶然得来的天赋而独占其全部回报。因此社会应把这些天赋视为某种「共同资产」,让其收益也惠及最不利者。这一思想为现代福利国家与再分配提供了强有力的论证。它也招致两面夹击:诺齐克从自由至上主义批评它侵犯了个人对自身才能与所得的正当权利;社群主义者(如桑德尔)则质疑那个被「无知之幕」剥得一干二净的「自我」是否还真实存在。这场争论,至今仍是政治哲学的中心。"}
+  ],
+  concepts:[
+    {t:"无知之幕", d:"立约者在不知自身阶级、天赋、性别等信息的条件下选择正义原则,以保证公平。"},
+    {t:"差别原则", d:"社会经济不平等只有在能使处境最不利者获得最大利益时才正当。"},
+    {t:"正义即公平", d:"正义原则应是公平的程序(原初状态)下理性各方一致同意的产物。"}
+  ],
+  quote:{q:"正义是社会制度的首要美德,正如真理是思想体系的首要美德。", who:"罗尔斯·《正义论》", plain:"一个社会再有效率、再繁荣,如果不正义,这套制度就是有根本缺陷的。"}
+},
+{ id:"13.4", t:"当代群像:心灵哲学的「难问题」与未竟的争论", lead:"科学几乎能解释大脑的一切运作,却似乎始终碰不到一个东西:为什么这些神经活动「感觉起来像某种样子」?", city:"usa",
+  body:[
+    {h:"心身问题的当代转世", p:"笛卡尔的心身二元论早已被多数哲学家放弃,但它留下的难题换了形式重返。主流的「物理主义」主张:心灵不过是大脑(物理系统)的某种状态或功能。其中「功能主义」影响最大——它说心理状态由其功能角色定义(疼痛就是「由损伤引起、导致呼痛与回避行为」的那个状态),因此原则上,硅基的计算机若实现了同样的功能组织,也能有心灵。这为人工智能时代的心灵问题埋下了伏笔:思维是否只是某种信息处理?"},
+    {h:"意识的难问题", p:"哲学家查尔默斯区分了意识的「易问题」与「难问题」。易问题(其实极难,但原则上可由科学解决)是:大脑如何整合信息、控制行为、报告状态。难问题是:为什么所有这些物理过程会伴随着主观体验——为什么看到红色「感觉起来是那个样子」,疼痛「疼起来是那种滋味」?这种第一人称的、质性的体验被称为「感受质」(qualia)。难点在于:即使我们完全掌握了大脑的全部物理事实,似乎仍留下一道无法被物理语言填平的「解释鸿沟」。"},
+    {h:"两个著名的思想实验", p:"两个实验把难问题逼到极致。其一是「玛丽的房间」:神经科学家玛丽自幼生活在黑白房间,通过书本掌握了关于颜色视觉的一切物理知识;当她第一次走出房间看见红色,她是否学到了新东西?如果是,那就说明物理知识之外还有「体验本身」这一事实。其二是「哲学僵尸」:设想一个在物理与行为上与你毫无二致、却完全没有内在体验的存在——如果这在逻辑上可设想,意识似乎就不能被还原为纯物理事实。这两个实验至今激烈争论,未有定论。"},
+    {h:"未竟的争论与哲学的处境", p:"对难问题的回应五花八门:取消主义者干脆否认「感受质」这类东西真实存在,认为那是过时的民间心理学幻觉;泛心论者反其道而行,猜测意识或许是物质的基本属性,普遍而微弱地存在;还有人主张这是人类认知的永久局限。心灵哲学的未决,折射出哲学的整体处境:在科学昌明的时代,哲学不再独占对世界的解释,但恰恰在科学的边缘与基础处——意识、自由意志、人工智能的道德地位、何为美好生活——那些最古老的追问以新的形态重新逼问我们。哲学的历史远未终结,它只是再一次回到了惊奇本身。"}
+  ],
+  concepts:[
+    {t:"难问题", d:"为何客观的物理脑过程会伴随主观体验,这是意识中最棘手、似乎无法被物理还原的问题。"},
+    {t:"感受质(qualia)", d:"体验的主观质性特征,如红之为红、痛之为痛的「感觉起来的样子」。"},
+    {t:"功能主义", d:"心理状态由其在系统中的功能角色定义,故原则上可被不同物理载体实现。"}
+  ],
+  quote:{q:"成为一只蝙蝠,究竟是什么感觉?", who:"内格尔·同名论文", plain:"哪怕我们掌握蝙蝠大脑的全部科学,也无法知道「身为蝙蝠」从内部体验起来是什么样——主观体验有客观知识够不着的一面。"}
+}
+];
+
+
+const T={1:"tag1",2:"tag2",3:"tag3"};
+const TN={1:"变化↔不变",2:"理性↔经验",3:"个体↔整体"};
+const navEl=document.getElementById('nav');
+const page=document.getElementById('page');
+const bar=document.getElementById('bar');
+// flat list of all sub-chapters for prev/next
+const FLAT=[]; subs.forEach((arr,i)=>(arr||[]).forEach((s,j)=>FLAT.push([i,j])));
+
+// ---------- sidebar (hierarchical) ----------
+(function buildNav(){
+  let html='<a class="navov" data-k="overview">总览 · 思想迁徙全景</a>';
+  chapters.forEach((c,i)=>{
+    const items=(subs[i]||[]).map((s,j)=>`<a class="subi" data-k="${i}.${j}"><span class="si">${s.id}</span>${s.t}</a>`).join('');
+    html+=`<div class="navgrp" data-grp="${i}">
+       <a class="grphead" data-k="${i}"><span class="gi">▸</span><span><span class="gt">${c.num}｜${c.title}</span><span class="gy">${c.period}</span></span></a>
+       <div class="subnav">${items}</div>
+     </div>`;
+  });
+  navEl.innerHTML=html;
+  navEl.querySelectorAll('[data-k]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.k);}));
+})();
+
+function go(k){
+  if(k==='overview'){ location.hash='overview'; return; }
+  if(/^\d+$/.test(k)){ location.hash='ch'+(Number(k)+1); return; }
+  const m=k.split('.'); location.hash='ch'+(Number(m[0])+1)+'s'+(Number(m[1])+1);
+}
+function setActive(kind,i,j){
+  navEl.querySelector('.navov').classList.toggle('on',kind==='ov');
+  navEl.querySelectorAll('.navgrp').forEach((g,gi)=>{
+    const on=(kind!=='ov'&&gi===i);
+    g.classList.toggle('on',on&&kind==='ch');
+    g.classList.toggle('open',on);
+  });
+  navEl.querySelectorAll('.subi').forEach(a=>a.classList.toggle('on',kind==='sub'&&a.dataset.k===i+'.'+j));
+}
+
+let playTimer=null, rafId=null;
+function stopPlay(){ if(playTimer){clearInterval(playTimer);playTimer=null;} if(rafId){cancelAnimationFrame(rafId);rafId=null;} }
+
+function route(){
+  stopPlay();
+  const h=location.hash.slice(1);
+  let m;
+  if(!h||h==='overview'){ renderOverview(); setActive('ov'); }
+  else if((m=h.match(/^ch(\d+)s(\d+)$/))){ const i=+m[1]-1,j=+m[2]-1;
+    if(subs[i]&&subs[i][j]){ renderSub(i,j); setActive('sub',i,j); } else { renderOverview(); setActive('ov'); } }
+  else if((m=h.match(/^ch(\d+)$/))){ const i=+m[1]-1;
+    if(chapters[i]){ renderChapterOverview(i); setActive('ch',i); } else { renderOverview(); setActive('ov'); } }
+  else { renderOverview(); setActive('ov'); }
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+
+// ============ OVERVIEW · TIME MACHINE ============
+function renderOverview(){
+  const full="M "+PRIM.map(p=>p.x+" "+p.y).join(" L ");
+  let dotsHTML=""; PRIM.forEach((p,i)=>{ dotsHTML+=`<circle class="ovdot" data-i="${i}" cx="${p.x}" cy="${p.y}" r="5"/>`; });
+  let labHTML="", ls={};
+  geo.forEach((g,i)=>{ const k=g.primary; if(ls[k])return; ls[k]=1; const c=cities[k];
+    const a=c.a||'start'; const lx=a==='end'?c.x-10:a==='middle'?c.x:c.x+10;
+    labHTML+=`<text class="ovlab" x="${lx}" y="${c.y+(c.dy||4)}" text-anchor="${a}">${c.n}</text>`; });
+  const ticks=chapters.map((c,i)=>`<button class="tick" data-i="${i}"><span class="tkdot"></span><span class="tky">${c.year}</span></button>`).join('');
+  page.innerHTML=`
+    <div class="ov-kicker">A Timeline of Western Thought</div>
+    <div class="ov-h1">西方哲学史 · 思想迁徙时光机</div>
+    <p class="ov-sub">按下播放,看哲学的重心如何随时间在地中海与欧洲间移动;点开任一章,会展开它下属的若干「独立子章节」。</p>
+    <svg class="ovmap" viewBox="0 0 800 480">
+      <rect width="800" height="480" fill="#d4e3ea"/>
+      <use href="#land-geo" class="land" filter="url(#ls)"/>
+      <text class="ovlab" x="40" y="232" style="font-style:italic;fill:#7f9aa6">大西洋</text>
+      <text class="ovlab" x="232" y="48" style="font-style:italic;fill:#7f9aa6">北海</text>
+      <text class="ovlab" x="430" y="402" style="font-style:italic;fill:#7f9aa6">地中海</text>
+      <text class="ovlab" x="640" y="270" style="font-style:italic;fill:#7f9aa6">黑海</text>
+      <path class="rmini" d="${full}"/>
+      <path class="rdone" id="ovdone" d=""/>
+      ${labHTML}${dotsHTML}
+      <circle id="ovmarker" class="ovmarker" cx="${PRIM[0].x}" cy="${PRIM[0].y}" r="9"/>
+    </svg>
+    <div class="ovcap" id="ovcap"></div>
+    <div class="ov-axis" id="ovaxis">${ticks}</div>
+    <div class="ov-ctrl">
+      <button id="ovplay">▶ 播放迁徙</button>
+      <button id="ovreset">⟲ 重置</button>
+      <button id="ovgoto">进入本章 →</button>
+    </div>
+    <div class="ov-hint">也可以直接点地图上的城市、下方年代轴,或左侧目录进入任意章节与子章节。</div>`;
+  const marker=document.getElementById('ovmarker'), done=document.getElementById('ovdone'), cap=document.getElementById('ovcap');
+  const dots=[...page.querySelectorAll('.ovdot')], ticksEl=[...page.querySelectorAll('.tick')];
+  let idx=-1;
+  function tween(ax,ay,bx,by){ if(rafId)cancelAnimationFrame(rafId); const t0=performance.now(),dur=850;
+    (function f(t){ let k=Math.min(1,(t-t0)/dur); const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      marker.setAttribute('cx',ax+(bx-ax)*e); marker.setAttribute('cy',ay+(by-ay)*e);
+      if(k<1) rafId=requestAnimationFrame(f); else rafId=null; })(t0); }
+  function show(i,animate){ const prev=idx; idx=i; const c=chapters[i], g=geo[i], n=subtl[i][0];
+    done.setAttribute('d',"M "+PRIM.slice(0,i+1).map(p=>p.x+" "+p.y).join(" L "));
+    if(animate&&prev>=0) tween(PRIM[prev].x,PRIM[prev].y,PRIM[i].x,PRIM[i].y);
+    else { marker.setAttribute('cx',PRIM[i].x); marker.setAttribute('cy',PRIM[i].y); }
+    dots.forEach((d,k)=>{ d.classList.toggle('visited',k<i); d.classList.toggle('cur',k===i); });
+    ticksEl.forEach((t,k)=>{ t.classList.toggle('visited',k<i); t.classList.toggle('active',k===i); });
+    cap.innerHTML=`<div class="oc-top">${c.num} · ${c.period}</div><div class="oc-t"><b>${c.title}</b> &nbsp;<span style="font-size:13px;color:var(--t2)">📍 ${g.where}</span></div><div class="oc-d">${n.t}(${n.y}) · ${c.cq}</div>`;
+    document.getElementById('ovgoto').onclick=()=>go(String(i));
+  }
+  dots.forEach(d=>d.addEventListener('click',()=>go(String(Number(d.dataset.i)))));
+  const pbtn=document.getElementById('ovplay');
+  ticksEl.forEach(t=>t.addEventListener('click',()=>{ stopPlay(); pbtn.classList.remove('playing'); pbtn.textContent='▶ 播放迁徙'; show(Number(t.dataset.i),true); }));
+  pbtn.addEventListener('click',()=>{ if(playTimer){ stopPlay(); pbtn.classList.remove('playing'); pbtn.textContent='▶ 播放迁徙'; return; }
+    if(idx>=chapters.length-1) show(0,false); pbtn.classList.add('playing'); pbtn.textContent='⏸ 暂停';
+    playTimer=setInterval(()=>{ if(idx>=chapters.length-1){ stopPlay(); pbtn.classList.remove('playing'); pbtn.textContent='▶ 重新播放'; return; } show(idx+1,true); },1700); });
+  document.getElementById('ovreset').addEventListener('click',()=>{ stopPlay(); pbtn.classList.remove('playing'); pbtn.textContent='▶ 播放迁徙'; show(0,false); });
+  show(0,false);
+}
+
+// ============ CHAPTER OVERVIEW ============
+function renderChapterOverview(i){
+  const c=chapters[i], g=geo[i], nodes=subtl[i];
+  const tagHTML=c.threads.map(t=>`<span class="tag ${T[t]}">${TN[t]}</span>`).join('')+`<span class="geotag">${(g.where.split(" · ")[1]||cities[g.primary].n)}</span>`;
+  const full="M "+PRIM.map(p=>p.x+" "+p.y).join(" L ");
+  const done="M "+PRIM.slice(0,i+1).map(p=>p.x+" "+p.y).join(" L ");
+  const step=i>0?`<path class="rstep" marker-end="url(#arr)" d="M ${PRIM[i-1].x} ${PRIM[i-1].y} L ${PRIM[i].x} ${PRIM[i].y}"/>`:``;
+  const stopsHTML=nodes.map((n,j)=>`<div class="vstop" data-j="${j}"><div class="vyear">${n.y}</div><div class="vrail"><span class="vdot"></span></div><div class="vbody"><span class="vschool">${n.s}</span><h4>${n.t}<span class="vcity">📍${cities[n.city].n}</span></h4><p>${n.d}</p></div></div>`).join('');
+  const cardHTML=(subs[i]||[]).map((s,j)=>`<div class="subcard" data-j="${j}"><div class="sid">${s.id}</div><h4>${s.t}</h4><p>${s.lead||''}</p></div>`).join('');
+  const debHTML=(typeof debate!=='undefined'&&debate[i])?`<div class="block"><span class="blabel">争论焦点 · 批评与回应</span>${debate[i].map(s=>`<div class="deep deb"><h4>◦ ${s.h}</h4><p>${s.p}</p></div>`).join('')}</div>`:'';
+  const impHTML=(typeof impact!=='undefined'&&impact[i])?`<div class="block"><span class="blabel">影响与回响 · 它如何塑造后世</span>${impact[i].map(s=>`<div class="deep imp"><h4>▸ ${s.h}</h4><p>${s.p}</p></div>`).join('')}</div>`:'';
+  const testHTML=c.test.map(t=>`<li>${t}</li>`).join('');
+  page.innerHTML=`
+   <div class="crumb"><a data-k="overview">总览</a> › ${c.num}</div>
+   <div class="chead"><span class="chperiod">${c.period}</span><div class="chnum">${c.num}</div><h2>${c.title}</h2><div class="tags">${tagHTML}</div></div>
+   <div class="cq">${c.cq}</div>
+   <div class="block"><span class="blabel">时代背景</span><p>${c.bg}</p></div>
+   <div class="block"><span class="blabel">地理 · 经济引擎</span><p>${g.econ}</p></div>
+   <div class="block"><span class="blabel">时间流 · 思想为何转变</span><div class="flow"><div class="step s1"><h4>① 遗留难题</h4><p>${c.flow.legacy}</p></div><div class="step s2"><h4>② 触发力量</h4><p>${c.flow.trigger}</p></div><div class="step s3"><h4>③ 思想转向</h4><p>${c.flow.shift}</p></div></div></div>
+   <div class="block"><span class="blabel">本章时间线 · 思想流派的变迁(点击节点在地图上定位)</span>
+     <div class="explore">
+       <div class="mapwrap"><svg class="cmap" viewBox="0 0 800 480"><rect width="800" height="480" fill="#d4e3ea"/><use href="#land-geo" class="land" filter="url(#ls)"/><path class="rmini" d="${full}"/><path class="rdone" d="${done}"/>${step}<g id="cmap-cities"></g></svg><div class="maphint">琥珀色实线 = 走到本章为止的迁徙路线</div></div>
+       <div class="vtlcol"><div class="vtlhead"><span class="h">⏳ ${nodes[0].y} → ${nodes[nodes.length-1].y}</span><button class="vplay" id="vplay">▶ 沿时间线演示</button></div><div class="vtl" id="vtl">${stopsHTML}</div></div>
+     </div>
+   </div>
+   <div class="block"><span class="blabel">本章子章节 · 点击进入(独立成章)</span><div class="subcards">${cardHTML}</div></div>
+   ${debHTML}
+   ${impHTML}
+   <div class="block"><span class="blabel">脉络承接 · 通向下一章</span><div class="lineage">${c.lineage}</div></div>
+   <details class="test"><summary>自测 3 问 · 点击展开</summary><ol>${testHTML}</ol></details>
+   <div class="navbtns">
+     <button id="bback" ${i===0?'disabled':''}><span class="nbk">← 上一章</span>${i===0?'已是开篇':chapters[i-1].title}</button>
+     <button id="bnextch" ${i===chapters.length-1?'disabled':''}><span class="nbk">下一章 →</span>${i===chapters.length-1?'已是终章':chapters[i+1].title}</button>
+   </div>`;
+  page.querySelector('.crumb a').addEventListener('click',()=>go('overview'));
+  page.querySelectorAll('.subcard').forEach(el=>el.addEventListener('click',()=>go(i+'.'+el.dataset.j)));
+  initExplore(i);
+  const bb=document.getElementById('bback'), bn=document.getElementById('bnextch');
+  if(i>0) bb.addEventListener('click',()=>go(String(i-1)));
+  if(i<chapters.length-1) bn.addEventListener('click',()=>go(String(i+1)));
+}
+
+function initExplore(i){
+  const nodes=subtl[i]; const cont=document.getElementById('cmap-cities');
+  const order=[]; nodes.forEach(n=>{ if(!order.includes(n.city)) order.push(n.city); });
+  let html=""; const cityEl={};
+  order.forEach(k=>{ const c=cities[k]; html+=`<circle class="cdot" data-city="${k}" cx="${c.x}" cy="${c.y}" r="7"/>`;
+    const a=c.a||'start'; const lx=a==='end'?c.x-11:a==='middle'?c.x:c.x+11;
+    html+=`<text class="clab" data-city="${k}" x="${lx}" y="${c.y+(c.dy||4)}" text-anchor="${a}">${c.n}</text>`; });
+  cont.innerHTML=html;
+  order.forEach(k=>{ cityEl[k]={dot:cont.querySelector(`.cdot[data-city="${k}"]`),lab:cont.querySelector(`.clab[data-city="${k}"]`)}; });
+  const stops=[...document.querySelectorAll('#vtl .vstop')]; let cur=-1;
+  function select(j){ cur=j; const n=nodes[j]; stops.forEach((s,k)=>s.classList.toggle('active',k===j));
+    for(const k in cityEl){ const on=(k===n.city); cityEl[k].dot.classList.toggle('cur',on); cityEl[k].lab.classList.toggle('cur',on); } }
+  stops.forEach((s,j)=>{ s.addEventListener('click',()=>{ stopPlay(); vb.classList.remove('playing'); vb.textContent='▶ 沿时间线演示'; select(j); });
+    s.addEventListener('mouseenter',()=>{ if(!playTimer) select(j); }); });
+  for(const k in cityEl){ cityEl[k].dot.addEventListener('click',()=>{ stopPlay(); const j=nodes.findIndex(n=>n.city===k); if(j>=0) select(j); }); }
+  const vb=document.getElementById('vplay');
+  vb.addEventListener('click',()=>{ if(playTimer){ stopPlay(); vb.classList.remove('playing'); vb.textContent='▶ 沿时间线演示'; return; }
+    vb.classList.add('playing'); vb.textContent='⏸ 停止'; if(cur>=nodes.length-1) select(0);
+    playTimer=setInterval(()=>{ if(cur>=nodes.length-1){ stopPlay(); vb.classList.remove('playing'); vb.textContent='▶ 重新演示'; return; } select(cur+1); },1700); });
+  select(0);
+}
+
+// ============ SUB-CHAPTER PAGE ============
+function renderSub(i,j){
+  const c=chapters[i], s=subs[i][j];
+  const bodyHTML=s.body.map(b=>`<div class="deep"><h4>${b.h}</h4><p>${b.p}</p></div>`).join('');
+  const conHTML=(s.concepts&&s.concepts.length)?`<div class="block"><span class="blabel">核心概念</span><div class="concepts">${s.concepts.map(x=>`<div class="concept"><b>${x.t}</b><span>${x.d}</span></div>`).join('')}</div>`:'';
+  const quoteHTML=s.quote?`<div class="block"><span class="blabel">原典金句</span><div class="quote"><div class="q">「${s.quote.q}」</div><div class="who">— ${s.quote.who}</div><div class="plain">${s.quote.plain}</div></div></div>`:'';
+  // locator map: this chapter's sub cities, highlight current
+  const chCities=[]; subs[i].forEach(x=>{ if(x.city&&!chCities.includes(x.city)) chCities.push(x.city); });
+  let locDots="";
+  chCities.forEach(k=>{ const cc=cities[k]; const on=(k===s.city);
+    locDots+=`<circle class="cdot ${on?'cur':''}" cx="${cc.x}" cy="${cc.y}" r="${on?8:6}"/>`;
+    if(on){ const a=cc.a||'start'; const lx=a==='end'?cc.x-11:a==='middle'?cc.x:cc.x+11; locDots+=`<text class="clab cur" x="${lx}" y="${cc.y+(cc.dy||4)}" text-anchor="${a}">${cc.n}</text>`; } });
+  const loc=s.city?`<svg class="locmap" viewBox="0 0 800 480"><rect width="800" height="480" fill="#d4e3ea"/><use href="#land-geo" class="land"/>${locDots}</svg>`:'';
+  // prev/next across all subs
+  const fi=FLAT.findIndex(p=>p[0]===i&&p[1]===j);
+  const prev=fi>0?FLAT[fi-1]:null, next=fi<FLAT.length-1?FLAT[fi+1]:null;
+  const lab=p=>subs[p[0]][p[1]].id+' '+subs[p[0]][p[1]].t;
+  page.innerHTML=`
+   <div class="crumb"><a data-k="overview">总览</a> › <a data-k="${i}">${c.num} ${c.title}</a> › ${s.id}</div>
+   <div class="chead"><span class="chperiod">${c.period}</span><div class="chnum">${c.num} · 子章节 ${s.id}</div><h2>${s.t}</h2></div>
+   ${s.lead?`<div class="cq">${s.lead}</div>`:''}
+   ${loc}
+   ${bodyHTML}
+   ${conHTML}
+   ${quoteHTML}
+   <div style="clear:both"></div>
+   <div class="navbtns">
+     <button id="sprev" ${prev?'':'disabled'}>${prev?`<span class="nbk">← 上一节</span>${lab(prev)}`:'已是第一节'}</button>
+     <button id="snext" ${next?'':'disabled'}>${next?`<span class="nbk">下一节 →</span>${lab(next)}`:'已是最后一节'}</button>
+   </div>
+   <div style="margin-top:14px"><a class="navov" style="display:inline-block" data-k="${i}">↩ 返回「${c.title}」总览</a></div>`;
+  page.querySelectorAll('.crumb [data-k]').forEach(a=>a.addEventListener('click',()=>go(a.dataset.k)));
+  page.querySelector('.navov').addEventListener('click',()=>go(String(i)));
+  if(prev) document.getElementById('sprev').addEventListener('click',()=>go(prev[0]+'.'+prev[1]));
+  if(next) document.getElementById('snext').addEventListener('click',()=>go(next[0]+'.'+next[1]));
+}
+
+window.addEventListener('scroll',()=>{ const hsc=document.documentElement.scrollHeight-window.innerHeight; bar.style.width=(hsc>0?(window.scrollY/hsc*100):0)+'%'; },{passive:true});
+route();
+</script>
+</body>
+</html>
