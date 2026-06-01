@@ -34,6 +34,13 @@
       "folder": "科技",
       "icon": "🔬",
       "color": "#3aa6b9"
+    },
+    {
+      "id": "mpvi40l3rkc5",
+      "name": "哲学",
+      "folder": "哲学",
+      "icon": "🧠",
+      "color": "#7b5cb8"
     }
   ],
   "pages": [
