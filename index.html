@@ -58,6 +58,10 @@
   .card .meta .t{background:var(--bg);border:1px solid var(--line);padding:1px 8px;border-radius:6px}
   .card .open{position:absolute;top:14px;right:14px;font-size:13px;color:#c2c7d0;opacity:0;transition:.15s}
   .card:hover .open{opacity:1;color:var(--accent)}
+  .dlbtn{position:absolute;top:12px;right:12px;border:1px solid var(--line);background:#fff;color:var(--accent);
+    font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;cursor:pointer;z-index:2;box-shadow:var(--shadow)}
+  .dlbtn:active{transform:scale(.95)}
+  .dlbtn.cached{color:#2f9e6f;border-color:#bfe6d2;background:#f0faf4}
 
   .empty{text-align:center;padding:70px 20px;color:var(--muted)}
   .empty .big{font-size:46px;margin-bottom:10px}
@@ -312,13 +316,36 @@ function render(){
   }
   grid.innerHTML=pages.map(p=>{ const m=moduleById(p.moduleId)||{name:"未分类",color:"#888",icon:"📄"};
     const tags=(p.tags||[]).slice(0,3).map(t=>`<span class="t">${esc(t)}</span>`).join("");
-    return `<div class="card" onclick="openPage('${p.id}')"><span class="open">打开 ↗</span>
+    return `<div class="card" onclick="openPage('${p.id}')"><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button>
       <span class="tag" style="background:${m.color}1a;color:${m.color}">${m.icon} ${esc(m.name)}</span>
       <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="opacity:.5">—</p>`}
       <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}</div></div>`;
   }).join("");
+  markCachedStates();
 }
 function setModule(id){ activeModule=id; render(); }
+async function cacheOne(id, btn){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  if(!("caches" in window) || !location.protocol.startsWith("http")){ toast("请在网址版里使用离线缓存"); return; }
+  const old=btn?btn.textContent:"";
+  try{
+    if(btn){ btn.textContent="…"; }
+    const cache=await caches.open("study-wiki-v2");
+    const url=pathFor(p);
+    const res=await fetch(url,{cache:"reload"});
+    if(res.ok){ await cache.put(url, res.clone()); if(btn){ btn.textContent="✓ 已离线"; btn.classList.add("cached"); } toast("已存到本机："+p.title); }
+    else { if(btn){ btn.textContent=old||"⤓ 离线"; } toast("缓存失败（文件可能不存在）"); }
+  }catch(e){ if(btn){ btn.textContent=old||"⤓ 离线"; } toast("缓存失败"); }
+}
+async function markCachedStates(){
+  if(!("caches" in window)) return;
+  let cache; try{ cache=await caches.open("study-wiki-v2"); }catch(e){ return; }
+  for(const p of data.pages){
+    try{ const m=await cache.match(pathFor(p));
+      if(m){ const btn=document.querySelector('.dlbtn[data-id="'+p.id+'"]'); if(btn){ btn.textContent="✓ 已离线"; btn.classList.add("cached"); } }
+    }catch(e){}
+  }
+}
 function pathFor(p){ const m=moduleById(p.moduleId); return "./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file); }
 function openPage(id){ const p=data.pages.find(x=>x.id===id); if(p) window.open(pathFor(p),"_blank"); }
 
