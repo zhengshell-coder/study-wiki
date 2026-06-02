@@ -1,6 +1,6 @@
 {
-  "name": "我的学习库",
-  "short_name": "学习库",
+  "name": "我的图书馆",
+  "short_name": "图书馆",
   "description": "与 AI 共建的个人学习页面库",
   "start_url": "./index.html",
   "scope": "./",

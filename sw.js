@@ -1,4 +1,4 @@
-// 我的学习库 Service Worker —— 离线缓存
+// 我的图书馆 Service Worker —— 离线缓存
 const CACHE = "study-wiki-v2";
 const CORE = [
   "./",
