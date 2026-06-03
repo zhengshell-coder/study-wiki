@@ -97,6 +97,15 @@
       "desc": "中国历史全景图",
       "tags": [],
       "date": "2026-06-03"
+    },
+    {
+      "id": "mpybgq62lrra",
+      "moduleId": "tcm",
+      "title": "中医系统课",
+      "file": "中医系统课.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-06-03"
     }
   ]
 }
