@@ -62,6 +62,21 @@
     font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;cursor:pointer;z-index:2;box-shadow:var(--shadow)}
   .dlbtn:active{transform:scale(.95)}
   .dlbtn.cached{color:#2f9e6f;border-color:#bfe6d2;background:#f0faf4}
+  .stack-sec{margin-bottom:14px}
+  .stack{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:14px;transition:.15s}
+  .stack:hover{border-color:#d7dbe6;transform:translateY(-2px)}
+  .stack:not(.open)::before,.stack:not(.open)::after{content:"";position:absolute;left:16px;right:16px;top:0;height:100%;
+    border-radius:var(--radius);background:var(--panel);border:1px solid var(--line);z-index:-1}
+  .stack:not(.open)::before{transform:translateY(6px);opacity:.75}
+  .stack:not(.open)::after{transform:translateY(12px);left:26px;right:26px;opacity:.45}
+  .stack-ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+  .stack-info{flex:1;min-width:0}
+  .stack-name{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .stack-name .cnt{font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px}
+  .stack-sub{font-size:12.5px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stack-chev{color:#b6bcc8;font-size:20px;flex-shrink:0}
+  .substack{margin:14px 2px 8px}
 
   .empty{text-align:center;padding:70px 20px;color:var(--muted)}
   .empty .big{font-size:46px;margin-bottom:10px}
@@ -303,23 +318,52 @@ function render(){
     h+=`<div class="chip ${activeModule===m.id?'active':''}" onclick="setModule('${m.id}')"><span class="dot" style="background:${m.color}"></span>${m.icon} ${esc(m.name)} <span style="opacity:.6">${n}</span></div>`; });
   chips.innerHTML=h;
   const q=(document.getElementById("searchBox").value||"").toLowerCase().trim();
+  const grid=document.getElementById("grid");
+  if(activeModule==="all" && !q){ renderStacks(grid); return; }
+  grid.style.display="grid";
   let pages=data.pages.slice().reverse();
   if(activeModule!=="all") pages=pages.filter(p=>p.moduleId===activeModule);
   if(q) pages=pages.filter(p=>{ const m=moduleById(p.moduleId);
     return (p.title+" "+(p.desc||"")+" "+(p.tags||[]).join(" ")+" "+(m?m.name:"")).toLowerCase().includes(q); });
-  const grid=document.getElementById("grid");
   if(pages.length===0){
     grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">🗂️</div>
       <div>${data.pages.length===0?"还没有页面。点下面按钮上传第一个吧。":"没有匹配的页面。"}</div>
       <button class="btn primary" onclick="openUpload()">＋ 上传新页面</button></div>`;
     return;
   }
-  grid.innerHTML=pages.map(p=>{ const m=moduleById(p.moduleId)||{name:"未分类",color:"#888",icon:"📄"};
-    const tags=(p.tags||[]).slice(0,3).map(t=>`<span class="t">${esc(t)}</span>`).join("");
-    return `<div class="card" onclick="openPage('${p.id}')"><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button>
-      <span class="tag" style="background:${m.color}1a;color:${m.color}">${m.icon} ${esc(m.name)}</span>
-      <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="opacity:.5">—</p>`}
-      <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}</div></div>`;
+  grid.innerHTML=pages.map(cardHTML).join("");
+  markCachedStates();
+}
+function cardHTML(p){
+  const m=moduleById(p.moduleId)||{name:"未分类",color:"#888",icon:"📄"};
+  const tags=(p.tags||[]).slice(0,3).map(t=>`<span class="t">${esc(t)}</span>`).join("");
+  return `<div class="card" onclick="openPage('${p.id}')"><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button>
+    <span class="tag" style="background:${m.color}1a;color:${m.color}">${m.icon} ${esc(m.name)}</span>
+    <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="opacity:.5">—</p>`}
+    <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}</div></div>`;
+}
+let expanded = new Set();
+function toggleStack(id){ if(expanded.has(id)) expanded.delete(id); else expanded.add(id); render(); }
+function renderStacks(grid){
+  grid.style.display="block";
+  const mods=data.modules.filter(m=>data.pages.some(p=>p.moduleId===m.id));
+  if(mods.length===0){
+    grid.innerHTML=`<div class="empty"><div class="big">🗂️</div>
+      <div>还没有页面。点下面按钮上传第一个吧。</div>
+      <button class="btn primary" onclick="openUpload()">＋ 上传新页面</button></div>`;
+    return;
+  }
+  grid.innerHTML=mods.map(m=>{
+    const ps=data.pages.filter(p=>p.moduleId===m.id).slice().reverse();
+    const open=expanded.has(m.id);
+    const cards=open?`<div class="grid substack">${ps.map(cardHTML).join("")}</div>`:"";
+    return `<div class="stack-sec">
+      <div class="stack ${open?'open':''}" onclick="toggleStack('${m.id}')">
+        <div class="stack-ic" style="background:${m.color}22;color:${m.color}">${m.icon}</div>
+        <div class="stack-info"><div class="stack-name">${esc(m.name)} <span class="cnt" style="background:${m.color}1a;color:${m.color}">${ps.length}</span></div>
+          <div class="stack-sub">${open?"点击收起":("最新："+esc(ps[0].title))}</div></div>
+        <div class="stack-chev">${open?"▾":"›"}</div>
+      </div>${cards}</div>`;
   }).join("");
   markCachedStates();
 }
@@ -476,10 +520,10 @@ const CATS=[
   {icon:"📚",name:"综合通识",color:"#6b7280"},{icon:"🏛️",name:"历史",color:"#c08457"},
   {icon:"📖",name:"文学",color:"#b5524a"},{icon:"⚖️",name:"政治法律",color:"#5566cc"},
   {icon:"📈",name:"经济金融",color:"#d98a3d"},{icon:"💼",name:"商业管理",color:"#b8862b"},
-  {icon:"🧠",name:"哲学",color:"#7b5cb8"},{icon:"🤖",name:"AI",color:"#2f8f9e"},
+  {icon:"🧠",name:"哲学",color:"#7b5cb8"},{icon:"📿",name:"宗教",color:"#8a6f9c"},
+  {icon:"🤖",name:"AI-技术",color:"#2f8f9e"},{icon:"🔌",name:"AI-芯片&硬件",color:"#3a6db5"},{icon:"📊",name:"AI-商业&趋势",color:"#d98a3d"},
   {icon:"➗",name:"数学",color:"#3a6db5"},{icon:"🔬",name:"科学",color:"#3aa6b9"},
-  {icon:"🌿",name:"中医医学",color:"#4a9d6f"},{icon:"💪",name:"健康运动",color:"#cf5b5b"},
-  {icon:"🎵",name:"音乐",color:"#b5853a"},{icon:"🎬",name:"影视",color:"#8a5cc2"}
+  {icon:"🌿",name:"中医医学",color:"#4a9d6f"}
 ];
 function fillIconSelect(){
   const s=document.getElementById("m_icon"); if(!s||s.dataset.filled) return;
