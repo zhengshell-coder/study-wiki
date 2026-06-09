@@ -41,6 +41,13 @@
       "folder": "哲学",
       "icon": "🧠",
       "color": "#7b5cb8"
+    },
+    {
+      "id": "mq6vkeyltawt",
+      "name": "宗教",
+      "folder": "宗教",
+      "icon": "📿",
+      "color": "#8a6f9c"
     }
   ],
   "pages": [
