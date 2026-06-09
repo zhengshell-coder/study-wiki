@@ -48,6 +48,13 @@
       "folder": "宗教",
       "icon": "📿",
       "color": "#8a6f9c"
+    },
+    {
+      "id": "mq6wzs4fqo5b",
+      "name": "AI-技术",
+      "folder": "AI-技术",
+      "icon": "🤖",
+      "color": "#2f8f9e"
     }
   ],
   "pages": [
