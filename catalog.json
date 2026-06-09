@@ -62,6 +62,13 @@
       "folder": "AI-芯片&硬件",
       "icon": "🔌",
       "color": "#3a6db5"
+    },
+    {
+      "id": "mq6wzyrperex",
+      "name": "AI-商业&趋势",
+      "folder": "AI-商业&趋势",
+      "icon": "📊",
+      "color": "#d98a3d"
     }
   ],
   "pages": [
