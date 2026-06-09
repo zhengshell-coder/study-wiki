@@ -55,6 +55,13 @@
       "folder": "AI-技术",
       "icon": "🤖",
       "color": "#2f8f9e"
+    },
+    {
+      "id": "mq6wzv1de9ha",
+      "name": "AI-芯片&硬件",
+      "folder": "AI-芯片&硬件",
+      "icon": "🔌",
+      "color": "#3a6db5"
     }
   ],
   "pages": [
