@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《黄帝内经》学习指南 — 从入门到精通</title>
+<style>
+  :root{
+    --paper:#f7f3ea; --paper2:#fffdf6; --ink:#2b2b2b; --ink-light:#5a564e;
+    --cinnabar:#9e2a2b; --cinnabar-light:#c0504d; --indigo:#2c4a52; --gold:#b08d3e;
+    --line:#d9d2c0; --shadow:0 2px 10px rgba(60,50,30,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Noto Serif SC","Songti SC","SimSun",serif;background:var(--paper);color:var(--ink);line-height:1.85;font-size:16px}
+  /* ===== 布局 ===== */
+  #sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--indigo);color:#e8e2d2;overflow-y:auto;padding:24px 0;z-index:10}
+  #sidebar h1{font-size:20px;text-align:center;letter-spacing:4px;color:#f0e6c8;margin-bottom:4px}
+  #sidebar .sub{text-align:center;font-size:12px;color:#a8b8ad;margin-bottom:18px;letter-spacing:2px}
+  #sidebar a{display:block;color:#cfd8cd;text-decoration:none;padding:7px 24px;font-size:14px;border-left:3px solid transparent;transition:.2s}
+  #sidebar a:hover,#sidebar a.active{background:rgba(255,255,255,.08);border-left-color:var(--gold);color:#fff}
+  #sidebar .grp{padding:12px 24px 4px;font-size:11px;color:#8fa396;letter-spacing:3px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px}
+  main{margin-left:230px;padding:0 48px 80px;max-width:1080px}
+  @media(max-width:900px){
+    #sidebar{top:0;left:0;right:0;bottom:auto;width:auto;height:52px;display:flex;align-items:center;overflow-x:auto;overflow-y:hidden;padding:0 8px;white-space:nowrap}
+    #sidebar h1,#sidebar .sub,#sidebar .grp{display:none}
+    #sidebar a{padding:6px 10px;border-left:none;border-bottom:3px solid transparent;font-size:13px;flex:0 0 auto}
+    #sidebar a.active{border-bottom-color:var(--gold)}
+    main{margin-left:0;padding:60px 16px 60px}
+  }
+  /* ===== 标题与文本 ===== */
+  section{display:none;padding-top:32px;animation:fade .25s ease}
+  section.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h2{font-size:30px;color:var(--cinnabar);letter-spacing:3px;margin-bottom:6px;border-bottom:3px double var(--gold);padding-bottom:10px}
+  h2 .en{font-size:13px;color:var(--ink-light);letter-spacing:1px;font-weight:normal;margin-left:12px}
+  h3{font-size:21px;color:var(--indigo);margin:30px 0 12px;letter-spacing:2px}
+  h3::before{content:"◆ ";color:var(--gold);font-size:15px}
+  h4{font-size:17px;color:var(--cinnabar);margin:20px 0 8px}
+  p{margin:10px 0;text-align:justify}
+  .lead{font-size:17px;color:var(--ink-light);margin:14px 0 6px}
+  em{color:var(--cinnabar);font-style:normal;font-weight:bold}
+  /* ===== 组件 ===== */
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:8px;padding:18px 22px;margin:16px 0;box-shadow:var(--shadow)}
+  .card.accent{border-left:5px solid var(--cinnabar)}
+  .card.gold{border-left:5px solid var(--gold)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+  blockquote{background:#f2ead8;border-left:5px solid var(--gold);padding:14px 20px;margin:16px 0;border-radius:0 8px 8px 0;font-size:17px}
+  blockquote .src{display:block;text-align:right;font-size:13px;color:var(--ink-light);margin-top:6px}
+  table{width:100%;border-collapse:collapse;margin:14px 0;background:var(--paper2);font-size:14.5px}
+  th{background:var(--indigo);color:#f0e6c8;padding:9px 10px;letter-spacing:1px;font-weight:600}
+  td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+  tr:nth-child(even) td{background:#f4efe2}
+  td.l{text-align:left}
+  details{background:var(--paper2);border:1px solid var(--line);border-radius:8px;margin:12px 0;overflow:hidden}
+  summary{cursor:pointer;padding:13px 18px;font-size:16.5px;font-weight:bold;color:var(--indigo);background:#efe8d6;list-style:none;user-select:none}
+  summary::before{content:"▸ ";color:var(--cinnabar)}
+  details[open] summary::before{content:"▾ "}
+  details .inner{padding:6px 22px 18px}
+  .tag{display:inline-block;background:var(--cinnabar);color:#fff;font-size:12px;padding:1px 10px;border-radius:10px;margin-right:6px;letter-spacing:1px;vertical-align:middle}
+  .tag.g{background:var(--gold)} .tag.i{background:var(--indigo)}
+  .orig{font-size:17px;line-height:2.1;background:#f6f0df;padding:14px 20px;border-radius:8px;border:1px dashed var(--gold);margin:10px 0}
+  .trans{color:var(--ink-light);font-size:15px;padding:4px 6px}
+  .trans::before{content:"【白话】";color:var(--cinnabar);font-weight:bold}
+  .note{color:var(--ink-light);font-size:15px;padding:4px 6px}
+  .note::before{content:"【要点】";color:var(--indigo);font-weight:bold}
+  .anal{color:var(--ink);font-size:15px;padding:4px 6px;background:#f0ece0;border-radius:6px;margin:6px 0}
+  .anal::before{content:"【解析】";color:var(--cinnabar);font-weight:bold}
+  .logic{border:1px solid var(--indigo);border-left:5px solid var(--indigo);background:#edf1ee;border-radius:8px;padding:16px 22px;margin:18px 0;box-shadow:var(--shadow)}
+  .logic p{font-size:15px}
+  .logic b.k{display:inline-block;color:#fff;background:var(--indigo);font-size:13px;padding:1px 10px;border-radius:4px;margin-right:8px;letter-spacing:1px}
+  .logic b.k.warn{background:var(--cinnabar)}
+  /* ===== 知识地图 ===== */
+  .map{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+  @media(max-width:760px){.map{grid-template-columns:1fr}}
+  .map a{display:block;text-decoration:none;color:var(--ink);background:var(--paper2);border:1px solid var(--line);border-top:4px solid var(--indigo);border-radius:8px;padding:14px 16px;box-shadow:var(--shadow);transition:.2s}
+  .map a:hover{transform:translateY(-3px);border-top-color:var(--cinnabar)}
+  .map b{display:block;font-size:17px;color:var(--cinnabar);margin-bottom:4px}
+  .map span{font-size:13px;color:var(--ink-light)}
+  /* ===== 流程/关系图 ===== */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0;font-size:15px}
+  .flow .nd{background:var(--indigo);color:#f0e6c8;padding:5px 14px;border-radius:20px;white-space:nowrap}
+  .flow .nd.r{background:var(--cinnabar)}
+  .flow .ar{color:var(--gold);font-weight:bold;font-size:18px}
+  .hero{background:linear-gradient(135deg,var(--indigo),#1d3238);color:#e8e2d2;border-radius:0 0 16px 16px;padding:54px 48px 44px;margin:0 -48px 10px;text-align:center}
+  @media(max-width:900px){.hero{margin:0 -16px 10px;padding:40px 20px}}
+  .hero h2{color:#f0e6c8;border:none;font-size:38px;letter-spacing:10px;margin-bottom:8px}
+  .hero p{color:#b9c6bb;max-width:620px;margin:8px auto;text-align:center}
+  .hero .q{font-size:19px;color:#e9d9a8;letter-spacing:2px;margin-top:18px}
+  .check{margin-right:8px;transform:scale(1.2);accent-color:var(--cinnabar)}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .pill{background:#efe8d6;border:1px solid var(--line);border-radius:16px;padding:3px 14px;font-size:14px}
+  .topbtn{position:fixed;right:22px;bottom:22px;background:var(--cinnabar);color:#fff;border:none;border-radius:50%;width:46px;height:46px;font-size:18px;cursor:pointer;box-shadow:var(--shadow);z-index:20}
+  footer{margin-top:60px;border-top:1px solid var(--line);padding-top:18px;font-size:13px;color:var(--ink-light);text-align:center}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <h1>黄帝内经</h1>
+  <div class="sub">学 习 指 南</div>
+  <div class="grp">高屋建瓴</div>
+  <a href="#sec-overview">一、全书鸟瞰</a>
+  <a href="#sec-map">二、知识地图</a>
+  <a href="#sec-method">三、学习总纲</a>
+  <div class="grp">理论体系</div>
+  <a href="#sec-qi">四、气·阴阳·五行</a>
+  <a href="#sec-zangxiang">五、藏象学说</a>
+  <a href="#sec-jingluo">六、经络学说</a>
+  <a href="#sec-jingshen">七、精气神与体质</a>
+  <a href="#sec-bingji">八、病因病机</a>
+  <a href="#sec-zhenfa">九、诊法</a>
+  <a href="#sec-zhize">十、治则治法</a>
+  <a href="#sec-yunqi">十一、运气学说</a>
+  <a href="#sec-yangsheng">十二、养生之道</a>
+  <div class="grp">细读与进阶</div>
+  <a href="#sec-jingdu">十三、重点篇章精读</a>
+  <a href="#sec-mingju">十四、名句精华</a>
+  <a href="#sec-path">十五、进阶路径与书目</a>
+  <a href="#sec-wuqu">十六、常见误区</a>
+</nav>
+
+<main>
+
+<!-- ============ 一、全书鸟瞰 ============ -->
+<section id="sec-overview">
+  <div class="hero">
+    <h2>黄帝内经</h2>
+    <p>中医学的奠基之作 · 现存最早的中医理论经典 · 一部讲"人如何与天地相参而活"的生命之书</p>
+    <p class="q">"上古之人,其知道者,法于阴阳,和于术数,食饮有节,起居有常,不妄作劳,故能形与神俱,而尽终其天年。"</p>
+  </div>
+  <h2>一、全书鸟瞰<span class="en">先立其大:这是一部什么书</span></h2>
+  <p class="lead">读《内经》最忌一头扎进条文。先回答三个问题:它是什么、它讲什么、它的世界观是什么——纲举而后目张。</p>
+
+  <h3>1. 它是什么</h3>
+  <div class="card accent">
+    <p>《黄帝内经》并非黄帝一人所著,而是<em>战国至西汉数百年间众多医家著作的汇编</em>,托名黄帝与岐伯、雷公等臣子问答而成(故中医又称"岐黄之术")。它与《难经》《伤寒杂病论》《神农本草经》并称中医四大经典,且居其首——后世一切中医理论,都是对它的展开、注释与发挥。</p>
+    <p>全书分为两部,各 81 篇,合计 <em>162 篇</em>:</p>
+  </div>
+  <div class="grid2">
+    <div class="card gold">
+      <h4>《素问》81 篇 —— 偏"理"</h4>
+      <p>问答生命之"素"(根本)。以理论为主:阴阳五行、藏象、病机、诊法、治则、运气、养生。是全书的<em>哲学与生理病理总论</em>。</p>
+      <p style="font-size:14px;color:var(--ink-light)">代表篇:上古天真论、四气调神大论、阴阳应象大论、灵兰秘典论、至真要大论。</p>
+    </div>
+    <div class="card gold">
+      <h4>《灵枢》81 篇 —— 偏"技"</h4>
+      <p>又称《针经》。以经络、腧穴、针刺为主,兼论神志、体质、营卫。是<em>针灸学的源头</em>,也是经络学说最系统的文献。</p>
+      <p style="font-size:14px;color:var(--ink-light)">代表篇:九针十二原、本神、经脉、营卫生会、天年。</p>
+    </div>
+  </div>
+
+  <h3>2. 它讲什么 —— 一句话概括</h3>
+  <blockquote>《内经》的全部内容,可以收束为一句话:<em>人是一个以五脏为中心、由经络联通、由气血充养、与天地四时同构同步的整体;顺之则生,逆之则病;治病的最高境界是治未病。</em></blockquote>
+
+  <h3>3. 它的世界观:三大底层预设</h3>
+  <div class="grid3">
+    <div class="card"><h4>① 天人相应</h4><p>人与自然是同构、同律、同气的整体。四时寒暑、昼夜晨昏、地域水土都直接参与人的生理病理。"人以天地之气生,四时之法成。"</p></div>
+    <div class="card"><h4>② 整体恒动</h4><p>人体不是零件的堆叠,而是脏腑经络气血相互联系、永恒运动的系统。一处失衡,全局牵动;诊一处,可知全身。</p></div>
+    <div class="card"><h4>③ 平衡为纲</h4><p>健康 = 阴阳平衡("阴平阳秘,精神乃治");疾病 = 平衡被打破;治疗 = 重建平衡("谨察阴阳所在而调之,以平为期")。</p></div>
+  </div>
+
+  <h3>4. 成书与流传(版本源流速览)</h3>
+  <table>
+    <tr><th>时期</th><th>事件</th><th>意义</th></tr>
+    <tr><td>战国—西汉</td><td class="l">各篇章陆续成文,西汉刘向校书时汇编定型;《汉书·艺文志》著录"《黄帝内经》十八卷"</td><td class="l">书名首见于官方书目</td></tr>
+    <tr><td>南北朝·齐梁</td><td class="l">全元起首注《素问》(已佚)</td><td class="l">最早注本</td></tr>
+    <tr><td>唐·762年</td><td class="l"><em>王冰</em>重新编次注释《素问》,补入"运气七篇大论"</td><td class="l">今本《素问》之祖,影响最大</td></tr>
+    <tr><td>北宋·1057年起</td><td class="l">校正医书局(林亿等)校定,称"新校正"</td><td class="l">官方定本,今通行本来源</td></tr>
+    <tr><td>南宋·1155年</td><td class="l">史崧献家藏《灵枢》并刊行</td><td class="l">今本《灵枢》之祖</td></tr>
+    <tr><td>明清</td><td class="l">马莳、吴崑、张介宾、张志聪等大注家辈出</td><td class="l">注释与分类研究高峰</td></tr>
+  </table>
+  <p style="font-size:14px;color:var(--ink-light)">注:今《素问》实存 79 篇(第72、73篇仅存篇名,刺法论、本病论为后人补入,称"遗篇")。</p>
+
+  <h3>5. 全书的逻辑骨架:它如何做到自洽</h3>
+  <p>《内经》最值得敬畏之处,不是某条具体结论,而是它作为一个理论体系的<em>整体自洽性</em>——从少数公理出发,演绎出生理、病理、诊断、治疗的全部内容,且各部分互相咬合。读全书前先看清这副骨架,之后每章我们都会对该章理论做同样的"自洽性分析"。</p>
+  <div class="logic">
+    <p><b class="k">公理层</b>全书只依赖四条基本预设:① <em>气一元论</em>(万物由气构成,气的运动产生一切变化);② <em>阴阳</em>(任何事物可按对立统一两分,且两面互根、消长、转化);③ <em>五行</em>(功能可归为五类,类与类之间有固定的生克拓扑);④ <em>天人相应</em>(人体与天地同构,自然规律可直接映射于人体)。</p>
+    <p><b class="k">演绎层</b>四条公理两两组合,生成各分支理论:气+阴阳 → 气机升降出入;阴阳+人体 → 表里、脏腑、营卫、气血的二分;五行+人体 → 藏象配属网络与疾病传变路径;天人相应+四时 → 运气与养生。<em>整个体系像几何学:公理少,定理多,推理路径可追溯。</em>这就是为什么"治病必求于本"——一切症状都能沿推理链回溯到阴阳失衡这个根。</p>
+    <p><b class="k">互锁层</b>自洽的关键设计是<em>同构互锁</em>:五脏、五行、五季、五色、五味、五志……共用同一张五元表,任何一个判断(如"面色青为肝病")都同时被多条路径支撑(青=木=肝=春=风),牵一发而动全网。互锁使体系极其稳固——单条经验被质疑时,整张网络仍能托住它。</p>
+    <p><b class="k warn">代价与边界</b>同一机制也带来认识论代价:解释力极强的体系,<em>可证伪性必然偏弱</em>——几乎任何临床现象都能在体系内找到解释(如正治不效可归为"假象"转用反治)。《内经》自身对此并非毫无自觉,它用"以此参伍""有者求之,无者求之,盛者责之,虚者责之"等条款要求多重验证、反复核对。读经的正确姿势由此而来:<em>欣赏其推理之严密,警惕其闭环之圆滑;把它当作一个高度精巧的功能模型来用,而不是当作不可质疑的教义来信。</em></p>
+  </div>
+</section>
+
+<!-- ============ 二、知识地图 ============ -->
+<section id="sec-map">
+  <h2>二、知识地图<span class="en">全书理论框架一图总览</span></h2>
+  <p class="lead">《内经》162 篇内容庞杂,但全部可纳入九大理论模块。下图即本指南的总目录——每个模块点击可跳转,先记住这张图,再读任何篇章都有"抽屉"可放。</p>
+
+  <div class="card accent" style="text-align:center;font-size:17px">
+    <p style="letter-spacing:2px"><em>哲学基础</em>(气—阴阳—五行) → 落实为 <em>人体观</em>(藏象·经络·精气神) → 解释 <em>疾病观</em>(病因病机·诊法) → 导出 <em>治疗观</em>(治则治法) → 升华为 <em>生命观</em>(运气·养生·治未病)</p>
+  </div>
+
+  <div class="map">
+    <a href="#sec-qi"><b>① 气·阴阳·五行</b><span>全书的哲学操作系统:一气、两仪、五行生克</span></a>
+    <a href="#sec-zangxiang"><b>② 藏象学说</b><span>五脏六腑、十二官、奇恒之腑——人体的"职能政府"</span></a>
+    <a href="#sec-jingluo"><b>③ 经络学说</b><span>十二经脉、奇经八脉——气血运行的交通网</span></a>
+    <a href="#sec-jingshen"><b>④ 精气神·体质</b><span>生命三宝;五神藏;阴阳二十五人</span></a>
+    <a href="#sec-bingji"><b>⑤ 病因病机</b><span>六淫七情饮食劳逸;病机十九条</span></a>
+    <a href="#sec-zhenfa"><b>⑥ 诊法</b><span>望闻问切;色脉合参;"能合色脉,可以万全"</span></a>
+    <a href="#sec-zhize"><b>⑦ 治则治法</b><span>治未病、标本缓急、正治反治、因人因时因地</span></a>
+    <a href="#sec-yunqi"><b>⑧ 运气学说</b><span>五运六气:天时气候与疾病流行的周期模型</span></a>
+    <a href="#sec-yangsheng"><b>⑨ 养生之道</b><span>四气调神、食饮有节、形神共养、终其天年</span></a>
+  </div>
+
+  <h3>《素问》《灵枢》篇章归类速查</h3>
+  <details>
+    <summary>展开:162 篇按主题分类(读经定位用)</summary>
+    <div class="inner">
+      <table>
+        <tr><th style="width:130px">主题</th><th>《素问》代表篇</th><th>《灵枢》代表篇</th></tr>
+        <tr><td>养生</td><td class="l">上古天真论①、四气调神大论②、生气通天论③</td><td class="l">天年、本神</td></tr>
+        <tr><td>阴阳五行</td><td class="l">阴阳应象大论⑤、金匮真言论④、阴阳离合论⑥</td><td class="l">阴阳系日月</td></tr>
+        <tr><td>藏象</td><td class="l">灵兰秘典论⑧、六节藏象论⑨、五藏生成⑩、五藏别论⑪</td><td class="l">本藏、本输、肠胃</td></tr>
+        <tr><td>经络</td><td class="l">血气形志、皮部论、经络论、骨空论</td><td class="l">经脉⑩、经别、经筋、营卫生会</td></tr>
+        <tr><td>病因病机</td><td class="l">举痛论、风论、痹论、痿论、咳论、热论、评热病论、至真要大论(病机十九条)</td><td class="l">百病始生、邪客、贼风</td></tr>
+        <tr><td>诊法</td><td class="l">脉要精微论、平人气象论、玉机真藏论、三部九候论</td><td class="l">五色、邪气藏府病形</td></tr>
+        <tr><td>治则治法</td><td class="l">异法方宜论、汤液醪醴论、标本病传论、至真要大论</td><td class="l">九针十二原、官针、师传</td></tr>
+        <tr><td>运气</td><td class="l">天元纪、五运行、六微旨、气交变、五常政、六元正纪、至真要(七篇大论)</td><td class="l">—</td></tr>
+        <tr><td>精神情志</td><td class="l">移精变气论、汤液醪醴论</td><td class="l">本神⑧、口问、淫邪发梦</td></tr>
+      </table>
+      <p style="font-size:13.5px;color:var(--ink-light)">带圈数字为原书篇序。粗体规律:学理论查《素问》,学针灸经络查《灵枢》。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 三、学习总纲 ============ -->
+<section id="sec-method">
+  <h2>三、学习总纲<span class="en">如何使用本指南 · 三遍读书法</span></h2>
+  <div class="grid3">
+    <div class="card accent"><h4>第一遍 · 鸟瞰(1–2 天)</h4><p>只读本指南第一、二章 + 每章开头的"lead"段落,在脑中建立九大模块的框架,不求甚解。</p></div>
+    <div class="card accent"><h4>第二遍 · 精读(2–4 周)</h4><p>按模块顺序通读四至十二章,配合第十三章的原文精读。每读一个理论,问自己:它解决什么问题?和前一模块如何衔接?</p></div>
+    <div class="card accent"><h4>第三遍 · 入经(长期)</h4><p>带着框架去读原典(白话对照本起步),用第十五章的路径与书目进阶。框架是地图,原典是山水。</p></div>
+  </div>
+  <div class="card gold">
+    <p><em>读经心法四条:</em>① 以经解经——前后篇互证,胜过任何注家;② 不抠死字眼——《内经》是汇编,各篇用词偶有不一致,取其大义;③ 每个概念先问"它在临床/生活中对应什么";④ 背诵关键段落(本指南标 <span class="tag">必背</span> 者),中医思维是"背"出来的。</p>
+  </div>
+</section>
+
+<!-- ============ 四、气·阴阳·五行 ============ -->
+<section id="sec-qi">
+  <h2>四、气 · 阴阳 · 五行<span class="en">全书的哲学操作系统</span></h2>
+  <p class="lead">这三个概念是《内经》的"编程语言"。后面所有理论(藏象、经络、病机、治则)都是用它们写成的,必须先彻底吃透。</p>
+
+  <h3>1. 气 —— 万物的本原与动力</h3>
+  <div class="card accent">
+    <p><em>气是构成宇宙与人体的最基本物质,同时也是一切功能活动的动力。</em>《内经》中"气"无处不在:天有六气,地有五行之气,人有真气、宗气、营气、卫气、脏腑之气、经络之气。理解口诀:凡是"看不见但起作用的",在《内经》里多半叫气。</p>
+  </div>
+  <table>
+    <tr><th>人身之气</th><th>来源</th><th>分布</th><th>主要功能</th></tr>
+    <tr><td>真气(元气)</td><td class="l">先天之精所化,受于父母</td><td class="l">根于肾,行于全身</td><td class="l">生命活动的原动力</td></tr>
+    <tr><td>宗气</td><td class="l">肺吸入清气 + 脾胃水谷之气</td><td class="l">积于胸中("气海")</td><td class="l">司呼吸、贯心脉、行气血</td></tr>
+    <tr><td>营气</td><td class="l">水谷之精气(精纯部分)</td><td class="l">行于脉中</td><td class="l">化生血液、营养全身</td></tr>
+    <tr><td>卫气</td><td class="l">水谷之悍气(慓疾部分)</td><td class="l">行于脉外</td><td class="l">温煦肌表、抵御外邪、司汗孔开合</td></tr>
+  </table>
+  <blockquote>"营在脉中,卫在脉外,营周不休,五十而复大会。"<span class="src">——《灵枢·营卫生会》</span></blockquote>
+
+  <h3>2. 阴阳 —— 一分为二的总纲 <span class="tag">必背</span></h3>
+  <blockquote>"阴阳者,天地之道也,万物之纲纪,变化之父母,生杀之本始,神明之府也。<em>治病必求于本。</em>"<span class="src">——《素问·阴阳应象大论》</span></blockquote>
+  <p>阴阳不是两种东西,而是<em>对一切事物对立统一两面的命名法</em>。判断口诀:凡运动的、外向的、上升的、温热的、明亮的、功能性的属<em>阳</em>;凡静止的、内守的、下降的、寒凉的、晦暗的、物质性的属<em>阴</em>。</p>
+  <div class="grid2">
+    <div class="card"><h4>阴阳四大关系</h4>
+      <p>① <em>对立制约</em>:动与静、寒与热互相牵制;② <em>互根互用</em>:"阴在内,阳之守也;阳在外,阴之使也"——没有阴的物质基础,阳的功能无从发生;③ <em>消长平衡</em>:四时寒暑即阴阳消长;④ <em>相互转化</em>:"重阴必阳,重阳必阴""寒极生热,热极生寒"。</p></div>
+    <div class="card"><h4>阴阳在医学中的落点</h4>
+      <p>生理:"<em>阴平阳秘,精神乃治</em>;阴阳离决,精气乃绝"。病理:"阴胜则阳病,阳胜则阴病;阳胜则热,阴胜则寒"。诊断:"善诊者,察色按脉,<em>先别阴阳</em>"。治疗:"谨察阴阳所在而调之,以平为期"。</p></div>
+  </div>
+  <div class="card gold">
+    <p><em>人体阴阳划分举例:</em>体表为阳、体内为阴;背为阳、腹为阴;六腑为阳、五脏为阴;气为阳、血为阴;而五脏之中又再分阴阳(心为阳中之阳,肾为阴中之阴)——阴阳可无限再分,"阴阳者,数之可十,推之可百"。</p>
+  </div>
+
+  <h3>3. 五行 —— 系统分类与动态关联的模型 <span class="tag">必背</span></h3>
+  <p>五行(木火土金水)不是五种材料,而是<em>五种功能属性 + 一套生克关系</em>的系统模型:木曰曲直(生发)、火曰炎上(温热)、土爰稼穑(化育)、金曰从革(肃降)、水曰润下(滋藏)。《内经》用它把自然与人体编织成一张对应大网:</p>
+  <table>
+    <tr><th>五行</th><th>五脏</th><th>五腑</th><th>五官</th><th>五体</th><th>五志</th><th>五液</th><th>五味</th><th>五色</th><th>五季</th><th>五方</th><th>五气</th></tr>
+    <tr><td><b>木</b></td><td>肝</td><td>胆</td><td>目</td><td>筋</td><td>怒</td><td>泪</td><td>酸</td><td>青</td><td>春</td><td>东</td><td>风</td></tr>
+    <tr><td><b>火</b></td><td>心</td><td>小肠</td><td>舌</td><td>脉</td><td>喜</td><td>汗</td><td>苦</td><td>赤</td><td>夏</td><td>南</td><td>暑</td></tr>
+    <tr><td><b>土</b></td><td>脾</td><td>胃</td><td>口</td><td>肉</td><td>思</td><td>涎</td><td>甘</td><td>黄</td><td>长夏</td><td>中</td><td>湿</td></tr>
+    <tr><td><b>金</b></td><td>肺</td><td>大肠</td><td>鼻</td><td>皮毛</td><td>悲(忧)</td><td>涕</td><td>辛</td><td>白</td><td>秋</td><td>西</td><td>燥</td></tr>
+    <tr><td><b>水</b></td><td>肾</td><td>膀胱</td><td>耳</td><td>骨</td><td>恐</td><td>唾</td><td>咸</td><td>黑</td><td>冬</td><td>北</td><td>寒</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="card"><h4>相生(母子关系)</h4>
+      <div class="flow"><span class="nd">木</span><span class="ar">→</span><span class="nd r">火</span><span class="ar">→</span><span class="nd">土</span><span class="ar">→</span><span class="nd">金</span><span class="ar">→</span><span class="nd">水</span><span class="ar">→</span><span class="nd">木</span></div>
+      <p style="font-size:14.5px">肝藏血以济心(木生火),心阳温脾(火生土),脾运化养肺(土生金),肺肃降助肾纳气(金生水),肾精养肝血(水生木)。</p></div>
+    <div class="card"><h4>相克(制约关系)</h4>
+      <div class="flow"><span class="nd">木</span><span class="ar">⊣</span><span class="nd">土</span><span class="ar">⊣</span><span class="nd">水</span><span class="ar">⊣</span><span class="nd r">火</span><span class="ar">⊣</span><span class="nd">金</span><span class="ar">⊣</span><span class="nd">木</span></div>
+      <p style="font-size:14.5px">病理上克之太过称<em>相乘</em>(如"肝木乘脾土"——情绪郁怒导致食欲不振),反向欺侮称<em>相侮</em>(如肝火太旺反灼肺金,"木火刑金")。临床推演疾病传变全靠这套关系:"<em>见肝之病,知肝传脾</em>"即源于此。</p></div>
+  </div>
+
+  <h3>4. 原文研读</h3>
+  <details open>
+    <summary>《素问·阴阳应象大论》—— 清浊升降:人体的气机总模型</summary>
+    <div class="inner">
+      <div class="orig">故清阳为天,浊阴为地;地气上为云,天气下为雨;雨出地气,云出天气。故清阳出上窍,浊阴出下窍;清阳发腠理,浊阴走五藏;清阳实四肢,浊阴归六府。</div>
+      <p class="trans">清轻的阳气上升为天,重浊的阴气下降为地;地气蒸腾上升为云,天气凝降下落为雨。在人:清阳从上窍(耳目口鼻)出,浊阴从下窍(前后二阴)出;清阳发散于肌表腠理,浊阴内走于五脏;清阳充实四肢,浊阴归于六腑。</p>
+      <p class="anal">这段不是文学比喻,而是一个严格的<em>循环模型</em>:先用"云雨"建立"升已而降、降已而升"的自然循环,再把同一结构套到人体——人体也是一个清升浊降的循环系统。由此可直接推出病理与治法:清阳不升则头晕耳鸣、目不明(故治眩晕有"升清"一法);浊阴不降则腹胀、便秘、呕逆(故治之以"降浊")。后世脾胃学派(李东垣)的"升清降浊"、温病学的"轻清宣上",都是在给这段经文做注脚。读《内经》要养成的正是这种眼光:每个比喻背后都是一个可操作的模型。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·阴阳应象大论》—— 气味厚薄:中药药理的元理论</summary>
+    <div class="inner">
+      <div class="orig">阴味出下窍,阳气出上窍。味厚者为阴,薄为阴之阳;气厚者为阳,薄为阳之阴。味厚则泄,薄则通;气薄则发泄,厚则发热……气味辛甘发散为阳,酸苦涌泄为阴。</div>
+      <p class="trans">药食之"味"(有形)属阴而趋下,"气"(无形之性)属阳而趋上。味厚的(如大黄)能泻下,味薄的(如茯苓)能通利;气薄的(如薄荷)能发散,气厚的(如附子)能助热。辛甘之品发散属阳,酸苦之品涌吐泻下属阴。</p>
+      <p class="anal">这是<em>整个中药学的公理层</em>:在没有化学分析的时代,古人用"气—味—厚—薄"四个变量给所有药物建立了作用方向的坐标系(升/降/散/泄)。从此,"为什么麻黄发汗、大黄泻下"有了统一解释,组方配伍(如辛甘化阳、酸甘化阴)有了推演规则。读懂这段,再看《神农本草经》和后世本草,就能看出它们共用的底层逻辑——阴阳不是空谈,它直接长出了药理学。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·宝命全形论》—— 五行相克的自然论证</summary>
+    <div class="inner">
+      <div class="orig">木得金而伐,火得水而灭,土得木而达,金得火而缺,水得土而绝,万物尽然,不可胜竭。</div>
+      <p class="trans">木遇金则被砍伐,火遇水则被熄灭,土得木则疏松通达,金遇火则熔化亏缺,水遇土则被遏绝,万物都遵循这个规律,不可穷尽。</p>
+      <p class="anal">注意经文的论证方式:相克关系不是凭空规定,而是从<em>斧伐木、水灭火、犁翻土</em>这些最日常的经验中归纳出来,再升格为普遍规律("万物尽然")。这正是《内经》的思维路数——取象比类:从可见的自然关系推不可见的脏腑关系。理解了这一点,就不会把五行当神秘教条,也就懂得它的边界:模型有效性取决于"象"取得是否恰当,后世医家对具体配属的争论(如心包三焦归属)恰说明它是开放的工作模型,而非封闭的信仰。</p>
+    </div>
+  </details>
+
+  <h3>5. 自洽性分析:这套"操作系统"如何运转</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>三个概念是逐级精化的关系,而非并列:<em>气</em>回答"世界由什么构成"(本体论,一元);<em>阴阳</em>给气的运动加上方向变量(动力学,二元);<em>五行</em>给气的功能加上分类与相互作用规则(拓扑学,五元)。一→二→五,每一步都在增加模型的分辨率:阴阳能说"该升的不升了",五行能进一步说"是谁压住了它、会连累谁"。</p>
+    <p><b class="k">自洽机制</b>① 阴阳"数之可十,推之可百"的<em>无限再分性</em>,保证任何新现象都可被纳入框架而不产生矛盾——体系对经验是封闭完备的;② 五行的生、克、乘、侮<em>四种关系恰好覆盖了五元系统中两两互动的全部方向</em>(促进/抑制 × 正常/异常),所以任何脏腑间的影响都有现成通道可走,不会出现"模型无法表达"的情况;③ 阴阳与五行互相兼容:五行各自可再分阴阳(如肾阴肾阳),两套语言可以互译,不冲突。</p>
+    <p><b class="k warn">张力与边界</b>① 完备性的反面是<em>难以出错</em>:生克乘侮四条通道总有一条能事后解释任何传变,预测时则需要额外经验约束(这正是临床功夫之所在);② 配属方案在书内并不完全统一——长夏配土与"脾不主时、寄旺四季"两说并存(《素问·太阴阳明论》),说明五行配属是<em>多次拟合的结果而非一次推导</em>;③ 取象比类的有效性依赖"象"取得恰当,类比强度有天花板。诚实地认识这些边界,反而能让你更准确地使用这套模型。</p>
+  </div>
+</section>
+
+<!-- ============ 五、藏象学说 ============ -->
+<section id="sec-zangxiang">
+  <h2>五、藏象学说<span class="en">人体的"职能政府"</span></h2>
+  <p class="lead">"藏"指藏于体内的脏器,"象"指表现于外的征象。藏象学说的关键:《内经》的"五脏"是<em>五大功能系统</em>,不等于解剖器官——"心"包含心脏也包含神志活动,"脾"包含消化吸收全过程。这是理解中医不闹笑话的第一关。</p>
+
+  <h3>1. 十二官:一国之政喻一身之治 <span class="tag">必背</span></h3>
+  <blockquote>"心者,君主之官也,神明出焉。肺者,相傅之官,治节出焉。肝者,将军之官,谋虑出焉。胆者,中正之官,决断出焉。膻中者,臣使之官,喜乐出焉。脾胃者,仓廪之官,五味出焉。大肠者,传道之官,变化出焉。小肠者,受盛之官,化物出焉。肾者,作强之官,伎巧出焉。三焦者,决渎之官,水道出焉。膀胱者,州都之官,津液藏焉,气化则能出矣。凡此十二官者,不得相失也。故<em>主明则下安……主不明则十二官危</em>。"<span class="src">——《素问·灵兰秘典论》</span></blockquote>
+  <p class="note">把人体比作朝廷:心为君主统摄全局,肺为宰相调理节度,肝为将军主谋略,肾为大力士主精巧。核心论点:心(神)是全身的主宰,心神清明则脏腑各安其位。</p>
+
+  <h3>2. 五脏:藏精气而不泻</h3>
+  <details open>
+    <summary>心 —— 君主之官:主血脉,藏神</summary>
+    <div class="inner">
+      <p>① <em>主血脉</em>:推动血液在脉中运行,"诸血者,皆属于心";其华在面,面色红润与否反映心血盛衰。② <em>藏神</em>:主宰精神意识思维,"心者,五藏六府之大主也,精神之所舍也"(《灵枢·邪客》)。故惊悸、失眠、健忘、神昏皆首责于心。开窍于舌,在志为喜,在液为汗。</p>
+    </div>
+  </details>
+  <details>
+    <summary>肺 —— 相傅之官:主气司呼吸,主宣发肃降,通调水道</summary>
+    <div class="inner">
+      <p>① 主一身之气:"诸气者,皆属于肺";司呼吸,吸清呼浊。② 宣发肃降:向上向外布散气与津液(宣发),向下向内通降(肃降),二者失常则咳、喘、胸闷。③ 通调水道:"肺为水之上源",参与水液代谢。④ 朝百脉、主治节:全身血液皆流经肺。外合皮毛,开窍于鼻,在志为悲忧。"肺为娇脏",最易受外邪。</p>
+    </div>
+  </details>
+  <details>
+    <summary>脾 —— 仓廪之官:主运化,主升清,主统血</summary>
+    <div class="inner">
+      <p>① <em>主运化</em>:消化水谷、吸收精微并输布全身,为"<em>后天之本</em>,气血生化之源"。② 主升清:精微上输心肺;脾气下陷则见久泻、内脏下垂。③ 主统血:统摄血液不溢出脉外。④ 主肌肉四肢——"脾主身之肌肉"。恶湿,湿困脾则腹胀、便溏、身重。开窍于口,其华在唇,在志为思——"思伤脾"。</p>
+    </div>
+  </details>
+  <details>
+    <summary>肝 —— 将军之官:主疏泄,主藏血</summary>
+    <div class="inner">
+      <p>① <em>主疏泄</em>:调畅全身气机与情志,促进消化;疏泄失常则郁(胁胀、抑郁、善太息)或亢(急躁易怒、头胀痛)。② <em>主藏血</em>:贮藏血液、调节血量,"人卧血归于肝"。③ 主筋,其华在爪;开窍于目——"肝受血而能视"。在志为怒,"怒伤肝"。体阴而用阳,最忌郁、最易化火生风。</p>
+    </div>
+  </details>
+  <details>
+    <summary>肾 —— 作强之官:藏精,主水,主纳气</summary>
+    <div class="inner">
+      <p>① <em>藏精</em>:藏先天之精(生殖、生长发育之本)与后天之精,为"<em>先天之本</em>"。"肾者主蛰,封藏之本,精之处也。"② 主水:主持全身水液代谢。③ 主纳气:摄纳肺吸入之气,"肺主呼气,肾主纳气"。④ 主骨生髓,通于脑("脑为髓海"),其华在发;开窍于耳及二阴。在志为恐,"恐伤肾"。肾精的盛衰决定人一生的生长壮老(详见第十二章"女七男八")。</p>
+    </div>
+  </details>
+
+  <h3>3. 六腑与奇恒之腑</h3>
+  <div class="grid2">
+    <div class="card"><h4>六腑:传化物而不藏</h4><p>胆、胃、小肠、大肠、膀胱、三焦。特点是<em>泻而不藏、实而不能满</em>——食物水液不断通过、不断排空,"六腑以通为用"。胃主受纳腐熟("太仓"),小肠分清别浊,大肠传导糟粕,膀胱贮尿排尿,三焦总司气化与水道。</p></div>
+    <div class="card"><h4>奇恒之腑:形似腑而功似脏</h4><p>脑、髓、骨、脉、胆、女子胞(子宫)。形态中空似腑,却<em>藏精气而不泻</em>似脏,故称"奇恒"(异于平常)。胆既是六腑又是奇恒之腑(藏精汁而不传化食物)。出自《素问·五藏别论》。</p></div>
+  </div>
+  <blockquote>"所谓五藏者,藏精气而不泻也,故满而不能实;六府者,传化物而不藏,故实而不能满也。"<span class="src">——《素问·五藏别论》</span></blockquote>
+
+  <h3>4. 原文研读</h3>
+  <details open>
+    <summary>《素问·六节藏象论》—— 五脏"X之本"定义:藏象的标准表述</summary>
+    <div class="inner">
+      <div class="orig">心者,生之本,神之变也;其华在面,其充在血脉,为阳中之太阳,通于夏气。肺者,气之本,魄之处也;其华在毛,其充在皮,为阳中之太阴,通于秋气。肾者,主蛰,封藏之本,精之处也;其华在发,其充在骨,为阴中之少阴,通于冬气。肝者,罢极之本,魂之居也;其华在爪,其充在筋……通于春气。脾、胃、大肠、小肠、三焦、膀胱者,仓廪之本,营之居也。</div>
+      <p class="trans">心是生命的根本、神明变化之所,光华显于面,充养在血脉,通应夏气;肺是气的根本、魄的居所,华在毫毛,充在皮肤,通应秋气;肾主闭藏,是封藏的根本、精的居所,华在头发,充在骨,通应冬气;肝是耐受疲劳的根本、魂的居所,华在指甲,充在筋,通应春气;脾胃等是仓廪的根本、营气的居所。</p>
+      <p class="anal">这段是藏象学说的"标准接口定义",每脏五个字段:<em>本(核心职能)—神(所藏精神)—华(外候)—充(所主形体)—通(所应季节)</em>。注意两个深意:① "其华在X"提供了诊断学依据——面色诊心、爪甲诊肝、头发诊肾,体检的"望"由此有了理论支点;② "通于X气"把五脏接入四时,意味着每脏有其旺季与弱季(肝病者愈于夏、甚于秋之类推演即出于此),治疗与养生都要顺时。与第五章"十二官"对读:灵兰篇讲脏腑的<em>社会分工</em>,本篇讲脏腑的<em>生理参数</em>,两篇合起来才是完整的藏象。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·经脉别论》—— 一杯水进入人体之后:水液代谢全程</summary>
+    <div class="inner">
+      <div class="orig">饮入于胃,游溢精气,上输于脾,脾气散精,上归于肺,通调水道,下输膀胱,水精四布,五经并行。</div>
+      <p class="trans">水饮进入胃,化生精气向上输给脾;脾散布精气,上归于肺;肺通调水道,向下输至膀胱。于是水精四面布散,沿五脏经脉同时运行。</p>
+      <p class="anal">短短三十余字,画出一条完整的"水代谢流水线":<em>胃(受纳)→脾(转输)→肺(布散与下输)→膀胱(排泄)</em>,加上肾的蒸腾气化贯穿其间。它的临床价值在于:水肿、痰饮、小便不利等一切水液病,都可以沿这条线逐站排查——在脾则健脾利湿,在肺则宣肺利水("提壶揭盖"),在肾则温阳化气。一段经文就是一张鉴别诊断流程图,这是《内经》"以生理释病理"的典型笔法。同篇论谷食的"食气入胃,散精于肝……浊气归心,淫精于脉"可对照读。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·五藏生成》—— "受血而能":功能依赖物质</summary>
+    <div class="inner">
+      <div class="orig">故人卧血归于肝,肝受血而能视,足受血而能步,掌受血而能握,指受血而能摄。</div>
+      <p class="trans">人睡卧时血归藏于肝;眼得血滋养才能看,脚得血才能走,手掌得血才能握,手指得血才能取物。</p>
+      <p class="anal">四个排比句确立一条总原理:<em>一切功能(阳)都以血的濡养(阴)为前提</em>——这正是"阴在内,阳之守也"的具体化。临床镜像:血虚则目涩昏花、肢麻不仁、手足震颤;"人卧血归于肝"还暗含睡眠与肝血的互养关系——熬夜伤肝血,肝血虚又致失眠多梦,恶性循环。一句经文,既是生理学,又是病理学,还是养生学(按时卧,让血归肝),足见《内经》文字的密度。</p>
+    </div>
+  </details>
+
+  <h3>5. 自洽性分析:看不见的内脏如何被"建模"</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>藏象学说要解决的根本难题是:<em>在不依赖解剖的前提下为内脏建立可用的理论</em>。它的策略是功能主义三步法:① 把可观察的生命功能归类(消化、呼吸、神志、生殖……);② 将功能簇打包命名为"脏"(所以"脾"是消化吸收功能簇的名字,不是那块器官);③ 用"司外揣内"建立每个功能簇的外部观测指标(其华、其充、开窍)。这样,五脏虽不可见,却各有一组可见的"仪表盘",理论就可以被经验校准。</p>
+    <p><b class="k">自洽机制</b>① 五脏接入五行网络后获得<em>多重冗余支撑</em>:"肝开窍于目"既有经验支持(肝血虚则目涩),又有五行通道(肝=木=青=春=风)背书,两路证据互相加固;② "藏泻之辨"(脏藏精、腑传化)给脏腑两类系统各立一条总则,使"满而不实/实而不满"的功能差异有了统一解释;③ 十二官的政体类比提供了<em>系统层面的协作约束</em>——"主明则下安"意味着任何局部病变都可能是整体协调失败,这为"治心""治神"优先留下了理论接口。</p>
+    <p><b class="k warn">张力与边界</b>体系内有几处著名的"接缝":① <em>心主神明与脑为髓海并存</em>——全书主流以心主神,但"脑为髓之海""头者精明之府"又暗示脑的地位,两说未在书内统一,直到明清(李时珍"脑为元神之府")乃至中西汇通才正面交锋;② <em>三焦"有名而无形"</em>之争自《难经》起聚讼两千年,提示它更像功能划分而非实体;③ 心包作为"代心受邪"的设置,带有为"心不受邪"公理打补丁的痕迹。看见这些接缝不是拆台——恰恰说明藏象是<em>在经验压力下不断修订的活模型</em>,这比铁板一块更接近科学品格。</p>
+  </div>
+</section>
+
+<!-- ============ 六、经络学说 ============ -->
+<section id="sec-jingluo">
+  <h2>六、经络学说<span class="en">气血运行的交通网(《灵枢》的主体)</span></h2>
+  <p class="lead">经络是气血运行的通道,内连脏腑、外络肢节,把人体织成一张整体之网。"经"是主干(纵行),"络"是分支(网络)。《灵枢·经脉》:"经脉者,所以能<em>决死生,处百病,调虚实</em>,不可不通。"</p>
+
+  <h3>1. 十二经脉:命名规律(懂规律就不用死记)</h3>
+  <div class="card accent">
+    <p>每条经名 = <em>手/足 + 阴阳属性 + 脏腑</em>。规律:① 阴经属脏、行于四肢内侧;阳经属腑、行于四肢外侧。② 阴阳各分三层:太阴/厥阴/少阴(内侧前/中/后),阳明/少阳/太阳(外侧前/中/后)。③ 相表里的脏腑,其经脉也相表里(如肺经与大肠经)。</p>
+  </div>
+  <table>
+    <tr><th></th><th>太阴(前)</th><th>厥阴(中)</th><th>少阴(后)</th><th>阳明(前)</th><th>少阳(中)</th><th>太阳(后)</th></tr>
+    <tr><td><b>手</b></td><td>肺经</td><td>心包经</td><td>心经</td><td>大肠经</td><td>三焦经</td><td>小肠经</td></tr>
+    <tr><td><b>足</b></td><td>脾经</td><td>肝经</td><td>肾经</td><td>胃经</td><td>胆经</td><td>膀胱经</td></tr>
+  </table>
+
+  <h3>2. 流注次序与走向 <span class="tag">必背</span></h3>
+  <p>气血在十二经中按固定次序循环一周,昼夜五十营。走向口诀:"<em>手之三阴,从脏走手;手之三阳,从手走头;足之三阳,从头走足;足之三阴,从足走腹</em>"(《灵枢·逆顺肥瘦》)。</p>
+  <div class="flow">
+    <span class="nd">肺</span><span class="ar">→</span><span class="nd">大肠</span><span class="ar">→</span><span class="nd">胃</span><span class="ar">→</span><span class="nd">脾</span><span class="ar">→</span><span class="nd r">心</span><span class="ar">→</span><span class="nd">小肠</span><span class="ar">→</span><span class="nd">膀胱</span><span class="ar">→</span><span class="nd">肾</span><span class="ar">→</span><span class="nd">心包</span><span class="ar">→</span><span class="nd">三焦</span><span class="ar">→</span><span class="nd">胆</span><span class="ar">→</span><span class="nd">肝</span><span class="ar">→</span><span class="nd">肺</span>
+  </div>
+  <p style="font-size:14px;color:var(--ink-light)">记忆歌诀:肺大胃脾心小肠,膀肾包焦胆肝乡。从肺经(寅时)始,一日十二时辰各旺一经,即后世"子午流注"之本。</p>
+
+  <h3>3. 奇经八脉与经络系统全貌</h3>
+  <div class="grid2">
+    <div class="card"><h4>奇经八脉</h4><p>督脉(阳脉之海,行后正中)、任脉(阴脉之海,行前正中,"任主胞胎")、冲脉(血海,十二经之海)、带脉(约束诸经如束带)、阴跷/阳跷(主肢体运动与睡眠)、阴维/阳维(维系诸阴诸阳)。功能:<em>蓄溢调节</em>十二经气血,如水库之于江河。</p></div>
+    <div class="card"><h4>系统全貌</h4><p>十二正经 + 奇经八脉为主干;另有<em>十二经别</em>(深入体腔的支脉)、<em>十五络脉</em>(表里沟通)、<em>十二经筋</em>(经气濡养的筋肉系统)、<em>十二皮部</em>(体表分区)。诊断上"有诸内必形诸外",治疗上针灸、按摩皆循经取穴。</p></div>
+  </div>
+  <blockquote>"夫十二经脉者,内属于府藏,外络于支节。"<span class="src">——《灵枢·海论》</span></blockquote>
+
+  <h3>4. 原文研读</h3>
+  <details open>
+    <summary>《灵枢·经脉》—— 经脉条文的标准格式(以肺经为例)</summary>
+    <div class="inner">
+      <div class="orig">肺手太阴之脉,起于中焦,下络大肠,还循胃口,上膈属肺,从肺系横出腋下,下循臑内……入寸口,上鱼,循鱼际,出大指之端。……是动则病:肺胀满,膨膨而喘咳,缺盆中痛……是主肺所生病者:咳,上气喘渴,烦心胸满,臑臂内前廉痛厥,掌中热。</div>
+      <p class="trans">手太阴肺经,起于中焦,向下联络大肠,回过来沿胃上口,穿过膈肌归属于肺,再从肺系横出腋下,沿上臂内侧……入寸口,沿大鱼际,止于拇指端。此经异常发动则病:肺部胀满、喘咳、缺盆中痛……此经所主之病:咳嗽、气喘、心烦胸满、上肢内侧前缘疼痛、掌心发热。</p>
+      <p class="anal">《灵枢·经脉》全篇十二条经文都是同一模板:<em>循行路线 + "是动则病" + "是主X所生病"</em>。读懂模板,十二经一通百通。两个关键:① 循行路线先讲<em>体内段</em>(起于中焦、络大肠、属肺)再讲体表段——经络首先是脏腑与体表的连接器,这就解释了"为什么按手臂上的穴位能治咳嗽";② 病候列表把内脏症状(喘咳)与循行部位症状(臂内侧痛、掌中热)并列,意味着<em>诊断可以双向推理</em>:见掌中热可疑肺经,有肺病可循经找压痛。针灸"循经取穴"的全部合法性,都建立在这个格式之上。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《灵枢·营卫生会》—— 营卫的来源与昼夜节律</summary>
+    <div class="inner">
+      <div class="orig">人受气于谷,谷入于胃,以传与肺,五藏六府,皆以受气。其清者为营,浊者为卫,营在脉中,卫在脉外,营周不休,五十而复大会,阴阳相贯,如环无端。……卫气行于阴二十五度,行于阳二十五度,分为昼夜,故气至阳而起,至阴而止。</div>
+      <p class="trans">人从谷物获得精气:谷入于胃,化生之气传给肺,五脏六腑都由此受气。其中精纯的成为营气,慓悍的成为卫气;营行脉中,卫行脉外,周流不息,一昼夜各运行五十周后大会合,如圆环没有端点。卫气白天行于阳分(体表)二十五周,夜间行于阴分(内脏)二十五周——行至阳分人就醒,行至阴分人就睡。</p>
+      <p class="anal">最后一句极重要:它用卫气的昼夜出入<em>解释了睡眠的机制</em>——这是两千年前的"生物钟模型"。由此推出失眠的经典病机:卫气"留于阳,不得入于阴"则目不瞑(《灵枢·邪客》),治法是引阳入阴(半夏秫米汤即出于此)。同时,"营在脉中,卫在脉外"也是外感病理的基础:风寒袭表,首犯卫分,故恶寒发热、汗孔失司——后世伤寒"营卫不和"(桂枝汤证)、温病"卫气营血辨证",源头都在这一篇。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《灵枢·经脉》—— 生命的发生序列与经脉的地位</summary>
+    <div class="inner">
+      <div class="orig">人始生,先成精,精成而脑髓生。骨为干,脉为营,筋为刚,肉为墙,皮肤坚而毛发长。谷入于胃,脉道以通,血气乃行。</div>
+      <p class="trans">人之初生,先形成精,精成而后脑髓生成。骨为支干,脉为营运通道,筋为刚束,肉为墙垣,皮肤坚固而毛发生长。谷食入胃,脉道贯通,血气才得以运行。</p>
+      <p class="anal">这是经脉篇的开场白,回答"经脉凭什么决死生":在生命的构造序列里,脉是先天即有的"营"(运输系统),但它要靠<em>后天谷气</em>来充盈启动("谷入于胃,脉道以通")。先天与后天在经脉处交汇——这就是为什么诊脉能候全身、为什么"有胃气则生"。从写作上看,本段先建立人体的"建筑学"(干、营、刚、墙),再引出全篇十二经循行,是典型的"立总纲—展细目"经文结构,读《灵枢》宜处处留意这种章法。</p>
+    </div>
+  </details>
+
+  <h3>5. 自洽性分析:通道模型的逻辑与它被"补齐"的历史</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>经络学说由三个前提推出:① 气血是流动的(气一元论的直接推论);② 流动需要通道(以水道、沟渠为原型的类比);③ 临床观察到体表点位与内脏症状的稳定关联(压痛点、放射痛、刺激某处可缓解某症)。三者合一:必有一套连接内外的通道网络——经络。其全部临床应用(循经诊断、循经取穴)都从"通道连接内外"这一核心命题演绎而来。</p>
+    <p><b class="k">自洽机制</b>① 十二经与十二脏腑<em>一一配属、表里成对</em>,使经络系统与藏象系统完全同构——两套理论共享同一张拓扑图,彼此印证;② 流注次序首尾相接"如环无端",与气血"营周不休"的生理设定严丝合缝;③ 数术对应(十二经应十二月,三百六十五穴应周天之数)把人体网络嵌入天人相应框架,获得宇宙论层面的支撑。整个设计的闭合度在全书各分支理论中最高。</p>
+    <p><b class="k warn">张力与边界</b>① 出土文献暴露了体系的<em>建构过程</em>:马王堆帛书(早于《内经》)记载的是十一脉,且各脉不相连接、不与脏腑一一配属——可见"十二经如环无端"是后来为追求与十二月、十二脏腑对称而<em>补齐</em>的,数术美感参与了理论定型;② "是动/所生病"两类病候的区分标准,经文本身语焉不详,历代注家解释多歧(气病血病?本经他经?),属于体系内未决问题;③ 经络的实体至今未在解剖学上找到对应物,但循经感传等现象又确有可重复观察——把它理解为<em>对体表-内脏关联现象的功能性建模</em>,比纠缠"有没有那根管子"更忠于经文本意("行血气"的通道描述本就是功能语言)。</p>
+  </div>
+</section>
+
+<!-- ============ 七、精气神与体质 ============ -->
+<section id="sec-jingshen">
+  <h2>七、精 · 气 · 神 与体质<span class="en">生命三宝与个体差异</span></h2>
+  <p class="lead">精是生命的物质基础,气是功能动力,神是生命活动的总体现与主宰。三者层层化生:<em>精化气,气生神;神又驭气,气又摄精</em>。养生的总纲即"保精、养气、全神"。</p>
+
+  <h3>1. 五神藏 <span class="tag">必背</span></h3>
+  <blockquote>"心藏神,肺藏魄,肝藏魂,脾藏意,肾藏志。"<span class="src">——《素问·宣明五气》</span></blockquote>
+  <table>
+    <tr><th>神</th><th>所藏</th><th>含义(据《灵枢·本神》)</th><th>病变举例</th></tr>
+    <tr><td>神</td><td>心</td><td class="l">精神意识的总主宰,"两精相搏谓之神"</td><td class="l">失眠、健忘、癫狂、神昏</td></tr>
+    <tr><td>魂</td><td>肝</td><td class="l">"随神往来者谓之魂"——梦境、想象、潜意识活动</td><td class="l">多梦、梦游、惊骇</td></tr>
+    <tr><td>魄</td><td>肺</td><td class="l">"并精而出入者谓之魄"——本能感觉与动作(痛痒、啼哭)</td><td class="l">感觉迟钝、悲伤不止</td></tr>
+    <tr><td>意</td><td>脾</td><td class="l">"心有所忆谓之意"——记忆、注意</td><td class="l">思虑过度、注意涣散</td></tr>
+    <tr><td>志</td><td>肾</td><td class="l">"意之所存谓之志"——志向、定力、长期记忆</td><td class="l">志气消沉、善恐</td></tr>
+  </table>
+  <p class="note">《灵枢·本神》还给出认知过程链:所忆为<em>意</em> → 意之存为<em>志</em> → 因志存变为<em>思</em> → 因思远慕为<em>虑</em> → 因虑处物为<em>智</em>。这是中国最早的认知心理学描述。</p>
+
+  <h3>2. 体质分型:因人而异的源头</h3>
+  <div class="grid2">
+    <div class="card"><h4>阴阳五态人(《灵枢·通天》)</h4><p>按阴阳多少分五型:太阴之人(沉静多藏)、少阴之人(谨慎多疑)、太阳之人(豪爽自负)、少阳之人(灵活好交)、阴阳和平之人(从容中正,最理想)。气质决定发病倾向与针刺补泻策略。</p></div>
+    <div class="card"><h4>阴阳二十五人(《灵枢·阴阳二十五人》)</h4><p>按五行分木火土金水五大型,每型再分五亚型,共二十五种,涉及肤色、体形、性格、耐受季节等。是后世体质学说(如现代九种体质)的滥觞。要义:<em>治病必须考虑这个"人",而不只是这个"病"。</em></p></div>
+  </div>
+
+  <h3>3. 原文研读</h3>
+  <details open>
+    <summary>《灵枢·决气》—— 精、气、津、液、血、脉的六个定义</summary>
+    <div class="inner">
+      <div class="orig">两神相搏,合而成形,常先身生,是谓精。上焦开发,宣五谷味,熏肤、充身、泽毛,若雾露之溉,是谓气。腠理发泄,汗出溱溱,是谓津。谷入气满,淖泽注于骨,骨属屈伸,泄泽补益脑髓,皮肤润泽,是谓液。中焦受气取汁,变化而赤,是谓血。壅遏营气,令无所避,是谓脉。</div>
+      <p class="trans">男女两精相合而成新的形体,这先于身体存在的就是精。上焦宣发,布散五谷精微,温熏皮肤、充实身体、润泽毫毛,像雾露灌溉一样,就是气。从腠理外泄、源源而出的汗,就是津。谷气充满,滑润之质注于骨节使之屈伸,渗灌补益脑髓,使皮肤润泽,就是液。中焦接受谷气、提取汁液,变化而成红色的,就是血。约束营气、使之循道而行不得散溢的,就是脉。</p>
+      <p class="anal">这是《内经》少见的"下定义"专篇——一问一答,六个概念各给出操作性定义,堪称全书的"术语表"。值得分析的是定义方式:<em>每个概念都用"来源+功能"定义,而非用"成分"定义</em>(气"若雾露之溉"是描述其布散方式)。这决定了中医概念体系的特质:功能性、过程性。本篇结尾更点出"六气者,贵贱善恶,可为常主,然五谷与胃为大海也"——六者再尊贵,都源于胃中水谷,再次把"后天之本"推到中心。临床上六者各有"脱"症(精脱者耳聋、气脱者目不明、津脱者腠理开汗大泄、液脱者骨痛屈伸不利、血脱者色白),即据定义反推的诊断学。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《灵枢·本神》—— 智者养生五条与"节欲望、顺四时"的逻辑</summary>
+    <div class="inner">
+      <div class="orig">故智者之养生也,必顺四时而适寒暑,和喜怒而安居处,节阴阳而调刚柔。如是,则僻邪不至,长生久视。</div>
+      <p class="trans">所以聪明人的养生,必定顺应四时而适应寒暑变化,调和喜怒而安定起居,节制房事而调和刚柔。这样,邪气无从侵犯,就能长寿而耳聪目明。</p>
+      <p class="anal">注意这段话在《本神》篇中的位置:它紧接在"心怵惕思虑则伤神……恐惧而不解则伤精"等情志伤脏的论述之后——先示病理,再出对策,顺序本身就是论证。三个"必":顺四时(对天)、和喜怒(对己之神)、节阴阳(对己之形),恰好覆盖了天人、形神两对关系。更深一层:本篇把"养生"落在"养神"上,因为前文已论证五脏所伤皆由情志先动——<em>情志是内伤疾病的第一因,故养神是养生的第一义</em>。这是中医心身医学的纲领句。</p>
+    </div>
+  </details>
+
+  <h3>4. 自洽性分析:精气神的层级逻辑与"神"的双重身份</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>精气神构成一个严格的<em>层级生成模型</em>:精(物质基底)→ 化气(功能动力)→ 生神(整体涌现)。每一层以下一层为存在条件,故有"精脱者死""气脱者亡""失神者死"的同构判语——三层任何一层崩溃,整个系统瓦解。《本神》的认知链(意→志→思→虑→智)同样是逐级生成:每个高阶认知活动以低阶为原料,递归定义,环环相扣——这种"以过程定义概念"的手法与《决气》六气定义一脉相承,是全书统一的概念建构方式。</p>
+    <p><b class="k">自洽机制</b>① 五神配五脏使精神活动获得脏腑定位,情志致病因此有了<em>双重解释通路</em>:直接通路(怒伤肝——情志伤其所舍之脏)与气机通路(怒则气上——情志扰乱气的运动),两路互补,临床无论见脏腑症还是气机症都能回溯到情志病因;② "神"的判预后功能(得神者昌)与"心为大主"互为支撑:既然神统摄全局,神的状态自然是全局状态的最佳指标——逻辑上完全自洽。</p>
+    <p><b class="k warn">张力与边界</b>体系最深的哲学张力在于<em>神的双重身份</em>:它既是五脏精气所生(产物),又主宰五脏活动(原因)——因果箭头是双向循环的。这在线性因果观里是缺陷,但换个角度看,它精确对应着现代心身医学的真实困境:心理状态既由生理产生、又反过来调控生理。《内经》没有回避这个环,而是直接把环本身作为模型(形神互养、形神共病)。另一处张力:体质学说(禀赋有定)与养生学说(后天可调)之间存在决定论与能动论的拉扯,经文以"先天定上限、后天定达成度"的方式调和——这也是它给现代人的回答。</p>
+  </div>
+</section>
+
+<!-- ============ 八、病因病机 ============ -->
+<section id="sec-bingji">
+  <h2>八、病因病机<span class="en">病从何来,如何演变</span></h2>
+  <p class="lead">病因回答"为什么生病",病机回答"疾病按什么机制发展"。《内经》的总答案只有一句:<em>"正气存内,邪不可干;邪之所凑,其气必虚。"</em>——发病是正邪相争的结果,内因(正气)是根本。</p>
+
+  <h3>1. 病因三类</h3>
+  <div class="grid3">
+    <div class="card"><h4>外感六淫</h4><p>风、寒、暑、湿、燥、火。本是正常六气,太过、不及或非其时而有其气则成"淫"邪。<em>"风者,百病之长也"</em>——风邪常为外邪先导。各邪性质:风善行数变、寒主收引、暑多夹湿、湿性重浊黏滞、燥易伤津、火易生风动血。</p></div>
+    <div class="card"><h4>内伤七情</h4><p>喜怒忧思悲恐惊。情志太过直接伤脏:"怒伤肝、喜伤心、思伤脾、忧伤肺、恐伤肾"。气机层面:<em>"怒则气上,喜则气缓,悲则气消,恐则气下,惊则气乱,思则气结"</em>(《素问·举痛论》)。</p></div>
+    <div class="card"><h4>饮食劳逸</h4><p>"饮食自倍,肠胃乃伤";五味偏嗜各伤其脏("多食咸则脉凝泣而变色")。劳逸失度:"久视伤血,久卧伤气,久坐伤肉,久立伤骨,久行伤筋"(五劳所伤)。另有房劳伤肾、外伤、虫兽所伤等。</p></div>
+  </div>
+
+  <h3>2. 基本病机:四大失衡</h3>
+  <table>
+    <tr><th>病机</th><th>核心表述</th><th>典型表现</th></tr>
+    <tr><td>邪正盛衰</td><td class="l">"邪气盛则实,精气夺则虚"(《素问·通评虚实论》)</td><td class="l">实证(亢盛有余)与虚证(衰退不足)的总纲</td></tr>
+    <tr><td>阴阳失调</td><td class="l">"阳胜则热,阴胜则寒;阳虚则外寒,阴虚则内热"</td><td class="l">一切寒热病变的总机制</td></tr>
+    <tr><td>气机失常</td><td class="l">升降出入失序:"出入废则神机化灭,升降息则气立孤危"</td><td class="l">气滞、气逆、气陷、气脱、气闭</td></tr>
+    <tr><td>气血津液失常</td><td class="l">"气血不和,百病乃变化而生"</td><td class="l">血虚、血瘀、出血;津伤、水湿痰饮</td></tr>
+  </table>
+
+  <h3>3. 病机十九条 <span class="tag">必背</span>(《素问·至真要大论》)</h3>
+  <p>临床辨证求因的"检索表"——见到某类症状,先到对应的脏腑或邪气上去找原因("审察病机,无失气宜")。</p>
+  <details open>
+    <summary>展开:十九条全文与白话</summary>
+    <div class="inner">
+      <table>
+        <tr><th style="width:46%">原文</th><th>白话要义</th></tr>
+        <tr><td class="l">诸风掉眩,皆属于肝</td><td class="l">震颤、抽动、眩晕一类"风"症,多责之于肝</td></tr>
+        <tr><td class="l">诸寒收引,皆属于肾</td><td class="l">畏寒蜷缩、筋脉拘急,多责之于肾(阳虚)</td></tr>
+        <tr><td class="l">诸气膹郁,皆属于肺</td><td class="l">呼吸急迫、胸闷气逆,多责之于肺</td></tr>
+        <tr><td class="l">诸湿肿满,皆属于脾</td><td class="l">水肿、腹胀满,多责之于脾(运化失司)</td></tr>
+        <tr><td class="l">诸热瞀瘛,皆属于火</td><td class="l">高热神昏、抽搐,属火邪</td></tr>
+        <tr><td class="l">诸痛痒疮,皆属于心</td><td class="l">疮疡痛痒,属心(火)</td></tr>
+        <tr><td class="l">诸厥固泄,皆属于下</td><td class="l">四肢厥冷、二便失常(癃闭或失禁),病位在下焦</td></tr>
+        <tr><td class="l">诸痿喘呕,皆属于上</td><td class="l">痿弱、喘、呕,病位在上焦</td></tr>
+        <tr><td class="l">诸禁鼓栗,如丧神守,皆属于火</td><td class="l">口噤、寒战鼓颔而神乱,属火郁于内</td></tr>
+        <tr><td class="l">诸痉项强,皆属于湿</td><td class="l">颈项强直之痉症,与湿有关</td></tr>
+        <tr><td class="l">诸逆冲上,皆属于火</td><td class="l">气逆上冲(呕逆、呃逆暴作),属火</td></tr>
+        <tr><td class="l">诸胀腹大,皆属于热</td><td class="l">腹部胀大(伴热象),属热</td></tr>
+        <tr><td class="l">诸躁狂越,皆属于火</td><td class="l">烦躁发狂、举动失常,属火扰心神</td></tr>
+        <tr><td class="l">诸暴强直,皆属于风</td><td class="l">突发强直,属风</td></tr>
+        <tr><td class="l">诸病有声,鼓之如鼓,皆属于热</td><td class="l">肠鸣腹胀叩之如鼓,属热</td></tr>
+        <tr><td class="l">诸病胕肿,疼酸惊骇,皆属于火</td><td class="l">局部红肿疼痛伴惊骇,属火</td></tr>
+        <tr><td class="l">诸转反戾,水液浑浊,皆属于热</td><td class="l">转筋抽搐、排泄物浑浊,属热</td></tr>
+        <tr><td class="l">诸病水液,澄澈清冷,皆属于寒</td><td class="l">分泌排泄物清稀透明而冷,属寒</td></tr>
+        <tr><td class="l">诸呕吐酸,暴注下迫,皆属于热</td><td class="l">呕吐酸水、暴泻急迫,属热</td></tr>
+      </table>
+      <p class="note">统计规律:五脏各一条,上下各一条,风寒湿各一至二条,火热多达九条——提示内生火热是最常见病机,也是后世"刘河间主火论"的经典依据。使用时须"有者求之,无者求之,盛者责之,虚者责之",不可机械套用。</p>
+    </div>
+  </details>
+
+  <h3>4. 外感热病传变模型:六经分期(《素问·热论》)</h3>
+  <div class="flow">
+    <span class="nd">一日太阳</span><span class="ar">→</span><span class="nd">二日阳明</span><span class="ar">→</span><span class="nd">三日少阳</span><span class="ar">→</span><span class="nd r">四日太阴</span><span class="ar">→</span><span class="nd r">五日少阴</span><span class="ar">→</span><span class="nd r">六日厥阴</span>
+  </div>
+  <p>"今夫热病者,皆伤寒之类也。"外感热病按六经由表入里、由阳入阴逐层传变。此模型被张仲景发展为《伤寒论》六经辨证——读懂这一篇,就找到了《内经》通向《伤寒论》的桥。</p>
+
+  <h3>5. 原文研读</h3>
+  <details open>
+    <summary>《灵枢·百病始生》—— "两虚相得":发病的条件论</summary>
+    <div class="inner">
+      <div class="orig">夫百病之始生也,皆生于风雨寒暑,清湿喜怒。……风雨寒热,不得虚,邪不能独伤人。卒然逢疾风暴雨而不病者,盖无虚,故邪不能独伤人。此必因虚邪之风,与其身形,两虚相得,乃客其形。</div>
+      <p class="trans">百病的发生,都源于风雨寒暑、湿气与情志。但风雨寒热若不遇上人体的虚弱,单凭邪气并不能伤人。突然遭遇疾风暴雨而不生病的人,是因为身体不虚。必定是虚邪之风与人体的虚弱状态"两虚相得",邪气才能侵入而停留。</p>
+      <p class="anal">这是《内经》发病学最精彩的论证,妙在用一个<em>反例</em>立论:同淋一场暴雨,为何有人病有人不病?——可见外因不是充分条件。"两虚相得"即:致病 = 邪气(外因)×正虚(内因),缺一不可。这与"正气存内,邪不可干"互为表述,共同确立了中医"内因主导"的发病观,也直接导出治疗与预防的重心:与其穷追外邪,不如固护正气。本篇后文还描绘了邪气由皮毛→络脉→经脉→输脉→伏冲之脉→肠胃→募原的逐层深入路线,是"既病防变"思想的病理学依据,可与《素问·热论》六经传变对读:一个讲空间深入,一个讲时间分期。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·调经论》—— 病因的阴阳二分:外感与内伤的源头</summary>
+    <div class="inner">
+      <div class="orig">夫邪之生也,或生于阴,或生于阳。其生于阳者,得之风雨寒暑;其生于阴者,得之饮食居处,阴阳喜怒。</div>
+      <p class="trans">病邪的产生,有的起于阳分,有的起于阴分。起于阳分的,得之于风雨寒暑(外感);起于阴分的,得之于饮食起居、房事与情志(内伤)。</p>
+      <p class="anal">两句话完成了病因学的<em>第一次系统分类</em>:外感伤阳分(体表),内伤伤阴分(内脏)。后世一切病因分类都是它的展开——宋代陈无择"三因学说"(外因、内因、不内外因)不过是把"饮食居处"从内因中再拆一层。分类的临床意义在于定位与定策:生于阳者从表治(汗、散),生于阴者从里调(补、消、和)。读经文要留意这种"二分→四分→无穷分"的展开方式,它是阴阳思维在病因学上的直接应用。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·生气通天论》—— "清静则肉腠闭拒":正气如何挡住大风苛毒</summary>
+    <div class="inner">
+      <div class="orig">风者,百病之始也。清静则肉腠闭拒,虽有大风苛毒,弗之能害,此因时之序也。</div>
+      <p class="trans">风是百病的起始。但人若保持清静(阳气固密、情志安和),肌肉腠理就闭合固密,即使有大风和剧烈的毒邪,也不能伤害——这是顺应时序的结果。</p>
+      <p class="anal">"清静"二字常被读浅。结合本篇上下文(阳气"烦劳则张"、大怒则"形气绝"),它指的是<em>阳气不被烦劳、暴怒、纵欲扰动的状态</em>——阳气安定,卫外功能(肉腠闭拒)才在线。等于给出了一条因果链:情志生活方式 → 阳气状态 → 屏障功能 → 是否感邪。现代人"一熬夜就感冒"的体验,正是这条链的日常验证。它也回答了一个常见疑问:中医防病为何总从作息情志入手——因为屏障的开关在生活方式手里。</p>
+    </div>
+  </details>
+
+  <h3>6. 自洽性分析:发病模型的乘积逻辑与十九条的索引设计</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>《内经》发病学的核心是一个<em>乘积模型</em>:发病 = 邪气 × 正虚(任一项为零则不病)。"两虚相得"用反例论证确立了它(同淋暴雨有人不病→外因非充分条件);"正气存内,邪不可干"是它的逆否表述——两处经文从正反两面陈述同一命题,逻辑上互为印证,这是体系内部一致性的好样本。由此模型演绎出全部防治战略:增大正气项(养生、扶正)优先于追剿邪气项(祛邪),因为前者是自变量中可长期控制的一个。</p>
+    <p><b class="k">自洽机制</b>① 病因按"生于阳/生于阴"二分后,与表里、营卫、脏腑诸二分结构对齐,外感走"皮毛→经络→脏腑"的空间路线,内伤直中脏腑,两类病因各有专属路径,互不混淆;② 病机十九条是一个<em>"症状→病位/病性"的反向索引</em>:正向理论(脏腑功能)预测"肝病生风",反向索引规定"见风症先查肝"——正反两表互逆,使理论可以双向使用(由因推果、由果溯因),这是它作为临床工具的精髓;③ "审察病机,无失气宜"与"有者求之,无者求之"为索引加了核对程序:症状与病机不符时必须再查,防止机械套用。</p>
+    <p><b class="k warn">张力与边界</b>① 十九条火热独占九条,比例严重不均——或反映成文时代热病多发的疾病谱,或是某一学派(主火论前身)的倾向被编入,总之它是<em>经验归纳的快照而非逻辑推导的完备表</em>,刘河间据此扬火热论、后世又有人纠偏,正说明其开放性;② "无者求之"一类条款在保证灵活性的同时,使模型几乎不可能被临床反例否决(任何不符都可解释为"另有隐藏病机"),解释力与可检验性的交换在此最为明显——这要求使用者以严格的"参伍"验证自律,经文给了工具,也给了滥用工具的空间。</p>
+  </div>
+</section>
+
+<!-- ============ 九、诊法 ============ -->
+<section id="sec-zhenfa">
+  <h2>九、诊法<span class="en">司外揣内:从外象读出内变</span></h2>
+  <p class="lead">诊断的原理一句话:"<em>有诸内者,必形诸外</em>"——内脏的变化必然表现于外部征象,故察色、闻声、问情、按脉即可推知内在病变(司外揣内)。</p>
+
+  <h3>1. 四诊源头</h3>
+  <table>
+    <tr><th>诊法</th><th>《内经》要点</th><th>关键原文</th></tr>
+    <tr><td>望</td><td class="l">察神(得神者昌,失神者亡)、察五色(青赤黄白黑应五脏;明润含蓄为善,晦暗暴露为恶)、察形态</td><td class="l">"切脉动静而视精明,察五色,观五藏有余不足"(《脉要精微论》)</td></tr>
+    <tr><td>闻</td><td class="l">听五音五声(呼笑歌哭呻应五脏)、嗅五气</td><td class="l">"闻而知之谓之圣"</td></tr>
+    <tr><td>问</td><td class="l">问起病、问饮食居处、问情志贵贱(失意之人病从内生)</td><td class="l">"诊病不问其始……何病能中"(《征四失论》)</td></tr>
+    <tr><td>切</td><td class="l">三部九候遍诊法→气口(寸口)独诊法;"气口何以独为五藏主?胃者水谷之海……变见于气口"</td><td class="l">《三部九候论》《五藏别论》</td></tr>
+  </table>
+
+  <h3>2. 脉诊精要</h3>
+  <div class="grid2">
+    <div class="card"><h4>诊脉的时机与心法</h4><p>"诊法常以<em>平旦</em>"——清晨阴气未动、阳气未散、气血未乱,最能见真象。诊脉须"虚静为保"(医者心静)。平人脉象:"人一呼脉再动,一吸脉亦再动,呼吸定息脉五动"——一息四至五至为平。</p></div>
+    <div class="card"><h4>四时五脏平脉</h4><p>脉应四时:春弦(微弦)、夏钩(洪)、秋浮(毛)、冬营(石/沉)。<em>胃气为本</em>:脉贵有"从容和缓"之胃气,"人无胃气曰逆,逆者死";真脏脉(全无胃气、脏气独现)为危候(《玉机真藏论》)。</p></div>
+  </div>
+  <blockquote>"能合色脉,可以万全。"<span class="src">——《素问·五藏生成》</span></blockquote>
+  <p class="note">诊断的最高要求是多种诊法互参,而非单凭一脉定乾坤。后世"四诊合参"即从此出。</p>
+
+  <h3>3. 原文研读</h3>
+  <details open>
+    <summary>《素问·脉要精微论》—— 平旦诊脉与"切脉动静"总纲</summary>
+    <div class="inner">
+      <div class="orig">诊法常以平旦,阴气未动,阳气未散,饮食未进,经脉未盛,络脉调匀,气血未乱,故乃可诊有过之脉。切脉动静,而视精明,察五色,观五藏有余不足,六府强弱,形之盛衰,以此参伍,决死生之分。</div>
+      <p class="trans">诊脉以清晨为宜:此时阴气未被扰动,阳气未曾耗散,未进饮食,经脉不亢盛,络脉匀和,气血未乱,所以能诊出有病的脉象。切按脉的动静,观察眼睛的神采,察看五色,判断五脏的有余不足、六腑的强弱、形体的盛衰——把这些互相参合比对,来判断死生。</p>
+      <p class="anal">两个层次都值得分析。其一,"平旦诊脉"的实质是<em>控制变量</em>:饮食、运动、情绪都会干扰脉象,清晨是干扰最少的"基线状态"——这是相当自觉的方法论意识,今天体检要求空腹晨起抽血,逻辑完全相同。其二,"以此参伍"四字是诊断学纲领:脉、神(精明)、色、形多指标交叉验证("参伍"即错杂比对),单一指标不下结论。后文还有著名的"五藏者,中之守也……得守者生,失守者死"(闻声察守)与"夫五藏者,身之强也……得强则生,失强则死"(望形察强),把闻诊望诊也纳入同一判断框架。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·脉要精微论》—— "夫脉者,血之府也":脉象主病的推理规则</summary>
+    <div class="inner">
+      <div class="orig">夫脉者,血之府也。长则气治,短则气病,数则烦心,大则病进;上盛则气高,下盛则气胀;代则气衰,细则气少,涩则心痛。</div>
+      <p class="trans">脉是血汇聚之府。脉长说明气机调畅,脉短说明气有病,脉数(快)多心烦有热,脉大说明病势正在进展;寸部盛则气壅于上(喘满),尺部盛则气胀于下;脉代(歇止)是脏气衰,脉细是气少,脉涩是血少气滞而心痛。</p>
+      <p class="anal">注意每一条都不是孤立的经验对应,而是<em>从"脉为血府"这个定义推出来的</em>:脉里装的是气血,所以脉的形态(长短、大小、细涩)直接反映气血的量与流动状态,脉的部位(上下)反映病位高下。掌握这个推理规则,二十八脉就不必死背——洪大者气血涌盛(热、病进),细涩者气血亏滞(虚、痛),沉者病在里,浮者病在表,皆可自推。《内经》教的从来不是结论清单,而是生成结论的法则。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·五藏别论》—— 为什么独取寸口</summary>
+    <div class="inner">
+      <div class="orig">帝曰:气口何以独为五藏主?岐伯曰:胃者,水谷之海,六府之大源也。五味入口,藏于胃,以养五藏气;气口亦太阴也,是以五藏六府之气味,皆出于胃,变见于气口。</div>
+      <p class="trans">黄帝问:为什么单凭气口(寸口)就能候五脏?岐伯答:胃是水谷之海、六腑的大源,五味入胃化生之气供养五脏;寸口属手太阴肺经,而五脏六腑之气都源于胃、经肺朝百脉,所以其变化都显现在寸口。</p>
+      <p class="anal">这段回答了脉诊最根本的质疑:"摸手腕一处,凭什么知全身?"论证链是:全身之气同源(胃)→ 同汇(肺朝百脉)→ 寸口恰在肺经,是这股总气流的"观测窗"。从《内经》的三部九候遍诊,到《难经》"独取寸口",再到后世寸关尺分候脏腑,脉诊简化的每一步都以这段为理论执照。学术上也要诚实地看到:这是模型内的自洽论证,后世对寸口分候脏腑的具体方案历来有分歧——读经当知其立论之巧,也知其留下的开放问题。</p>
+    </div>
+  </details>
+
+  <h3>4. 自洽性分析:"司外揣内"成立的条件与诊断学的防错设计</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>整个诊法的合法性建立在一条前提上:<em>内外是同一系统的两面,且有稳定的映射关系</em>。这条前提不是凭空断言,而是由前面的理论保证的——藏象学说规定了映射表(其华在面、开窍于目……),经络学说提供了映射的物理通道(十二经内属脏腑、外络肢节)。于是"察色按脉"在体系内是严格有据的:外候的每一项都能沿藏象-经络的管线追到某个内脏。诊法是藏象与经络两大理论的<em>应用层</em>,三者构成"基础理论→映射通道→读取接口"的完整栈。</p>
+    <p><b class="k">自洽机制</b>① "以此参伍"是体系自带的<em>防错设计</em>:色、脉、神、形多通道读数交叉验证,单通道噪声(个体差异、一时扰动)被多数表决过滤——这与现代诊断学多指标联合判读的逻辑相同;② "平旦诊脉"控制测量条件,"虚静为保"控制测量者状态,说明体系对测量误差有自觉;③ "胃气"概念是一个巧妙的<em>统一判据</em>:四时五脏脉象各异(春弦夏钩),看似无法比较,但都以"有无从容和缓之胃气"为共同标尺——异中立同,使千变万化的脉象有了单一的预后轴(胃气多寡=生机多寡)。</p>
+    <p><b class="k warn">张力与边界</b>① 寸口独诊的论证(胃→肺→寸口)虽在体系内自洽,但它<em>用本体系的理论证明本体系的观测方法</em>,带有循环论证结构——观测窗的有效性无法在体系外独立验证,这是一切封闭理论体系的共同困境;② 从三部九候(遍身多点)简化到独取寸口(单点),信息量明显压缩,《内经》内部两法并存,实际是诊断效率与信息完备性的权衡被历史固化;③ 脉象描述高度依赖指感语言("如循榆荚""如按琴瑟弦"),主观一致性难以保证——这恰是经文反复强调"参伍"与师承的原因:体系自知单凭脉不可靠,所以把可靠性建在组合验证上。</p>
+  </div>
+</section>
+
+<!-- ============ 十、治则治法 ============ -->
+<section id="sec-zhize">
+  <h2>十、治则治法<span class="en">治病的战略与战术</span></h2>
+
+  <h3>1. 最高战略:治未病 <span class="tag">必背</span></h3>
+  <blockquote>"是故圣人<em>不治已病治未病,不治已乱治未乱</em>……夫病已成而后药之,乱已成而后治之,譬犹渴而穿井,斗而铸锥,不亦晚乎!"<span class="src">——《素问·四气调神大论》</span></blockquote>
+  <p>三层含义:① 未病先防(养生);② 既病防变(见肝之病当先实脾,截断传变);③ 瘥后防复。这是《内经》对世界医学最具前瞻性的贡献——把医学重心从治疗前移到预防。</p>
+
+  <h3>2. 治则总表</h3>
+  <table>
+    <tr><th>治则</th><th>原文依据</th><th>含义与应用</th></tr>
+    <tr><td>治病求本</td><td class="l">"治病必求于本"(阴阳应象大论)</td><td class="l">透过症状抓阴阳失调的根本</td></tr>
+    <tr><td>调整阴阳</td><td class="l">"谨察阴阳所在而调之,以平为期"</td><td class="l">寒者热之,热者寒之;"阳病治阴,阴病治阳"</td></tr>
+    <tr><td>扶正祛邪</td><td class="l">"虚则补之,实则泻之""盛者泻之,虚者补之"</td><td class="l">补虚泻实两大手段,据邪正盛衰取舍先后</td></tr>
+    <tr><td>标本缓急</td><td class="l">"急则治其标,缓则治其本"(标本病传论义)</td><td class="l">大出血先止血(标),平时调体质(本);"间者并行,甚者独行"</td></tr>
+    <tr><td>正治反治</td><td class="l">"逆者正治,从者反治"(至真要大论)</td><td class="l">正治:寒者热之;反治:热因热用、寒因寒用、塞因塞用、通因通用(顺假象而治真本质)</td></tr>
+    <tr><td>因势利导</td><td class="l">"其高者,因而越之;其下者,引而竭之;中满者,泻之于内;其在皮者,汗而发之"</td><td class="l">邪在上用吐,在下用通利,在表用汗——顺病势就近祛邪</td></tr>
+    <tr><td>三因制宜</td><td class="l">《异法方宜论》:东方砭石、西方毒药、北方灸焫、南方九针、中央导引按蹻</td><td class="l">因时、因地、因人制宜;"杂合以治,各得其所宜"</td></tr>
+    <tr><td>把握分寸</td><td class="l">"大毒治病,十去其六……无毒治病,十去其九;谷肉果菜,食养尽之,无使过之,伤其正也"</td><td class="l">用药留有余地,以食养收尾,严防过度治疗</td></tr>
+  </table>
+
+  <h3>3. 形神并治与医患之道</h3>
+  <p>"精神不进,志意不治,故病不可愈"(《汤液醪醴论》)——病人的求生意志与配合是疗效前提;"<em>病为本,工为标</em>,标本不得,邪气不服"。又《师传》:"人之情,莫不恶死而乐生,告之以其败,语之以其善,导之以其所便,开之以其所苦"——已是完整的心理疏导与医患沟通方法论。</p>
+
+  <h3>4. 原文研读</h3>
+  <details open>
+    <summary>《素问·阴阳应象大论》—— 按病程与病位分层施治</summary>
+    <div class="inner">
+      <div class="orig">故邪风之至,疾如风雨。故善治者治皮毛,其次治肌肤,其次治筋脉,其次治六府,其次治五藏。治五藏者,半死半生也。……故因其轻而扬之,因其重而减之,因其衰而彰之。……其高者,因而越之;其下者,引而竭之;中满者,泻之于内;其有邪者,渍形以为汗;其在皮者,汗而发之。</div>
+      <p class="trans">邪气袭来快如风雨,所以高明的医生在邪尚在皮毛时就治,其次治肌肤,其次治筋脉,其次治六腑,最后才不得不治五脏——病入五脏,治愈机会只剩一半。病轻浅就顺势宣散,病重就逐步消减,正气衰就助其彰盛。病位高(上焦)的用涌吐,在下的用通泄,中焦胀满的从内消导,邪在体表的用汤浴取汗、发汗而解。</p>
+      <p class="anal">这段把两条治疗原则编织在一起。第一条是<em>时间维度的"早治"</em>:皮毛→肌肤→筋脉→六腑→五脏的序列,与《百病始生》的邪气深入路线严格对应——治疗窗口随深度递减,"治五藏者半死半生"是给"治未病"算的一笔成本账。第二条是<em>空间维度的"因势利导"</em>:吐、下、消、汗诸法按病位高下选择,顺着邪气最近的出口送它出去,而不是与之缠斗。后世张子和"攻邪三法(汗吐下)"直接以此为纲。合读可见《内经》治疗学的底层趣味:省力、借势、赶早——与其说是斗争医学,不如说是时机医学。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·至真要大论》—— 正治法总诀:"寒者热之,热者寒之"</summary>
+    <div class="inner">
+      <div class="orig">寒者热之,热者寒之,微者逆之,甚者从之,坚者削之,客者除之,劳者温之,结者散之,留者攻之,燥者濡之,急者缓之,散者收之,损者温之,逸者行之,惊者平之……各安其气,必清必静,则病气衰去,归其所宗,此治之大体也。</div>
+      <p class="trans">寒证用热法,热证用寒法;病情单纯的用逆其性质的正治,病重有假象的用顺其假象的从治;坚积的削之,外来的除之,虚劳的温补,郁结的疏散,留滞的攻逐,干燥的濡润,拘急的缓和,耗散的收敛,虚损的温养,气血壅滞的通行,惊悸的平镇……使各种病气安定归于清静,这就是治疗的大法。</p>
+      <p class="anal">一连串四字句,实质是一张<em>"病性→治法"的映射表</em>:每个病理状态都配一个方向相反的操作。它的深层逻辑只有一条——<em>以偏纠偏,以平为期</em>:疾病是某种"偏"(过寒、过热、过结、过散),治疗就是施加反向的"偏"使系统回到平衡。理解这一条,中医全部治法乃至食疗原则(寒性体质少食寒凉)都可一以贯之。同句"微者逆之,甚者从之"又预留了例外通道:病重出现假象时正治会遭格拒,须用反治(热因热用、塞因塞用等)——原则与权变并立,正是"大体"二字的分量。</p>
+    </div>
+  </details>
+
+  <h3>5. 自洽性分析:一条公理生出全部治法,以及"反治"的认识论地位</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>治则体系的演绎结构在全书中最为干净:唯一公理是<em>健康=动态平衡</em>("阴平阳秘")。由此严格推出:疾病=偏离平衡(第一推论)→ 治疗=反向施偏、以偏纠偏(第二推论,"寒者热之"全表皆此一条的展开)→ 偏离越小越易纠正(第三推论,故"治未病"不是道德劝诫而是<em>从公理推出的最优策略</em>:在偏离为零附近干预,成本最低、胜算最大)。标本、缓急、因势利导,都是第二推论在时间、主次、路径三个维度上的参数化。一条公理撑起一整章,这是《内经》演绎品质的最佳展品。</p>
+    <p><b class="k">自洽机制</b>① 标本之争由"急则治标,缓则治本,间者并行,甚者独行"完整封闭——四句话覆盖了主次×轻重的全部组合,决策树无遗漏分支;② 三因制宜把"同病异治"合法化:同一疾病在不同人、时、地表现为不同的偏离向量,治法自然不同——表面的"不一致"在模型内是严格一致的;③ "大毒治病十去其六"的剂量伦理与"以平为期"呼应:纠偏本身也是施偏,过度治疗会造成新的偏离,所以治疗必须自我克制——模型对"治疗伤害"有内生的预警,这是相当现代的医源性损害意识。</p>
+    <p><b class="k warn">张力与边界</b>最值得深思的是<em>反治法的双重面孔</em>。"热因热用"处理真寒假热,临床确有其事(阴盛格阳),它使体系在正治失败时仍能自洽。但从认识论看,这也是一个<em>免疫策略</em>:任何正治无效的案例都可被重新描述为"有假象",理论本身永不被反例触及——证伪的出口被堵上了。《内经》的补救是把举证责任压回诊断:用脉之沉取、口渴喜冷热、二便等"参伍"指标严格鉴别真假寒热,等于要求假象判定必须有独立证据,不得事后随意援引。读者由此可见一个成熟体系的自我约束方式——<em>它不能从外部被证伪,就在内部设置反滥用的程序。</em></p>
+  </div>
+</section>
+
+<!-- ============ 十一、运气学说 ============ -->
+<section id="sec-yunqi">
+  <h2>十一、运气学说<span class="en">五运六气:气候与疾病的周期模型(选学)</span></h2>
+  <p class="lead">载于王冰补入的"七篇大论",约占《素问》三分之一篇幅,是《内经》中最艰深的部分。初学者只需理解其思想框架,不必急于推算。</p>
+  <div class="grid2">
+    <div class="card"><h4>五运</h4><p>以天干配五行(甲己化土、乙庚化金、丙辛化水、丁壬化木、戊癸化火),推算每年主导的"岁运"及其太过不及,预测该年气候偏向与易发疾病。</p></div>
+    <div class="card"><h4>六气</h4><p>以地支配三阴三阳六气(风木、君火、相火、湿土、燥金、寒水),将一年分六步("主气"恒定,"客气"逐年轮转),司天在泉,推演每段时令的气化特点。</p></div>
+  </div>
+  <div class="card gold">
+    <p><em>学习价值定位:</em>① 思想内核——气候周期性变化深刻影响流行病与体质,这一"医学气象学/时间医学"视角至今有启发;② "必先岁气,无伐天和"——治病用药须顾及当年气运;③ 争议提示——七篇为唐代补入,推算体系后世聚讼纷纭,宜知其理、慎其术。</p>
+  </div>
+
+  <h3>原文研读</h3>
+  <details open>
+    <summary>《素问·六微旨大论》—— 升降出入:一切生命的存在方式</summary>
+    <div class="inner">
+      <div class="orig">出入废则神机化灭,升降息则气立孤危。故非出入,则无以生长壮老已;非升降,则无以生长化收藏。是以升降出入,无器不有。故器者,生化之宇;器散则分之,生化息矣。</div>
+      <p class="trans">出入(与外界的交换)停止,生命的机能就消灭;升降(内部的气机运转)停息,依靠气化而立的存在就孤危。没有出入,就没有生、长、壮、老、已(动物的生命过程);没有升降,就没有生、长、化、收、藏(植物与万物的化育过程)。所以升降出入,任何"器"(有形之物)都不能没有;器是生化的场所,器一解体,生化也就终止。</p>
+      <p class="anal">这是运气七篇中哲学浓度最高的一段,价值远超运气推算本身:它把一切生命定义为<em>开放系统中的持续运动</em>——"出入"是系统与环境的物质能量交换,"升降"是系统内部的循环,二者停止即死亡。以此回看全书,处处豁然:脾升胃降、肺宣发肃降、心肾相交,都是"升降"的分论;呼吸、饮食、排泄、出汗,都是"出入"的分论;而"六腑以通为用""不通则痛",不过是说运动不可阻断。一段经文,统摄全书的动态生命观——读运气七篇若只取一段,取此。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·五常政大论/六元正纪大论》—— "必先岁气,无伐天和"</summary>
+    <div class="inner">
+      <div class="orig">必先岁气,无伐天和。……无失天信,无逆气宜,无翼其胜,无赞其复,是谓至治。</div>
+      <p class="trans">治病必先了解当年的气运特点,不可攻伐天时的和气。不要违背天时的规律,不要逆着六气所宜,不要助长偏胜之气,也不要助推报复之气,这才是最高明的治疗。</p>
+      <p class="anal">运气学说留给临床最实在的遗产就是这八个字。剥去推算外壳,其内核是:<em>用药要把"当下的气候背景"当作处方的隐藏变量</em>——湿热当令之年慎用滋腻助湿之品,寒水司天之时慎用过度苦寒。它与"三因制宜"中的"因时制宜"互为表里,也与现代流行病学"季节性疾病谱"的观察相通。学习建议:初学者记住这个原则并在生活中验证(如梅雨季湿病多发),推算技术留待深研阶段再议。</p>
+    </div>
+  </details>
+
+  <h3>自洽性分析:最精密也最脆弱的子系统</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>运气学说是天人相应公理的<em>极限推演</em>:既然人与天地同气,而天地之气有周期(年、季、六步),那么疾病流行也应有可计算的周期——于是用干支纪年作时间坐标,五行配天干得"五运",三阴三阳配地支得"六气",再加太过/不及、司天/在泉、主气/客气等参数,构成一台预测气候-疾病的"历法机器"。就形式化程度而言,它是全书最接近数学模型的部分:输入年份,输出该年的气化特征与易发病谱。</p>
+    <p><b class="k">自洽机制</b>① 模型与全书共享五行六气语言,与病机十九条(风寒湿火热)无缝衔接——运气预测的"邪",正是病机学说处理的"邪",两章互为上下游;② 胜复、郁发等机制为模型加入<em>自我调节项</em>(某气太过会引来报复之气),使气候系统呈现负反馈的动态平衡,与人体"以平为期"同构——天人在数学结构上也对应,体系美感达到顶点。</p>
+    <p><b class="k warn">张力与边界</b>① 自我调节项同时是<em>免责条款</em>:预测不验时,总可归因于胜复郁发的扰动,模型几乎不可证伪——这是它两千年来"信者奉为至宝、疑者斥为附会"的根源;② 文献层面,七篇大论为王冰所补,文风、篇幅、术语与《素问》他篇明显不同,其与全书的"自洽"部分是后人整合的结果;③ 它把复杂气候压缩为五六个离散变量,分辨率天然有限。理性的取舍:接受其<em>思想内核</em>(气候周期与疾病谱相关、用药须顾岁气)——这部分有现代流行病学的平行证据;悬置其<em>推算细节</em>,待深研阶段以史学和统计的眼光检验。</p>
+  </div>
+</section>
+
+<!-- ============ 十二、养生之道 ============ -->
+<section id="sec-yangsheng">
+  <h2>十二、养生之道<span class="en">《内经》的终极关怀:尽终天年</span></h2>
+  <p class="lead">《素问》开篇即是养生(上古天真论、四气调神大论),这个编排本身就是宣言:<em>医学的最高目标不是治病,而是让人不病、并活满自然寿命("天年",约百岁)。</em></p>
+
+  <h3>1. 养生总纲 <span class="tag">必背</span></h3>
+  <blockquote>"上古之人,其知道者,<em>法于阴阳,和于术数,食饮有节,起居有常,不妄作劳</em>,故能形与神俱,而尽终其天年,度百岁乃去。今时之人不然也,以酒为浆,以妄为常,醉以入房,以欲竭其精,以耗散其真……故半百而衰也。"<span class="src">——《素问·上古天真论》</span></blockquote>
+  <p class="note">五句纲领:顺应自然规律(法于阴阳)、用恰当方法调养(和于术数)、饮食有节制、作息有规律、劳作不过度。反面教材两千年后读来依然句句扎心:酗酒、纵欲、熬夜、透支。</p>
+  <blockquote>"<em>恬惔虚无,真气从之;精神内守,病安从来?</em>"<span class="src">——《素问·上古天真论》</span></blockquote>
+
+  <h3>2. 生命节律:女七男八 <span class="tag">必背</span></h3>
+  <p>肾气(天癸)主导的生长发育周期:女子以 7 年、男子以 8 年为一个台阶。</p>
+  <table>
+    <tr><th>女子(七)</th><th>表现</th><th>男子(八)</th><th>表现</th></tr>
+    <tr><td>7 岁</td><td class="l">肾气盛,齿更发长</td><td>8 岁</td><td class="l">肾气实,发长齿更</td></tr>
+    <tr><td>14(二七)</td><td class="l">天癸至,月事以时下,能生育</td><td>16(二八)</td><td class="l">肾气盛,天癸至,精气溢泻</td></tr>
+    <tr><td>21(三七)</td><td class="l">肾气平均,真牙生而长极</td><td>24(三八)</td><td class="l">筋骨劲强,真牙生而长极</td></tr>
+    <tr><td>28(四七)</td><td class="l">筋骨坚,发长极,身体盛壮(顶点)</td><td>32(四八)</td><td class="l">筋骨隆盛,肌肉满壮(顶点)</td></tr>
+    <tr><td>35(五七)</td><td class="l">阳明脉衰,面始焦,发始堕</td><td>40(五八)</td><td class="l">肾气衰,发堕齿槁</td></tr>
+    <tr><td>42(六七)</td><td class="l">三阳脉衰于上,面皆焦,发始白</td><td>48(六八)</td><td class="l">阳气衰竭于上,面焦,发鬓斑白</td></tr>
+    <tr><td>49(七七)</td><td class="l">天癸竭,地道不通,形坏而无子</td><td>56(七八)</td><td class="l">肝气衰,筋不能动,天癸竭</td></tr>
+    <tr><td>—</td><td class="l">—</td><td>64(八八)</td><td class="l">齿发去,五脏皆衰,形体皆极</td></tr>
+  </table>
+  <p class="note">养生的本质即<em>护惜肾精、延缓这条曲线的下行</em>。各年龄段养生重点不同:青年护其盛,中年缓其衰,老年保其余。</p>
+
+  <h3>3. 四气调神:跟着季节过日子 <span class="tag">必背</span></h3>
+  <table>
+    <tr><th>季节</th><th>气象</th><th>起居</th><th>情志</th><th>违逆之害</th></tr>
+    <tr><td>春·发陈</td><td class="l">天地俱生,万物以荣</td><td class="l">夜卧早起,广步于庭,被发缓形</td><td class="l">"以使志生"——生而勿杀,予而勿夺(舒展、立志、不压抑)</td><td class="l">逆之伤肝,夏为寒变</td></tr>
+    <tr><td>夏·蕃秀</td><td class="l">天地气交,万物华实</td><td class="l">夜卧早起,无厌于日</td><td class="l">"使志无怒",使气得泄(尽情生长疏泄,勿郁怒)</td><td class="l">逆之伤心,秋为痎疟</td></tr>
+    <tr><td>秋·容平</td><td class="l">天气以急,地气以明</td><td class="l">早卧早起,与鸡俱兴</td><td class="l">"使志安宁",收敛神气(收心、勿外散)</td><td class="l">逆之伤肺,冬为飧泄</td></tr>
+    <tr><td>冬·闭藏</td><td class="l">水冰地坼,无扰乎阳</td><td class="l">早卧晚起,必待日光;去寒就温,无泄皮肤</td><td class="l">"使志若伏若匿,若有私意,若已有得"(藏而不露)</td><td class="l">逆之伤肾,春为痿厥</td></tr>
+  </table>
+  <p>总原则:"<em>春夏养阳,秋冬养阴</em>,以从其根"——春夏顺其生长之气,秋冬顺其收藏之气。</p>
+
+  <h3>4. 形神共养与情志调摄</h3>
+  <div class="grid2">
+    <div class="card"><h4>养形</h4><p>食饮:"五谷为养,五果为助,五畜为益,五菜为充,气味合而服之,以补精益气"(《藏气法时论》)——主食为根基的均衡膳食观;"谨和五味,骨正筋柔"。起居:顺应昼夜("阳气者,一日而主外,平旦人气生,日中阳气隆,日西阳气已虚,气门乃闭"——日落后减少剧烈活动)。劳逸:"形劳而不倦"。</p></div>
+    <div class="card"><h4>养神</h4><p>"志闲而少欲,心安而不惧,形劳而不倦""嗜欲不能劳其目,淫邪不能惑其心"。情志中和,大喜大怒皆伤:"暴怒伤阴,暴喜伤阳"。养生四境界:真人(提挈天地)、至人(和于阴阳)、圣人(处天地之和,无恚嗔之心)、贤人(法则天地)——给普通人的榜样是圣人:<em>入世而不为物累</em>。</p></div>
+  </div>
+
+  <h3>5. 原文研读</h3>
+  <details open>
+    <summary>《素问·生气通天论》—— 阳气的一日节律:作息表的经典依据</summary>
+    <div class="inner">
+      <div class="orig">故阳气者,一日而主外。平旦人气生,日中而阳气隆,日西而阳气已虚,气门乃闭。是故暮而收拒,无扰筋骨,无见雾露。反此三时,形乃困薄。</div>
+      <p class="trans">人身阳气在白天主司体表:清晨阳气始生,中午阳气最盛,日落时阳气已虚,汗孔随之关闭。所以入夜应当收敛拒守,不要剧烈劳动筋骨,不要触冒雾露寒湿。违背了这三个时段的规律,形体就会困顿衰薄。</p>
+      <p class="anal">这是"天人相应"精确到<em>一天之内</em>的版本:阳气随太阳同步起落,人的活动强度应当跟随这条曲线——晨起渐动、日中任劳、入夜收敛。由此可直接推出今天仍在用的作息建议:剧烈运动放在白天而非深夜,夜间护阳避寒。更要紧的是它解释了"为什么熬夜伤人":夜间阳气已入里,强行调用(熬夜工作、夜跑、夜浴冷水)等于透支卫外与修复之本,"形乃困薄"是必然结果。与第六章《营卫生会》的卫气昼夜出入对读,一个讲节律的能量面(阳气),一个讲节律的运行面(卫气),互为表里。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·上古天真论》—— 真至圣贤四等人:养生的境界阶梯</summary>
+    <div class="inner">
+      <div class="orig">中古之时,有至人者,淳德全道,和于阴阳,调于四时……有圣人者,处天地之和,从八风之理,适嗜欲于世俗之间,无恚嗔之心,行不欲离于世,被服章,举不欲观于俗,外不劳形于事,内无思想之患,以恬愉为务,以自得为功,形体不敝,精神不散,亦可以百数。</div>
+      <p class="trans">中古有"至人",道德淳厚,顺和阴阳、调适四时;又有"圣人",安处天地的和气,顺从八风的规律,在世俗之间安顿自己的嗜欲,没有恼怒怨恨之心;行为不脱离社会,穿着如常人,举止不标新立异;对外不让事务过劳形体,对内不让思虑成为负担,以恬静愉悦为本务,以自在自得为成就——所以形体不衰敝,精神不耗散,也能活到百岁。</p>
+      <p class="anal">真人、至人高蹈难学,经文真正推荐给常人的范本是"圣人",其要义可概括为<em>入世的中道</em>:不离世俗(照常工作穿衣)、不逐世俗(举不欲观于俗)、欲望不禁绝而是"适"(安顿在合适的度)。这与后世把养生等同于辟谷隐居的想象恰好相反——《内经》的养生是在正常生活里完成的,核心只有两条:外不过劳其形,内不过耗其神。"以恬愉为务,以自得为功"八字,可视为全书养生论的心理学总结:把情绪的安宁当作正事来经营,把内在的自足当作成就来追求。</p>
+    </div>
+  </details>
+  <details>
+    <summary>《素问·四气调神大论》—— "逆春气则少阳不生":顺时的反面论证</summary>
+    <div class="inner">
+      <div class="orig">逆春气,则少阳不生,肝气内变;逆夏气,则太阳不长,心气内洞;逆秋气,则太阴不收,肺气焦满;逆冬气,则少阴不藏,肾气独沉。夫四时阴阳者,万物之根本也……故阴阳四时者,万物之终始也,死生之本也。逆之则灾害生,从之则苛疾不起,是谓得道。</div>
+      <p class="trans">违逆春气,少阳之气不能生发,肝气就内郁而生变;违逆夏气,太阳之气不能盛长,心气就内虚;违逆秋气,太阴之气不能收敛,肺热叶焦而胀满;违逆冬气,少阴之气不能闭藏,肾气就衰惫下沉。四时阴阳是万物的根本、终始、死生之本:违逆它灾害就发生,顺从它重病就不会出现——这就叫掌握了"道"。</p>
+      <p class="anal">第十二章正面讲了四季"该怎么做",这段从反面补全因果:每个季节的失养,都精确落到对应的脏("逆春伤肝、逆夏伤心、逆秋伤肺、逆冬伤肾"),且祸延下一季——春不生则夏无以长,环环相扣成一条<em>跨季节的健康债务链</em>。这给"顺时养生"提供了可检验的推断:夏天贪凉伤了"长"气,秋冬易咳泻;冬天熬夜失"藏",来春易疲乏痿厥。把养生从泛泛的"好习惯"变成有明确因果与时滞的系统模型——这正是《内经》高于一般养生格言之处。</p>
+    </div>
+  </details>
+
+  <h3>6. 自洽性分析:寿命方程与"顺势"的经济学</h3>
+  <div class="logic">
+    <p><b class="k">推理链</b>养生论可还原为一个简洁的<em>寿命方程</em>:天年(上限,约百岁)由先天之精设定;实际寿命 = 上限 − 累计耗损。耗损来自三个泄漏口:逆天时(四时昼夜节律)、过用形(劳逸饮食房事)、扰动神(七情妄动)。于是养生三策与之一一对应:顺时(堵第一个口)、节用(堵第二个口)、恬惔(堵第三个口)。"上古天真论"的正反对比(上古之人 vs 今时之人)正是这个方程的两组代入:同一上限,不同耗损率,结果"度百岁"与"半百而衰"。整章逻辑无一处溢出此方程。</p>
+    <p><b class="k">自洽机制</b>① 它与全书所有分支严格连通:顺四时调用天人相应,节饮食调用脾胃藏象,恬惔调用心主神明与"百病生于气"——养生章是全书理论的<em>汇流处</em>,这正是《素问》把它放在卷首的深意(纲领先行,而非附录殿后);② "女七男八"与"天年十岁"两条衰老曲线粒度不同(生殖轴 vs 全脏轴)却走势一致,内部互证;③ 因果链带<em>时滞</em>("逆春则夏病")——这使理论具备了罕见的可检验性:它做出的是有明确时间窗的预测,而非随时可兑现的模糊断言,在全书各分支中可证伪性最高。</p>
+    <p><b class="k warn">张力与边界</b>① "形与神俱"把心理变量写进寿命方程,是体系最具现代性的一笔(与当代身心医学、压力-免疫研究的方向一致),但"恬惔虚无"的度量始终依赖主观体认,操作化困难;② 先天上限论与养生能动论之间有决定论张力,经文的调和方案是"上限不可加,达成度可调"——养生不延长天年,只防止打折;③ "度百岁乃去"在汉代人均寿命背景下是<em>理想型而非统计值</em>,经文以"上古"托古立论,修辞策略与理论内容须分开评估。读这一章的最佳姿态:把它当作一份两千年前的"健康行为干预框架"——其变量选择(节律、饮食、运动、心理)与现代生活方式医学几乎完全重合,这本身就是对其自洽性最有力的外部旁证。</p>
+  </div>
+</section>
+
+<!-- ============ 十三、重点篇章精读 ============ -->
+<section id="sec-jingdu">
+  <h2>十三、重点篇章精读<span class="en">原文 · 白话 · 要点(细节在此)</span></h2>
+  <p class="lead">以下八篇是《内经》的"承重墙",按推荐阅读顺序排列。每篇选最核心段落,逐段给原文、白话、要点。读完这八篇,《内经》的骨架即立。</p>
+
+  <details open>
+    <summary>① 素问·上古天真论(第一篇)—— 生命观与养生总纲</summary>
+    <div class="inner">
+      <div class="orig">昔在黄帝,生而神灵,弱而能言,幼而徇齐,长而敦敏,成而登天。乃问于天师曰:余闻上古之人,春秋皆度百岁,而动作不衰;今时之人,年半百而动作皆衰者,时世异耶?人将失之耶?</div>
+      <p class="trans">黄帝问岐伯(天师):上古的人都能活过百岁且行动不衰,如今的人五十岁上下就衰老了,是时代变了,还是人自己失了养生之道?</p>
+      <p class="note">全书以"人为什么会早衰"开篇——把医学的第一问题设定为寿命与生活方式,而非疾病。岐伯的回答(法于阴阳……见第十二章)确认:责任在人,不在天。</p>
+      <div class="orig">夫上古圣人之教下也,皆谓之虚邪贼风,避之有时,恬惔虚无,真气从之,精神内守,病安从来?是以志闲而少欲,心安而不惧,形劳而不倦,气从以顺,各从其欲,皆得所愿。</div>
+      <p class="trans">对外避开不正之邪气,对内保持恬静淡泊,真气和顺,精神守持于内,病从哪里来?志趣安闲而少欲望,心境安定而不忧惧,身体劳作而不过度疲倦。</p>
+      <p class="note">养生纲领的"内外两防":外避邪气有时,内守精神不耗。"恬惔虚无"四字是《内经》精神养生的最高概括,与道家思想同源。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>② 素问·四气调神大论(第二篇)—— 顺时养生与治未病</summary>
+    <div class="inner">
+      <div class="orig">春三月,此谓发陈。天地俱生,万物以荣,夜卧早起,广步于庭,被发缓形,以使志生;生而勿杀,予而勿夺,赏而勿罚,此春气之应,养生之道也。逆之则伤肝,夏为寒变,奉长者少。</div>
+      <p class="trans">春季三个月叫"发陈"(推陈出新)。应晚睡早起,在庭院散步,披散头发、舒缓形体,让志意随春气生发;多生少杀、多予少夺、多赏少罚。违逆则伤肝,到夏天会生寒性病变。</p>
+      <p class="note">注意其论证结构:每季皆是"气象描述→起居处方→情志处方→违逆后果(且后果显现在下一季)"。这是"天人相应"最具操作性的落地,四季全文见第十二章表格。</p>
+      <div class="orig">夫四时阴阳者,万物之根本也。所以圣人春夏养阳,秋冬养阴,以从其根……是故圣人不治已病治未病,不治已乱治未乱,此之谓也。</div>
+      <p class="trans">四时阴阳是万物的根本,圣人春夏养护生长之阳气,秋冬养护收藏之阴气。所以圣人不等病成才治,而治于未病之时。</p>
+      <p class="note">"治未病"三字的出处。本篇把养生从个人保健提升为医学战略。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>③ 素问·生气通天论(第三篇)—— 阳气论</summary>
+    <div class="inner">
+      <div class="orig">阳气者,若天与日,失其所则折寿而不彰。故天运当以日光明,是故阳因而上,卫外者也。</div>
+      <p class="trans">人身的阳气,就像天上的太阳;阳气失其常位,人就会折寿而生机不彰。阳气向上向外,卫护周身。</p>
+      <p class="note">著名的"阳气论"——后世扶阳派(火神派)的理论源头。本篇还历数阳气在烦劳、大怒、湿热等情况下的损伤模式("阳气者,烦劳则张,精绝……")。</p>
+      <div class="orig">阴者,藏精而起亟也;阳者,卫外而为固也……凡阴阳之要,阳密乃固……阴平阳秘,精神乃治;阴阳离决,精气乃绝。</div>
+      <p class="trans">阴在内贮藏精气而不断起而应阳,阳在外卫护而使形体固密。阴阳的关键在于阳气固密;阴气平和、阳气固密,精神才正常;阴阳分离决绝,精气随之竭绝。</p>
+      <p class="note">"阴平阳秘"是中医健康观的标准定义,必背。注意:阴阳虽并重,本篇强调"阳密乃固"——阳气的固护是关键环节。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>④ 素问·阴阳应象大论(第五篇)—— 全书理论枢纽 <span class="tag">最重要</span></summary>
+    <div class="inner">
+      <div class="orig">阴阳者,天地之道也,万物之纲纪,变化之父母,生杀之本始,神明之府也,治病必求于本。故积阳为天,积阴为地。阴静阳躁,阳生阴长,阳杀阴藏。阳化气,阴成形。</div>
+      <p class="trans">阴阳是天地的根本规律、万物的纲领、一切变化的来源、生杀的本始、神妙变化之所在,治病必须求之于这个根本。阳化为无形的气,阴凝成有形的质。</p>
+      <p class="note">若全书只背一段,背这一段。"阳化气,阴成形"六字概括了一切生理病理:功能(阳)与物质(阴)的相互转化;肿瘤痰饮为"阴成形"太过,消瘦发热为"阳化气"太过——后世无数发挥皆从此出。</p>
+      <div class="orig">水谷之寒热,感则害于六府;地之湿气,感则害皮肉筋脉……故善用针者,从阴引阳,从阳引阴,以右治左,以左治右,以我知彼,以表知里,以观过与不及之理,见微得过,用之不殆。</div>
+      <p class="trans">善于用针的人,能从阴分引导阳分之邪,从阳分引导阴分之邪,取右侧治左侧病,取左侧治右侧病,由自己推知病人,由表象推知内里。</p>
+      <p class="note">本篇还包含:五行五脏五味全配属表(第四章表格之源)、"清阳出上窍,浊阴出下窍"的气机模型、"冬伤于寒,春必温病"的伏邪理论、"治病必求于本"的治则。一篇之内,哲学、生理、病理、诊断、治疗全线贯通,故称枢纽。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑤ 素问·灵兰秘典论(第八篇)—— 十二官藏象</summary>
+    <div class="inner">
+      <div class="orig">心者,君主之官也,神明出焉……凡此十二官者,不得相失也。故主明则下安,以此养生则寿,殁世不殆,以为天下则大昌。主不明则十二官危,使道闭塞而不通,形乃大伤。</div>
+      <p class="trans">(十二官全文与白话见第五章。)君主清明则百官安定,以此养生可得长寿;君主不明则十二官皆危,气血通道闭塞,形体大伤。</p>
+      <p class="note">两个读点:① 以官制喻脏腑,记住的不是比喻本身,而是<em>功能定位与协作关系</em>;② "主明则下安"把心神的地位推到极致——养生先养心,治形先治神。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑥ 灵枢·本神(第八篇)—— 中医心理学之源</summary>
+    <div class="inner">
+      <div class="orig">天之在我者德也,地之在我者气也,德流气薄而生者也。故生之来谓之精,两精相搏谓之神,随神往来者谓之魂,并精而出入者谓之魄;所以任物者谓之心,心有所忆谓之意,意之所存谓之志,因志而存变谓之思,因思而远慕谓之虑,因虑而处物谓之智。</div>
+      <p class="trans">生命之初的物质叫精,父母两精结合产生的生命力叫神,随神往来的(精神活动)叫魂,伴精出入的(本能)叫魄;担任认识事物的是心,心中的记忆叫意,意的存留叫志,据志反复权衡叫思,由思推及长远叫虑,因虑而正确处事叫智。</p>
+      <p class="note">从"精"到"智"的完整生成链,是中国古代对意识与认知最系统的定义。后文逐一论述怵惕思虑伤神、悲哀动中伤魂魄等情志致病机制,以及五脏虚实的精神症状——精神科与心身医学的中医源头。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑦ 素问·举痛论(第三十九篇)—— "百病生于气"</summary>
+    <div class="inner">
+      <div class="orig">余知百病生于气也。怒则气上,喜则气缓,悲则气消,恐则气下,寒则气收,炅则气泄,惊则气乱,劳则气耗,思则气结。</div>
+      <p class="trans">一切疾病都从气机失常而生:发怒使气上逆,过喜使气涣散,悲伤使气消损,恐惧使气下陷,寒使气收敛,热使气外泄,受惊使气紊乱,过劳使气耗散,思虑使气郁结。</p>
+      <p class="note">"九气为病"——把情志、寒热、劳倦对人体的影响统一到"气机"这一个变量上,是《内经》病机学最精炼的模型。本篇前半还以"不通则痛"系统分析了十四种疼痛,为后世"通则不痛,痛则不通"之所本。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>⑧ 灵枢·天年(第五十四篇)—— 生命历程论</summary>
+    <div class="inner">
+      <div class="orig">人生十岁,五藏始定,血气已通,其气在下,故好走;二十岁,血气始盛,肌肉方长,故好趋……四十岁,五藏六府十二经脉,皆大盛以平定,腠理始疏,荣华颓落,发颇斑白……百岁,五藏皆虚,神气皆去,形骸独居而终矣。</div>
+      <p class="trans">十岁好跑,二十岁好快走,三十岁好步行,四十岁开始衰退而好坐,五十岁肝气衰、目不明,六十岁心气衰、好卧,七十岁脾气虚,八十岁肺气衰、魄离而言善误,九十岁肾气焦,百岁五脏皆虚,神气离去,只剩形骸而终。</p>
+      <p class="note">与"女七男八"互补的另一条生命曲线(以十岁为阶)。本篇还回答"何因而死/何因而寿":长寿者"五藏坚固,血脉和调……营卫之行,不失其常"。把死亡描述为自然过程而非失败——《内经》生命观的从容底色。</p>
+    </div>
+  </details>
+
+  <div class="card gold">
+    <p><em>继续精读的次序建议:</em>金匮真言论、六节藏象论、五藏别论 → 经脉(灵枢)、营卫生会 → 热论、评热病论、咳论、痹论、痿论 → 脉要精微论、平人气象论 → 异法方宜论、汤液醪醴论、标本病传论 → 至真要大论。约 30 篇精读完毕,全书思想已得十之八九。</p>
+  </div>
+</section>
+
+<!-- ============ 十四、名句精华 ============ -->
+<section id="sec-mingju">
+  <h2>十四、名句精华<span class="en">分类必背语录(勾选记录进度)</span></h2>
+
+  <h3>论阴阳</h3>
+  <div class="card">
+    <p><input type="checkbox" class="check" id="q1">阴阳者,天地之道也,万物之纲纪,变化之父母,生杀之本始,神明之府也,治病必求于本。<span class="tag g">阴阳应象大论</span></p>
+    <p><input type="checkbox" class="check" id="q2">阴平阳秘,精神乃治;阴阳离决,精气乃绝。<span class="tag g">生气通天论</span></p>
+    <p><input type="checkbox" class="check" id="q3">阳化气,阴成形。<span class="tag g">阴阳应象大论</span></p>
+    <p><input type="checkbox" class="check" id="q4">阴在内,阳之守也;阳在外,阴之使也。<span class="tag g">阴阳应象大论</span></p>
+    <p><input type="checkbox" class="check" id="q5">阳气者,若天与日,失其所则折寿而不彰。<span class="tag g">生气通天论</span></p>
+  </div>
+
+  <h3>论发病与病机</h3>
+  <div class="card">
+    <p><input type="checkbox" class="check" id="q6">正气存内,邪不可干;邪之所凑,其气必虚。<span class="tag g">刺法论/评热病论</span></p>
+    <p><input type="checkbox" class="check" id="q7">风者,百病之长也。<span class="tag g">玉机真藏论</span></p>
+    <p><input type="checkbox" class="check" id="q8">百病生于气也。<span class="tag g">举痛论</span></p>
+    <p><input type="checkbox" class="check" id="q9">邪气盛则实,精气夺则虚。<span class="tag g">通评虚实论</span></p>
+    <p><input type="checkbox" class="check" id="q10">冬伤于寒,春必温病。<span class="tag g">阴阳应象大论</span></p>
+  </div>
+
+  <h3>论诊治</h3>
+  <div class="card">
+    <p><input type="checkbox" class="check" id="q11">善诊者,察色按脉,先别阴阳。<span class="tag g">阴阳应象大论</span></p>
+    <p><input type="checkbox" class="check" id="q12">有诸内者,必形诸外。(司外揣内之义)<span class="tag g">内经要旨</span></p>
+    <p><input type="checkbox" class="check" id="q13">谨察阴阳所在而调之,以平为期。<span class="tag g">至真要大论</span></p>
+    <p><input type="checkbox" class="check" id="q14">急则治其标,缓则治其本。(标本之义)<span class="tag g">标本病传论</span></p>
+    <p><input type="checkbox" class="check" id="q15">谨守病机,各司其属,有者求之,无者求之,盛者责之,虚者责之。<span class="tag g">至真要大论</span></p>
+  </div>
+
+  <h3>论养生</h3>
+  <div class="card">
+    <p><input type="checkbox" class="check" id="q16">法于阴阳,和于术数,食饮有节,起居有常,不妄作劳。<span class="tag g">上古天真论</span></p>
+    <p><input type="checkbox" class="check" id="q17">恬惔虚无,真气从之;精神内守,病安从来?<span class="tag g">上古天真论</span></p>
+    <p><input type="checkbox" class="check" id="q18">圣人不治已病治未病,不治已乱治未乱。<span class="tag g">四气调神大论</span></p>
+    <p><input type="checkbox" class="check" id="q19">春夏养阳,秋冬养阴,以从其根。<span class="tag g">四气调神大论</span></p>
+    <p><input type="checkbox" class="check" id="q20">五谷为养,五果为助,五畜为益,五菜为充。<span class="tag g">藏气法时论</span></p>
+  </div>
+
+  <h3>论生命与精神</h3>
+  <div class="card">
+    <p><input type="checkbox" class="check" id="q21">人以天地之气生,四时之法成。<span class="tag g">宝命全形论</span></p>
+    <p><input type="checkbox" class="check" id="q22">天覆地载,万物悉备,莫贵于人。<span class="tag g">宝命全形论</span></p>
+    <p><input type="checkbox" class="check" id="q23">心者,五藏六府之大主也,精神之所舍也。<span class="tag g">灵枢·邪客</span></p>
+    <p><input type="checkbox" class="check" id="q24">得神者昌,失神者亡。<span class="tag g">移精变气论</span></p>
+    <p><input type="checkbox" class="check" id="q25">两精相搏谓之神。<span class="tag g">灵枢·本神</span></p>
+  </div>
+</section>
+
+<!-- ============ 十五、进阶路径与书目 ============ -->
+<section id="sec-path">
+  <h2>十五、进阶路径与书目<span class="en">从这份文件走向原典</span></h2>
+
+  <h3>三阶段学习路线</h3>
+  <table>
+    <tr><th style="width:90px">阶段</th><th>目标</th><th>做法</th><th>参考时长</th></tr>
+    <tr><td><b>筑基</b></td><td class="l">建立框架,看懂白话</td><td class="l">吃透本指南;通读一种白话全译本;背诵本指南全部"必背"段落与 25 名句</td><td class="l">1–3 个月</td></tr>
+    <tr><td><b>入经</b></td><td class="l">精读 30 核心篇,能读原文</td><td class="l">按第十三章次序精读;配教材(如《内经讲义》/《内经选读》);做篇章笔记:每篇一句话主旨 + 三个要点</td><td class="l">6–12 个月</td></tr>
+    <tr><td><b>深研</b></td><td class="l">通读全书,参注家,联临床</td><td class="l">选一两家注本从头读到尾;对照《伤寒论》《难经》看理论如何落地;关注训诂与版本差异</td><td class="l">数年,常读常新</td></tr>
+  </table>
+
+  <h3>历代注家与版本(深研阶段地图)</h3>
+  <table>
+    <tr><th>注家/著作</th><th>时代</th><th>特色</th></tr>
+    <tr><td class="l">王冰《黄帝内经素问注》</td><td>唐</td><td class="l">今本之祖,注文本身已成经典;"益火之源,以消阴翳;壮水之主,以制阳光"即出其注</td></tr>
+    <tr><td class="l">杨上善《黄帝内经太素》</td><td>隋唐</td><td class="l">现存最早分类编次本,保存早期经文面貌,校勘价值极高</td></tr>
+    <tr><td class="l">马莳《素问/灵枢注证发微》</td><td>明</td><td class="l">历史上首次全注《灵枢》,针灸经络注释见长</td></tr>
+    <tr><td class="l">张介宾(景岳)《类经》</td><td>明</td><td class="l">打散原书按主题重新分类(摄生、阴阳、藏象、脉色……),体系最清晰,<em>初学注本首选</em></td></tr>
+    <tr><td class="l">吴崑《素问吴注》</td><td>明</td><td class="l">注文简明,便于通读</td></tr>
+    <tr><td class="l">张志聪《素问/灵枢集注》</td><td>清</td><td class="l">集门人集体注经,义理阐发深</td></tr>
+    <tr><td class="l">现代:郭霭春《黄帝内经素问校注语译》、各版《内经选读》教材、王洪图《内经讲义》</td><td>今</td><td class="l">校勘精审/教学系统,入经阶段主力工具</td></tr>
+  </table>
+
+  <h3>配套经典的关系图</h3>
+  <div class="flow">
+    <span class="nd r">黄帝内经(理论总源)</span><span class="ar">→</span><span class="nd">难经(释疑发挥)</span><span class="ar">→</span><span class="nd">伤寒杂病论(辨证施治落地)</span><span class="ar">→</span><span class="nd">温病学(清代发展)</span>
+  </div>
+  <p style="font-size:14.5px;color:var(--ink-light)">针灸一脉:灵枢 → 针灸甲乙经(晋·皇甫谧) → 针灸大成(明·杨继洲)。药物一脉:神农本草经 → 历代本草 → 本草纲目。</p>
+</section>
+
+<!-- ============ 十六、常见误区 ============ -->
+<section id="sec-wuqu">
+  <h2>十六、常见误区<span class="en">读《内经》的七个坑</span></h2>
+  <div class="card accent"><p><em>① 把五脏当解剖器官。</em>"脾主运化"的脾是功能系统,不是 spleen;争论"中医的脾对不对"在解剖层面没有意义,要在功能模型层面理解。</p></div>
+  <div class="card accent"><p><em>② 把阴阳五行当迷信或当真理。</em>它是古人的系统建模语言——既不必斥为玄学,也不必处处坐实。问"这个模型解释了什么、预测了什么",比问"它是不是科学"更有收获。</p></div>
+  <div class="card accent"><p><em>③ 逐字死抠,见不一致就否定。</em>《内经》是数百年多人汇编,篇与篇之间术语、观点本有出入(如三焦形质、心主与心包)。当以主流义为纲,存异说为注。</p></div>
+  <div class="card accent"><p><em>④ 跳过《素问》前几篇直接看"干货"。</em>前四篇(天真、调神、生气、金匮)是世界观地基,跳过它们,后面的条文只是零件。</p></div>
+  <div class="card accent"><p><em>⑤ 拿养生条文当医疗方案。</em>《内经》养生原则可贵,但具体疾病须就医;经文也明言"病为本,工为标"——经典不能替代诊疗。</p></div>
+  <div class="card accent"><p><em>⑥ 初学即陷入运气推算。</em>五运六气艰深且有争议,初学者宜先取其"天时影响疾病"的思想,缓学其推演技术。</p></div>
+  <div class="card accent"><p><em>⑦ 只读不背、只背不思。</em>经典语言自带思维结构,必背段落须背;但每背一句要追问:它回答了什么问题?临床/生活中何处可见?</p></div>
+
+  <div class="card gold" style="margin-top:28px">
+    <h4>结语</h4>
+    <p>《内经》全书的精神,可以用它自己的两句话收束:对内,"<em>恬惔虚无,真气从之</em>";对外,"<em>法于阴阳,和于术数</em>"。一部《黄帝内经》,讲的无非是:认识生命的节律,然后顺着它生活。框架已立于胸中,愿你由此入经,常读常新。</p>
+  </div>
+</section>
+
+<!-- APPEND -->
+
+<footer>
+  <p>《黄帝内经》学习指南 · 仅供学习参考,不构成医疗建议 · 引文以通行本《素问》《灵枢》为准</p>
+</footer>
+</main>
+
+<button class="topbtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+<script>
+// ===== 章节切换:点击侧栏只显示当前章 =====
+const links=[...document.querySelectorAll('#sidebar a')];
+const ids=links.map(a=>a.getAttribute('href').slice(1));
+const secs=ids.map(id=>document.getElementById(id));
+function show(id){
+  if(!ids.includes(id)) id=ids[0];
+  secs.forEach(s=>s.classList.toggle('active',s.id===id));
+  links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+  // 底部"上一章/下一章"
+  const i=ids.indexOf(id),sec=secs[i];
+  let nav=sec.querySelector('.chapnav');
+  if(!nav){
+    nav=document.createElement('div');nav.className='chapnav';
+    nav.style.cssText='display:flex;justify-content:space-between;margin-top:36px;border-top:1px solid var(--line);padding-top:16px';
+    sec.appendChild(nav);
+  }
+  const mk=(k,txt)=>k<0||k>=ids.length?'<span></span>':`<a href="#${ids[k]}" style="color:var(--cinnabar);text-decoration:none;font-size:15px">${txt} ${links[k].textContent}</a>`;
+  nav.innerHTML=mk(i-1,'←')+mk(i+1,'→');
+  if(history.replaceState)history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0,behavior:'instant'in window?'instant':'auto'});
+  try{localStorage.setItem('nj_last',id)}catch(_){}
+}
+// 拦截所有指向章节的链接(侧栏、知识地图、上一章/下一章)
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a[href^="#sec-"]');
+  if(a){e.preventDefault();show(a.getAttribute('href').slice(1))}
+});
+// 初始章节:URL hash > 上次阅读位置 > 第一章
+let init=location.hash.slice(1);
+if(!ids.includes(init)){try{init=localStorage.getItem('nj_last')||''}catch(_){init=''}}
+show(ids.includes(init)?init:ids[0]);
+// 进度勾选持久化(本地文件可用)
+document.addEventListener('change',e=>{
+  if(e.target.classList.contains('check')){
+    try{localStorage.setItem('nj_'+e.target.id,e.target.checked?'1':'0')}catch(_){}
+  }
+});
+window.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.check').forEach(c=>{
+    try{if(localStorage.getItem('nj_'+c.id)==='1')c.checked=true}catch(_){}
+  });
+});
+</script>
+</body>
+</html>
