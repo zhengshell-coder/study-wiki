@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动驾驶中美双体系 · 体系性深度报告 2026</title>
+<script>document.documentElement.classList.add('js');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0c10; --bg-soft:#0d1017; --panel:#141925; --panel-2:#1a2030;
+    --line:#242c3a; --line-2:#2f3a4d;
+    --ink:#eef2f8; --ink-2:#a9b4c6; --ink-3:#6c7789;
+    --us:#4ea1ff; --us-soft:#16304d; --cn:#ff5b6e; --cn-soft:#4d1820;
+    --gold:#f5c451; --green:#46d39a; --violet:#9b8cff;
+    --sidebar:288px; --barh:62px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.85;font-size:16.5px;-webkit-font-smoothing:antialiased}
+  a{color:var(--us);text-decoration:none}
+
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:300;
+    background:linear-gradient(90deg,var(--us),var(--violet),var(--cn));transition:width .25s}
+
+  /* SIDEBAR */
+  #sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);overflow-y:auto;
+    background:var(--bg-soft);border-right:1px solid var(--line);padding:26px 0 40px;z-index:200}
+  #sidebar::-webkit-scrollbar{width:7px} #sidebar::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
+  .brand{padding:0 24px 20px;border-bottom:1px solid var(--line);margin-bottom:14px;cursor:pointer}
+  .brand .logo{font-size:12px;letter-spacing:3px;color:var(--ink-3);text-transform:uppercase}
+  .brand .ttl{font-size:19px;font-weight:800;margin-top:8px;line-height:1.3;
+    background:linear-gradient(120deg,#fff,#8fb0db);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .date{font-size:12px;color:var(--ink-3);margin-top:8px}
+  .nav-part{padding:14px 24px 4px;font-size:11px;letter-spacing:2px;color:var(--ink-3);text-transform:uppercase;font-weight:700}
+  #sidebar a.nav-link{display:flex;gap:10px;align-items:baseline;padding:8px 24px;color:var(--ink-2);font-size:14px;
+    border-left:2px solid transparent;transition:.15s;line-height:1.4;cursor:pointer}
+  #sidebar a.nav-link:hover{background:rgba(255,255,255,.03);color:var(--ink)}
+  #sidebar a.nav-link.active{color:#fff;border-left-color:var(--us);background:linear-gradient(90deg,rgba(78,161,255,.12),transparent)}
+  #sidebar a.nav-link .ix{color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums;min-width:22px}
+  #sidebar a.nav-link.active .ix{color:var(--us)}
+
+  /* MAIN / PAGES */
+  main{margin-left:var(--sidebar)}
+  /* 默认(无 JS):全部章节连续滚动,锚点原生跳转;JS 可用时切换为分页模式 */
+  .page{display:block;max-width:880px;margin:0 auto;padding:46px 56px 60px;border-bottom:1px solid var(--line)}
+  html.js .page{display:none;padding-bottom:calc(var(--barh) + 50px);min-height:100vh;border-bottom:none;animation:fade .35s ease}
+  html.js .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .sec-num{font-size:12px;letter-spacing:3px;color:var(--ink-3);text-transform:uppercase;margin-bottom:10px;font-weight:700}
+  .sec-num .part{color:var(--violet)}
+  h2{font-size:clamp(24px,3.4vw,33px);line-height:1.22;margin:0 0 14px;font-weight:850;letter-spacing:-.5px}
+  h2 .dot{color:var(--us)} h2 .dotc{color:var(--cn)}
+  .lead{font-size:18px;color:var(--ink-2);margin:0 0 26px}
+  h3{font-size:21px;margin:34px 0 12px;font-weight:750;letter-spacing:-.3px}
+  h4{font-size:17px;margin:22px 0 8px;font-weight:700}
+  p{margin:0 0 16px;color:var(--ink-2)}
+  p strong,li strong,td strong{color:var(--ink);font-weight:650}
+  em{color:var(--gold);font-style:normal;font-weight:600}
+  ul,ol{color:var(--ink-2)} li{margin-bottom:8px}
+
+  .pull{font-size:clamp(19px,2.5vw,25px);line-height:1.45;font-weight:750;color:var(--ink);
+    border-left:3px solid var(--us);padding:4px 0 4px 22px;margin:30px 0;letter-spacing:-.3px}
+  .pull.cn{border-color:var(--cn)}
+
+  .callout{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:22px 0}
+  .callout .t{font-weight:700;color:var(--ink);margin-bottom:6px;font-size:15px}
+  .callout.us{border-left:3px solid var(--us)} .callout.cn{border-left:3px solid var(--cn)} .callout.warn{border-left:3px solid var(--gold)}
+  .callout p{font-size:15px;margin-bottom:0}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:20px;transition:.2s}
+  .card:hover{border-color:var(--line-2);transform:translateY(-2px)}
+  .card .tag{font-size:10.5px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:9px;text-transform:uppercase}
+  .tag.us{background:var(--us-soft);color:#9fcbff} .tag.cn{background:var(--cn-soft);color:#ff9fab}
+  .card h4{margin:0 0 3px;font-size:18px} .card .role{font-size:12.5px;color:var(--ink-3);margin-bottom:11px}
+  .card ul{margin:0;padding-left:17px} .card li{font-size:13.5px;margin-bottom:6px}
+  .card .bet{margin-top:11px;font-size:12.5px;color:var(--ink-3);border-top:1px dashed var(--line);padding-top:9px}
+  .card .bet b{color:var(--gold)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;text-align:center}
+  .stat .n{font-size:26px;font-weight:850;letter-spacing:-1px;line-height:1}
+  .stat .n.us{color:var(--us)} .stat .n.cn{color:var(--cn)} .stat .n.g{color:var(--gold)} .stat .n.v{color:var(--violet)}
+  .stat .l{font-size:11.5px;color:var(--ink-3);margin-top:7px;line-height:1.4}
+
+  .tbl-wrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:13px}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+  th,td{padding:11px 15px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--panel-2);color:var(--ink);font-weight:700;font-size:12.5px;letter-spacing:.4px}
+  tbody tr:last-child td{border-bottom:none} tbody td:first-child{color:var(--ink);font-weight:650}
+  tbody tr:hover{background:rgba(255,255,255,.014)}
+  .us-c{color:var(--us)} .cn-c{color:var(--cn)}
+
+  .chart-box,.fig{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:20px 22px 16px;margin:24px 0}
+  .chart-box .ch-t,.fig .ch-t{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px}
+  .chart-box .ch-s,.fig .ch-s{font-size:12.5px;color:var(--ink-3);margin-bottom:16px}
+  .chart-box .cv{position:relative;height:300px}
+  .chart-box .src,.fig .src{font-size:11px;color:var(--ink-3);margin-top:12px;text-align:right}
+  .fig svg{width:100%;height:auto;display:block}
+  .fig img.shot{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line-2);background:#fff}
+  .figcap{font-size:12.5px;color:var(--ink-3);margin-top:12px;line-height:1.7}
+  .figcap b{color:var(--gold)}
+
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}
+  .flow .step{flex:1;min-width:140px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 13px}
+  .flow .step .s{font-size:10.5px;color:var(--ink-3);letter-spacing:1px}
+  .flow .step .n{font-weight:800;font-size:16px;margin:4px 0 5px}
+  .flow .step .x{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .flow .step.cur{border-color:var(--violet);background:linear-gradient(180deg,rgba(155,140,255,.08),var(--panel))}
+  .flow .step.cur .n{color:var(--violet)}
+  .arrow{display:flex;align-items:center;color:var(--ink-3);font-size:18px}
+
+  .vs{display:grid;grid-template-columns:1fr 1px 1fr;margin:24px 0;border:1px solid var(--line);border-radius:15px;overflow:hidden}
+  .vs .side{padding:22px} .vs .divider{background:var(--line)}
+  .vs .side.us{background:linear-gradient(180deg,rgba(78,161,255,.06),transparent)}
+  .vs .side.cn{background:linear-gradient(180deg,rgba(255,91,110,.06),transparent)}
+  .vs .flag{font-size:11px;letter-spacing:2px;font-weight:700;margin-bottom:9px}
+  .vs .side.us .flag{color:var(--us)} .vs .side.cn .flag{color:var(--cn)}
+  .vs .side h4{margin:0 0 8px} .vs .side ul{padding-left:16px;margin:0} .vs .side li{font-size:13.5px;margin-bottom:8px}
+
+  .timeline{position:relative;margin:26px 0;padding-left:24px}
+  .timeline::before{content:"";position:absolute;left:5px;top:5px;bottom:5px;width:2px;background:linear-gradient(180deg,var(--us),var(--cn))}
+  .tl-item{position:relative;margin-bottom:20px}
+  .tl-item::before{content:"";position:absolute;left:-24px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--us)}
+  .tl-item .yr{font-size:12.5px;letter-spacing:1px;color:var(--gold);font-weight:700}
+  .tl-item .h{font-weight:700;color:var(--ink)} .tl-item .d{font-size:14px;color:var(--ink-3)}
+
+  .sources{font-size:13px;color:var(--ink-3)} .sources a{color:var(--ink-2);word-break:break-all} .sources li{margin-bottom:7px}
+  .disclaimer{font-size:13px;color:var(--ink-3);line-height:1.7;border:1px solid var(--line);border-radius:12px;padding:16px 20px;background:var(--panel);margin:22px 0}
+
+  /* BOTTOM PAGER(仅 JS 分页模式显示) */
+  #pagebar{position:fixed;left:var(--sidebar);right:0;bottom:0;height:var(--barh);z-index:150;
+    background:rgba(13,16,23,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+    display:none;align-items:center;justify-content:space-between;padding:0 30px;gap:16px}
+  html.js #pagebar{display:flex}
+  #pagebar button{background:var(--panel);border:1px solid var(--line-2);color:var(--ink);border-radius:10px;
+    padding:9px 18px;font-size:14px;cursor:pointer;transition:.15s;white-space:nowrap;font-weight:600}
+  #pagebar button:hover:not(:disabled){border-color:var(--us);color:var(--us)}
+  #pagebar button:disabled{opacity:.3;cursor:default}
+  #pmeta{text-align:center;line-height:1.25;overflow:hidden}
+  #pmeta .pi{font-size:11px;color:var(--ink-3);letter-spacing:1px}
+  #pmeta .pt{font-size:14px;color:var(--ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  #menuBtn{display:none}
+  @media(max-width:1080px){
+    :root{--sidebar:0px}
+    #sidebar{transform:translateX(-100%);transition:.25s;width:280px;box-shadow:0 0 40px rgba(0,0,0,.5)}
+    #sidebar.open{transform:translateX(0)}
+    main{margin-left:0}
+    .page{padding:46px 22px calc(var(--barh) + 40px)}
+    #pagebar{left:0;padding:0 16px}
+    #menuBtn{display:flex;position:fixed;top:14px;right:14px;z-index:160;width:44px;height:44px;border-radius:11px;
+      background:var(--panel);border:1px solid var(--line-2);color:var(--ink);align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+  }
+  @media(max-width:640px){
+    .cards,.grid2{grid-template-columns:1fr} .stats{grid-template-columns:repeat(2,1fr)}
+    .vs{grid-template-columns:1fr} .vs .divider{height:1px}
+    #pagebar button{padding:9px 12px;font-size:13px} #pmeta .pt{font-size:12px}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<button id="menuBtn">☰</button>
+
+<aside id="sidebar">
+  <div class="brand" data-go="0">
+    <div class="logo">Deep Report</div>
+    <div class="ttl">自动驾驶<br>中美双体系</div>
+    <div class="date">体系性深度分析 · 2026.06</div>
+  </div>
+  <div class="nav-part">总览</div>
+  <a class="nav-link" href="#c0" data-target="c0"><span class="ix">00</span><span>执行摘要</span></a>
+  <a class="nav-link" href="#c1" data-target="c1"><span class="ix">01</span><span>2026:行业拐点</span></a>
+  <div class="nav-part">技术体系</div>
+  <a class="nav-link" href="#c2" data-target="c2"><span class="ix">02</span><span>技术范式演进</span></a>
+  <a class="nav-link" href="#c3" data-target="c3"><span class="ix">03</span><span>硬件与传感器</span></a>
+  <a class="nav-link" href="#c4" data-target="c4"><span class="ix">04</span><span>数据与训练</span></a>
+  <div class="nav-part">玩家与方案</div>
+  <a class="nav-link" href="#c5" data-target="c5"><span class="ix">05</span><span>美系方案全景</span></a>
+  <a class="nav-link" href="#c6" data-target="c6"><span class="ix">06</span><span>中系方案全景</span></a>
+  <a class="nav-link" href="#c7" data-target="c7"><span class="ix">07</span><span>方案对比矩阵</span></a>
+  <div class="nav-part">商业与市场</div>
+  <a class="nav-link" href="#c8" data-target="c8"><span class="ix">08</span><span>商业模式拆解</span></a>
+  <a class="nav-link" href="#c9" data-target="c9"><span class="ix">09</span><span>市场分析</span></a>
+  <a class="nav-link" href="#c10" data-target="c10"><span class="ix">10</span><span>单位经济与盈利</span></a>
+  <div class="nav-part">制度与展望</div>
+  <a class="nav-link" href="#c11" data-target="c11"><span class="ix">11</span><span>立法与监管</span></a>
+  <a class="nav-link" href="#c12" data-target="c12"><span class="ix">12</span><span>体系差异与挑战</span></a>
+  <a class="nav-link" href="#c13" data-target="c13"><span class="ix">13</span><span>趋势与赌注</span></a>
+  <div class="nav-part">后记与附录</div>
+  <a class="nav-link" href="#epilogue" data-target="epilogue"><span class="ix">＋</span><span>后记:AI 与知识工作</span></a>
+  <a class="nav-link" href="#sources" data-target="sources"><span class="ix">＋</span><span>数据来源</span></a>
+</aside>
+
+<main>
+  <!-- C0 -->
+  <section class="page active" id="c0" data-label="执行摘要">
+    <div class="sec-num"><span class="part">总览</span> / 00</div>
+    <h2>执行<span class="dot">摘要</span></h2>
+    <p class="lead">如果只读一页,以下八条判断概括了 2026 年自动驾驶的全局。</p>
+    <div class="grid2">
+      <div class="callout us"><div class="t">① 技术范式已殊途同归</div><p>端到端 + VLA 大模型 + 世界模型成为中美共同底座,差距从"用不用大模型"转向"谁的数据飞轮转得更快"。</p></div>
+      <div class="callout cn"><div class="t">② 规模上来了,钱还没来</div><p>Waymo 周 50 万单、百度周 30 万单,但除百度武汉单车盈利外,无人整体盈利。</p></div>
+      <div class="callout warn"><div class="t">③ 激光雷达的"成本论"失效</div><p>单价从万元级跌至 400–500 美元,特斯拉"去激光雷达省成本"的核心论据被釜底抽薪。</p></div>
+      <div class="callout us"><div class="t">④ 收敛点是"视觉 + 4D 雷达"</div><p>不是纯视觉胜出,也不是堆激光雷达,而是按自动驾驶等级分层的混合方案。</p></div>
+      <div class="callout cn"><div class="t">⑤ 中国走普惠 + 车路云</div><p>比亚迪把高阶智驾下探到 7 万元级,累计 400 万辆;20 城车路云试点。</p></div>
+      <div class="callout us"><div class="t">⑥ 美国走单车智能 + 联邦松绑</div><p>2026 年 NHTSA 推动无方向盘车量产、每厂年豁免 2500 辆,应对"与中国的创新竞赛"。</p></div>
+      <div class="callout warn"><div class="t">⑦ L3 瓶颈在法律不在技术</div><p>中国 2025 年底发首批 L3 牌照,但全球范围 L2+ 反超 L3——责任转移让车企却步。</p></div>
+      <div class="callout cn"><div class="t">⑧ 胜负手在"制度"</div><p>不会有全球唯一赢家;中美各自在自己的制度土壤里,长出形态不同却同样成熟的生态。</p></div>
+    </div>
+  </section>
+
+  <!-- C1 -->
+  <section class="page" id="c1" data-label="2026:行业拐点">
+    <div class="sec-num"><span class="part">总览</span> / 01</div>
+    <h2>2026:自动驾驶的<span class="dot">分水岭</span></h2>
+    <p class="lead">十年前这是一场关于传感器和高精地图的工程竞赛;今天它已变成一场关于"谁的 AI 更懂世界"的认知竞赛。</p>
+    <div class="stats">
+      <div class="stat"><div class="n us">50万</div><div class="l">Waymo 每周付费无人出行</div></div>
+      <div class="stat"><div class="n cn">340万</div><div class="l">百度萝卜快跑单季出行(25Q4)</div></div>
+      <div class="stat"><div class="n g">$1260亿</div><div class="l">Waymo 最新估值(D 轮)</div></div>
+      <div class="stat"><div class="n cn">400万+</div><div class="l">比亚迪天神之眼累计装机</div></div>
+    </div>
+    <p>2026 年上半年,几个标志性事件几乎同时出现:Waymo 付费无人出行突破每周 50 万次、估值冲到 1260 亿美元;百度萝卜快跑单季完成 340 万单并开进首尔与中东;特斯拉 Robotaxi 在得州三城实现真正无人化,尽管车队仍以数十辆计;而曾被寄予厚望的通用 Cruise,已在 2024 年底被彻底关停。</p>
+    <p>这些事件拼在一起,勾勒出清晰的拐点:<strong>自动驾驶不再是"能不能跑"的技术验证,而是"能不能规模化、能不能赚钱、能不能合规"的系统工程。</strong>更深层的变化是,几乎所有头部玩家都在 2025–2026 年完成了一次技术世界观的切换——从手写规则的模块化流水线,转向以端到端、VLA、世界模型为核心的"驾驶大脑"。</p>
+    <p class="pull">这一次,决定胜负的不再是激光雷达的线数,而是模型对物理世界的理解深度。</p>
+  </section>
+
+  <!-- C2 技术范式 + 架构图解 -->
+  <section class="page" id="c2" data-label="技术范式演进">
+    <div class="sec-num"><span class="part">技术体系</span> / 02</div>
+    <h2>技术范式:从<span class="dot">流水线</span>到大模型</h2>
+    <p class="lead">要理解今天每一家的差异,必须先理解过去三年里整个行业经历的一场静默革命。下图是三代架构的演进图解。</p>
+
+    <div class="fig">
+      <div class="ch-t">图解:自动驾驶三代技术架构演进</div>
+      <div class="ch-s">从人工拼接的模块流水线,到单一神经网络,再到 VLA + 世界模型的闭环</div>
+      <svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#6c7789"/></marker>
+          <marker id="arv" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9b8cff"/></marker>
+        </defs>
+        <!-- Row A -->
+        <text x="12" y="26" fill="#4ea1ff" font-size="14" font-weight="700">① 模块化流水线</text>
+        <text x="158" y="26" fill="#6c7789" font-size="12">人工规则衔接,可解释但脆弱</text>
+        <g font-size="12" fill="#eef2f8" text-anchor="middle">
+          <rect x="12" y="40" width="84" height="38" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="54" y="63">传感器</text>
+          <rect x="124" y="40" width="78" height="38" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="163" y="63">感知</text>
+          <rect x="230" y="40" width="78" height="38" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="269" y="63">预测</text>
+          <rect x="336" y="40" width="78" height="38" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="375" y="63">规划</text>
+          <rect x="442" y="40" width="78" height="38" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="481" y="63">控制</text>
+          <rect x="560" y="40" width="84" height="38" rx="8" fill="#16304d" stroke="#4ea1ff"/><text x="602" y="63">车辆</text>
+        </g>
+        <g stroke="#6c7789" stroke-width="1.5" marker-end="url(#ar)">
+          <line x1="98" y1="59" x2="120" y2="59"/><line x1="204" y1="59" x2="226" y2="59"/>
+          <line x1="310" y1="59" x2="332" y2="59"/><line x1="416" y1="59" x2="438" y2="59"/><line x1="522" y1="59" x2="556" y2="59"/>
+        </g>
+        <!-- Row B -->
+        <text x="12" y="150" fill="#4ea1ff" font-size="14" font-weight="700">② 端到端 (E2E)</text>
+        <text x="138" y="150" fill="#6c7789" font-size="12">像素直出动作,30 万行代码塌缩为约 2000 行</text>
+        <g font-size="12" fill="#eef2f8" text-anchor="middle">
+          <rect x="12" y="164" width="84" height="40" rx="8" fill="#141925" stroke="#2f3a4d"/><text x="54" y="188">传感器</text>
+          <rect x="160" y="158" width="320" height="52" rx="10" fill="#141925" stroke="#46d39a"/><text x="320" y="180" fill="#46d39a" font-weight="700">单一端到端神经网络</text><text x="320" y="198" font-size="11" fill="#a9b4c6">感知·预测·规划隐式融合</text>
+          <rect x="544" y="164" width="84" height="40" rx="8" fill="#16304d" stroke="#4ea1ff"/><text x="586" y="188">车辆</text>
+        </g>
+        <g stroke="#6c7789" stroke-width="1.5" marker-end="url(#ar)">
+          <line x1="98" y1="184" x2="156" y2="184"/><line x1="482" y1="184" x2="540" y2="184"/>
+        </g>
+        <!-- Row C -->
+        <text x="12" y="278" fill="#9b8cff" font-size="14" font-weight="700">③ VLA + 世界模型 (当前)</text>
+        <text x="232" y="278" fill="#6c7789" font-size="12">语义推理 + 想象未来 + 仿真闭环训练</text>
+        <g font-size="12" fill="#eef2f8" text-anchor="middle">
+          <rect x="12" y="298" width="120" height="48" rx="9" fill="#141925" stroke="#2f3a4d"/><text x="72" y="318">传感器</text><text x="72" y="335" font-size="11" fill="#a9b4c6">+ 语言指令</text>
+          <rect x="196" y="294" width="160" height="56" rx="10" fill="#1a1530" stroke="#9b8cff"/><text x="276" y="316" fill="#9b8cff" font-weight="700">VLA 大模型</text><text x="276" y="334" font-size="11" fill="#a9b4c6">视觉·语言·动作</text>
+          <rect x="430" y="294" width="170" height="56" rx="10" fill="#2a1018" stroke="#ff5b6e"/><text x="515" y="316" fill="#ff5b6e" font-weight="700">世界模型</text><text x="515" y="334" font-size="11" fill="#a9b4c6">生成长尾·仿真闭环</text>
+          <rect x="636" y="298" width="72" height="48" rx="9" fill="#16304d" stroke="#4ea1ff"/><text x="672" y="326">车辆</text>
+        </g>
+        <g stroke="#6c7789" stroke-width="1.5" marker-end="url(#ar)"><line x1="134" y1="322" x2="192" y2="322"/><line x1="600" y1="322" x2="632" y2="322"/></g>
+        <!-- 双向闭环 between VLA & world model -->
+        <g stroke="#9b8cff" stroke-width="1.6">
+          <path d="M358 312 L426 312" fill="none" marker-end="url(#arv)"/>
+          <path d="M428 338 L360 338" fill="none" marker-end="url(#arv)"/>
+        </g>
+        <text x="393" y="378" fill="#9b8cff" font-size="11" text-anchor="middle">闭环互训</text>
+        <!-- caption divider lines -->
+        <line x1="12" y1="104" x2="708" y2="104" stroke="#242c3a"/>
+        <line x1="12" y1="232" x2="708" y2="232" stroke="#242c3a"/>
+      </svg>
+      <div class="src">示意图 · 概念性演进,非具体厂商实现</div>
+    </div>
+
+    <h3>VLA:让车"会思考",而非只"会模仿"</h3>
+    <p>纯端到端的软肋是"知其然不知其所以然"——它模仿人类动作却缺乏语义推理。<strong>VLA(视觉-语言-动作)大模型</strong>把视觉、语言与驾驶动作统一进一个多模态模型,让车辆能像人一样"理解"再"决策"。2025 年,理想 MindVLA、小鹏"物理世界大模型 VLA 2.0"相继量产。</p>
+    <h3>世界模型:2025–2026 的真正共识</h3>
+    <p>VLA 仍缺乏对时序与因果一致性的显式建模,补足这一缺口的是<strong>世界模型</strong>——一个能"想象"未来、生成逼真场景的生成式模型,其杀手级用途是<em>仿真训练</em>。Waymo 基于 Genie 3 的世界模型可同时输出摄像头与激光雷达数据、支持"反事实"推演;英伟达 Cosmos 预训练超 2000 万小时数据。</p>
+    <p class="pull">端到端解决了"怎么开",世界模型正在解决"怎么练"——把数据的物理边界,变成算力可无限延伸的想象边界。</p>
+    <p>但并非所有人都信"单一大模型"。<strong>Waymo 坚持模块化的神经网络组合</strong>,理由是单体大模型"慢、易错、难调试"。特斯拉单模型 vs Waymo 多模块,是当下最根本的架构分歧。</p>
+  </section>
+
+  <!-- C3 硬件 + 传感器图解 -->
+  <section class="page" id="c3" data-label="硬件与传感器">
+    <div class="sec-num"><span class="part">技术体系</span> / 03</div>
+    <h2>硬件:<span class="dot">纯视觉</span>与<span class="dotc">多融合</span>之争</h2>
+    <p class="lead">曾被视为信仰之争的"纯视觉 vs 激光雷达",在 2026 年正变成一道成本算术题。</p>
+
+    <div class="grid2">
+      <div class="fig">
+        <div class="ch-t">图解:三类传感器的感知覆盖</div>
+        <div class="ch-s">摄像头(视锥)· 激光雷达(360°)· 4D 雷达(穿透)</div>
+        <svg viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
+          <!-- lidar 360 ring -->
+          <circle cx="180" cy="150" r="120" fill="#ff5b6e" opacity="0.06"/>
+          <circle cx="180" cy="150" r="120" fill="none" stroke="#ff5b6e" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.8"/>
+          <!-- radar wide cones (front/back) -->
+          <path d="M180 150 L70 20 L290 20 Z" fill="#f5c451" opacity="0.10"/>
+          <path d="M180 150 L70 280 L290 280 Z" fill="#f5c451" opacity="0.08"/>
+          <!-- camera narrow cone front -->
+          <path d="M180 150 L120 35 L240 35 Z" fill="#4ea1ff" opacity="0.22"/>
+          <!-- car -->
+          <rect x="163" y="120" width="34" height="60" rx="9" fill="#1a2030" stroke="#eef2f8" stroke-width="1.4"/>
+          <rect x="168" y="128" width="24" height="16" rx="3" fill="#2f3a4d"/>
+          <!-- legend -->
+          <g font-size="11">
+            <rect x="14" y="250" width="11" height="11" rx="2" fill="#4ea1ff"/><text x="30" y="260" fill="#a9b4c6">摄像头</text>
+            <rect x="92" y="250" width="11" height="11" rx="2" fill="#ff5b6e"/><text x="108" y="260" fill="#a9b4c6">激光雷达</text>
+            <rect x="184" y="250" width="11" height="11" rx="2" fill="#f5c451"/><text x="200" y="260" fill="#a9b4c6">4D 雷达</text>
+          </g>
+        </svg>
+        <div class="src">示意图 · 覆盖范围为概念示意</div>
+      </div>
+      <div class="chart-box">
+        <div class="ch-t">能力雷达:三种方案对比</div>
+        <div class="ch-s">1–5 分,分数越高越强(相对比较)</div>
+        <div class="cv"><canvas id="chSensor"></canvas></div>
+        <div class="src">综合行业普遍认知 · 相对评分</div>
+      </div>
+    </div>
+
+    <p>这场争论的真正分歧不在"激光雷达好不好用",而在三个更深的命题:驾驶是<strong>认知问题还是感知问题</strong>、<strong>传感器融合的悖论</strong>(冲突时信谁 vs 失效模式不相关才能互补)、以及<strong>商业模式的绑架</strong>(量产降本 vs 无人化必须冗余)。</p>
+
+    <h3>激光雷达的"价格崩塌"</h3>
+    <div class="chart-box"><div class="ch-t">激光雷达单价下降曲线(对数轴,大致价格点)</div><div class="ch-s">机械式 → 固态/芯片级,不同型号拼接,非单一连续序列</div><div class="cv"><canvas id="chLidarCost"></canvas></div><div class="src">来源:IEEE Spectrum、Yole Group、各厂指引 · 价格为近似区间</div></div>
+    <p>禾赛 2025 年出货突破 100 万台(全球首家),速腾 2024 年乘用车装机量全球第一。<strong>全球车载激光雷达约 89% 来自四家中国厂商</strong>,ADAS 激光雷达需求中国占约 92%——这条产业链已被中国主导。</p>
+    <div class="grid2">
+      <div class="chart-box"><div class="ch-t">全球车载激光雷达市场份额</div><div class="ch-s">2024–2025 口径,近似</div><div class="cv"><canvas id="chLidarShare"></canvas></div><div class="src">来源:Yole Group</div></div>
+      <div class="chart-box"><div class="ch-t">主流智驾芯片算力对比(TOPS)</div><div class="ch-s">不同精度口径不可直接比,仅作量级参考</div><div class="cv"><canvas id="chChip"></canvas></div><div class="src">来源:NVIDIA / 地平线 / 各厂规格</div></div>
+    </div>
+    <p class="pull">真正的趋势不是某方胜出,而是第三条路:<em>4D 成像雷达 + 视觉</em>——按自动驾驶等级分层的混合方案。</p>
+  </section>
+
+  <!-- C4 数据 + 飞轮图解 -->
+  <section class="page" id="c4" data-label="数据与训练">
+    <div class="sec-num"><span class="part">技术体系</span> / 04</div>
+    <h2>数据与训练:真正的<span class="dot">护城河</span></h2>
+    <p class="lead">当大家都用大模型,胜负就不在架构,而在"谁的数据飞轮转得更快"。</p>
+
+    <div class="fig">
+      <div class="ch-t">图解:自动驾驶数据飞轮闭环</div>
+      <div class="ch-s">从车队采集到 OTA 回灌,世界模型把"被动发现"变为"主动预防"</div>
+      <svg viewBox="0 0 460 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,'PingFang SC',sans-serif">
+        <circle cx="230" cy="180" r="120" fill="none" stroke="#2f3a4d" stroke-width="1.4" stroke-dasharray="6 6"/>
+        <!-- rotation arrowheads (clockwise) -->
+        <g fill="#9b8cff">
+          <path d="M225,60 L236,55 L225,50 Z"/>
+          <path d="M350,175 L345,186 L340,175 Z" transform="rotate(90 350 180)"/>
+          <path d="M225,300 L236,305 L225,310 Z" transform="rotate(180 230 300)"/>
+          <path d="M110,185 L115,174 L120,185 Z" transform="rotate(0 110 180)"/>
+        </g>
+        <text x="230" y="176" text-anchor="middle" fill="#9b8cff" font-size="15" font-weight="800">数据飞轮</text>
+        <text x="230" y="194" text-anchor="middle" fill="#6c7789" font-size="11">Data Flywheel</text>
+        <!-- nodes -->
+        <g font-size="12.5" fill="#eef2f8" text-anchor="middle">
+          <g><rect x="178" y="42" width="104" height="36" rx="9" fill="#141925" stroke="#4ea1ff"/><text x="230" y="65">① 车队采集</text></g>
+          <g><rect x="282" y="102" width="104" height="36" rx="9" fill="#141925" stroke="#2f3a4d"/><text x="334" y="125">② 难例挖掘</text></g>
+          <g><rect x="282" y="222" width="116" height="36" rx="9" fill="#141925" stroke="#ff5b6e"/><text x="340" y="245" fill="#ff5b6e">③ 世界模型生成</text></g>
+          <g><rect x="178" y="282" width="104" height="36" rx="9" fill="#141925" stroke="#2f3a4d"/><text x="230" y="305">④ 仿真训练</text></g>
+          <g><rect x="62" y="222" width="104" height="36" rx="9" fill="#141925" stroke="#2f3a4d"/><text x="114" y="245">⑤ 模型迭代</text></g>
+          <g><rect x="74" y="102" width="104" height="36" rx="9" fill="#141925" stroke="#46d39a"/><text x="126" y="125" fill="#46d39a">⑥ OTA 下发</text></g>
+        </g>
+      </svg>
+      <div class="src">示意图 · 概念性流程</div>
+    </div>
+
+    <h3>长尾困境与"分布漂移"</h3>
+    <p>模仿学习的根本软肋是<strong>分布漂移</strong>:模型在开环(看录像)中训练,却要在闭环(真实驾驶)中工作。面对分布外的长尾场景——突然横穿的电瓶车、违规掉头的卡车、施工区改道——系统会变脆。性能与数据量呈幂律关系,但单纯堆量边际递减,<em>焦点应转向数据分布质量而非数量</em>。</p>
+    <h3>数据闭环:从"被动发现"到"主动预防"</h3>
+    <p>解法正收敛于<strong>世界模型驱动的仿真闭环</strong>(见上图③→④):把真实世界挖出的 corner case 喂进世界模型,自动生成数千变体场景,让系统在虚拟世界反复"经历"危险。华为云端"世界引擎"用扩散模型生成长尾,密度达真实世界千倍。</p>
+    <div class="callout warn"><div class="t">⚙️ 算力即门票</div><p>小鹏建成行业首个万卡智算集群,云端算力 10 EFLOPS;华为 ADS 云端训练算力 7.5 EFLOPS。"模型工厂"全链路迭代周期已压缩到约 5 天。谁的算力 × 数据更大,谁的模型进化更快。</p></div>
+    <p class="pull">拥有最大量产车队的玩家(特斯拉、比亚迪),掌握着数据的战略制高点。</p>
+  </section>
+
+  <!-- C5 美系 -->
+  <section class="page" id="c5" data-label="美系方案全景">
+    <div class="sec-num"><span class="part">玩家与方案</span> / 05</div>
+    <h2 class="us-c">美系方案:四种命运</h2>
+    <p class="lead">同样起跑于硅谷的资本与人才,四家公司却走出截然不同的结局——领跑者、追赶者、供应商,与出局者。</p>
+    <div class="cards">
+      <div class="card"><span class="tag us">领跑者</span><h4>Waymo</h4><div class="role">Alphabet · 模块化多传感器 · 自营 Robotaxi</div><ul>
+        <li>每周 50 万次付费,2025 全年约 1500 万次,累计破 2000 万</li>
+        <li>第 6 代传感器精简 42%,2026 起无安全员</li>
+        <li>已服务 4 座机场,2026 计划新增 20+ 城,含东京、伦敦</li>
+        <li>累计近 2 亿无人里程;重伤/致命碰撞比人类少 92%</li></ul>
+        <div class="bet">核心赌注:<b>可证明的安全</b> + 模块化稳健工程 + 世界模型仿真</div></div>
+      <div class="card"><span class="tag us">追赶者</span><h4>特斯拉 Tesla</h4><div class="role">纯视觉 · 端到端 · 量产车转 Robotaxi</div><ul>
+        <li>FSD v14(2025/10)统一感知-预测-决策为单一神经网络</li>
+        <li>Robotaxi 在 Austin/Dallas/Houston 无人运营,但车队数十辆</li>
+        <li>AI5 芯片 2026/4 流片(晚近两年),Cybercab 先用 AI4</li>
+        <li>纯视觉不变;NHTSA 仍在调查 FSD 交通违规</li></ul>
+        <div class="bet">核心赌注:<b>纯视觉 + 海量车队数据</b>,最低单车成本博最大规模潜力</div></div>
+      <div class="card"><span class="tag us">供应商</span><h4>Mobileye</h4><div class="role">Intel · B2B 方案商 · 绑定大众</div><ul>
+        <li>四产品线:Surround ADAS / SuperVision / Chauffeur / Drive</li>
+        <li>大众 2026 起在美全无人,MOIA+Uber 推进奥兰多、洛杉矶</li>
+        <li>2024 关停自研 FMCW 激光雷达,转软件定义成像雷达</li>
+        <li>2025 营收约 18.6–18.9 亿美元,增长拐点押 2027</li></ul>
+        <div class="bet">核心赌注:<b>不自营、做军火商</b>,靠 REM 众包地图 + 量产绑定车企</div></div>
+      <div class="card"><span class="tag us">出局者</span><h4>Cruise(通用)</h4><div class="role">已退出 Robotaxi · 转个人辅助驾驶</div><ul>
+        <li>2024/12 通用停止资助 Cruise 的 Robotaxi 业务</li>
+        <li>团队并入 GM,转个人乘用车自动/辅助驾驶</li>
+        <li>2025 裁员约 1000 人,年化省超 10 亿美元</li>
+        <li>新方向基于 Super Cruise(已搭 20+ 款车型)</li></ul>
+        <div class="bet">退场教训:<b>Robotaxi 的烧钱速度与监管风险超出车企耐心</b></div></div>
+    </div>
+    <div class="callout warn"><div class="t">⚠️ 美系共同特征</div><p>玩家少、资产重、监管严。除特斯拉走量产车路线外,Robotaxi 玩家都背着每年数十亿美元现金消耗。Cruise 的关停是一记警钟:在没有清晰盈利路径前,规模化是悬在头上的达摩克利斯之剑。</p></div>
+  </section>
+
+  <!-- C6 中系 -->
+  <section class="page" id="c6" data-label="中系方案全景">
+    <div class="sec-num"><span class="part">玩家与方案</span> / 06</div>
+    <h2 class="cn-c">中系方案:百花齐放的军备竞赛</h2>
+    <p class="lead">如果美国是少数巨头的"精英赛",中国就是十余家玩家贴身肉搏的"团体赛"——整体技术节奏已不输甚至局部领先。</p>
+    <div class="cards">
+      <div class="card"><span class="tag cn">芯片+模型双自研</span><h4>小鹏 XPeng</h4><div class="role">物理世界大模型 · 图灵芯片 · 全国无图</div><ul>
+        <li>2025/11 发布第二代 VLA"物理世界大模型",定位"开启 L4 时代"</li>
+        <li>自研图灵芯片,Robotaxi 车型搭 4 颗、算力 3000 TOPS;大众成首个战略客户</li>
+        <li>城区 XNGP 100% 无图化,覆盖约 356 城</li>
+        <li>万卡智算集群,云端算力 10 EFLOPS;2026 推 3 款 Robotaxi</li></ul>
+        <div class="bet">核心赌注:<b>全栈自研</b>——芯片、大模型、数据闭环一把抓</div></div>
+      <div class="card"><span class="tag cn">生态领头羊</span><h4>华为 乾崑智驾</h4><div class="role">ADS 4.0 · 世界引擎 · 鸿蒙智行四界</div><ul>
+        <li>ADS 4.0(2025/4)旗舰版宣称"中国首个可商用高速 L3"</li>
+        <li>GOD 大网取代 BEV;云端"世界引擎"扩散模型生成长尾</li>
+        <li>云端训练算力 7.5 EFLOPS;主力 192 线激光雷达</li>
+        <li>车 BU 独立为"引望",赛力斯、阿维塔各入股 10%</li></ul>
+        <div class="bet">核心赌注:<b>不造车、做增量部件</b>,用鸿蒙智行生态绑定车企</div></div>
+      <div class="card"><span class="tag cn">VLA 量产先锋</span><h4>理想 Li Auto</h4><div class="role">MindVLA · 司机大模型 · 具身智能</div><ul>
+        <li>2025/3 发布 MindVLA,统一空间/语言/行为,取代双系统</li>
+        <li>推理帧率约 10Hz(提升 3 倍多),改用强化学习</li>
+        <li>理想 i8 全球首搭,9 月全量推送至 AD Max 车型</li>
+        <li>AD Pro 4.0 行业首个单颗征程 6M 端到端城市 NOA</li></ul>
+        <div class="bet">核心赌注:<b>VLA 司机大模型</b>,并向"具身智能企业"升维</div></div>
+      <div class="card"><span class="tag cn">闭环强化学习</span><h4>蔚来 NIO</h4><div class="role">神玑 NX9031 · NWM 世界模型 · 群体智能</div><ul>
+        <li>自研神玑 NX9031,号称全球首颗 5nm 车规智驾芯片</li>
+        <li>NWM 2.0(2026/1)国内首次将完整闭环强化学习用于量产</li>
+        <li>覆盖超 46 万辆 Banyan 车型,新增城区领航换电</li>
+        <li>端到端 AEB 从 20 亿公里数据提取、4 亿公里验证</li></ul>
+        <div class="bet">核心赌注:<b>世界模型 + 闭环强化学习</b> + 自研芯片</div></div>
+      <div class="card"><span class="tag cn">Robotaxi 规模王</span><h4>百度 Apollo(萝卜快跑)</h4><div class="role">自营 Robotaxi · 第六代 RT6 · 出海</div><ul>
+        <li>2025 Q4 完成 340 万次(同比+209%),累计超 2000 万次</li>
+        <li>进入全球 26 城,海外落地阿布扎比、迪拜、首尔</li>
+        <li>第六代 RT6 对外价约 20.46 万元,成本较上代降约 60%</li>
+        <li>武汉实现单车级盈利</li></ul>
+        <div class="bet">核心赌注:<b>低成本量产车 + 规模化运营</b>,最早跑通单车盈利</div></div>
+      <div class="card"><span class="tag cn">隐形供应商</span><h4>Momenta</h4><div class="role">飞轮大模型 · 一段式端到端 · 拟港股 IPO</div><ul>
+        <li>行业首个量产一段式端到端,R6 强化学习大模型首搭别克至境 L7</li>
+        <li>累计合作量产车型 160+ 款,城市 NOA 市占率超 60%</li>
+        <li>与 Uber 计划 2026 慕尼黑 L4 Robotaxi</li>
+        <li>2026 初保密递交港股 IPO,拟募至少 10 亿美元</li></ul>
+        <div class="bet">核心赌注:<b>数据飞轮</b>——用量产规模喂养模型,再反哺 L4</div></div>
+    </div>
+    <div class="callout cn"><div class="t">🚗 比亚迪:把高阶智驾"打到地板价"</div><p>2025/2 发布"天神之眼"全民智驾战略,分 A/B/C 三档并接入 DeepSeek。天神之眼 C 首批 21 款车型覆盖 <strong>7 万–20 万元</strong>价格带,累计智驾车辆超 <strong>400 万辆</strong>。<em>当别人拼技术上限,比亚迪在拼普及下限。</em></p></div>
+    <p class="pull cn">中国玩家的真正杀招不是某项技术,而是"量产规模 × 数据飞轮 × 价格普惠"的乘积效应。</p>
+  </section>
+
+  <!-- C7 矩阵 -->
+  <section class="page" id="c7" data-label="方案对比矩阵">
+    <div class="sec-num"><span class="part">玩家与方案</span> / 07</div>
+    <h2>核心方案<span class="dot">对比矩阵</span></h2>
+    <p class="lead">把各家拉到同一张表上,技术取舍的分野一目了然。</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>玩家</th><th>架构路线</th><th>传感器</th><th>芯片</th><th>商业模式</th><th>核心赌注</th></tr></thead>
+      <tbody>
+        <tr><td><span class="us-c">特斯拉</span></td><td>端到端单模型</td><td>纯视觉</td><td>自研 AI4/AI5</td><td>量产车+自营 Robotaxi</td><td>规模化数据</td></tr>
+        <tr><td><span class="us-c">Waymo</span></td><td>模块化神经网络</td><td>激光雷达多融合</td><td>定制+通用</td><td>自营 Robotaxi</td><td>可证明安全</td></tr>
+        <tr><td><span class="us-c">Mobileye</span></td><td>分级方案</td><td>视觉+成像雷达</td><td>EyeQ 自研</td><td>B2B 供应商</td><td>REM 地图+量产</td></tr>
+        <tr><td><span class="cn-c">小鹏</span></td><td>VLA 物理世界模型</td><td>视觉为主</td><td>自研图灵</td><td>量产车+Robotaxi</td><td>全栈自研</td></tr>
+        <tr><td><span class="cn-c">华为</span></td><td>GOD 网络+世界引擎</td><td>激光雷达多融合</td><td>昇腾系</td><td>增量部件供应商</td><td>生态+L3</td></tr>
+        <tr><td><span class="cn-c">理想</span></td><td>MindVLA</td><td>激光雷达+视觉</td><td>英伟达+地平线</td><td>量产车</td><td>司机大模型</td></tr>
+        <tr><td><span class="cn-c">蔚来</span></td><td>NWM 世界模型+RL</td><td>激光雷达+视觉</td><td>自研神玑</td><td>量产车</td><td>闭环强化学习</td></tr>
+        <tr><td><span class="cn-c">百度</span></td><td>端到端</td><td>激光雷达多融合</td><td>自研+通用</td><td>自营 Robotaxi</td><td>低成本规模化</td></tr>
+        <tr><td><span class="cn-c">Momenta</span></td><td>一段式端到端+RL</td><td>视觉+激光雷达</td><td>通用</td><td>B2B+L4</td><td>数据飞轮</td></tr>
+        <tr><td><span class="cn-c">比亚迪</span></td><td>天神之眼分级</td><td>视觉/激光雷达分档</td><td>自研+合作</td><td>全系标配普惠</td><td>普及规模</td></tr>
+      </tbody></table></div>
+    <p>三条最关键的分野线:<strong>"单一大模型" vs "模块化组合"</strong>、<strong>"纯视觉" vs "多传感器融合"</strong>、<strong>"自营 Robotaxi" vs "量产赋能"</strong>。特斯拉、小鹏两条腿走路,Waymo、百度自营车队,华为、Mobileye、Momenta 做军火商。</p>
+  </section>
+
+  <!-- C8 商业模式 -->
+  <section class="page" id="c8" data-label="商业模式拆解">
+    <div class="sec-num"><span class="part">商业与市场</span> / 08</div>
+    <h2>商业模式<span class="dot">拆解</span></h2>
+    <p class="lead">同样的技术,被装进了四种完全不同的赚钱方式。</p>
+    <div class="cards">
+      <div class="card"><h4>① Robotaxi 自营</h4><div class="role">Waymo · 百度 · 特斯拉(部分)</div><ul>
+        <li>自己持有车队、运营出行,赚每单出行费</li>
+        <li>重资产、高壁垒,依赖硬件降本与利用率</li>
+        <li>护城河深但烧钱猛——Cruise 即倒在此</li></ul>
+        <div class="bet">本质:<b>用资本换运营数据与规模</b></div></div>
+      <div class="card"><h4>② 供应商 / 增量部件</h4><div class="role">华为 · Mobileye · Momenta</div><ul>
+        <li>不造车不运营,向车企卖软硬件方案与芯片</li>
+        <li>轻资产、现金流好,但受制于车企客户</li>
+        <li>靠量产规模摊薄研发,绑定头部 OEM</li></ul>
+        <div class="bet">本质:<b>做自动驾驶时代的"博世/英特尔"</b></div></div>
+      <div class="card"><h4>③ 量产车 + 数据飞轮</h4><div class="role">特斯拉 · 小鹏 · 理想 · 蔚来</div><ul>
+        <li>卖车同时用在路车辆采集数据反哺模型</li>
+        <li>软件订阅(FSD)或随车标配,边际成本低</li>
+        <li>车队越大,数据越多,模型越强——正反馈</li></ul>
+        <div class="bet">本质:<b>把每辆卖出的车变成数据节点</b></div></div>
+      <div class="card"><h4>④ 全系普惠标配</h4><div class="role">比亚迪</div><ul>
+        <li>把高阶智驾下探到 7 万元级,全系标配</li>
+        <li>不靠智驾直接赚钱,靠它提升整车竞争力</li>
+        <li>用最大装机量形成数据碾压</li></ul>
+        <div class="bet">本质:<b>用规模把智驾变成"水电煤"</b></div></div>
+    </div>
+    <p>四种模式并非互斥。特斯拉、小鹏同时做量产车与自营 Robotaxi;Momenta 一边供货一边筹备 L4。但底层逻辑差异巨大:<strong>自营赌运营终局,供应商赌产业链卡位,数据飞轮赌模型进化速度,普惠赌规模的暴力。</strong></p>
+  </section>
+
+  <!-- C9 市场 -->
+  <section class="page" id="c9" data-label="市场分析">
+    <div class="sec-num"><span class="part">商业与市场</span> / 09</div>
+    <h2>市场<span class="dot">分析</span></h2>
+    <p class="lead">出行量在指数增长,产业链在中国集结,但市场规模预测的口径分歧巨大。</p>
+    <div class="chart-box"><div class="ch-t">中美 Robotaxi 出行量增长:Waymo vs 百度萝卜快跑</div><div class="ch-s">Waymo 为每周付费出行(左);百度为季度全无人出行(右)。26 末为目标值</div><div class="cv"><canvas id="chRides"></canvas></div><div class="src">来源:Waymo Blog / CNBC / TechCrunch;Gasgoo / CarNewsChina · 末点为目标</div></div>
+    <p>两条曲线讲述同一个故事:<strong>无人出行已跨过"实验"进入"指数放量"。</strong>规模问题基本被回答,真正的悬念转向了盈利。</p>
+    <div class="chart-box"><div class="ch-t">2035 全球 Robotaxi 市场规模:机构预测分歧</div><div class="ch-s">不同机构口径差异极大,以区间而非单点理解</div><div class="cv"><canvas id="chMarket"></canvas></div><div class="src">来源:Goldman Sachs / MarketsandMarkets / Cervicorn · 均为预测</div></div>
+    <p>2035 年全球 Robotaxi 市场预测区间约 <strong>1050 亿–4150 亿美元</strong>,CAGR 区间 57%–80%。如此巨大的分歧本身就是信号:<em>终局确定性高,但路径和节奏高度不确定。</em></p>
+    <div class="grid2">
+      <div class="chart-box"><div class="ch-t">Waymo 估值与融资阶梯</div><div class="ch-s">投后估值,十亿美元</div><div class="cv"><canvas id="chValuation"></canvas></div><div class="src">来源:Waymo Blog / CNBC</div></div>
+      <div class="chart-box"><div class="ch-t">全球自动驾驶芯片市场规模</div><div class="ch-s">十亿美元,2024→2034 预测</div><div class="cv"><canvas id="chChipMkt"></canvas></div><div class="src">来源:GM Insights · 预测</div></div>
+    </div>
+    <p>产业链上,中国厂商已主导激光雷达(四家占约 89%),芯片侧地平线在中国前视一体机 ADAS 市占率近 48%、英伟达在城市 NOA 计算芯片占约 49%——<strong>中美在不同细分赛道各自称王</strong>。</p>
+  </section>
+
+  <!-- C10 单位经济 -->
+  <section class="page" id="c10" data-label="单位经济与盈利">
+    <div class="sec-num"><span class="part">商业与市场</span> / 10</div>
+    <h2>单位经济:规模 <span class="dot">≠</span> 盈利</h2>
+    <p class="lead">2026 年的尴尬真相:出行量指数增长,但截至目前没有任何 Robotaxi 运营商在单位经济层面整体盈利——包括 Waymo。</p>
+    <p>网约车成本的 <strong>60–70% 是司机</strong>,去掉司机理论上应大幅改善单位经济。但高昂硬件成本、有限利用率、远程接管人力、保险与责任成本,把账面重新拉回亏损。</p>
+    <div class="chart-box"><div class="ch-t">每英里成本:人类网约车 vs Robotaxi(长期)</div><div class="ch-s">美元/英里,长期理论值,含降本预期</div><div class="cv"><canvas id="chUnit"></canvas></div><div class="src">来源:ARK Invest / McKinsey 等 · 长期预测,口径不确定</div></div>
+    <p>逻辑很清楚:一旦硬件降本(下一代车从约 17.5 万降到 7.5 万美元)叠加利用率爬坡,去掉司机后每英里成本理论上可从约 3.25 美元降到 0.3 美元量级。Waymo 第 6 代系统较第 5 代降本约 40%。</p>
+    <div class="callout cn"><div class="t">💰 唯一的亮点:百度武汉</div><p>萝卜快跑在武汉实现<strong>单车级盈利</strong>——运营约 1000 辆车覆盖 3000 平方公里,车费比一线城市低约 30%。这是全球少数被验证的正向单位经济样本,也解释了为何中国 Robotaxi 敢于激进出海。</p></div>
+    <p class="pull">Waymo 的 160 亿美元 D 轮,本质上是买了 10 年以上的"烧钱跑道"。</p>
+  </section>
+
+  <!-- C11 立法 -->
+  <section class="page" id="c11" data-label="立法与监管">
+    <div class="sec-num"><span class="part">制度与展望</span> / 11</div>
+    <h2>立法与<span class="dot">监管</span>:两种治理哲学</h2>
+    <p class="lead">技术可以趋同,但监管框架的差异正在把中美推向两种不同的自动驾驶未来。</p>
+    <h3>中国:确定性规则 + 政府主导</h3>
+    <p>2023 年 11 月,工信部等四部门发布《智能网联汽车准入和上路通行试点通知》,采用"车企+使用主体"联合体申报。<strong>2025 年 12 月 15 日,工信部公布首批 L3 准入许可</strong>——长安深蓝、极狐阿尔法两款车型,长安拿到全国首张 L3 牌照"渝AD0001Z"。北京《自动驾驶汽车条例》2025/4/1 施行,明确生产企业承担产品质量主体责任;深圳/武汉将事故责任落到车辆所有人或管理人,上海浦东采用运营企业先行赔付。</p>
+    <div class="callout cn"><div class="t">📦 GB 44497-2024:强制"黑匣子"</div><p>强制性国标《智能网联汽车自动驾驶数据记录系统》(DSSAD),<strong>2026 年 1 月 1 日起对新申请型式批准的 L3+ 车型实施</strong>。须记录系统状态、车辆控制、驾驶员状态、故障与环境信息,具备防篡改与碰撞后数据存活能力。</p></div>
+    <p>此外,中国 2024 年 7 月公布 <strong>20 城"车路云一体化"试点</strong>;2025 年 2 月起强力规范"智驾"宣传用语,禁用"自动驾驶""高阶智驾"等易误导词,并强制驾驶员在环、OTA 备案。</p>
+    <h3>美国:市场驱动 + 联邦松绑 + 州碎片化</h3>
+    <p>2025 年 4 月,NHTSA 发布新的 <strong>AV Framework</strong>,把豁免项目扩展到国产车,简化 Part 555 允许<strong>每制造商每年最多 2500 辆</strong>不完全符合 FMVSS 的车辆(含无方向盘车)。2026 年 3 月进一步发布 NPRM 拟修订 FMVSS。州层面高度碎片化:约 18 个州允许全无人运营,亚利桑那最宽松,加州双轨监管,得州 2025 年通过 SB 2807。联邦层面无统一责任法。</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>维度</th><th class="cn-c">中国</th><th class="us-c">美国</th></tr></thead>
+      <tbody>
+        <tr><td>监管模式</td><td>确定性规则、政府主导,统一发文+分级试点+强标先行</td><td>市场驱动,联邦放松+州碎片化</td></tr>
+        <tr><td>技术导向</td><td>车路云一体化(20 城)+ 单车智能并重</td><td>单车智能为主,无全国车路云政策</td></tr>
+        <tr><td>责任清晰度</td><td>地方条例明确事故责任归属</td><td>无统一责任法,依赖各州侵权/产品责任</td></tr>
+        <tr><td>数据/黑匣子</td><td>GB 44497 强制 DSSAD(2026.1 起)</td><td>无等效强制标准,以 SGO 事故报告替代</td></tr>
+        <tr><td>宣传约束</td><td>强力规范"智驾"用语、强制驾驶员在环</td><td>无宣传用语强制规范</td></tr>
+      </tbody></table></div>
+    <p class="pull cn">中国用"确定性的规则"换"商业化的速度",美国用"市场的自由"换"创新的弹性"。</p>
+  </section>
+
+  <!-- C12 -->
+  <section class="page" id="c12" data-label="体系差异与挑战">
+    <div class="sec-num"><span class="part">制度与展望</span> / 12</div>
+    <h2>体系差异与<span class="dot">未解</span>命题</h2>
+    <p class="lead">两套体系的分野,以及横在所有人面前的共同难关。</p>
+    <div class="vs">
+      <div class="side cn"><div class="flag">中国体系</div><h4>基础设施 + 普惠 + 强政府</h4><ul>
+        <li>车路云一体化,部分智能卸载到路侧</li>
+        <li>清晰责任框架 + 强制黑匣子,以确定性换速度</li>
+        <li>十余家肉搏,价格下探到 7 万元级</li>
+        <li>百度武汉单车盈利,激进出海</li></ul></div>
+      <div class="divider"></div>
+      <div class="side us"><div class="flag">美国体系</div><h4>单车智能 + 市场 + 联邦松绑</h4><ul>
+        <li>重车端 AI,路侧投入少</li>
+        <li>监管碎片化,2026 联邦松绑放行无方向盘车</li>
+        <li>少数巨头精英赛,已有出局者(Cruise)</li>
+        <li>Waymo 规模最大但整体未盈利</li></ul></div>
+    </div>
+    <h3>共同的拦路虎</h3>
+    <p><strong>长尾与泛化</strong>:99% 场景早已被攻克,难的永远是剩下那 1%。<strong>安全验证</strong>:Waymo 宣称比人类少 92% 重伤碰撞,但自动驾驶安全高度依赖运营设计域(ODD)与成熟度,跨厂商直接比较需极度谨慎。<strong>可解释性</strong>:端到端大模型泛化越强,决策越难追溯——当一辆无人车出事,运营方必须能解释"为什么这么做",这正是 Waymo 坚持模块化的深层原因。</p>
+    <div class="callout warn"><div class="t">⚠️ 安全数据的两面</div><p>Waymo 累计近 2 亿无人里程、重伤/致命碰撞比人类少 92%,是迄今最有力的安全证据。但任何单一厂商的数据都嵌在其特定 ODD 里,"更安全"的结论需结合场景、里程与成熟度综合判断,不宜简单跨家对比或外推。</p></div>
+  </section>
+
+  <!-- C13 -->
+  <section class="page" id="c13" data-label="趋势与赌注">
+    <div class="sec-num"><span class="part">制度与展望</span> / 13</div>
+    <h2>未来三年的<span class="dot">赌注</span></h2>
+    <p class="lead">谁会赢?这个问题本身可能就问错了。更可能的结局是:不同体系在不同维度各自封王。</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="yr">2026</div><div class="h">世界模型成为标配基础设施</div><div class="d">Waymo、英伟达、华为、蔚来均以世界模型做闭环仿真训练,"数据合成"取代"数据采集"成为竞争焦点。</div></div>
+      <div class="tl-item"><div class="yr">2026–2027</div><div class="h">激光雷达 vs 纯视觉的成本论据失效</div><div class="d">激光雷达跌破 400 美元,4D 成像雷达 + 视觉成为最可能的收敛点。纯视觉退守为特斯拉一家的孤注。</div></div>
+      <div class="tl-item"><div class="yr">2027</div><div class="h">Robotaxi 单位经济的"证明年"</div><div class="d">Mobileye 自定的拐点,特斯拉 AI5/Cybercab 量产兑现期。能否从"规模"走向"盈利",决定资本耐心。</div></div>
+      <div class="tl-item"><div class="yr">2027–2028</div><div class="h">L3 责任框架成熟与中美格局定型</div><div class="d">中国清晰责任体系若率先跑通 L3 普及,美国靠联邦松绑放量 Robotaxi,两种模式优劣首次被市场检验。</div></div>
+    </div>
+    <p><strong>其一,技术上正在"殊途同归"。</strong>VLA + 世界模型 + 强化学习已是共同范式底座,真正差距是"谁的数据飞轮转得更快、谁的芯片-模型协同更深"。</p>
+    <p><strong>其二,商业上"规模 ≠ 盈利"的鸿沟仍未跨越。</strong>无人出行可规模化,但盈亏平衡仍依赖硬件降本与利用率爬坡。Cruise 的退场是前车之鉴。</p>
+    <p><strong>其三,体系之争的胜负手在"制度"而非"技术"。</strong>中国用清晰责任法规和车路云基建换速度,美国用市场自由和联邦松绑保留弹性。</p>
+    <p class="pull">方向盘的消失,从来不只是一个技术事件。它是一面镜子,照出两种文明对"安全、效率与自由"的不同排序。</p>
+  </section>
+
+  <!-- SOURCES -->
+  <section class="page" id="sources" data-label="数据来源">
+    <div class="sec-num">附录</div>
+    <h2>主要数据<span class="dot">来源</span></h2>
+    <p class="lead">本文事实与数字基于以下公开来源核实,数据截至 2026 年 6 月。</p>
+    <div class="sources">
+      <h4 style="color:var(--us)">玩家与方案</h4>
+      <ul>
+        <li>Tesla:<a href="https://electrek.co/2026/04/15/tesla-ai5-chip-taped-out-musk-ai6-dojo3/">Electrek</a>、<a href="https://en.wikipedia.org/wiki/Tesla_Robotaxi">Wikipedia</a></li>
+        <li>Waymo:<a href="https://techcrunch.com/2026/03/27/waymo-skyrocketing-ridership-in-one-chart/">TechCrunch</a>、<a href="https://waymo.com/blog/2026/02/waymo-raises-usd16-billion-investment-round/">Waymo Blog</a></li>
+        <li>Mobileye:<a href="https://www.sec.gov/Archives/edgar/data/0001910139/000110465925070225/tm2521336d1_ex99-1.htm">SEC</a>；Cruise:<a href="https://news.gm.com/home.detail.html/Pages/news/us/en/2024/dec/1210-gm.html">GM</a></li>
+        <li>小鹏/华为/蔚来:<a href="https://carnewschina.com/2025/11/05/xpeng-reveals-navigation-free-driving-and-l4-robo-cars-volkswagen-named-first-partner/">CarNewsChina</a>、<a href="https://news.qq.com/rain/a/20250422A08JMC00">腾讯新闻</a>、<a href="https://www.nio.cn/news/20250530001">蔚来官网</a></li>
+        <li>百度:<a href="https://carnewschina.com/2025/11/13/baidus-apollo-go-robotaxi-leads-global-autonomous-driving-with-17m-orders-targets-profit-this-year/">CarNewsChina</a>；Momenta:<a href="https://cnevpost.com/2026/03/05/momenta-confidentially-files-hk-ipo/">CnEVPost</a>；比亚迪:<a href="https://www.bydglobal.com/cn/news/2025-02-11/1617162592632">比亚迪官网</a></li>
+      </ul>
+      <h4 style="color:var(--gold)">市场 · 硬件 · 财务</h4>
+      <ul>
+        <li>市场预测:<a href="https://www.goldmansachs.com/insights/articles/robotaxis-to-become-a-400-billion-dollar-market-in-2035">Goldman Sachs</a>、<a href="https://www.marketsandmarkets.com/PressReleases/future-of-robotaxi.asp">MarketsandMarkets</a></li>
+        <li>激光雷达:<a href="https://spectrum.ieee.org/solid-state-lidar-microvision-adas">IEEE Spectrum</a>、<a href="https://www.yolegroup.com/press-release/china-takes-the-lead-in-automotive-lidar-a-market-set-to-quadruple-by-2030/">Yole Group</a>、<a href="https://www.hesaitech.com/hesai-secures-no-1-in-long-range-adas-lidar-shipments-in-2025-by-yole-group/">Hesai</a></li>
+        <li>芯片/单位经济:<a href="https://www.gminsights.com/industry-analysis/autonomous-driving-chips-market">GM Insights</a>、<a href="https://counterpointresearch.com/en/insights/Global-Shifts-in-ADAS-and-Autonomous-Vehicles">Counterpoint</a>、<a href="https://www.ark-invest.com/articles/analyst-research/autonomous-ridehailing-fees">ARK Invest</a></li>
+      </ul>
+      <h4 style="color:var(--cn)">立法与监管</h4>
+      <ul>
+        <li>中国:<a href="https://www.gov.cn/zhengce/zhengceku/202311/content_6915788.htm">国务院</a>、<a href="https://www.news.cn/tech/20251216/1a2a5bf1141d4bdda70d178ba852e6dc/c.html">新华社</a>、<a href="https://www.beijing.gov.cn/zhengce/dfxfg/202501/t20250103_3980149.html">北京市政府</a></li>
+        <li>美国:<a href="https://www.transportation.gov/briefing-room/trumps-transportation-secretary-sean-p-duffy-unveils-new-automated-vehicle-framework">US DOT</a>、<a href="https://www.nhtsa.gov/press-releases/av-framework-plan-modernize-safety-standards">NHTSA</a></li>
+      </ul>
+    </div>
+    <div class="disclaimer"><strong>说明</strong>:本文为技术媒体视角的综合分析。图表中出行量、估值、出货量多为实绩;市场规模(2035)、单位经济(长期)、芯片市场为机构预测,口径差异较大,已尽量以区间呈现。激光雷达价格曲线由不同型号拼接,非单一连续序列;芯片算力 TOPS 因精度口径不同不可直接比较,仅作量级参考。架构、传感器、飞轮三张图为概念性示意图。部分项公开信息有限,关键决策建议另行核实一手来源。</div>
+  </section>
+</main>
+
+<div id="pagebar">
+  <button id="prevBtn">← 上一章</button>
+  <div id="pmeta"><div class="pi"></div><div class="pt"></div></div>
+  <button id="nextBtn">下一章 →</button>
+</div>
+
+<script>
+const pages=[...document.querySelectorAll('.page')];
+const navLinks=[...document.querySelectorAll('#sidebar a.nav-link')];
+const prog=document.getElementById('progress');
+const sb=document.getElementById('sidebar'),mb=document.getElementById('menuBtn');
+const prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');
+const pi=document.querySelector('#pmeta .pi'),pt=document.querySelector('#pmeta .pt');
+const idOf=p=>p.id;
+const builtCharts=new Set();
+let cur=0;
+
+function show(i){
+  i=Math.max(0,Math.min(pages.length-1,i));
+  cur=i;
+  pages.forEach((p,k)=>p.classList.toggle('active',k===i));
+  const id=idOf(pages[i]);
+  navLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===id));
+  prog.style.width=(i/(pages.length-1)*100)+'%';
+  // bottom meta
+  const lbl=pages[i].dataset.label||'';
+  const num=pages[i].querySelector('.sec-num');
+  pi.textContent = id==='sources'?'附录':'第 '+id.replace('c','')+' 章 / 共 13 章';
+  pt.textContent=lbl;
+  prevBtn.disabled=(i===0); nextBtn.disabled=(i===pages.length-1);
+  window.scrollTo(0,0);
+  buildCharts(id);
+}
+// —— 基于 hash 的路由:点击锚点 / 浏览器前进后退 / 直接带 #c5 打开,均可切页 ——
+function goto(i){
+  i=Math.max(0,Math.min(pages.length-1,i));
+  const id=pages[i].id;
+  if(('#'+id)!==location.hash){ try{history.pushState(null,'','#'+id);}catch(e){location.hash=id;} }
+  show(i);
+}
+function syncFromHash(){
+  const id=(location.hash||'#c0').slice(1);
+  const idx=pages.findIndex(p=>p.id===id);
+  show(idx>=0?idx:0);
+}
+window.addEventListener('hashchange',syncFromHash);
+window.addEventListener('popstate',syncFromHash);
+navLinks.forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const idx=pages.findIndex(p=>p.id===a.dataset.target);
+  if(idx>=0)goto(idx); sb.classList.remove('open');
+}));
+document.querySelector('.brand').addEventListener('click',()=>goto(0));
+prevBtn.addEventListener('click',()=>goto(cur-1));
+nextBtn.addEventListener('click',()=>goto(cur+1));
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='ArrowRight')goto(cur+1);
+  if(e.key==='ArrowLeft')goto(cur-1);
+});
+mb.addEventListener('click',()=>sb.classList.toggle('open'));
+
+// ===== Charts (lazy per page) =====
+const I='#a9b4c6', G='#242c3a', US='#4ea1ff', CN='#ff5b6e', GD='#f5c451', GR='#46d39a', VI='#9b8cff';
+function buildCharts(id){
+  if(!window.Chart||builtCharts.has(id))return;
+  Chart.defaults.color=I; Chart.defaults.font.family="-apple-system,'PingFang SC','Microsoft YaHei',sans-serif";
+  Chart.defaults.font.size=11.5; Chart.defaults.borderColor=G;
+  const grid={grid:{color:G},ticks:{color:I}}, noGrid={grid:{display:false},ticks:{color:I}};
+
+  if(id==='c3'){
+    new Chart(chSensor,{type:'radar',data:{labels:['成本优势','语义识别','3D 精度','夜间表现','雨雾穿透','速度测量'],
+      datasets:[
+        {label:'纯视觉',data:[5,5,2,2,2,1],borderColor:US,backgroundColor:'rgba(78,161,255,.15)',pointBackgroundColor:US},
+        {label:'激光雷达融合',data:[2,3,5,4,3,2],borderColor:CN,backgroundColor:'rgba(255,91,110,.13)',pointBackgroundColor:CN},
+        {label:'4D 雷达',data:[4,2,4,5,5,5],borderColor:GD,backgroundColor:'rgba(245,196,81,.12)',pointBackgroundColor:GD}
+      ]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:12}}},
+      scales:{r:{min:0,max:5,grid:{color:G},angleLines:{color:G},pointLabels:{color:I,font:{size:11}},ticks:{display:false}}}}});
+    new Chart(chLidarCost,{type:'line',data:{labels:['2017','2020','2022','2024','2026'],
+      datasets:[{label:'单价(美元)',data:[75000,12000,1500,700,450],borderColor:GD,backgroundColor:'rgba(245,196,81,.12)',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:GD}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{type:'logarithmic',...grid,ticks:{color:I,callback:v=>'$'+v.toLocaleString()}},x:noGrid}}});
+    new Chart(chLidarShare,{type:'doughnut',data:{labels:['禾赛 Hesai','速腾+华为+Seyond','其他(欧美等)'],
+      datasets:[{data:[33,56,11],backgroundColor:[CN,'#ff8d9b','#33405455'],borderColor:'#141925',borderWidth:2}]},
+      options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:12}}},cutout:'58%'}});
+    new Chart(chChip,{type:'bar',data:{labels:['图灵×4(小鹏)','Thor','AI5(特斯拉)','征程6P','Orin-X','AI4','EyeQ6'],
+      datasets:[{label:'TOPS',data:[3000,2000,2000,560,254,100,34],backgroundColor:[CN,US,US,CN,US,US,US],borderRadius:5}]},
+      options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{...grid,ticks:{color:I,callback:v=>v.toLocaleString()}},y:noGrid}}});
+  }
+  if(id==='c9'){
+    new Chart(chRides,{data:{labels:['24Q2','24Q4','25Q1','25Q2','25Q4','26Q1','26末*'],
+      datasets:[
+        {type:'line',label:'Waymo 每周付费(万)',yAxisID:'y',data:[5,15,20,25,45,50,100],borderColor:US,backgroundColor:'rgba(78,161,255,.1)',tension:.3,pointRadius:3,pointBackgroundColor:US,fill:true},
+        {type:'bar',label:'百度 季度全无人(万)',yAxisID:'y1',data:[90,110,150,220,340,null,null],backgroundColor:'rgba(255,91,110,.55)',borderRadius:4}]},
+      options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}}},
+        scales:{y:{position:'left',...grid,title:{display:true,text:'Waymo 周出行(万)',color:US}},
+                y1:{position:'right',grid:{display:false},ticks:{color:I},title:{display:true,text:'百度 季度量(万)',color:CN}},x:noGrid}}});
+    new Chart(chMarket,{type:'bar',data:{labels:['MarketsandMarkets','Cervicorn','Goldman Sachs'],
+      datasets:[{label:'2035 市场规模(十亿美元)',data:[105,283,400],backgroundColor:[GR,GD,US],borderRadius:6}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{...grid,ticks:{color:I,callback:v=>'$'+v+'B'}},x:noGrid}}});
+    new Chart(chValuation,{type:'bar',data:{labels:['2024.10 (C轮)','2026.02 (最新)'],
+      datasets:[{label:'投后估值(十亿美元)',data:[45,126],backgroundColor:[US+'88',US],borderRadius:8}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{...grid,ticks:{color:I,callback:v=>'$'+v+'B'}},x:noGrid}}});
+    new Chart(chChipMkt,{type:'line',data:{labels:['2024','2025','2034'],
+      datasets:[{label:'市场规模(十亿美元)',data:[24.2,29.7,191],borderColor:VI,backgroundColor:'rgba(155,140,255,.14)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:VI}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{...grid,ticks:{color:I,callback:v=>'$'+v+'B'}},x:noGrid}}});
+  }
+  if(id==='c10'){
+    new Chart(chUnit,{type:'bar',data:{labels:['人类网约车','Robotaxi(长期)'],
+      datasets:[{label:'每英里成本(美元)',data:[3.25,0.30],backgroundColor:[CN,GR],borderRadius:8}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{...grid,ticks:{color:I,callback:v=>'$'+v}},x:noGrid}}});
+  }
+  builtCharts.add(id);
+}
+syncFromHash();
+</script>
+</body>
+</html>
