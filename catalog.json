@@ -58,15 +58,15 @@
     },
     {
       "id": "mq6wzv1de9ha",
-      "name": "AI-芯片&硬件",
-      "folder": "AI-芯片&硬件",
+      "name": "AI-芯片硬件",
+      "folder": "AI-芯片硬件",
       "icon": "🔌",
       "color": "#3a6db5"
     },
     {
       "id": "mq6wzyrperex",
-      "name": "AI-商业&趋势",
-      "folder": "AI-商业&趋势",
+      "name": "AI-商业趋势",
+      "folder": "AI-商业趋势",
       "icon": "📊",
       "color": "#d98a3d"
     }
