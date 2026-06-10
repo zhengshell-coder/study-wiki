@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prefill 与 Decode · 系统性讲解</title>
+<style>
+:root{
+  --bg:#0f1117;--panel:#161922;--panel-2:#1c2030;--border:#272c3a;
+  --text:#e6e8ee;--muted:#9aa3b2;--accent:#6ea8fe;--accent-2:#7ee0c0;
+  --prefill:#f0a868;--decode:#79c0ff;--code-bg:#11141c;--warn:#ffd479;--maxw:820px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.75;font-size:16px;}
+.layout{display:flex;min-height:100vh}
+#sidebar{width:280px;flex:0 0 280px;background:var(--panel);border-right:1px solid var(--border);
+  padding:24px 0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;}
+#sidebar .brand{padding:0 22px 18px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+#sidebar .brand h1{font-size:16px;margin:0 0 4px;letter-spacing:.3px}
+#sidebar .brand p{font-size:12px;color:var(--muted);margin:0}
+#sidebar ol{list-style:none;margin:14px 0 0;padding:0}
+#sidebar li a{display:flex;gap:10px;align-items:baseline;padding:9px 22px;color:var(--muted);
+  text-decoration:none;font-size:14px;border-left:3px solid transparent;cursor:pointer}
+#sidebar li a .num{color:var(--accent);font-variant-numeric:tabular-nums;font-size:12px;min-width:20px;}
+#sidebar li a:hover{background:var(--panel-2);color:var(--text)}
+#sidebar li a.active{color:var(--text);background:var(--panel-2);border-left-color:var(--accent);font-weight:600;}
+.menu-toggle{display:none}
+main{flex:1;min-width:0;display:flex;justify-content:center;padding:48px 40px 96px}
+.chapter{width:100%;max-width:var(--maxw);display:none}
+.chapter.active{display:block}
+.eyebrow{color:var(--accent);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 10px}
+.chapter h1{font-size:30px;line-height:1.25;margin:0 0 18px}
+.chapter h2{font-size:22px;margin:42px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.chapter h3{font-size:17px;margin:28px 0 8px;color:#cdd4e0}
+.chapter p{margin:12px 0;color:#d7dbe4}
+.chapter ul,.chapter ol{margin:12px 0;padding-left:22px}
+.chapter li{margin:6px 0}
+.chapter strong{color:#fff}
+a{color:var(--accent)}
+.lead{font-size:18px;color:#c4ccd9;border-left:3px solid var(--accent);padding-left:16px;margin:18px 0 24px}
+code{background:var(--code-bg);border:1px solid var(--border);padding:1px 6px;border-radius:5px;font-size:13.5px;
+  font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;color:#e8c9a0;}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;margin:16px 0;}
+pre code{background:none;border:none;padding:0;color:#cdd4e0;font-size:13px;line-height:1.6}
+.note,.tip,.warn{border-radius:10px;padding:14px 16px;margin:18px 0;font-size:14.5px;border:1px solid var(--border);background:var(--panel);}
+.note{border-left:3px solid var(--accent)}
+.tip{border-left:3px solid var(--accent-2)}
+.warn{border-left:3px solid var(--warn)}
+.note b,.tip b,.warn b{display:block;margin-bottom:4px}
+.formula{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:16px 0;
+  text-align:center;font-size:16px;font-family:"SF Mono",ui-monospace,Menlo,monospace;color:#e6e8ee;overflow-x:auto;}
+.formula .sub{font-size:.7em;vertical-align:sub}
+.formula em{color:var(--muted);font-style:normal;font-size:13px;display:block;margin-top:6px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th,td{border:1px solid var(--border);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--panel-2);font-weight:600}
+td.prefill,th.prefill{color:var(--prefill)}
+td.decode,th.decode{color:var(--decode)}
+tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px}
+.tag.pre{background:rgba(240,168,104,.15);color:var(--prefill);border:1px solid rgba(240,168,104,.35)}
+.tag.dec{background:rgba(121,192,255,.15);color:var(--decode);border:1px solid rgba(121,192,255,.35)}
+.kvgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.kvgrid .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+.kvgrid .card h4{margin:0 0 8px;font-size:15px}
+.kvgrid .card.pre{border-top:3px solid var(--prefill)}
+.kvgrid .card.dec{border-top:3px solid var(--decode)}
+figure{margin:22px 0;text-align:center}
+figure svg{max-width:100%;height:auto}
+figcaption{color:var(--muted);font-size:13px;margin-top:8px}
+.pager{display:flex;justify-content:space-between;gap:14px;margin-top:56px;border-top:1px solid var(--border);padding-top:22px}
+.pager a{flex:1;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:14px 16px;transition:border-color .15s;cursor:pointer}
+.pager a:hover{border-color:var(--accent)}
+.pager a.next{text-align:right}
+.pager .dir{font-size:12px;color:var(--muted);display:block;margin-bottom:3px}
+.pager .ttl{font-size:14px;font-weight:600}
+.pager a.disabled{opacity:.35;pointer-events:none}
+@media(max-width:880px){
+  #sidebar{position:fixed;z-index:30;transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  #sidebar.open{transform:translateX(0)}
+  .menu-toggle{display:flex;position:fixed;top:14px;left:14px;z-index:40;background:var(--accent);color:#0b0e14;
+    border:none;border-radius:8px;width:42px;height:42px;font-size:20px;align-items:center;justify-content:center;cursor:pointer}
+  main{padding:64px 18px 80px}
+  .kvgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside id="sidebar">
+    <div class="brand"><h1>Prefill 与 Decode</h1><p>LLM 推理两阶段 · 系统性讲解</p></div>
+    <ol id="toc"></ol>
+  </aside>
+  <main>
+
+  <!-- ===================== 第 0 章 ===================== -->
+  <section class="chapter" id="index">
+    <p class="eyebrow">第 0 章 · 导读</p>
+    <h1>为什么 LLM 推理要分成两个阶段？</h1>
+    <p class="lead">同一个模型、同样的权重，推理时却表现出两副完全不同的面孔：处理你的输入时它像一台<strong>算力机器</strong>，吐出回答时它又像一台<strong>搬运内存的机器</strong>。理解这两副面孔——Prefill 与 Decode——是看懂现代推理系统一切优化的钥匙。</p>
+    <h2>一个直观的现象</h2>
+    <p>你给 ChatGPT 这样的产品发一段长长的提问，会注意到一个规律：无论提问多长，<strong>第一个字</strong>蹦出来之前总有一段等待；而一旦开始输出，文字便以相对稳定的速度一个接一个地流出来。</p>
+    <p>这不是巧合，而是底层两个阶段的直接体现：</p>
+    <ul>
+      <li><span class="tag pre">Prefill</span> <strong>预填充</strong>：模型一次性"读完"你的整段输入（prompt），为生成做准备。等待第一个字的时间，大头花在这里。</li>
+      <li><span class="tag dec">Decode</span> <strong>解码</strong>：模型逐个 token 地生成回答，一次只产出一个 token，循环往复直到结束。你看到的"流式输出"就是它。</li>
+    </ul>
+    <figure>
+      <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <rect x="20" y="60" width="180" height="70" rx="8" fill="#f0a868" opacity="0.18" stroke="#f0a868"/>
+        <text x="110" y="90" fill="#f0a868" font-size="15" font-weight="700" text-anchor="middle">Prefill</text>
+        <text x="110" y="112" fill="#cdd4e0" font-size="12" text-anchor="middle">一次处理全部输入</text>
+        <text x="110" y="150" fill="#9aa3b2" font-size="11" text-anchor="middle">N 个 token 并行</text>
+        <line x1="200" y1="95" x2="250" y2="95" stroke="#6ea8fe" stroke-width="2" marker-end="url(#a0)"/>
+        <g>
+          <rect x="260" y="68" width="80" height="54" rx="7" fill="#79c0ff" opacity="0.16" stroke="#79c0ff"/>
+          <text x="300" y="100" fill="#79c0ff" font-size="13" text-anchor="middle">tok 1</text>
+          <rect x="350" y="68" width="80" height="54" rx="7" fill="#79c0ff" opacity="0.16" stroke="#79c0ff"/>
+          <text x="390" y="100" fill="#79c0ff" font-size="13" text-anchor="middle">tok 2</text>
+          <rect x="440" y="68" width="80" height="54" rx="7" fill="#79c0ff" opacity="0.16" stroke="#79c0ff"/>
+          <text x="480" y="100" fill="#79c0ff" font-size="13" text-anchor="middle">tok 3</text>
+          <text x="560" y="100" fill="#9aa3b2" font-size="16">· · ·</text>
+          <rect x="600" y="68" width="80" height="54" rx="7" fill="#79c0ff" opacity="0.16" stroke="#79c0ff"/>
+          <text x="640" y="100" fill="#79c0ff" font-size="13" text-anchor="middle">tok n</text>
+        </g>
+        <text x="470" y="150" fill="#9aa3b2" font-size="11" text-anchor="middle">Decode：每步只生成 1 个 token，串行循环</text>
+        <text x="110" y="38" fill="#e6e8ee" font-size="12" text-anchor="middle">「读题」</text>
+        <text x="470" y="38" fill="#e6e8ee" font-size="12" text-anchor="middle">「逐字作答」</text>
+        <defs><marker id="a0" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6ea8fe"/></marker></defs>
+      </svg>
+      <figcaption>一次推理请求 = 一次 Prefill + 多步 Decode</figcaption>
+    </figure>
+    <h2>为什么这件事值得专门讲一章</h2>
+    <p>如果两个阶段只是"先读后写"这么简单，那确实不必大费周章。关键在于：<strong>它们的硬件瓶颈完全相反</strong>。</p>
+    <ul>
+      <li>Prefill 把成百上千个 token 一起喂进 GPU，矩阵又大又满，<strong>卡在算力（compute-bound）</strong>——GPU 的计算单元被压榨到极限。</li>
+      <li>Decode 每步只处理 1 个新 token，计算量极小，却要把整个模型权重和不断增长的缓存反复从显存里搬出来，<strong>卡在访存带宽（memory-bound）</strong>——GPU 算力大量闲置，在等数据。</li>
+    </ul>
+    <p>同一块 GPU，在 Prefill 时利用率可以接近 100%，在 Decode 时算力利用率常常只有个位数百分比。几乎所有现代推理优化——KV Cache、continuous batching、chunked prefill、PD 分离、投机解码——本质上都是在<strong>调和这对矛盾</strong>。</p>
+    <div class="note"><b>本手册的主线</b>我们会先补齐自回归生成的基础（第 1 章），再分别拆解 Prefill（第 2 章）与 Decode（第 3 章），用 KV Cache（第 4 章）把两者串起来；然后从计算特性（第 5 章）和性能指标（第 6 章）建立"度量"的视角，最后落到系统优化（第 7 章）与真实框架（第 8 章）。第 9 章是一页速查表。</div>
+    <h2>读完你应该能回答</h2>
+    <ul>
+      <li>为什么"首字延迟"和"每字延迟"要分开衡量？分别由哪个阶段决定？</li>
+      <li>KV Cache 到底缓存了什么，省掉了哪部分重复计算，又带来什么新成本？</li>
+      <li>为什么 Decode 阶段"攒一批请求一起算"能大幅提升吞吐，而 Prefill 不那么明显？</li>
+      <li>chunked prefill、PD 分离这些词，解决的究竟是什么问题？</li>
+    </ul>
+    <div class="tip"><b>阅读建议</b>左侧目录可随时跳转章节，章末有上一章 / 下一章。建议第一遍按顺序读，之后把第 9 章速查表当工具页用。整份内容现已合并为<strong>单个 HTML 文件</strong>，无任何外部依赖，可自由复制、改名、移动。</div>
+  </section>
+
+  <!-- ===================== 第 1 章 ===================== -->
+  <section class="chapter" id="autoreg">
+    <p class="eyebrow">第 1 章 · 基础</p>
+    <h1>自回归生成：两阶段从何而来</h1>
+    <p class="lead">Prefill 和 Decode 不是谁设计出来的"功能"，而是<strong>自回归（autoregressive）生成方式 + 注意力机制</strong>这两个事实自然导出的结果。先把这层基础铺平，后面一切都顺理成章。</p>
+    <h2>1.1 语言模型在做什么：预测下一个 token</h2>
+    <p>一个 GPT 类模型，本质上是一个函数：给定到目前为止的 token 序列，输出"下一个 token 是什么"的概率分布。</p>
+    <div class="formula">P( x<span class="sub">t</span> | x<span class="sub">1</span>, x<span class="sub">2</span>, …, x<span class="sub">t-1</span> )<em>已知前面所有 token，预测第 t 个 token 的概率分布</em></div>
+    <p>注意两个关键词：<strong>token</strong>（不是字也不是词，而是分词器切出的子词单元，比如 "推理" 可能是一个 token，"inference" 可能被切成 "infer"+"ence"）；以及<strong>条件</strong>——预测第 t 个时，模型能看到前面全部 t−1 个 token。</p>
+    <h2>1.2 "自回归"：把上一步的输出当作下一步的输入</h2>
+    <p>生成一段文本，模型并不是一次性写完，而是一个字一个字地"接龙"：</p>
+    <ol>
+      <li>拿到当前序列，预测下一个 token 的分布；</li>
+      <li>按采样策略（贪心 / top-p / 温度等）选出一个 token；</li>
+      <li>把这个新 token <strong>追加</strong>到序列末尾；</li>
+      <li>回到第 1 步，直到生成结束符或达到长度上限。</li>
+    </ol>
+    <p>"用自己刚生成的输出作为下一步输入"——这就是<strong>自回归</strong>。它有一个无法回避的特性：<strong>串行</strong>。第 t 个 token 必须等第 t−1 个生成完才能开始，因为它要把 x<sub>t-1</sub> 当输入。这正是 Decode 阶段慢、难以并行的根本原因。</p>
+    <div class="note"><b>那 Prefill 为什么能并行？</b>因为输入的 prompt 是<strong>已知的、完整的</strong>。整段 prompt 的所有 token 同时摆在面前，不存在"等上一个算完"的依赖，于是可以一次性塞进 GPU 并行处理。差别的源头就在这里：prompt 是已知的（可并行），续写是未知的（必须串行）。</div>
+    <h2>1.3 注意力机制：为什么要回看前面所有 token</h2>
+    <p>Transformer 的核心是<strong>自注意力（self-attention）</strong>。每生成一个位置的表示，模型会让当前 token 去"查询"前面每一个 token，按相关性加权汇总它们的信息。具体地，每个 token 会被投影成三个向量：</p>
+    <ul>
+      <li><strong>Q（Query，查询）</strong>：我想找什么；</li>
+      <li><strong>K（Key，键）</strong>：我能被什么样的查询匹配到；</li>
+      <li><strong>V（Value，值）</strong>：如果被匹配到，我贡献什么信息。</li>
+    </ul>
+    <p>当前 token 的 Q 与前面所有 token 的 K 做点积得到注意力权重，再用这些权重对所有 V 加权求和。一句话：</p>
+    <div class="formula">Attention(Q, K, V) = softmax( Q·K<sup>T</sup> / √d ) · V<em>当前 token 的 Q，对照历史所有 token 的 K 与 V</em></div>
+    <h2>1.4 关键洞察：历史 token 的 K、V 是"可复用"的</h2>
+    <p>这是连接两个阶段、并通往 KV Cache 的最重要一步。请仔细看：</p>
+    <p>当模型生成第 t 个 token 时，它需要前面 1…t−1 所有 token 的 <strong>K 和 V</strong>。当它继续生成第 t+1 个 token 时，又需要 1…t 所有 token 的 K 和 V——其中 1…t−1 这部分<strong>和上一步完全一样</strong>，因为这些 token 已经定下来了，它们的 K、V 不会改变。</p>
+    <div class="tip"><b>于是有了一个巨大的省力空间</b>既然历史 token 的 K、V 算一次就永远不变，为什么每步都重算？把它们<strong>缓存</strong>起来，每生成一个新 token，只算这一个新 token 的 K、V 并追加进缓存即可。这个缓存就是 <strong>KV Cache</strong>（第 4 章详解），它是 Decode 阶段高效运转的前提，也是显存占用的大头。</div>
+    <h2>1.5 把两阶段重新定义一遍</h2>
+    <p>有了上面的铺垫，现在可以给出更准确的定义：</p>
+    <ul>
+      <li><span class="tag pre">Prefill</span> 对<strong>已知的整段 prompt</strong>做一次前向传播，并行计算出所有 prompt token 的 K、V 存入缓存，同时得到"预测第一个输出 token"所需的信息。</li>
+      <li><span class="tag dec">Decode</span> 进入串行循环：每步把上一个 token 喂入，只计算它一个的 Q/K/V，用它的 Q 去注意缓存里的全部历史 K/V，预测下一个 token，再把新 K/V 追加进缓存。</li>
+    </ul>
+    <p>两个阶段跑的是<strong>同一个模型、同一套权重、同样的注意力公式</strong>，区别只在于：<strong>一次处理多少个 token</strong>（Prefill 是一批，Decode 是一个），以及<strong>K/V 是新算还是从缓存读</strong>。正是这一点差别，导致了下面几章要讲的截然不同的性能行为。</p>
+  </section>
+
+  <!-- ===================== 第 2 章 ===================== -->
+  <section class="chapter" id="prefill">
+    <p class="eyebrow">第 2 章 · Prefill</p>
+    <h1>Prefill 阶段：一次性吃透整段输入</h1>
+    <p class="lead">Prefill 干一件事：把用户给的整段 prompt 跑一遍前向传播，产出两样东西——<strong>全部 prompt token 的 KV Cache</strong>，以及<strong>预测第一个输出 token 所需的最后一层输出</strong>。因为整段输入已知，它可以高度并行，是典型的算力密集型负载。</p>
+    <h2>2.1 输入与输出</h2>
+    <p>假设 prompt 有 <code>N</code> 个 token。Prefill 的一次前向传播：</p>
+    <ul>
+      <li><strong>输入</strong>：N 个 token 的 embedding，形状大致为 <code>[N, d]</code>（d 是隐藏维度）。</li>
+      <li><strong>过程</strong>：N 个 token 一起穿过模型的每一层（注意力 + FFN），彼此之间通过注意力交换信息。</li>
+      <li><strong>输出</strong>：① 每一层、每个 token 的 K 和 V，全部写入 KV Cache；② 最后一个位置的输出向量，经过输出层得到"第一个生成 token"的概率分布。</li>
+    </ul>
+    <div class="note"><b>注意一个常被忽略的点</b>Prefill 计算了 N 个位置的全部表示，但<strong>真正用来预测下一个 token 的只有最后一个位置</strong>。前面 N−1 个位置的输出 logits 在普通生成中并不需要——它们存在的意义是把 K、V 算出来留给后续 Decode 用。所以 Prefill 的产物里，<strong>KV Cache 才是给未来用的主角</strong>。</div>
+    <h2>2.2 为什么 Prefill 可以并行</h2>
+    <p>因为 prompt 的所有 token 此刻全部已知。注意力虽然是"因果"的（第 t 个只能看 1…t），但这只是一个<strong>掩码（causal mask）</strong>，并不妨碍把 N 个 token 当成一个矩阵一起算——GPU 把它变成一次大的矩阵乘法 <code>[N, d] × [d, d]</code>，N 越大，矩阵越"胖"，GPU 的并行计算单元就越满。</p>
+    <figure>
+      <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <text x="360" y="24" fill="#e6e8ee" font-size="13" text-anchor="middle" font-weight="700">Prefill 的注意力：N×N 的因果矩阵（一次算完）</text>
+        <text x="40" y="70" fill="#9aa3b2" font-size="11">q1</text><text x="40" y="100" fill="#9aa3b2" font-size="11">q2</text>
+        <text x="40" y="130" fill="#9aa3b2" font-size="11">q3</text><text x="40" y="160" fill="#9aa3b2" font-size="11">q4</text>
+        <text x="40" y="190" fill="#9aa3b2" font-size="11">q5</text>
+        <text x="75" y="50" fill="#9aa3b2" font-size="11">k1</text><text x="115" y="50" fill="#9aa3b2" font-size="11">k2</text>
+        <text x="155" y="50" fill="#9aa3b2" font-size="11">k3</text><text x="195" y="50" fill="#9aa3b2" font-size="11">k4</text>
+        <text x="235" y="50" fill="#9aa3b2" font-size="11">k5</text>
+        <g stroke="#272c3a">
+          <rect x="66" y="58" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="106" y="58" width="28" height="20" fill="#161922"/><rect x="146" y="58" width="28" height="20" fill="#161922"/><rect x="186" y="58" width="28" height="20" fill="#161922"/><rect x="226" y="58" width="28" height="20" fill="#161922"/>
+          <rect x="66" y="88" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="106" y="88" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="146" y="88" width="28" height="20" fill="#161922"/><rect x="186" y="88" width="28" height="20" fill="#161922"/><rect x="226" y="88" width="28" height="20" fill="#161922"/>
+          <rect x="66" y="118" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="106" y="118" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="146" y="118" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="186" y="118" width="28" height="20" fill="#161922"/><rect x="226" y="118" width="28" height="20" fill="#161922"/>
+          <rect x="66" y="148" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="106" y="148" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="146" y="148" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="186" y="148" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="226" y="148" width="28" height="20" fill="#161922"/>
+          <rect x="66" y="178" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="106" y="178" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="146" y="178" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="186" y="178" width="28" height="20" fill="#f0a868" opacity="0.6"/><rect x="226" y="178" width="28" height="20" fill="#f0a868" opacity="0.6"/>
+        </g>
+        <text x="150" y="222" fill="#9aa3b2" font-size="11" text-anchor="middle">填色 = 需要计算的注意力对（下三角）</text>
+        <text x="430" y="90" fill="#f0a868" font-size="13" font-weight="700">≈ N² 量级的注意力计算</text>
+        <text x="430" y="116" fill="#cdd4e0" font-size="12">N 个 token 同时进 GPU，</text>
+        <text x="430" y="136" fill="#cdd4e0" font-size="12">矩阵又大又满 → 算力被打满</text>
+        <text x="430" y="166" fill="#79c0ff" font-size="12">这就是 compute-bound：</text>
+        <text x="430" y="186" fill="#cdd4e0" font-size="12">瓶颈在 GPU 的浮点算力</text>
+      </svg>
+      <figcaption>Prefill 把整段 prompt 的注意力一次算清，计算量随 N 近似平方增长</figcaption>
+    </figure>
+    <h2>2.3 计算量从哪来：两块大头</h2>
+    <p>Prefill 的浮点运算（FLOPs）主要来自两部分：</p>
+    <ul>
+      <li><strong>线性投影 / FFN</strong>：与 token 数 N 成正比，是计算量的主体。粗略地，每个 token 的前向计算约为 <code>2 × 参数量</code> 次浮点运算，整段 prompt 就是 <code>≈ 2 × N × 参数量</code>。</li>
+      <li><strong>注意力本身</strong>：Q·K<sup>T</sup> 和对 V 加权，复杂度随 <code>N²</code> 增长。短 prompt 时占比不大，但 prompt 很长时会变得显著——这也是超长上下文成本高的原因之一。</li>
+    </ul>
+    <h2>2.4 Prefill 的性能特征</h2>
+    <table>
+      <tr><th>维度</th><th>Prefill 的表现</th></tr>
+      <tr><td>一次处理的 token 数</td><td>很多（整段 prompt，N 个）</td></tr>
+      <tr><td>并行度</td><td>高，N 个 token 同时算</td></tr>
+      <tr><td>瓶颈</td><td class="prefill"><b>算力受限（compute-bound）</b></td></tr>
+      <tr><td>GPU 利用率</td><td>高，容易接近峰值算力</td></tr>
+      <tr><td>对延迟的影响</td><td>决定 <b>首字延迟 TTFT</b>（见第 6 章）</td></tr>
+      <tr><td>耗时如何随输入增长</td><td>大致随 prompt 长度线性增长（注意力部分更快）</td></tr>
+    </table>
+    <div class="warn"><b>一个实践后果</b>因为 Prefill 的耗时随 prompt 长度增长，<strong>超长 prompt 会显著拉高首字延迟</strong>。一段 8K token 的上下文，光 Prefill 就可能占掉用户感知到的等待的绝大部分。这也是为什么"减少不必要的上下文""prompt 缓存（prefix caching）"等手段对体验影响很大——它们直接砍掉 Prefill 的工作量。</div>
+    <h2>2.5 小结</h2>
+    <p>Prefill 是"读题"阶段：把已知的整段输入并行跑一遍，攒出 KV Cache，并迈出生成的第一步。它算得多、并行好、吃算力，决定了用户等待第一个字的时间。下一章我们看它的反面——Decode。</p>
+  </section>
+
+  <!-- ===================== 第 3 章 ===================== -->
+  <section class="chapter" id="decode">
+    <p class="eyebrow">第 3 章 · Decode</p>
+    <h1>Decode 阶段：逐字作答的串行循环</h1>
+    <p class="lead">Decode 是生成回答的阶段。它每一步只做一件小事：拿上一个 token，算出下一个 token。计算量小得可怜，却因为<strong>必须串行</strong>、且<strong>每步都要把整个模型权重和缓存从显存搬一遍</strong>，成了典型的访存密集型负载，也是推理慢、贵的主因。</p>
+    <h2>3.1 一步 Decode 做了什么</h2>
+    <p>假设 Prefill 已经跑完，KV Cache 里已有 prompt 的全部 K、V。现在进入循环，每一步：</p>
+    <ol>
+      <li>取<strong>上一个生成的 token</strong>（第一步取的是 Prefill 预测出的首个 token），形状 <code>[1, d]</code>——注意只有 1 个 token。</li>
+      <li>让它穿过每一层。在注意力里，只为这 1 个新 token 计算 Q、K、V。</li>
+      <li>用它的 Q，去注意 <strong>KV Cache 里的全部历史 K、V</strong>（prompt + 之前生成的所有 token）。</li>
+      <li>把这 1 个新 token 的 K、V <strong>追加</strong>进 KV Cache。</li>
+      <li>最后一层输出 → logits → 采样出下一个 token。</li>
+      <li>回到第 1 步。直到生成结束符或达到上限。</li>
+    </ol>
+    <figure>
+      <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <text x="360" y="22" fill="#e6e8ee" font-size="13" text-anchor="middle" font-weight="700">Decode 第 t 步：只有 1 行 Query，对照整列历史 KV</text>
+        <text x="120" y="58" fill="#9aa3b2" font-size="11">KV Cache（历史，只读 + 追加）</text>
+        <g stroke="#272c3a">
+          <rect x="120" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/><rect x="152" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/><rect x="184" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/><rect x="216" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/><rect x="248" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/><rect x="280" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/>
+          <text x="320" y="82" fill="#9aa3b2" font-size="14">· · ·</text>
+          <rect x="350" y="66" width="30" height="22" fill="#79c0ff" opacity="0.35"/>
+          <rect x="386" y="66" width="30" height="22" fill="#7ee0c0" opacity="0.7" stroke="#7ee0c0"/>
+        </g>
+        <text x="401" y="108" fill="#7ee0c0" font-size="10" text-anchor="middle">↑新增</text>
+        <rect x="120" y="140" width="30" height="22" fill="#f0a868" opacity="0.8"/>
+        <text x="170" y="156" fill="#f0a868" font-size="12">Q：仅当前 1 个 token</text>
+        <text x="120" y="196" fill="#cdd4e0" font-size="12">计算量 ≈ 1 个 token，</text>
+        <text x="300" y="196" fill="#cdd4e0" font-size="12">但要读取全部权重 + 整个 Cache → </text>
+        <text x="560" y="196" fill="#79c0ff" font-size="12" font-weight="700">memory-bound</text>
+      </svg>
+      <figcaption>每步只生成 1 个 token，注意力从"满矩阵"退化为"一行"</figcaption>
+    </figure>
+    <h2>3.2 为什么 Decode 必须串行</h2>
+    <p>第 t+1 个 token 的输入，是第 t 个 token——而第 t 个 token 要等这一步算完、采样出来才知道。<strong>未来的输入依赖当前的输出</strong>，所以无法像 Prefill 那样把多个 token 摊开一起算。这是自回归的本质约束（第 1 章），不是工程没做好。</p>
+    <div class="note"><b>那 Prefill 不也是因果的吗，怎么能并行？</b>因果掩码只限制"谁能看谁"，不限制"谁先算"。Prefill 的 token 全部已知，可以同时摆上桌；Decode 的 token 一个还没生出来，逼着你排队。已知 vs 未知，是可并行与否的分水岭。</div>
+    <h2>3.3 致命的不对称：算得少，搬得多</h2>
+    <p>Decode 的每一步，计算量只相当于<strong>处理 1 个 token</strong>，少到 GPU 的计算单元几乎是闲着的。但要完成这一步，GPU 必须：</p>
+    <ul>
+      <li>把<strong>整个模型的权重</strong>（几 GB 到上百 GB）从显存读进计算单元——哪怕只算 1 个 token，权重也得全读一遍；</li>
+      <li>把<strong>整个 KV Cache</strong>（随生成长度不断变大）读出来做注意力。</li>
+    </ul>
+    <p>于是出现了一个尴尬的局面：<strong>搬运数据的时间远远大于计算的时间</strong>，GPU 大部分时候在等显存。这就是访存受限（memory-bound）。一个直观的比方：让一位大厨（强大的算力）只为切一根葱，却要求他每次都把整个仓库的食材（权重 + 缓存）搬到台前再搬回去——切葱的功夫可以忽略，全耗在搬运上。</p>
+    <div class="tip"><b>这把矛盾点了出来，也指明了出路</b>既然每步搬一次权重只切一根葱太浪费，那就<strong>一次多切几根</strong>——把多个请求的"当前 token"凑成一批，共享同一次权重读取。这就是 batching（第 7 章），是提升 Decode 吞吐最有效的手段，原因正是它<strong>摊薄了昂贵的权重访存</strong>。</div>
+    <h2>3.4 Decode 的性能特征</h2>
+    <table>
+      <tr><th>维度</th><th>Decode 的表现</th></tr>
+      <tr><td>一次处理的 token 数</td><td>1 个（每个请求）</td></tr>
+      <tr><td>并行度</td><td>单请求内为零（串行）；跨请求可 batch</td></tr>
+      <tr><td>瓶颈</td><td class="decode"><b>访存受限（memory-bound）</b></td></tr>
+      <tr><td>GPU 算力利用率</td><td>低，常只有个位数百分比</td></tr>
+      <tr><td>对延迟的影响</td><td>决定 <b>每字延迟 TPOT</b> 与总生成时间（见第 6 章）</td></tr>
+      <tr><td>随生成变长的代价</td><td>KV Cache 越来越大，每步访存越来越多，且持续占显存</td></tr>
+    </table>
+    <h2>3.5 Prefill 与 Decode 并排看</h2>
+    <table>
+      <tr><th>对比项</th><th class="prefill">Prefill</th><th class="decode">Decode</th></tr>
+      <tr><td>处理对象</td><td class="prefill">整段已知 prompt</td><td class="decode">逐个新生成 token</td></tr>
+      <tr><td>token 数 / 步</td><td class="prefill">N（多）</td><td class="decode">1（少）</td></tr>
+      <tr><td>能否并行</td><td class="prefill">能</td><td class="decode">单请求不能</td></tr>
+      <tr><td>注意力形态</td><td class="prefill">N×N 满矩阵</td><td class="decode">1×历史 一行</td></tr>
+      <tr><td>瓶颈</td><td class="prefill">算力</td><td class="decode">访存带宽</td></tr>
+      <tr><td>决定的指标</td><td class="prefill">首字延迟 TTFT</td><td class="decode">每字延迟 TPOT</td></tr>
+      <tr><td>执行次数</td><td class="prefill">1 次</td><td class="decode">输出多少 token 就多少次</td></tr>
+    </table>
+    <p>这张表是全篇的"地图"。接下来第 4 章讲串起两者的 KV Cache，第 5 章把"算力 vs 访存"这件事讲到底。</p>
+  </section>
+
+  <!-- ===================== 第 4 章 ===================== -->
+  <section class="chapter" id="kvcache">
+    <p class="eyebrow">第 4 章 · 核心机制</p>
+    <h1>KV Cache：把两个阶段缝在一起</h1>
+    <p class="lead">KV Cache 是理解推理系统的枢纽。它由 Prefill 创建，被 Decode 反复读取和追加，是"省掉重复计算"的功臣，也是"吃光显存、限制并发"的元凶。搞懂它，前后几章全部连成一条线。</p>
+    <h2>4.1 它缓存的到底是什么</h2>
+    <p>回顾第 1 章：注意力里，每个 token 都会产出 Q、K、V 三个向量。其中<strong>历史 token 的 K 和 V 一旦算出就不再改变</strong>（因为这些 token 定下来了）。KV Cache 缓存的正是<strong>每一层、每个历史 token 的 K 向量和 V 向量</strong>。注意：</p>
+    <ul>
+      <li>缓存的是 <strong>K 和 V</strong>，<strong>不缓存 Q</strong>——Q 是"当前 token 想查什么"，每步都是新的，没有复用价值。</li>
+      <li>缓存是<strong>逐层</strong>的：模型有多少层，就有多少份 K/V 缓存。</li>
+      <li>它随生成<strong>只增不减</strong>：每生成一个 token，就往每层追加一份新的 K、V。</li>
+    </ul>
+    <h2>4.2 没有 KV Cache 会怎样</h2>
+    <p>设想关掉缓存：生成第 t 个 token 时，要重新计算 1…t−1 所有 token 的 K、V；生成第 t+1 个时，又把 1…t 全重算一遍……每一步都把历史从头算起。总计算量会从"随长度线性"恶化成"随长度平方"，长文本生成将慢到不可用。</p>
+    <div class="tip"><b>KV Cache 的本质</b>它是一个<strong>用显存换计算</strong>的经典权衡：花一块持续增长的显存，把"每步重算全部历史"省成"每步只算 1 个新 token + 读一遍缓存"。这是自回归生成能高效跑起来的前提。</div>
+    <h2>4.3 两阶段视角下的 KV Cache 生命周期</h2>
+    <figure>
+      <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <rect x="30" y="40" width="170" height="60" rx="8" fill="#f0a868" opacity="0.16" stroke="#f0a868"/>
+        <text x="115" y="65" fill="#f0a868" font-size="13" font-weight="700" text-anchor="middle">Prefill</text>
+        <text x="115" y="86" fill="#cdd4e0" font-size="11" text-anchor="middle">批量写入 N 份 KV</text>
+        <text x="360" y="135" fill="#9aa3b2" font-size="11" text-anchor="middle">KV Cache（随时间增长）</text>
+        <g stroke="#272c3a">
+          <rect x="140" y="145" width="20" height="26" fill="#f0a868" opacity="0.5"/><rect x="162" y="145" width="20" height="26" fill="#f0a868" opacity="0.5"/><rect x="184" y="145" width="20" height="26" fill="#f0a868" opacity="0.5"/><rect x="206" y="145" width="20" height="26" fill="#f0a868" opacity="0.5"/>
+          <text x="232" y="163" fill="#f0a868" font-size="11">← prompt 的 KV（Prefill 写）</text>
+        </g>
+        <g stroke="#272c3a">
+          <rect x="430" y="145" width="20" height="26" fill="#79c0ff" opacity="0.55"/><rect x="452" y="145" width="20" height="26" fill="#79c0ff" opacity="0.55"/><rect x="474" y="145" width="20" height="26" fill="#79c0ff" opacity="0.55"/>
+          <text x="500" y="163" fill="#79c0ff" font-size="11">← 生成 token 的 KV（Decode 逐个追加）</text>
+        </g>
+        <rect x="520" y="40" width="170" height="60" rx="8" fill="#79c0ff" opacity="0.16" stroke="#79c0ff"/>
+        <text x="605" y="65" fill="#79c0ff" font-size="13" font-weight="700" text-anchor="middle">Decode（循环）</text>
+        <text x="605" y="86" fill="#cdd4e0" font-size="11" text-anchor="middle">每步读全部 + 追加 1 份</text>
+        <line x1="115" y1="100" x2="150" y2="143" stroke="#f0a868" stroke-width="1.5" marker-end="url(#b4)"/>
+        <line x1="605" y1="100" x2="475" y2="143" stroke="#79c0ff" stroke-width="1.5" marker-end="url(#b4)"/>
+        <defs><marker id="b4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9aa3b2"/></marker></defs>
+      </svg>
+      <figcaption>Prefill 一次性把 prompt 的 KV 写满，Decode 在其后逐格追加并整体读取</figcaption>
+    </figure>
+    <h2>4.4 算一笔显存账（理解量级即可）</h2>
+    <p>KV Cache 的大小有一个直观的公式，不必背，但要理解它和哪些量成正比：</p>
+    <div class="formula">KV 显存 ≈ 2 × 层数 × KV头数 × 头维度 × 序列长度 × 批大小 × 精度字节<em>2 代表 K 和 V 各一份</em></div>
+    <p>关键结论：</p>
+    <ul>
+      <li>与<strong>序列长度成正比</strong>——上下文越长、生成越长，缓存越大。这是长上下文昂贵的核心原因之一。</li>
+      <li>与<strong>并发请求数（批大小）成正比</strong>——同时服务的用户越多，缓存总量越大。</li>
+      <li>它和模型权重<strong>分开占显存</strong>。权重是固定开销，KV Cache 是随负载浮动的开销。</li>
+    </ul>
+    <div class="warn"><b>它常常才是并发的真正天花板</b>很多人以为"能服务多少并发"由算力决定，实际上常常是 <strong>KV Cache 把显存吃满了</strong>，导致无法再接新请求。所以省显存的 KV 优化（下一条）几乎等价于"提升并发能力"。</div>
+    <h2>4.5 围绕 KV Cache 的优化（先建立框架认知）</h2>
+    <p>这些会在第 7 章展开，这里先知道它们都在解决"KV Cache 太大 / 太碎 / 不复用"的问题：</p>
+    <ul>
+      <li><strong>GQA / MQA（分组 / 多查询注意力）</strong>：让多个注意力头<strong>共享同一份 K、V</strong>，直接把 KV 缓存缩小数倍。现代大模型几乎都用，是省显存的"出厂设置"。</li>
+      <li><strong>PagedAttention（分页）</strong>：像操作系统管理内存那样，把 KV Cache 切成小块按需分配，消除碎片浪费——vLLM 的招牌设计。</li>
+      <li><strong>Prefix Caching（前缀缓存）</strong>：多个请求若共享相同前缀（如同一段 system prompt），它们的 KV 可以<strong>复用</strong>，省掉重复 Prefill。</li>
+      <li><strong>量化 / 卸载</strong>：把 KV 用更低精度存储，或暂时挪到 CPU 内存，腾出显存。</li>
+    </ul>
+    <h2>4.6 小结</h2>
+    <p>KV Cache 是"用显存换计算"的核心机制：Prefill 创建它，Decode 复用并扩展它。它让自回归生成变得可行，同时把瓶颈从"重复计算"转移到了"访存与显存容量"——这恰好解释了为什么 Decode 是 memory-bound，也为什么显存常是并发的上限。带着这个认识，下一章我们正式建立"算力受限 vs 访存受限"的分析框架。</p>
+  </section>
+
+  <!-- ===================== 第 5 章 ===================== -->
+  <section class="chapter" id="compute">
+    <p class="eyebrow">第 5 章 · 计算特性</p>
+    <h1>算力受限 vs 访存受限：一张图说清</h1>
+    <p class="lead">前几章反复提到 Prefill 是 compute-bound、Decode 是 memory-bound。这一章把这句话讲到底——用一个叫"算术强度"的概念和 roofline 模型，让你看清两个阶段为什么必然落在硬件性能曲线的两端。</p>
+    <h2>5.1 GPU 有两种"速度上限"</h2>
+    <p>任何一段计算在 GPU 上跑，都同时受两个能力约束：</p>
+    <ul>
+      <li><strong>算力（compute）</strong>：每秒能做多少次浮点运算，单位 FLOP/s。比如某 GPU 峰值约几百 TFLOP/s。</li>
+      <li><strong>访存带宽（memory bandwidth）</strong>：每秒能从显存（HBM）搬多少字节进计算单元，单位 GB/s 或 TB/s。</li>
+    </ul>
+    <p>一段计算最终跑多快，取决于这两者中<strong>先到达上限的那个</strong>。如果计算单元先满，就是算力受限；如果带宽先满（计算单元在等数据），就是访存受限。</p>
+    <h2>5.2 算术强度：判断卡在哪一边的标尺</h2>
+    <p><strong>算术强度（arithmetic intensity）</strong> = 这段计算的浮点运算次数 ÷ 它需要搬运的字节数。</p>
+    <div class="formula">算术强度 = FLOPs / Bytes<em>每搬运 1 字节数据，能"喂饱"多少次计算</em></div>
+    <ul>
+      <li>算术强度<strong>高</strong>：搬一点数据能算很久 → 计算单元忙得过来 → 多半是<strong>算力受限</strong>。</li>
+      <li>算术强度<strong>低</strong>：搬一堆数据只算一点点 → 计算单元在等数据 → 多半是<strong>访存受限</strong>。</li>
+    </ul>
+    <h2>5.3 把两个阶段放进 Roofline 图</h2>
+    <figure>
+      <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <line x1="70" y1="300" x2="660" y2="300" stroke="#9aa3b2" stroke-width="1.5"/>
+        <line x1="70" y1="300" x2="70" y2="40" stroke="#9aa3b2" stroke-width="1.5"/>
+        <text x="365" y="338" fill="#cdd4e0" font-size="12" text-anchor="middle">算术强度（FLOPs / Byte）→ 对数轴</text>
+        <text x="24" y="170" fill="#cdd4e0" font-size="12" transform="rotate(-90 24 170)" text-anchor="middle">可达性能（FLOP/s）</text>
+        <line x1="70" y1="300" x2="330" y2="90" stroke="#7ee0c0" stroke-width="2.5"/>
+        <line x1="330" y1="90" x2="660" y2="90" stroke="#6ea8fe" stroke-width="2.5"/>
+        <text x="150" y="200" fill="#7ee0c0" font-size="12" transform="rotate(-39 150 200)">带宽屋顶（访存受限区）</text>
+        <text x="470" y="80" fill="#6ea8fe" font-size="12">算力屋顶（算力受限区）</text>
+        <line x1="330" y1="90" x2="330" y2="300" stroke-dasharray="4 4" stroke="#444b5e"/>
+        <text x="330" y="316" fill="#9aa3b2" font-size="10" text-anchor="middle">拐点</text>
+        <circle cx="150" cy="178" r="7" fill="#79c0ff"/>
+        <text x="150" y="160" fill="#79c0ff" font-size="13" font-weight="700" text-anchor="middle">Decode</text>
+        <text x="150" y="228" fill="#9aa3b2" font-size="10" text-anchor="middle">强度低</text>
+        <text x="150" y="242" fill="#9aa3b2" font-size="10" text-anchor="middle">卡带宽</text>
+        <circle cx="500" cy="90" r="7" fill="#f0a868"/>
+        <text x="500" y="72" fill="#f0a868" font-size="13" font-weight="700" text-anchor="middle">Prefill</text>
+        <text x="500" y="116" fill="#9aa3b2" font-size="10" text-anchor="middle">强度高，贴着算力屋顶</text>
+      </svg>
+      <figcaption>Roofline：左侧斜坡是访存受限区，右侧平顶是算力受限区。Decode 落在左边，Prefill 落在右边</figcaption>
+    </figure>
+    <p>这张图是整套理论的浓缩。横轴是算术强度，纵轴是实际能达到的性能。斜线代表"被带宽卡住"时的上限，平线代表"被算力卡住"时的上限，两者交点是<strong>拐点（ridge point）</strong>。</p>
+    <ul>
+      <li><span class="tag pre">Prefill</span> 一次算 N 个 token，复用同一批权重做大量计算，<strong>算术强度高</strong>，落在拐点右侧、贴着算力屋顶。增大算力才能更快。</li>
+      <li><span class="tag dec">Decode</span> 一次只算 1 个 token，却要把整套权重读一遍，<strong>算术强度极低</strong>，落在拐点左侧斜坡上。此时再强的算力也没用，<strong>只有更高带宽或更高的有效强度才有帮助</strong>。</li>
+    </ul>
+    <h2>5.4 为什么 batching 能救 Decode，却对 Prefill 帮助有限</h2>
+    <p>这是 roofline 框架最有用的推论。Batching = 把 B 个请求的"当前 token"凑成一批一起算。</p>
+    <ul>
+      <li>对 <span class="tag dec">Decode</span>：权重只需读<strong>一次</strong>，却服务了 B 个 token 的计算 → 计算量涨了 B 倍，访存几乎没变 → <strong>算术强度提高 B 倍</strong>，在 roofline 上沿斜坡向右移动，逼近拐点。吞吐随之大涨。这就是为什么所有推理系统都拼命攒 batch。</li>
+      <li>对 <span class="tag pre">Prefill</span>：它本来就在算力屋顶下，算术强度已经很高，再加 batch 只是让计算更多、但单位性能已经触顶 → 主要是<strong>排队/吞吐</strong>层面的收益，而非"解锁闲置算力"。</li>
+    </ul>
+    <div class="tip"><b>一句话记住</b>Prefill 缺的是"算力时间"，Decode 缺的是"把昂贵的权重读取摊给更多 token"。前者靠更强的卡 / 更多并行，后者靠 batching、GQA、量化等提高有效算术强度的手段。</div>
+    <h2>5.5 这把后面所有优化都解释了</h2>
+    <table>
+      <tr><th>优化手段</th><th>本质上在做什么</th></tr>
+      <tr><td>Continuous batching</td><td class="decode">持续把更多请求拼进 Decode 批次，抬高算术强度</td></tr>
+      <tr><td>GQA / MQA</td><td class="decode">缩小 KV，减少 Decode 每步的访存字节</td></tr>
+      <tr><td>KV 量化</td><td class="decode">同样减少访存字节</td></tr>
+      <tr><td>Chunked prefill</td><td>把 Prefill 切块，与 Decode 混跑，填满 GPU 空隙</td></tr>
+      <tr><td>投机解码</td><td class="decode">一次验证多个候选 token，单次权重读取产出更多 token</td></tr>
+    </table>
+    <p>看懂了 roofline，你会发现第 7 章的各种技巧都不是孤立的招式，而是同一个目标的不同侧面：<strong>让算力受限的 Prefill 别等，让访存受限的 Decode 别浪费算力</strong>。下一章先建立衡量这一切的指标。</p>
+  </section>
+
+  <!-- ===================== 第 6 章 ===================== -->
+  <section class="chapter" id="metrics">
+    <p class="eyebrow">第 6 章 · 性能指标</p>
+    <h1>怎么衡量：TTFT、TPOT、吞吐与延迟</h1>
+    <p class="lead">两个阶段对应两类用户体验，也对应两组截然不同的指标。分不清它们，就会优化错方向。这一章建立一套能把"快不快""划不划算"说清楚的度量语言。</p>
+    <h2>6.1 两个核心延迟指标</h2>
+    <div class="kvgrid">
+      <div class="card pre"><h4>TTFT · 首字延迟</h4>
+        <p style="font-size:13.5px;color:#cdd4e0">Time To First Token：从请求到达，到吐出<strong>第一个</strong> token 的时间。</p>
+        <p style="font-size:13.5px;color:#cdd4e0">主要由 <span class="tag pre">Prefill</span> 决定，随 prompt 长度增长。它决定了"反应快不快"。</p></div>
+      <div class="card dec"><h4>TPOT · 每字延迟</h4>
+        <p style="font-size:13.5px;color:#cdd4e0">Time Per Output Token：进入流式输出后，<strong>相邻两个</strong> token 之间的平均间隔（也叫 ITL，token 间延迟）。</p>
+        <p style="font-size:13.5px;color:#cdd4e0">由 <span class="tag dec">Decode</span> 决定，体现"打字速度"。常用每秒 token 数表示。</p></div>
+    </div>
+    <h2>6.2 一个请求的总延迟怎么拆</h2>
+    <p>把两个指标拼起来，就得到端到端延迟的直观公式：</p>
+    <div class="formula">总延迟 ≈ TTFT + TPOT × (输出 token 数 − 1)<em>首字的等待 + 之后每个字的累加</em></div>
+    <figure>
+      <svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <line x1="40" y1="100" x2="660" y2="100" stroke="#9aa3b2" stroke-width="1.5"/>
+        <text x="40" y="135" fill="#9aa3b2" font-size="11">请求到达</text>
+        <rect x="40" y="74" width="220" height="26" fill="#f0a868" opacity="0.25" stroke="#f0a868"/>
+        <text x="150" y="92" fill="#f0a868" font-size="12" text-anchor="middle" font-weight="700">TTFT（Prefill 为主）</text>
+        <circle cx="260" cy="100" r="5" fill="#7ee0c0"/>
+        <text x="260" y="64" fill="#7ee0c0" font-size="11" text-anchor="middle">首 token</text>
+        <g fill="#79c0ff">
+          <circle cx="320" cy="100" r="5"/><circle cx="380" cy="100" r="5"/><circle cx="440" cy="100" r="5"/><circle cx="500" cy="100" r="5"/><circle cx="560" cy="100" r="5"/><circle cx="620" cy="100" r="5"/>
+        </g>
+        <line x1="320" y1="118" x2="380" y2="118" stroke="#79c0ff" stroke-width="1.5"/>
+        <text x="350" y="135" fill="#79c0ff" font-size="11" text-anchor="middle">TPOT</text>
+        <text x="470" y="64" fill="#79c0ff" font-size="11" text-anchor="middle">Decode 逐 token 输出</text>
+      </svg>
+      <figcaption>等待第一个字的是 TTFT，之后每个字的间隔是 TPOT</figcaption>
+    </figure>
+    <div class="note"><b>体验上的差异</b>TTFT 高 = 用户盯着空白等很久才有反应；TPOT 高 = 文字一顿一顿地往外蹦。短输出（如分类、判断）对 TTFT 敏感；长输出（如写文章、生成代码）对 TPOT 敏感，因为它要乘以很多 token。</div>
+    <h2>6.3 吞吐：另一套视角</h2>
+    <p>延迟关心"单个请求多快"，吞吐关心"系统单位时间能干多少活"，是成本的核心。</p>
+    <ul>
+      <li><strong>Token 吞吐</strong>：每秒生成多少 token（tokens/s），通常按整机统计。Decode 的 batching 直接拉高它。</li>
+      <li><strong>请求吞吐</strong>：每秒完成多少请求（req/s 或 QPS）。</li>
+    </ul>
+    <h2>6.4 吞吐与延迟的根本矛盾</h2>
+    <p>提高吞吐最有效的办法是<strong>增大 batch</strong>（第 5 章解释过，这能抬高 Decode 的算术强度）。但 batch 越大：</p>
+    <ul>
+      <li>单个请求要和更多请求<strong>共享算力、排更长的队</strong>，单请求的 TPOT/TTFT 往往变差；</li>
+      <li>KV Cache 占用更多显存，可能触及容量上限。</li>
+    </ul>
+    <p>于是形成经典权衡：<strong>追求低延迟就难有高吞吐，追求高吞吐就要牺牲单请求延迟</strong>。</p>
+    <figure>
+      <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <line x1="70" y1="240" x2="600" y2="240" stroke="#9aa3b2" stroke-width="1.5"/>
+        <line x1="70" y1="240" x2="70" y2="30" stroke="#9aa3b2" stroke-width="1.5"/>
+        <text x="335" y="272" fill="#cdd4e0" font-size="12" text-anchor="middle">吞吐（tokens/s）→</text>
+        <text x="28" y="135" fill="#cdd4e0" font-size="12" transform="rotate(-90 28 135)" text-anchor="middle">单请求延迟 →</text>
+        <path d="M90,210 C220,205 330,190 430,150 C500,120 540,70 570,45" fill="none" stroke="#6ea8fe" stroke-width="2.5"/>
+        <circle cx="160" cy="206" r="6" fill="#7ee0c0"/>
+        <text x="160" y="196" fill="#7ee0c0" font-size="11" text-anchor="middle">小 batch</text>
+        <text x="160" y="226" fill="#9aa3b2" font-size="10" text-anchor="middle">延迟低、吞吐低</text>
+        <circle cx="470" cy="135" r="6" fill="#ffd479"/>
+        <text x="470" y="125" fill="#ffd479" font-size="11" text-anchor="middle">甜点区</text>
+        <circle cx="560" cy="55" r="6" fill="#f0a868"/>
+        <text x="560" y="45" fill="#f0a868" font-size="11" text-anchor="middle">大 batch</text>
+        <text x="560" y="78" fill="#9aa3b2" font-size="10" text-anchor="middle">吞吐高、延迟差</text>
+      </svg>
+      <figcaption>把吞吐推得越高，单请求延迟通常越差。运营就是在这条曲线上找一个满足 SLA 的工作点</figcaption>
+    </figure>
+    <h2>6.5 实践中常用的服务等级目标（SLO/SLA）</h2>
+    <p>线上服务通常不看平均值，而看<strong>尾延迟</strong>（如 P95、P99），并对两个阶段分别设目标，例如："P99 TTFT &lt; 500ms 且 P95 TPOT &lt; 50ms"。然后在满足这组约束的前提下，把吞吐(即把硬件成本)压到最低。</p>
+    <div class="tip"><b>为什么要分两阶段设指标</b>因为它们由不同阶段、不同瓶颈决定，优化手段也不同。TTFT 不达标 → 往 Prefill 想办法（prefix caching、chunked prefill、减上下文）；TPOT 不达标 → 往 Decode 想办法（更小的 KV、投机解码、给 Decode 更多带宽）。把它们混成一个"延迟"指标，就会失去优化的抓手。</div>
+    <p>有了这套度量语言，第 7 章就能讲清各种系统优化"改善了哪个指标、付出了什么代价"。</p>
+  </section>
+
+  <!-- ===================== 第 7 章 ===================== -->
+  <section class="chapter" id="optimize">
+    <p class="eyebrow">第 7 章 · 系统优化</p>
+    <h1>系统优化：调和两阶段的矛盾</h1>
+    <p class="lead">前面建立的所有概念，在这一章兑现成真实的工程手段。每一种优化都对应一个明确的问题：Prefill 太占场、Decode 太浪费、两者抢资源、KV 太大。理解"它解决什么"，比记住名字重要得多。</p>
+    <h2>7.1 矛盾的根源：Prefill 与 Decode 抢同一块 GPU</h2>
+    <p>一台推理服务器要同时面对很多请求：有的刚到、需要 Prefill，有的在输出中、需要 Decode。这两类活儿性格相反——Prefill 吃算力、一来就是一大坨；Decode 吃带宽、零零碎碎但量大。怎么把它们安排在同一块（或同一组）GPU 上而不互相拖累，就是调度的核心难题。下面的手段，基本都在回答这个问题。</p>
+    <h2>7.2 Continuous Batching（连续批处理）</h2>
+    <p><strong>问题</strong>：传统静态 batching 要等一批请求都到齐才开跑，且必须等批里最慢的请求结束才能换下一批——短请求被长请求拖着，GPU 大量空转。</p>
+    <p><strong>做法</strong>：以 token 为粒度动态拼批。每一步结束后，已生成完的请求<strong>立刻退出</strong>、腾出位置，新到的请求<strong>随时插入</strong>当前正在跑的 Decode 批次。批次像流水一样持续滚动，不再"对齐等待"。</p>
+    <p><strong>收益</strong>：把 Decode 的算术强度持续维持在高位（第 5 章），GPU 利用率和吞吐大幅提升。这是现代推理引擎（vLLM、TGI 等）的标配，常被认为是吞吐提升最大的单项优化。</p>
+    <div class="tag dec">主要改善 Decode 吞吐</div>
+    <h2>7.3 PagedAttention 与分页 KV Cache</h2>
+    <p><strong>问题</strong>：KV Cache 随生成增长，长度事先不知道。若给每个请求预留一整段连续显存，会产生大量<strong>内部碎片</strong>（预留多了浪费）和<strong>外部碎片</strong>（凑不出连续大块），显存利用率很低。</p>
+    <p><strong>做法</strong>：借鉴操作系统虚拟内存，把 KV Cache 切成固定大小的"块（page）"，按需分配、用逻辑页表映射。请求要多少给多少，不必连续。</p>
+    <p><strong>收益</strong>：显存碎片几乎消除，同样显存能塞下更多并发请求 → 更大的有效 batch → 更高吞吐。它还让<strong>前缀共享</strong>变得容易（见下）。这是 vLLM 的招牌设计。</p>
+    <div class="tag dec">提升显存利用率 → 提升并发与吞吐</div>
+    <h2>7.4 Prefix Caching（前缀缓存）</h2>
+    <p><strong>问题</strong>：很多请求开头是一样的——相同的 system prompt、相同的少样本示例、多轮对话里相同的历史。每次都对这段相同前缀重新做 Prefill，是纯重复劳动。</p>
+    <p><strong>做法</strong>：把已经算过的前缀对应的 KV Cache 留存下来，遇到相同前缀的新请求<strong>直接复用</strong>，跳过这部分 Prefill。配合分页很自然——共享前缀就是共享那些页。</p>
+    <p><strong>收益</strong>：命中时 TTFT 大幅下降、Prefill 算力开销骤减。对话类、Agent 类、固定模板类场景收益尤其明显。</p>
+    <div class="tag pre">主要改善 TTFT 与 Prefill 成本</div>
+    <h2>7.5 Chunked Prefill（分块预填充）</h2>
+    <p><strong>问题</strong>：一个超长 prompt 的 Prefill 是一大坨算力密集型任务，它一旦上 GPU，正在进行的 Decode 步骤就被<strong>卡住排队</strong>，导致其他用户的 TPOT 突然飙高（卡顿）。</p>
+    <p><strong>做法</strong>：把长 Prefill 切成若干小块，分多步执行；每一步把一小块 Prefill 和正在进行的若干 Decode <strong>混在同一个批次</strong>里跑。Prefill 借机填满 Decode 留下的算力空隙，二者共生。</p>
+    <p><strong>收益</strong>：平滑了 Prefill 对 Decode 的冲击，TPOT 更稳定；同时让 memory-bound 的 Decode 和 compute-bound 的 Prefill 互补，整机利用率更高。代价是单个长 Prefill 的完成被切散，需要权衡块大小。</p>
+    <div class="tag pre">Prefill</div> <div class="tag dec">Decode</div> <span style="color:var(--muted);font-size:13px">混合调度，稳住 TPOT</span>
+    <h2>7.6 PD 分离（Prefill / Decode Disaggregation）</h2>
+    <p><strong>问题</strong>：Prefill 和 Decode 性格相反，硬塞在同一组 GPU 上总会互相干扰——要么 Prefill 抢了 Decode 的节奏，要么为了照顾延迟而牺牲吞吐。而且两者对硬件的偏好不同（Prefill 要算力，Decode 要带宽和显存）。</p>
+    <p><strong>做法</strong>：把两个阶段<strong>拆到不同的 GPU/节点</strong>。一组机器专做 Prefill，算完把 KV Cache 通过高速互联传给另一组专做 Decode 的机器。各自独立扩缩容、独立调优。</p>
+    <p><strong>收益</strong>：消除阶段间干扰，TTFT 和 TPOT 都更可控，两类资源可按需配比。代价是要<strong>跨节点传输 KV Cache</strong>（量不小，依赖高速网络），架构也更复杂。这是大规模在线服务（如超大模型 API）近年的重要方向。</p>
+    <div class="tag pre">隔离两阶段，各自最优</div>
+    <h2>7.7 投机解码（Speculative Decoding）</h2>
+    <p><strong>问题</strong>：Decode 受访存限制，每步读一遍大模型权重只产出 1 个 token，算力大量闲置。</p>
+    <p><strong>做法</strong>：用一个<strong>小而快的草稿模型</strong>（或其他机制）一口气猜出未来若干个 token，再让<strong>大模型一次性并行验证</strong>这串猜测——验证 K 个 token 和 Decode 1 个 token 的访存成本几乎相同（都只读一遍权重），但若猜对就一次落地多个 token。</p>
+    <p><strong>收益</strong>：在不改变输出分布的前提下，把"每次权重读取的产出"从 1 个 token 提到多个，等于把闲置算力换成了速度，TPOT 显著下降。收益取决于草稿模型的命中率。</p>
+    <div class="tag dec">主要改善 TPOT（用闲置算力换访存效率）</div>
+    <h2>7.8 注意力结构层面：GQA / MQA</h2>
+    <p><strong>问题</strong>：KV Cache 大小正比于 KV 头数（第 4 章），它是 Decode 访存和显存的大头。</p>
+    <p><strong>做法</strong>：让多个 Query 头<strong>共享同一组 K、V 头</strong>。MQA 是所有头共享一组（最省），GQA 是分组共享（在质量与开销间折中，现已成主流）。</p>
+    <p><strong>收益</strong>：KV Cache 直接缩小数倍 → Decode 每步访存更少、显存能放下更多并发。这是在<strong>模型设计阶段</strong>就内建的优化，几乎所有现代大模型默认采用。</p>
+    <div class="tag dec">从源头缩小 KV</div>
+    <h2>7.9 汇总：每招对症什么</h2>
+    <table>
+      <tr><th>手段</th><th>解决的问题</th><th>主要改善</th></tr>
+      <tr><td>Continuous batching</td><td>Decode 算力浪费、批对齐空转</td><td class="decode">吞吐</td></tr>
+      <tr><td>PagedAttention</td><td>KV 显存碎片</td><td class="decode">并发 / 吞吐</td></tr>
+      <tr><td>Prefix caching</td><td>重复前缀的重复 Prefill</td><td class="prefill">TTFT</td></tr>
+      <tr><td>Chunked prefill</td><td>长 Prefill 卡住 Decode</td><td>TPOT 稳定 / 利用率</td></tr>
+      <tr><td>PD 分离</td><td>两阶段互相干扰</td><td>TTFT + TPOT 可控</td></tr>
+      <tr><td>投机解码</td><td>Decode 算力闲置</td><td class="decode">TPOT</td></tr>
+      <tr><td>GQA / MQA</td><td>KV Cache 过大</td><td class="decode">访存 / 显存</td></tr>
+    </table>
+    <p>没有"万能最优"——这些手段各有代价，真实系统是按业务的延迟/吞吐目标组合使用。下一章看看真实框架是怎么把它们落地的。</p>
+  </section>
+
+  <!-- ===================== 第 8 章 ===================== -->
+  <section class="chapter" id="frameworks">
+    <p class="eyebrow">第 8 章 · 实战</p>
+    <h1>真实框架如何处理两阶段</h1>
+    <p class="lead">理论落到代码，会看到一个清晰的执行循环：调度器在每一步决定"这一拍跑哪些 Prefill、哪些 Decode"，KV Cache 管理器决定"谁的缓存放哪、能不能复用"。这一章用框架视角把前面的概念串成一个可运行的心智模型——只求理解骨架，不抠实现细节。</p>
+    <h2>8.1 主流框架速览</h2>
+    <table>
+      <tr><th>框架</th><th>定位 / 特点</th><th>与两阶段相关的招牌能力</th></tr>
+      <tr><td><strong>vLLM</strong></td><td>开源、通用、易用</td><td>PagedAttention、continuous batching、prefix caching、chunked prefill</td></tr>
+      <tr><td><strong>TensorRT-LLM</strong></td><td>NVIDIA 官方，极致性能</td><td>编译优化的 in-flight batching、分页 KV、量化</td></tr>
+      <tr><td><strong>SGLang</strong></td><td>面向复杂提示 / Agent</td><td>RadixAttention（基于前缀树的高效 KV 复用）</td></tr>
+      <tr><td><strong>TGI</strong></td><td>Hugging Face 服务化</td><td>continuous batching、生产级服务封装</td></tr>
+    </table>
+    <div class="note"><b>名字不同，内核一致</b>各框架术语略有差异（in-flight batching ≈ continuous batching，RadixAttention 是 prefix caching 的一种实现），但都围绕第 7 章那几件事：拼批、管 KV、复用前缀、混跑两阶段。看懂了原理，换任何框架都能快速上手。</div>
+    <h2>8.2 一个迭代式调度循环（心智模型）</h2>
+    <p>把一台推理引擎想象成一个不停转的循环，每转一圈叫一个 <strong>step</strong>（一次模型前向）。每个 step，调度器做三件事：</p>
+    <ol>
+      <li><strong>挑活</strong>：从等待队列里挑出能跑的请求。有新请求要做 Prefill，有在途请求要做 Decode——在显存预算内尽量塞满这一批。</li>
+      <li><strong>组批</strong>：把选中的 Prefill 块和 Decode token 拼成一个混合批次（开启 chunked prefill 时），或分开成 Prefill 批与 Decode 批。</li>
+      <li><strong>执行 + 回收</strong>：跑一次前向；为新 token 追加 KV；已生成完的请求退出并<strong>释放它的 KV 页</strong>，归还给显存池供后来者使用。</li>
+    </ol>
+    <figure>
+      <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">
+        <text x="350" y="24" fill="#e6e8ee" font-size="13" text-anchor="middle" font-weight="700">每个 step：调度器拼出一个批次</text>
+        <rect x="30" y="60" width="140" height="200" rx="8" fill="#161922" stroke="#272c3a"/>
+        <text x="100" y="82" fill="#9aa3b2" font-size="12" text-anchor="middle">等待队列</text>
+        <rect x="46" y="96" width="108" height="26" rx="5" fill="#f0a868" opacity="0.3"/>
+        <text x="100" y="114" fill="#f0a868" font-size="11" text-anchor="middle">新请求 A（待 Prefill）</text>
+        <rect x="46" y="130" width="108" height="26" rx="5" fill="#f0a868" opacity="0.3"/>
+        <text x="100" y="148" fill="#f0a868" font-size="11" text-anchor="middle">新请求 B（待 Prefill）</text>
+        <rect x="280" y="120" width="120" height="60" rx="8" fill="#6ea8fe" opacity="0.18" stroke="#6ea8fe"/>
+        <text x="340" y="148" fill="#6ea8fe" font-size="13" font-weight="700" text-anchor="middle">调度器</text>
+        <text x="340" y="166" fill="#cdd4e0" font-size="10" text-anchor="middle">受显存 / KV 预算约束</text>
+        <line x1="170" y1="150" x2="278" y2="150" stroke="#9aa3b2" stroke-width="1.5" marker-end="url(#c8)"/>
+        <rect x="500" y="60" width="170" height="200" rx="8" fill="#161922" stroke="#272c3a"/>
+        <text x="585" y="82" fill="#9aa3b2" font-size="12" text-anchor="middle">本 step 批次</text>
+        <rect x="516" y="96" width="138" height="24" rx="5" fill="#f0a868" opacity="0.35"/>
+        <text x="585" y="113" fill="#f0a868" font-size="10" text-anchor="middle">A 的 Prefill 块</text>
+        <rect x="516" y="126" width="138" height="24" rx="5" fill="#79c0ff" opacity="0.35"/>
+        <text x="585" y="143" fill="#79c0ff" font-size="10" text-anchor="middle">C 的 Decode（第 40 token）</text>
+        <rect x="516" y="156" width="138" height="24" rx="5" fill="#79c0ff" opacity="0.35"/>
+        <text x="585" y="173" fill="#79c0ff" font-size="10" text-anchor="middle">D 的 Decode（第 12 token）</text>
+        <rect x="516" y="186" width="138" height="24" rx="5" fill="#79c0ff" opacity="0.35"/>
+        <text x="585" y="203" fill="#79c0ff" font-size="10" text-anchor="middle">E 的 Decode（第 88 token）</text>
+        <line x1="400" y1="150" x2="498" y2="150" stroke="#9aa3b2" stroke-width="1.5" marker-end="url(#c8)"/>
+        <text x="585" y="238" fill="#9aa3b2" font-size="10" text-anchor="middle">混合批：Prefill + Decode 同跑</text>
+        <defs><marker id="c8" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9aa3b2"/></marker></defs>
+      </svg>
+      <figcaption>continuous batching + chunked prefill 下，一个批次里同时有 Prefill 和多个不同进度的 Decode</figcaption>
+    </figure>
+    <h2>8.3 一段把概念串起来的伪代码</h2>
+    <pre><code>while server_running:
+    # 1) 调度：在 KV/显存预算内挑请求组批
+    batch = scheduler.pick(
+        waiting_queue, running_queue,
+        kv_budget = free_kv_blocks()
+    )
+    # batch 里可能同时含：若干 Prefill 块 + 若干 Decode token
+    #   —— continuous batching + chunked prefill
+
+    # 2) 一次模型前向（这一个 step）
+    logits = model.forward(batch, kv_cache)   # 复用/追加 KV
+
+    # 3) 采样下一个 token
+    new_tokens = sample(logits)
+
+    # 4) 写回 &amp; 回收
+    for req in batch:
+        kv_cache.append(req, new_tokens[req])   # 追加新 KV 页
+        if req.finished():                      # 命中结束符/长度上限
+            kv_cache.free(req)                  # 释放页，归还显存池
+            running_queue.remove(req)
+</code></pre>
+    <p>对照前几章：<code>kv_budget</code> 体现了"显存常是并发上限"（第 4 章）；混合 <code>batch</code> 体现了 chunked prefill 和 continuous batching（第 7 章）；<code>kv_cache.append/free</code> 就是分页 KV 的分配与回收（第 7 章）。整个循环，就是把 compute-bound 的 Prefill 和 memory-bound 的 Decode 编排在一起的工程答案。</p>
+    <h2>8.4 调参时该想什么</h2>
+    <ul>
+      <li><strong>max batch / max KV blocks</strong>：调大→吞吐升、延迟与显存压力升。对着第 6 章的 SLO 找工作点。</li>
+      <li><strong>是否开 chunked prefill、块大小</strong>：长 prompt、对 TPOT 稳定性敏感的场景值得开。</li>
+      <li><strong>是否开 prefix caching</strong>：有固定 system prompt / 多轮对话 / Agent 模板时收益大。</li>
+      <li><strong>是否上投机解码、PD 分离</strong>：追求极致 TPOT 或超大规模在线服务时考虑，代价是复杂度和额外资源。</li>
+    </ul>
+    <div class="tip"><b>从框架反推原理</b>当你在 vLLM 日志里看到 "running: 32 reqs, pending: 5, GPU KV cache usage: 88%" 这类信息，其实就是本手册的全部概念在实时跳动：32 个请求在混合批里滚动 Decode，5 个在排队等 Prefill，KV Cache 快满了——再多就要触发抢占或排队。看懂这行日志，说明你已经把两阶段吃透了。</div>
+  </section>
+
+  <!-- ===================== 第 9 章 ===================== -->
+  <section class="chapter" id="summary">
+    <p class="eyebrow">第 9 章 · 总结</p>
+    <h1>总结与速查表</h1>
+    <p class="lead">一页纸把全篇收束。先用一条逻辑链把所有概念串起来，再附上随手可查的对照表。</p>
+    <h2>9.1 一条逻辑链贯穿全篇</h2>
+    <p>语言模型靠<strong>自回归</strong>生成（第 1 章）——已知的 prompt 可并行处理，未知的续写必须串行。这一条事实劈出两个阶段：</p>
+    <p><span class="tag pre">Prefill</span> 把整段已知输入一次算完（第 2 章），产出 KV Cache 并预测首个 token，因为算得多而并行，是 <strong>compute-bound</strong>，决定 <strong>TTFT</strong>。</p>
+    <p><span class="tag dec">Decode</span> 逐个 token 串行生成（第 3 章），每步只算 1 个 token 却要把权重和缓存全读一遍，是 <strong>memory-bound</strong>，决定 <strong>TPOT</strong>。</p>
+    <p>把两者缝在一起的是 <strong>KV Cache</strong>（第 4 章）：用显存换计算，由 Prefill 写、被 Decode 读和追加，常常是并发的真正上限。</p>
+    <p><strong>Roofline</strong>（第 5 章）解释了为什么 batching 能救 Decode（抬高算术强度）却对 Prefill 帮助有限。指标体系（第 6 章）让我们能分别度量两阶段，并理解吞吐与延迟的根本矛盾。最后，所有<strong>系统优化</strong>（第 7 章）和<strong>真实框架</strong>（第 8 章）都在做同一件事：<strong>让 compute-bound 的 Prefill 别等、让 memory-bound 的 Decode 别浪费算力，再把两者和谐地编排在同一块 GPU 上</strong>。</p>
+    <h2>9.2 核心对照表</h2>
+    <table>
+      <tr><th>维度</th><th class="prefill">Prefill 预填充</th><th class="decode">Decode 解码</th></tr>
+      <tr><td>处理对象</td><td class="prefill">整段已知 prompt</td><td class="decode">逐个新生成的 token</td></tr>
+      <tr><td>每步 token 数</td><td class="prefill">N（多）</td><td class="decode">1（少）</td></tr>
+      <tr><td>能否并行</td><td class="prefill">可以（token 已知）</td><td class="decode">单请求不可（依赖上一步输出）</td></tr>
+      <tr><td>注意力形态</td><td class="prefill">N×N 因果满矩阵</td><td class="decode">1 行 query 对全部历史 KV</td></tr>
+      <tr><td>KV Cache</td><td class="prefill">批量写入</td><td class="decode">读取全部 + 追加 1 份</td></tr>
+      <tr><td>瓶颈</td><td class="prefill">算力（compute-bound）</td><td class="decode">访存带宽（memory-bound）</td></tr>
+      <tr><td>GPU 利用率</td><td class="prefill">高，逼近算力峰值</td><td class="decode">低，算力大量闲置</td></tr>
+      <tr><td>执行次数</td><td class="prefill">每请求 1 次</td><td class="decode">每输出 token 各 1 次</td></tr>
+      <tr><td>主导指标</td><td class="prefill">TTFT 首字延迟</td><td class="decode">TPOT 每字延迟</td></tr>
+      <tr><td>随什么变贵</td><td class="prefill">prompt 越长越贵</td><td class="decode">生成越长、并发越高，KV 越大越贵</td></tr>
+      <tr><td>batching 收益</td><td class="prefill">有限（已触算力顶）</td><td class="decode">巨大（抬高算术强度）</td></tr>
+    </table>
+    <h2>9.3 优化手段速查</h2>
+    <table>
+      <tr><th>手段</th><th>对症问题</th><th>主要改善</th><th>章节</th></tr>
+      <tr><td>Continuous batching</td><td>Decode 算力浪费</td><td class="decode">吞吐</td><td>7.2</td></tr>
+      <tr><td>PagedAttention</td><td>KV 显存碎片</td><td class="decode">并发 / 吞吐</td><td>7.3</td></tr>
+      <tr><td>Prefix caching</td><td>重复前缀重复 Prefill</td><td class="prefill">TTFT</td><td>7.4</td></tr>
+      <tr><td>Chunked prefill</td><td>长 Prefill 卡住 Decode</td><td>TPOT 稳定</td><td>7.5</td></tr>
+      <tr><td>PD 分离</td><td>两阶段互相干扰</td><td>TTFT+TPOT</td><td>7.6</td></tr>
+      <tr><td>投机解码</td><td>Decode 算力闲置</td><td class="decode">TPOT</td><td>7.7</td></tr>
+      <tr><td>GQA / MQA</td><td>KV Cache 过大</td><td class="decode">访存 / 显存</td><td>7.8</td></tr>
+    </table>
+    <h2>9.4 容易记混的几个点</h2>
+    <ul>
+      <li><strong>缓存的是 K 和 V，不是 Q</strong>。Q 每步都新算，没有复用价值。</li>
+      <li><strong>Prefill 也是因果的</strong>，但因果掩码只限制"看谁"，不妨碍 token 并行计算；并行与否取决于 token 是否已知。</li>
+      <li><strong>Decode 慢不是因为算得多，而是因为搬得多</strong>——每步只算 1 个 token，却要全量读权重和缓存。</li>
+      <li><strong>显存常比算力先成为并发瓶颈</strong>，因为 KV Cache 随并发和长度线性膨胀。</li>
+      <li><strong>TTFT 看 Prefill，TPOT 看 Decode</strong>，优化前先定位是哪个指标不达标。</li>
+    </ul>
+    <h2>9.5 一句话总纲</h2>
+    <div class="note" style="font-size:16px;border-left-color:var(--accent-2)">同一个模型，<b>Prefill 把已知输入并行算成 KV Cache（吃算力、定首字）</b>，<b>Decode 借助 KV Cache 串行逐字生成（吃带宽、定吐字速度）</b>；推理系统的全部艺术，就是用 batching、分页、缓存复用、混合调度等手段，把这两副相反的面孔安顿在同一块 GPU 上，同时满足延迟与吞吐。</div>
+    <p style="color:var(--muted);font-size:13px;margin-top:30px">全篇完。可从左侧目录回看任意章节。本手册内容基于截至 2025 年中的公开技术认识，框架细节请以各项目最新文档为准。</p>
+  </section>
+
+  </main>
+</div>
+
+<script>
+const CHAPTERS = [
+  {id:"index",num:"0",title:"导读 · 为什么要分两阶段"},
+  {id:"autoreg",num:"1",title:"自回归生成基础"},
+  {id:"prefill",num:"2",title:"Prefill 阶段详解"},
+  {id:"decode",num:"3",title:"Decode 阶段详解"},
+  {id:"kvcache",num:"4",title:"KV Cache：连接两阶段"},
+  {id:"compute",num:"5",title:"计算特性：算力 vs 访存"},
+  {id:"metrics",num:"6",title:"性能指标：TTFT、TPOT、吞吐"},
+  {id:"optimize",num:"7",title:"系统优化手段"},
+  {id:"frameworks",num:"8",title:"实战：框架如何调度"},
+  {id:"summary",num:"9",title:"总结与速查表"}
+];
+const toc = document.getElementById("toc");
+toc.innerHTML = CHAPTERS.map(c =>
+  `<li><a data-id="${c.id}"><span class="num">${c.num}</span><span>${c.title}</span></a></li>`).join("");
+const sidebar = document.getElementById("sidebar");
+
+function show(id, push){
+  const c = CHAPTERS.find(x=>x.id===id) ? id : "index";
+  document.querySelectorAll(".chapter").forEach(s=>s.classList.toggle("active", s.id===c));
+  toc.querySelectorAll("a").forEach(a=>a.classList.toggle("active", a.dataset.id===c));
+  // build pager inside active chapter (once)
+  const sec = document.getElementById(c);
+  let pg = sec.querySelector(".pager");
+  if(!pg){
+    const i = CHAPTERS.findIndex(x=>x.id===c);
+    const prev=CHAPTERS[i-1], next=CHAPTERS[i+1];
+    pg=document.createElement("nav"); pg.className="pager";
+    pg.innerHTML =
+      (prev?`<a class="prev" data-id="${prev.id}"><span class="dir">← 上一章</span><span class="ttl">${prev.title}</span></a>`
+           :`<a class="prev disabled"><span class="dir">← 上一章</span><span class="ttl">已是第一章</span></a>`)+
+      (next?`<a class="next" data-id="${next.id}"><span class="dir">下一章 →</span><span class="ttl">${next.title}</span></a>`
+           :`<a class="next disabled"><span class="dir">下一章 →</span><span class="ttl">已是最后一章</span></a>`);
+    sec.appendChild(pg);
+  }
+  if(push!==false) history.replaceState(null,"","#"+c);
+  window.scrollTo(0,0);
+  sidebar.classList.remove("open");
+}
+document.addEventListener("click", e=>{
+  const a = e.target.closest("a[data-id]");
+  if(a){ show(a.dataset.id); }
+});
+// mobile toggle
+const btn=document.createElement("button");
+btn.className="menu-toggle"; btn.setAttribute("aria-label","目录"); btn.textContent="☰";
+btn.onclick=()=>sidebar.classList.toggle("open");
+document.body.appendChild(btn);
+document.addEventListener("click", e=>{
+  if(sidebar.classList.contains("open") && !sidebar.contains(e.target) && e.target!==btn)
+    sidebar.classList.remove("open");
+});
+// initial
+show((location.hash||"#index").slice(1), false);
+</script>
+</body>
+</html>
