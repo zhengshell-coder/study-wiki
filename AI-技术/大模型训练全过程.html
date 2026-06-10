@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大模型训练全过程（单文件版）</title>
+<style>
+
+:root{
+  --bg:#0f1115; --panel:#161922; --panel2:#1c2130; --ink:#e8eaf0; --muted:#9aa3b2;
+  --line:#262c3a; --accent:#6ea8fe; --accent2:#7ee0c0; --warn:#ffb86b; --danger:#ff7a90;
+  --before:#8b95a7; --now:#7ee0c0; --maxw:860px; --sb:300px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* 布局 */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:var(--sb);flex:0 0 var(--sb);background:var(--panel);border-right:1px solid var(--line);
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:22px 0}
+.brand{padding:0 22px 16px 22px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.brand h1{font-size:16px;margin:0 0 4px}
+.brand p{font-size:12px;color:var(--muted);margin:0}
+.nav{padding:8px 12px}
+.nav .grp{font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin:16px 10px 6px}
+.nav a{display:block;padding:8px 12px;border-radius:8px;color:var(--ink);font-size:14px;margin:2px 0}
+.nav a .num{color:var(--muted);font-variant-numeric:tabular-nums;margin-right:8px;font-size:12px}
+.nav a:hover{background:var(--panel2);text-decoration:none}
+.nav a.active{background:linear-gradient(90deg,rgba(110,168,254,.18),transparent);color:#fff;
+  box-shadow:inset 2px 0 0 var(--accent)}
+
+.main{flex:1;min-width:0;display:flex;justify-content:center;padding:46px 40px 80px}
+.content{width:100%;max-width:var(--maxw)}
+.crumb{font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.04em}
+h2.page-title{font-size:30px;line-height:1.25;margin:0 0 6px}
+.subtitle{color:var(--muted);font-size:15px;margin:0 0 28px}
+
+h3{font-size:21px;margin:38px 0 12px;padding-top:6px;border-top:1px solid var(--line)}
+h3:first-of-type{border-top:none}
+h4{font-size:16px;margin:24px 0 8px;color:#cfd6e4}
+p{margin:12px 0}
+ul,ol{margin:12px 0;padding-left:22px}
+li{margin:6px 0}
+strong{color:#fff}
+code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:13.5px;
+  font-family:"SF Mono",Menlo,Consolas,monospace;color:#a8e6c7}
+pre{background:#0b0d12;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;
+  font-size:13px;line-height:1.6}
+pre code{background:none;padding:0;color:#cdd6e4}
+
+/* 卡片 / 提示框 */
+.box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0;background:var(--panel)}
+.box .bt{font-weight:600;font-size:13px;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.box .bt::before{content:"";width:8px;height:8px;border-radius:50%}
+.box.before{border-color:#3a4150}
+.box.before .bt{color:var(--before)} .box.before .bt::before{background:var(--before)}
+.box.now{border-color:#2c4a40} .box.now .bt{color:var(--now)} .box.now .bt::before{background:var(--now)}
+.box.note{border-color:#33405e} .box.note .bt{color:var(--accent)} .box.note .bt::before{background:var(--accent)}
+.box.bottleneck{border-color:#5a3a44;background:#1d161a}
+.box.bottleneck .bt{color:var(--danger)} .box.bottleneck .bt::before{background:var(--danger)}
+.box.deep{border-color:#4a3a5e;background:#1a1622}
+.box.deep .bt{color:#c8a8ff} .box.deep .bt::before{background:#c8a8ff}
+
+/* 对比两栏 */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.vs .box{margin:0}
+@media(max-width:720px){.vs{grid-template-columns:1fr}}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:#fff;font-weight:600}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+/* 流程图（纯 CSS） */
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:20px 0}
+.flow .step{flex:1;min-width:120px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:12px;font-size:13px;position:relative}
+.flow .step b{display:block;color:#fff;margin-bottom:4px;font-size:13.5px}
+.flow .arrow{align-self:center;color:var(--muted);font-size:18px}
+
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);
+  color:var(--muted);margin-right:6px}
+
+/* 上一页下一页 */
+.pager{display:flex;justify-content:space-between;gap:14px;margin-top:48px;border-top:1px solid var(--line);padding-top:22px}
+.pager a{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:block}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .dir{font-size:12px;color:var(--muted)} .pager .t{color:#fff;font-size:15px;margin-top:3px}
+.pager a.next{text-align:right}
+.pager .ph{flex:1}
+
+/* 移动端 */
+.menu-btn{display:none}
+@media(max-width:900px){
+  :root{--sb:0px}
+  .sidebar{position:fixed;left:0;top:0;width:280px;transform:translateX(-100%);transition:.25s;z-index:40}
+  .sidebar.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.6)}
+  .main{padding:64px 18px 70px}
+  .menu-btn{display:flex;position:fixed;top:12px;left:12px;z-index:50;background:var(--panel);
+    border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 13px;cursor:pointer;align-items:center;gap:7px}
+}
+.kpi{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+.kpi .k{flex:1;min-width:140px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi .k .n{font-size:22px;color:#fff;font-weight:700}
+.kpi .k .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+.chapter{display:none}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="toggleMenu()">☰ 目录</button>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>大模型训练全过程</h1>
+      <p>从浅入深 · 历史演变 · 各阶段任务 · 核心瓶颈</p>
+    </div>
+    <nav class="nav">
+<div class="grp">入门 · 全景</div>
+<a data-slug="index" href="#index" onclick="show('index');return false;"><span class="num">01</span>全景总览</a>
+<a data-slug="history" href="#history" onclick="show('history');return false;"><span class="num">02</span>历史演变</a>
+<div class="grp">数据与模型</div>
+<a data-slug="data" href="#data" onclick="show('data');return false;"><span class="num">03</span>数据准备</a>
+<a data-slug="tokenize" href="#tokenize" onclick="show('tokenize');return false;"><span class="num">04</span>分词 Tokenization</a>
+<a data-slug="architecture" href="#architecture" onclick="show('architecture');return false;"><span class="num">05</span>Transformer 架构</a>
+<div class="grp">预训练</div>
+<a data-slug="pretrain" href="#pretrain" onclick="show('pretrain');return false;"><span class="num">06</span>预训练 Pre-training</a>
+<a data-slug="scaling" href="#scaling" onclick="show('scaling');return false;"><span class="num">07</span>扩展法则 & 算力</a>
+<div class="grp">后训练 / 对齐</div>
+<a data-slug="sft" href="#sft" onclick="show('sft');return false;"><span class="num">08</span>监督微调 SFT</a>
+<a data-slug="rlhf" href="#rlhf" onclick="show('rlhf');return false;"><span class="num">09</span>对齐 RLHF / DPO</a>
+<a data-slug="reasoning" href="#reasoning" onclick="show('reasoning');return false;"><span class="num">10</span>推理强化 RLVR</a>
+<div class="grp">落地与总结</div>
+<a data-slug="inference" href="#inference" onclick="show('inference');return false;"><span class="num">11</span>推理与部署</a>
+<a data-slug="eval" href="#eval" onclick="show('eval');return false;"><span class="num">12</span>评估 Evaluation</a>
+<a data-slug="bottleneck" href="#bottleneck" onclick="show('bottleneck');return false;"><span class="num">13</span>瓶颈总结 & 展望</a>
+<div class="grp">前沿 · 竞争格局</div>
+<a data-slug="landscape" href="#landscape" onclick="show('landscape');return false;"><span class="num">14</span>竞争格局</a>
+<a data-slug="iteration" href="#iteration" onclick="show('iteration');return false;"><span class="num">15</span>迭代速度之谜</a>
+</nav>
+  </aside>
+  <main class="main">
+    <article class="content">
+      
+      <section class="chapter" id="ch-index" data-slug="index">
+        <div class="crumb">首页</div>
+        <h2 class="page-title">大模型训练全过程：一张地图</h2>
+        <p class="subtitle">在深入每个细节之前，先建立一张完整的地图：训练一个大模型，到底要经过哪些阶段？</p>
+        
+<p>今天我们用的 ChatGPT、Claude、文心、通义这类「会聊天、会写代码、会推理」的模型，本质上都是一个庞大的<strong>神经网络</strong>。它从「一堆随机数字」变成「能听懂人话的助手」，要经过一条很长的流水线。这套文档会沿着这条流水线，从最浅显的概念一路讲到工程细节。</p>
+
+<div class="box note">
+  <div class="bt">先记住这条主线</div>
+  <p>整个训练可以拆成两大块：<strong>预训练（Pre-training）</strong>让模型「读完整个互联网，学会世界知识和语言规律」；<strong>后训练（Post-training）</strong>让模型「学会按人类期望的方式说话、做事、讲道理」。前者烧的是算力，后者拼的是数据质量和对齐方法。</p>
+</div>
+
+<h3>完整流水线一览</h3>
+<div class="flow">
+  <div class="step"><b>① 数据</b>采集、清洗、去重、配比</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>② 分词</b>把文本切成 token</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>③ 预训练</b>预测下一个 token</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>④ SFT</b>指令微调</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>⑤ 对齐</b>RLHF / DPO</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>⑥ 推理强化</b>RLVR / 长思维链</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>⑦ 部署</b>推理优化、上线</div>
+</div>
+
+<h3>各阶段一句话职责</h3>
+<table>
+<tr><th>阶段</th><th>在做什么</th><th>产出</th><th>主要成本</th></tr>
+<tr><td>数据准备</td><td>把几十 TB 的原始网页变成干净、去重、配比合理的训练语料</td><td>高质量 token 池</td><td>人力 + 存储 + CPU</td></tr>
+<tr><td>预训练</td><td>在海量文本上反复「预测下一个词」，把语言和知识压进权重</td><td>基座模型 (Base)</td><td>巨量 GPU 算力（最贵）</td></tr>
+<tr><td>SFT 监督微调</td><td>用「指令→理想回答」示范，教模型听懂任务</td><td>指令模型</td><td>高质量标注数据</td></tr>
+<tr><td>对齐 RLHF/DPO</td><td>用人类偏好把回答调得更有用、更安全、更得体</td><td>对齐模型 (Chat)</td><td>偏好标注 + RL 训练</td></tr>
+<tr><td>推理强化</td><td>用可验证奖励训练模型「先想后答」，提升数学/代码/逻辑</td><td>推理模型 (Reasoning)</td><td>RL 算力 + 验证器</td></tr>
+<tr><td>部署</td><td>量化、KV Cache、并行，把模型跑得又快又便宜</td><td>线上服务</td><td>推理算力</td></tr>
+</table>
+
+<h3>过去 vs 现在：最重要的三个变化</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前（2018 年前后）</div>
+    <ul><li>每个任务单独训一个模型（情感分类一个、翻译一个）</li><li>靠人工标注的小数据集</li><li>模型几千万～几亿参数</li><li>「预训练 + 针对任务微调」是主流范式</li></ul>
+  </div>
+  <div class="box now"><div class="bt">现在（2023 年之后）</div>
+    <ul><li>一个通用基座模型解决几乎所有任务</li><li>预训练靠自监督，不需要人工标注</li><li>模型百亿～万亿参数（含 MoE）</li><li>「预训练 + 指令微调 + RL 对齐 + 推理强化」四段式</li></ul>
+  </div>
+</div>
+
+<div class="box note"><div class="bt">怎么读这份文档</div>
+<p>建议按左侧顺序通读。第 2 章先讲清「之前几十年是怎么干的」，这样你才能体会到现在范式的革命性。第 6～10 章是核心训练阶段，第 13 章把所有「核心瓶颈」收口成一张总表。</p></div>
+
+        <div class="pager">
+<div class="ph"></div>
+<a class="next" href="#history" onclick="show('history');return false;"><div class="dir">下一章 →</div><div class="t">历史演变</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-history" data-slug="history">
+        <div class="crumb">首页 / 历史演变</div>
+        <h2 class="page-title">之前是怎么干的：从规则到神经网络</h2>
+        <p class="subtitle">理解今天，必须先看清来路。NLP 走过了规则、统计、深度学习三个时代，每一次范式跃迁都源于一个旧瓶颈被打破。</p>
+        
+<p>「让机器理解语言」这件事，人类折腾了七十年。每个时代都有自己的核心方法，也有把它逼到尽头的瓶颈。看懂这条演化链，你就能理解为什么今天会是这个样子。</p>
+
+<h3>第一阶段：规则时代（1950s–1980s）</h3>
+<p>最早的思路很直觉：既然语言有语法，那就让语言学家把规则一条条写进程序。比如「主语 + 谓语 + 宾语」，再配一本词典。</p>
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<p>语言的例外、歧义、口语千变万化，规则写不完，而且彼此冲突。一个稍微复杂的句子就能让系统崩溃。人工规则<strong>无法规模化</strong>。</p></div>
+
+<h3>第二阶段：统计时代（1990s–2010s）</h3>
+<p>转折点是：与其手写规则，不如<strong>从数据里统计概率</strong>。代表是 <strong>N-gram 语言模型</strong>——用前 N-1 个词预测下一个词的概率。机器翻译、语音识别都靠它吃饭。</p>
+<pre><code>P(下一个词 | 前文) ≈ P(下一个词 | 前 N-1 个词)
+例：P("好" | "今天天气很") —— 只看有限的前几个词</code></pre>
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<p>① <strong>维度灾难</strong>：N 一大，组合数爆炸，绝大多数词组在语料里从没出现过（数据稀疏）。② <strong>记不住长距离依赖</strong>：N-gram 只能看前几个词，「这本书……我去年读过」这种跨度它抓不住。</p></div>
+
+<h3>第三阶段：神经网络与词向量（2013 起）</h3>
+<p><strong>Word2Vec</strong>（2013）让每个词变成一个稠密向量，语义相近的词在空间里也相近（著名的「国王 - 男人 + 女人 ≈ 女王」）。随后 <strong>RNN / LSTM</strong> 登场，理论上能把任意长的历史压进一个「隐藏状态」里逐字处理。<strong>Seq2Seq + 注意力</strong>（2014–2015）撑起了第一代神经机器翻译。</p>
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<p>RNN 必须<strong>一个词一个词顺序处理</strong>，无法并行，训练慢；序列一长还会梯度消失，「记忆」实际上传不远。这成了扩大规模的天花板。</p></div>
+
+<h3>第四阶段：Transformer 革命（2017）</h3>
+<p>论文《Attention Is All You Need》提出 <strong>Transformer</strong>，用<strong>自注意力（self-attention）</strong>彻底丢掉了循环结构。任意两个词可以直接「互相看到」，而且整个序列能<strong>并行</strong>计算。这一下同时解决了「长依赖」和「不能并行」两个老瓶颈，为「把模型和数据一起做大」铺平了道路。</p>
+
+<h3>第五阶段：预训练 + 大规模化（2018–2022）</h3>
+<div class="vs">
+  <div class="box note"><div class="bt">BERT 路线（理解）</div><p>双向编码，擅长分类、抽取、检索类任务，「先预训练再针对任务微调」成为主流。</p></div>
+  <div class="box note"><div class="bt">GPT 路线（生成）</div><p>单向自回归，专注「预测下一个词」。GPT-2、GPT-3 证明了一件事：<strong>只要把模型和数据同时放大，能力会突现</strong>。</p></div>
+</div>
+<p>GPT-3（2020，1750 亿参数）展示了「<strong>少样本/零样本</strong>」能力——不再为每个任务单独训练，给几个例子甚至一句话指令就能干活。范式开始从「为任务微调」转向「一个通用模型 + 提示词」。</p>
+
+<h3>第六阶段：对齐与对话（2022 至今）</h3>
+<p>纯预训练模型「博学但不听话」：它会续写、会胡说，却不一定回答你的问题。<strong>InstructGPT / ChatGPT</strong>（2022）引入 <strong>RLHF（基于人类反馈的强化学习）</strong>，把模型对齐到「有用、诚实、无害」，这才有了今天的对话体验。2024–2025 又出现 <strong>推理模型</strong>（如 o1 风格）：用强化学习训练模型「先长篇思考再作答」，把数学、代码、逻辑能力推上新台阶。</p>
+
+<div class="box note"><div class="bt">一句话总结演化逻辑</div>
+<p>每一代都是在解决上一代的瓶颈：规则写不完 → 用统计；统计记不住长程 → 用 RNN；RNN 不能并行 → 用 Transformer；模型博学但不听话 → 用 RLHF；会说话但不会深度推理 → 用推理强化。<strong>瓶颈驱动范式迁移</strong>，这就是这份文档后续章节的暗线。</p></div>
+
+        <div class="pager">
+<a href="#index" onclick="show('index');return false;"><div class="dir">← 上一章</div><div class="t">全景总览</div></a>
+<a class="next" href="#data" onclick="show('data');return false;"><div class="dir">下一章 →</div><div class="t">数据准备</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-data" data-slug="data">
+        <div class="crumb">首页 / 数据准备</div>
+        <h2 class="page-title">数据：模型能力的真正上限</h2>
+        <p class="subtitle">有句行话：「Garbage in, garbage out」。预训练 90% 的功夫花在数据上。模型见过什么样的数据，就有什么样的能力边界。</p>
+        
+<p>很多人以为训练大模型最难的是算法，其实在工业界，<strong>数据工程</strong>才是投入最大、最影响成败的环节。模型的知识、语气、偏见、能力上限，几乎全由训练数据决定。</p>
+
+<h3>数据从哪来</h3>
+<ul>
+<li><strong>网页爬取</strong>：Common Crawl 等大规模网页存档是主力来源，原始体量达 PB 级。</li>
+<li><strong>高质量语料</strong>：维基百科、书籍、论文（arXiv、PubMed）、问答社区。</li>
+<li><strong>代码</strong>：GitHub 等公开代码。代码能显著提升模型的推理和结构化能力。</li>
+<li><strong>多语言 / 多模态</strong>：各语种文本，以及图文对（用于多模态模型）。</li>
+</ul>
+
+<h3>清洗流水线：从几十 TB 到几 TB</h3>
+<p>原始网页里充斥着导航栏、广告、乱码、垃圾内容。清洗是个层层过滤的漏斗：</p>
+<div class="flow">
+  <div class="step"><b>抽正文</b>去掉 HTML、模板、广告</div><div class="arrow">→</div>
+  <div class="step"><b>语言过滤</b>识别语种、剔除乱码</div><div class="arrow">→</div>
+  <div class="step"><b>质量过滤</b>规则 + 模型打分，删低质</div><div class="arrow">→</div>
+  <div class="step"><b>去重</b>文档级 / 句级去重</div><div class="arrow">→</div>
+  <div class="step"><b>去污染</b>剔除测试集、隐私、有害内容</div>
+</div>
+
+<h4>为什么「去重」这么关键</h4>
+<p>互联网上同一篇内容可能被转载成千上万次。如果不去重，模型会<strong>过度记忆</strong>高频重复内容、浪费算力，泛化能力反而下降。研究反复证明：去重能在同等算力下显著提升效果。</p>
+
+<h3>过去 vs 现在：数据观念的转变</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前的做法</div>
+    <ul><li>「数据越多越好」，粗放堆量</li><li>清洗主要靠简单规则（关键词黑名单、长度阈值）</li><li>各来源简单混在一起</li></ul></div>
+  <div class="box now"><div class="bt">现在的做法</div>
+    <ul><li>「<strong>质量 &gt; 数量</strong>」，宁缺毋滥</li><li>用<strong>小模型给数据打质量分</strong>，甚至用大模型筛/改写数据</li><li>精细设计<strong>数据配比</strong>与<strong>课程顺序</strong>（先易后难、训练后期提高高质量数据占比）</li><li>大量使用<strong>合成数据</strong>（模型自己生成高质量样本）</li></ul></div>
+</div>
+
+<div class="box note"><div class="bt">合成数据：当前最热的方向之一</div>
+<p>真实优质数据正在被「训练消耗殆尽」，于是业界越来越多用强模型生成教科书式的高质量数据来训练新模型（如「教科书级」语料能让小模型表现远超体量）。但要警惕<strong>模型崩溃（model collapse）</strong>——纯用模型生成数据反复自训，会让多样性退化。</p></div>
+
+<div class="box deep"><div class="bt">进阶：为什么「质量 &gt; 数量」在数学上成立</div>
+<p>回想预训练的目标是「预测下一个词」。如果语料里塞满低质、矛盾、重复的文本，模型就在<strong>学习一个混乱的概率分布</strong>——它会同时被教「这种烂写法也对」。等于一边教好习惯一边教坏习惯，互相抵消，还白白消耗了昂贵的算力。</p>
+<p>反过来，<strong>一条高质量样本提供的「干净信号」</strong>抵得过许多条噪声样本。著名实验显示，用「教科书级」的精选/合成数据训练，小模型能达到数倍体量模型的水平。这就是配比与课程（先广撒网打基础、后期提高优质与难样本占比）越来越被重视的原因——它在<strong>不加算力的前提下提升了每一份算力的产出</strong>。</p></div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>高质量数据枯竭</strong>：互联网上的优质人类文本是有限的，可能已接近用尽。</li>
+<li><strong>数据污染</strong>：评测集泄漏进训练数据，会让跑分虚高、误导判断。</li>
+<li><strong>版权与合规</strong>：训练数据的来源合法性日益受关注。</li>
+<li><strong>配比是门玄学</strong>：代码、数学、多语言各放多少，缺乏理论，靠大量实验试错。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#history" onclick="show('history');return false;"><div class="dir">← 上一章</div><div class="t">历史演变</div></a>
+<a class="next" href="#tokenize" onclick="show('tokenize');return false;"><div class="dir">下一章 →</div><div class="t">分词 Tokenization</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-tokenize" data-slug="tokenize">
+        <div class="crumb">首页 / 分词 Tokenization</div>
+        <h2 class="page-title">分词：模型其实不认识「字」</h2>
+        <p class="subtitle">模型处理的不是文字，而是数字编号。文本如何切分成 token，直接影响效率、成本和多语言表现。</p>
+        
+<p>神经网络只会算数字。所以第一步要把文本切成一个个<strong>token</strong>（词元），再映射成整数 ID。一个 token 大致相当于英文里 3～4 个字符，或者一个常见词的一部分；中文里通常 1 个 token 约等于 1～2 个汉字。</p>
+
+<h3>为什么不直接按「字」或「词」切</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">按词切（早期）</div>
+    <ul><li>词表巨大（几十万），还总有没见过的「未登录词 OOV」</li><li>遇到没见过的词只能用 [UNK] 占位，信息丢失</li></ul></div>
+  <div class="box note"><div class="bt">按字符切</div>
+    <ul><li>词表很小，没有 OOV 问题</li><li>但序列变得超长，效率低，语义太碎</li></ul></div>
+</div>
+
+<h3>现在的主流：子词分词（Subword）</h3>
+<p>折中方案是<strong>子词</strong>：常见词作为整体（如 "the"），生僻词拆成片段（如 "tokenization" → "token" + "ization"）。这样既控制了词表大小（通常 3 万～15 万），又能拼出任何没见过的词。主流算法是 <strong>BPE（Byte-Pair Encoding）</strong> 及其字节级变体，从字节开始，不断把「最常一起出现的相邻片段」合并成新 token。</p>
+<pre><code>初始: l o w e r   (按字符/字节)
+统计最高频相邻对 "e r" -> 合并
+逐步合并: lo w er -> low er -> lower
+最终词表里既有完整词，也有可拼装的片段</code></pre>
+
+<h3>分词如何影响成本和公平</h3>
+<div class="kpi">
+  <div class="k"><div class="n">~4 字符</div><div class="l">英文 1 token 约等于</div></div>
+  <div class="k"><div class="n">1–2 字</div><div class="l">中文 1 token 约等于</div></div>
+  <div class="k"><div class="n">×2~3</div><div class="l">同一句话，某些小语种 token 数可能是英文的数倍</div></div>
+</div>
+<p>因为计费、上下文长度、推理速度都按 token 算，分词器对某些语言不友好就意味着这些语言<strong>更贵、更慢、可用上下文更短</strong>。这也是「分词公平性」近年受关注的原因。</p>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>多语言不公平</strong>：词表偏向英文，小语种和中文被切得更碎。</li>
+<li><strong>数字与代码处理别扭</strong>：数字被切成奇怪片段，影响算术能力；缩进等空白也敏感。</li>
+<li><strong>词表一旦定死就难改</strong>：分词器在预训练前就固定，后期几乎无法调整。</li>
+<li><strong>探索无分词（byte-level/token-free）</strong>：直接吃字节是个方向，但目前效率仍打不过子词。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#data" onclick="show('data');return false;"><div class="dir">← 上一章</div><div class="t">数据准备</div></a>
+<a class="next" href="#architecture" onclick="show('architecture');return false;"><div class="dir">下一章 →</div><div class="t">Transformer 架构</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-architecture" data-slug="architecture">
+        <div class="crumb">首页 / Transformer 架构</div>
+        <h2 class="page-title">模型架构：Transformer 与注意力机制</h2>
+        <p class="subtitle">几乎所有现代大模型都建立在 Transformer 之上。理解「注意力」，就理解了大模型为什么这么强。</p>
+        
+<p>这一章稍微硬核一点，但只要抓住一个核心概念——<strong>注意力（Attention）</strong>——其余都是工程细节。</p>
+
+<h3>一个直觉：注意力在做什么</h3>
+<p>处理「它」这个词时，模型需要知道「它」指代前文的哪个东西。注意力机制让每个词去「环顾」句子里所有其他词，按相关程度分配权重，再把相关词的信息加权汇总过来。这就是「任意两词直接互相看到」的含义，也是它能抓住长距离依赖的根本原因。</p>
+<pre><code>对每个 token 算出三个向量：
+  Query (我在找什么) · Key (我是什么) · Value (我携带的信息)
+注意力权重 = softmax(Query · Key / √d)   # 谁和我相关
+输出 = Σ 权重 × Value                      # 把相关信息汇总过来</code></pre>
+
+<h3>Transformer 的积木</h3>
+<ul>
+<li><strong>多头注意力</strong>：并行开多个「注意力头」，分别关注不同类型的关系（语法、指代、语义……）。</li>
+<li><strong>前馈网络（FFN）</strong>：每个位置上的小型全连接网络，负责「加工/存储知识」，参数量的大头其实在这里。</li>
+<li><strong>残差连接 + 层归一化</strong>：让几十上百层能稳定训练、梯度传得动。</li>
+<li><strong>位置编码</strong>：注意力本身不分先后，需要额外告诉模型「词的顺序」（现代常用 RoPE 旋转位置编码，利于外推长上下文）。</li>
+</ul>
+<p>把「注意力 + FFN」这样一层层堆叠几十到上百层，再加大每层宽度，就得到了大模型。</p>
+
+<div class="box deep"><div class="bt">进阶：把注意力想成一场「图书馆检索」</div>
+<p>每个 token 同时扮演三个角色：它带着一张<strong>查询单 Query</strong>（我现在想找什么信息），一个<strong>标签 Key</strong>（我这里有什么），和<strong>内容 Value</strong>（我能提供的实际信息）。注意力做的事，就是拿每个词的 Query 去和所有词的 Key 比对相似度，相似度高的「检索命中」，就把对方的 Value 多取一点过来。「它/这本书」之所以能跨越很远对应到正确的指代对象，就是因为它们的 Query 和 Key 在训练中学会了互相匹配。</p>
+<p><strong>多头</strong>就是同时开好几套这样的检索系统，每套关注不同侧面：有的头专门追踪语法主谓关系，有的追踪指代，有的追踪主题。最后把各头结果拼起来，信息维度就丰富了。</p>
+<p>而真正「存知识」的地方，多数人会忽略：是每层里的<strong>前馈网络 FFN</strong>。注意力负责「在上下文里搬运信息」，FFN 负责「加工并存储从训练中学到的世界知识」，参数量的大头其实在这。MoE 之所以拆的是 FFN，正因为知识主要存在这里——把它做成「很多专家、每次只用几个」，就能在不增加单次计算的前提下塞进更多知识。</p></div>
+
+<h3>解码器架构：现代生成式大模型的标配</h3>
+<p>GPT 系采用 <strong>仅解码器（decoder-only）+ 自回归</strong>：从左到右，<strong>每次预测下一个 token</strong>，预测出的又作为输入继续预测。这种简单到极致的目标，配合规模，催生了惊人的通用能力。</p>
+
+<h3>过去 vs 现在：架构的演进</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前</div>
+    <ul><li>RNN/LSTM 顺序处理，难并行</li><li>编码器-解码器结构为翻译而生</li><li>稠密模型：每个 token 都激活全部参数</li></ul></div>
+  <div class="box now"><div class="bt">现在</div>
+    <ul><li>Decoder-only Transformer 一统天下</li><li>RoPE 位置编码、RMSNorm、SwiGLU 等成为标配优化</li><li><strong>MoE 混合专家</strong>：每个 token 只激活一小部分「专家」参数，用更少计算撑起更大模型</li><li>长上下文优化（GQA 分组注意力、滑窗、稀疏注意力）</li></ul></div>
+</div>
+
+<div class="box note"><div class="bt">MoE：用「稀疏激活」破解规模诅咒</div>
+<p>普通稠密模型，参数翻倍计算也翻倍。MoE 把 FFN 拆成很多「专家」，每个 token 只走其中 1～2 个，于是<strong>总参数可以很大（强），但单次实际计算很小（快）</strong>。代价是显存占用高、训练时专家负载难均衡。</p></div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>注意力的二次复杂度</strong>：计算量随序列长度<strong>平方</strong>增长，是长上下文最大的拦路虎（FlashAttention、稀疏/线性注意力都是在攻这个点）。</li>
+<li><strong>长上下文外推</strong>：训练时上下文短，推理想要更长就会性能衰减。</li>
+<li><strong>架构创新边际收益递减</strong>：多数变体相对原始 Transformer 提升有限，规模与数据仍是主导因素。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#tokenize" onclick="show('tokenize');return false;"><div class="dir">← 上一章</div><div class="t">分词 Tokenization</div></a>
+<a class="next" href="#pretrain" onclick="show('pretrain');return false;"><div class="dir">下一章 →</div><div class="t">预训练 Pre-training</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-pretrain" data-slug="pretrain">
+        <div class="crumb">首页 / 预训练 Pre-training</div>
+        <h2 class="page-title">预训练：在整个互联网上「猜下一个词」</h2>
+        <p class="subtitle">这是最烧钱、最核心的阶段。一个看似简单的任务——预测下一个 token——把语言规律和世界知识压进了上千亿个参数里。</p>
+        
+<p>预训练的目标简单到不可思议：<strong>给定前文，预测下一个 token</strong>。就这一句话，重复几万亿次，模型就从随机数变成了「懂世界」的基座。</p>
+
+<h3>训练循环到底在干什么</h3>
+<div class="flow">
+  <div class="step"><b>① 前向</b>读入一段文本，预测每个位置的下一个 token</div><div class="arrow">→</div>
+  <div class="step"><b>② 算损失</b>预测分布和真实下一个词的差距（交叉熵）</div><div class="arrow">→</div>
+  <div class="step"><b>③ 反向</b>计算每个参数该往哪调（梯度）</div><div class="arrow">→</div>
+  <div class="step"><b>④ 更新</b>优化器（AdamW）微调全部参数</div><div class="arrow">↺ 重复万亿次</div>
+</div>
+<p>关键在于：这是<strong>自监督</strong>——「正确答案」就是文本里本来的下一个词，<strong>不需要任何人工标注</strong>。这正是它能吃下整个互联网的原因，也是相对「之前」最大的解放。</p>
+
+<div class="box note"><div class="bt">为什么「猜词」能学到知识</div>
+<p>要准确预测「中国的首都是__」后面的词，模型必须「知道」答案是北京。要续写一段代码，它得理解语法和逻辑。<strong>压缩即理解</strong>：为了把海量文本压进有限参数里准确预测，模型被迫学会了语法、事实、推理、风格等内在规律。</p></div>
+
+<h3>过去 vs 现在</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前（预训练 + 任务微调时代）</div>
+    <ul><li>预训练只是「起点」，真正干活前要在每个任务的标注数据上再微调</li><li>BERT 用「完形填空」（掩码预测）做双向理解</li><li>模型规模有限，单卡或少量卡即可</li></ul></div>
+  <div class="box now"><div class="bt">现在（通用基座时代）</div>
+    <ul><li>预训练出的 <strong>基座模型本身就极强</strong>，靠提示词即可零样本干活</li><li>统一用「预测下一个词」的自回归目标</li><li>千卡万卡集群、数月连续训练，训练 token 量达数万亿到十几万亿</li><li>训练后期混入更高质量数据、退火学习率（annealing）压榨最后性能</li></ul></div>
+</div>
+
+<div class="box deep"><div class="bt">进阶：训练循环里到底发生了什么</div>
+<p><strong>① 几乎不重复看数据。</strong>和小模型时代「同一份数据反复训几十轮（epoch）」不同，现代大模型数据极多，通常只把语料<strong>过一遍（约 1 个 epoch）</strong>。所以主要矛盾不是「过拟合」（背书），而是「欠拟合」——算力和数据是否足够把规律学透。</p>
+<p><strong>② 优化器为什么吃掉那么多显存。</strong>主流优化器 AdamW 会为<strong>每个参数额外保存两份状态</strong>（梯度的一阶、二阶动量）。所以训练时显存占用大致是「参数 ×（自身 + 梯度 + 两份动量）」，是参数本身的好几倍——这正是必须把训练切到上千张卡的直接原因（见下一章）。</p>
+<p><strong>③ 学习率不是常数。</strong>训练初期用 <strong>warmup</strong> 把学习率从 0 慢慢升上去（防止一上来就崩），中后期再缓慢衰减（decay/annealing）把模型「磨细」。学习率调度是稳定性与最终效果的关键旋钮之一。</p>
+<p><strong>④ 「涌现能力」。</strong>有些能力（如多步算术、按指令执行）在模型小的时候几乎为零，<strong>规模越过某个门槛后突然出现</strong>，这被称为涌现（emergence）。它是「做大」如此诱人的原因之一；不过也有研究指出，部分「涌现」是评测指标选择造成的错觉，学界仍有争论。</p></div>
+
+<h3>产出：Base 模型</h3>
+<p>预训练结束得到的叫 <strong>基座 / Base 模型</strong>。它博学、能续写，但<strong>不一定听话</strong>——你问它问题，它可能续写出更多类似的问题而不是回答。把它变成「助手」，是后面 SFT 和对齐阶段的事。</p>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>算力与成本</strong>：训练一个前沿模型动辄数千万美元、上万张 GPU、数月不间断，是整条流水线最贵的一环。</li>
+<li><strong>训练稳定性</strong>：规模一大，loss 容易突然飙升（spike）、梯度爆炸，半路崩溃损失惨重，需要大量监控和容错。</li>
+<li><strong>数据见顶</strong>：可用的高质量 token 接近耗尽（见数据章）。</li>
+<li><strong>能耗与硬件供应</strong>：电力、散热、GPU 供货都成了现实约束。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#architecture" onclick="show('architecture');return false;"><div class="dir">← 上一章</div><div class="t">Transformer 架构</div></a>
+<a class="next" href="#scaling" onclick="show('scaling');return false;"><div class="dir">下一章 →</div><div class="t">扩展法则 & 算力</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-scaling" data-slug="scaling">
+        <div class="crumb">首页 / 扩展法则 & 算力</div>
+        <h2 class="page-title">扩展法则与算力基础设施</h2>
+        <p class="subtitle">为什么大家拼命把模型做大?因为「Scaling Law」告诉我们：投入越多，效果可预测地越好。但把上万张卡协同起来,本身就是一座工程高山。</p>
+        
+<h3>扩展法则（Scaling Laws）：大模型时代的指南针</h3>
+<p>研究发现，模型的能力（用损失衡量）与三个量呈<strong>平滑、可预测的幂律关系</strong>：模型参数量、训练数据量、计算量。换句话说——<strong>只要按比例同时加大模型、数据和算力，效果就会稳定提升</strong>。这是大模型敢于「重注做大」的理论底气：可以用小规模实验外推、预测大模型的效果，再决定要不要投钱。</p>
+
+<div class="box note"><div class="bt">Chinchilla 的关键修正</div>
+<p>早期大家拼命堆参数，数据喂得不够。2022 年 Chinchilla 指出：<strong>参数和数据应当大致同比增长</strong>。很多大模型其实「训练不充分」——同样的算力，做小一点但喂更多数据反而更强。这直接改变了后续模型的配方，也催生了「小而精」的高性价比模型潮流。</p></div>
+
+<div class="box deep"><div class="bt">进阶：把「算力」换算成钱、卡和时间</div>
+<p>业界有个好用的估算公式：训练一个模型需要的总计算量 ≈ <code>6 × 参数量 × 训练 token 数</code>（单位是浮点运算 FLOPs）。这个简单的乘法解释了一切：<strong>参数翻倍或数据翻倍，算力（也就是钱和时间）都翻倍。</strong></p>
+<p>举例感受量级：一个千亿参数、用十几万亿 token 训练的模型，总算力达 10²⁵ FLOPs 级别，对应<strong>上万张顶级 GPU 连续跑数月</strong>，电费 + 折旧动辄数千万美元。这就是为什么「要不要做这个模型」是 CEO 级决策，也是为什么<strong>能先用小实验把 Scaling 曲线拟合出来、预测大模型效果</strong>如此有价值——它把一次豪赌变成了可计算的投资。</p>
+<p>Chinchilla 的经验法则可以记成：<strong>每个参数大约配 20 个训练 token</strong>最划算。但这是「训练最省」的配比；如果模型要长期上线服务亿万次，人们会<strong>故意「过度训练」小模型</strong>（喂远超 20 倍的数据），因为小模型推理更便宜，长期总成本更低——这就是近年「小而强」模型流行的经济学原因。</p></div>
+
+<h3>为什么一张卡远远不够</h3>
+<p>一个千亿参数模型，光是参数 + 梯度 + 优化器状态就需要 TB 级显存，远超单卡（几十 GB）。所以必须把训练<strong>切开，分布到成百上千张卡</strong>上协同。这就是「分布式并行」。</p>
+
+<h3>四种并行方式（现代训练的拼图）</h3>
+<table>
+<tr><th>并行方式</th><th>切什么</th><th>解决什么</th></tr>
+<tr><td><strong>数据并行 (DP)</strong></td><td>每张卡放完整模型，喂不同的数据批次</td><td>加快吞吐；最基础</td></tr>
+<tr><td><strong>张量并行 (TP)</strong></td><td>把单层的大矩阵切成几块，分到多卡同时算</td><td>单层放不下时</td></tr>
+<tr><td><strong>流水线并行 (PP)</strong></td><td>把不同的层分到不同卡，像流水线接力</td><td>模型层数太多时</td></tr>
+<tr><td><strong>专家并行 (EP)</strong></td><td>把 MoE 的不同专家分到不同卡</td><td>MoE 模型专用</td></tr>
+</table>
+<p>外加 <strong>ZeRO / FSDP</strong> 技术：把优化器状态、梯度、参数也分片到各卡，进一步省显存。前沿训练通常是这几种方式<strong>叠加组合</strong>（3D / 4D 并行）。</p>
+
+<h3>省显存、提速度的关键工程</h3>
+<ul>
+<li><strong>混合精度（FP16/BF16，乃至 FP8）</strong>：用更低精度算，省一半以上显存和带宽。</li>
+<li><strong>梯度检查点（activation checkpointing）</strong>：用时间换显存，反向时重算激活而非全存。</li>
+<li><strong>FlashAttention</strong>：重写注意力计算，避免显存搬运瓶颈，大幅提速并支持更长序列。</li>
+<li><strong>高速互联</strong>：NVLink / InfiniBand，让卡间通信不拖后腿。</li>
+</ul>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>通信墙</strong>：卡越多，同步梯度/激活的通信开销越大，常常成为瓶颈而非算力本身。</li>
+<li><strong>显存墙</strong>：显存增长远跟不上模型增长，逼出了各种分片和重算技巧。</li>
+<li><strong>利用率（MFU）</strong>：再好的集群，实际算力利用率常只有 30%～50%，剩下都耗在等待和通信上。</li>
+<li><strong>故障率</strong>：上万张卡跑数月，硬件几乎必然出故障，需要 checkpoint 和自动恢复，否则前功尽弃。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#pretrain" onclick="show('pretrain');return false;"><div class="dir">← 上一章</div><div class="t">预训练 Pre-training</div></a>
+<a class="next" href="#sft" onclick="show('sft');return false;"><div class="dir">下一章 →</div><div class="t">监督微调 SFT</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-sft" data-slug="sft">
+        <div class="crumb">首页 / 监督微调 SFT</div>
+        <h2 class="page-title">监督微调（SFT）：教模型「听懂人话」</h2>
+        <p class="subtitle">基座模型博学却不听话。SFT 用成千上万条「指令 → 理想回答」的示范，把它从「续写机器」变成「能干活的助手」。</p>
+        
+<p>预训练出的基座模型，你问它「帮我写封请假邮件」，它可能续写成「……以及如何写辞职信、如何写道歉信」。它学会了语言，却没学会「应答」。<strong>监督微调（Supervised Fine-Tuning, SFT）</strong>，也叫<strong>指令微调（Instruction Tuning）</strong>，就是来补这一课的。</p>
+
+<h3>做法：示范学习</h3>
+<p>准备大量「指令 + 理想回答」的成对数据，让模型在这些示范上继续用「预测下一个词」的方式训练——但这次只学着<strong>模仿回答部分</strong>。本质还是预训练那套机制，只是数据换成了高质量的对话/任务示范。</p>
+<pre><code>指令: 把这句话翻译成英文：今天天气很好。
+理想回答: The weather is nice today.
+
+指令: 用一句话解释什么是黑洞。
+理想回答: 黑洞是引力极强、连光都无法逃逸的天体区域。</code></pre>
+
+<h3>为什么少量数据就能见效</h3>
+<p>关键洞察：模型在预训练时<strong>其实已经具备这些能力</strong>，SFT 不是在教新知识，而是在<strong>激活并规范输出格式</strong>——告诉它「面对指令时，应该用这种方式回应」。所以几千到几十万条高质量数据往往就够，<strong>质量远比数量重要</strong>（著名的「LIMA：少即是多」实验说明了这点）。</p>
+
+<h3>过去 vs 现在</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前（任务微调）</div>
+    <ul><li>为每个任务单独微调一个模型（一个分类、一个翻译……）</li><li>需要该任务的大量标注数据</li><li>模型不通用，换任务就得重训</li></ul></div>
+  <div class="box now"><div class="bt">现在（指令微调）</div>
+    <ul><li>把<strong>各种任务统一成「指令」格式</strong>混在一起训一个通用模型</li><li>训练出的模型能<strong>泛化到没见过的新指令</strong></li><li>大量使用<strong>合成/蒸馏数据</strong>：用更强的模型生成示范来教较弱模型</li><li>覆盖多轮对话、工具调用、代码、特定格式等</li></ul></div>
+</div>
+
+<h4>高效微调：LoRA 等</h4>
+<p>全参数微调很贵。<strong>LoRA / QLoRA</strong> 等「参数高效微调（PEFT）」只训练少量新增的低秩矩阵，冻结原模型，用极小的成本就能定制模型——这让中小团队也能微调大模型，是开源生态繁荣的重要推手。</p>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>数据质量天花板</strong>：SFT 效果几乎完全取决于示范数据的质量，而高质量标注昂贵且难规模化。</li>
+<li><strong>模仿的局限</strong>：SFT 只能模仿示范，<strong>学不会「什么是更好的回答」</strong>——它没有「比较」的概念，遇到示范没覆盖的情况就抓瞎。这正是需要下一阶段 RLHF 的根本原因。</li>
+<li><strong>幻觉风险</strong>：如果示范里要求模型回答它其实不知道的问题，反而会「教会它自信地编造」。</li>
+<li><strong>灾难性遗忘</strong>：微调过头会损害预训练学到的通用能力。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#scaling" onclick="show('scaling');return false;"><div class="dir">← 上一章</div><div class="t">扩展法则 & 算力</div></a>
+<a class="next" href="#rlhf" onclick="show('rlhf');return false;"><div class="dir">下一章 →</div><div class="t">对齐 RLHF / DPO</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-rlhf" data-slug="rlhf">
+        <div class="crumb">首页 / 对齐 RLHF / DPO</div>
+        <h2 class="page-title">对齐：用人类偏好把模型「调教」得有用又安全</h2>
+        <p class="subtitle">SFT 只会模仿,不懂好坏。对齐阶段让模型学会「人更喜欢哪个回答」,这是 ChatGPT 体验的真正秘密。</p>
+        
+<p>SFT 之后模型已经能应答，但还不够「贴心」：回答可能啰嗦、回避、不安全，或者在多个合理回答中选了不那么好的那个。<strong>对齐（Alignment）</strong>的目标，是让模型符合人类偏好——通常概括为 <strong>3H：Helpful（有用）、Honest（诚实）、Harmless（无害）</strong>。</p>
+
+<h3>RLHF：基于人类反馈的强化学习</h3>
+<p>这是 InstructGPT / ChatGPT 的核心方法，分三步：</p>
+<div class="flow">
+  <div class="step"><b>① 收集偏好</b>同一问题让模型生成多个回答，人类标注「哪个更好」</div><div class="arrow">→</div>
+  <div class="step"><b>② 训练奖励模型 (RM)</b>用偏好数据训练一个模型，学会给任意回答打分</div><div class="arrow">→</div>
+  <div class="step"><b>③ 强化学习</b>用 RM 当「裁判」，通过 PPO 等算法优化语言模型，让它倾向于拿高分的回答</div>
+</div>
+
+<div class="box note"><div class="bt">为什么是「比较」而不是「打分」</div>
+<p>让人直接给回答打绝对分（比如 7.5 分）很不稳定，不同人尺度不一。但让人判断「A 和 B 哪个更好」要可靠得多。RLHF 巧妙地把「难以定义的好坏」转化成了「<strong>成对比较</strong>」，再让奖励模型把这种偏好泛化开。这解决了 SFT「只会模仿、不懂优劣」的根本短板。</p></div>
+
+<h4>一个关键约束：别跑偏（KL 惩罚）</h4>
+<p>RL 优化时如果一味追求高奖励，模型会找到奖励模型的漏洞、输出怪话（<strong>奖励黑客 reward hacking</strong>）。所以会加一个约束：不许偏离原 SFT 模型太远（KL 散度惩罚），在「讨好裁判」和「保持正常」之间平衡。</p>
+
+<div class="box deep"><div class="bt">进阶：PPO 阶段为什么要同时跑「四个模型」</div>
+<p>经典 RLHF 用 PPO 时，显存里常常同时装着四个模型，理解它们各自的角色，就理解了为什么这一步又贵又难调：</p>
+<ul>
+<li><strong>策略模型（Policy）</strong>：正在被训练、要变强的那个语言模型本体。</li>
+<li><strong>参考模型（Reference）</strong>：训练开始时策略模型的「冻结快照」，用来算 KL——衡量「现在偏离初始有多远」，防止越训越歪。</li>
+<li><strong>奖励模型（Reward）</strong>：前面用人类偏好训出来的「裁判」，给每个回答打分。</li>
+<li><strong>价值模型（Value/Critic）</strong>：估计「当前局面预期能拿多少分」，帮助判断每一步是赚是亏（降低训练噪声）。</li>
+</ul>
+<p>四个模型一起跑，显存和工程复杂度都翻倍，还容易不稳定——这正是后来大家想方设法简化它的动机。</p></div>
+
+<div class="box deep"><div class="bt">进阶：DPO 的巧妙之处</div>
+<p>DPO 的洞察是：上面那套「训奖励模型 + 跑 RL」在数学上其实可以<strong>化简成一个直接的损失函数</strong>。它不再显式训练裁判，而是直接告诉模型——「对于这一对回答，<strong>提高被偏好那条的相对概率、压低被嫌弃那条的</strong>」，同时用参考模型约束别跑太远。一步到位，省掉了奖励模型和强化学习的全部复杂度，所以稳定、便宜、好复现，成了开源社区的默认选择。代价是它通常需要现成的成对偏好数据，灵活性和上限不如在线 RL。</p></div>
+
+<h3>过去 vs 现在：从 PPO 到 DPO</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">经典 RLHF（PPO）</div>
+    <ul><li>要单独训一个奖励模型 + 跑复杂的强化学习</li><li>同时要加载 4 个模型，工程复杂、不稳定、调参难</li><li>效果好但门槛高</li></ul></div>
+  <div class="box now"><div class="bt">DPO 及新方法</div>
+    <ul><li><strong>DPO（直接偏好优化）</strong>：数学上证明可以<strong>跳过奖励模型和 RL</strong>，直接用偏好数据微调，简单稳定</li><li>衍生出 IPO、KTO、ORPO、SimPO 等一系列变体</li><li><strong>RLAIF / Constitutional AI</strong>：用 AI 代替部分人类标注（按一套「宪法」原则让模型自我批评修正），大幅降低标注成本</li></ul></div>
+</div>
+
+<div class="box note"><div class="bt">DPO vs PPO 怎么选</div>
+<p>DPO 简单、便宜、稳定，是开源社区主流；在线 RL（PPO 类）上限更高、更灵活，前沿实验室仍在用，尤其在下一章的「推理强化」里 RL 重新成为主角。两者并存，各有适用场景。</p></div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>奖励黑客</strong>：模型钻奖励模型的空子，比如学会「说得长、说得自信」来骗高分，而非真的更好。</li>
+<li><strong>人类偏好不一致、有偏</strong>：标注者意见相左、带有主观和文化偏见，且偏好会被「写得讨喜」误导（谄媚 sycophancy）。</li>
+<li><strong>对齐税（alignment tax）</strong>：对齐可能轻微损害某些原始能力，需要权衡。</li>
+<li><strong>众包标注昂贵且难扩展</strong>，催生了用 AI 反馈替代的探索。</li>
+<li><strong>难以对齐「我们说不清的目标」</strong>：当任务超出人类轻松评判的范围，如何对齐成为开放难题（可扩展监督）。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#sft" onclick="show('sft');return false;"><div class="dir">← 上一章</div><div class="t">监督微调 SFT</div></a>
+<a class="next" href="#reasoning" onclick="show('reasoning');return false;"><div class="dir">下一章 →</div><div class="t">推理强化 RLVR</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-reasoning" data-slug="reasoning">
+        <div class="crumb">首页 / 推理强化 RLVR</div>
+        <h2 class="page-title">推理模型：教模型「先想清楚再回答」</h2>
+        <p class="subtitle">2024–2025 最大的范式变化。与其让模型脱口而出，不如让它生成长篇思考过程,再用「可验证的奖励」强化正确的推理。</p>
+        
+<p>传统对话模型是「脱口而出」——看到问题立刻给答案。但复杂的数学题、编程题、逻辑推理，人类也要打草稿、试错、回溯。<strong>推理模型（Reasoning Models）</strong>正是让模型学会这件事，代表是 o1 风格模型和开源的 R1 类工作。这是继 RLHF 之后又一次重要范式跃迁。</p>
+
+<h3>核心思想：思维链 + 可验证奖励</h3>
+<p>两个支柱：</p>
+<ul>
+<li><strong>长思维链（long Chain-of-Thought）</strong>：训练模型在给出最终答案前，先生成一长段「内部思考」——分解问题、尝试、自我检查、纠错。</li>
+<li><strong>RLVR（基于可验证奖励的强化学习）</strong>：在数学、代码这类<strong>答案可以自动判对错</strong>的领域，奖励信号不再依赖易被钻空子的奖励模型，而是用<strong>客观验证器</strong>（答案是否正确、代码是否通过测试）。这让 RL 信号干净可靠，可以大规模自动进行。</li>
+</ul>
+
+<div class="box note"><div class="bt">为什么这是个突破</div>
+<p>RLHF 的奖励来自「人类觉得好不好」，容易被谄媚和奖励黑客污染。而「这道数学题答对没有」是<strong>客观、可自动验证、不会撒谎</strong>的。把 RL 建立在这种可靠信号上，模型可以通过海量自我尝试、自我纠错<strong>真正学会推理</strong>，而不只是学会「显得在推理」。某些工作甚至显示，仅靠 RL（几乎不用人工示范）就能涌现出反思、回溯等高级推理行为。</p></div>
+
+<div class="box deep"><div class="bt">进阶：强化学习到底怎么「教会」模型推理</div>
+<p>核心直觉非常朴素，叫<strong>「试错 + 强化」</strong>：对同一道题，让模型<strong>采样出很多条不同的解法</strong>，用验证器判对错，然后——<strong>把通向正确答案的那些推理路径的概率调高，把走向错误的调低</strong>。重复千万次，模型就逐渐「长出」分解问题、自我检查、回溯纠错这些行为，因为这些行为统计上更常通向正确答案。</p>
+<p>这里有个关键升级叫 <strong>GRPO</strong>（也是 R1 类工作采用的方法）：它<strong>砍掉了上一章 PPO 里那个昂贵的价值模型</strong>，改用「一组答案里，谁比这组的平均分高就上调、低就下调」的相对比较来估计「这条路好不好」。少跑一个大模型，训练更省更稳，是推理强化能规模化的工程关键之一。</p>
+<p>为什么<strong>可验证奖励（RLVR）</strong>是灵魂：RL 最怕奖励信号被钻空子。「这道数学题答案对不对、这段代码测试过不过」是<strong>客观、自动、不会撒谎</strong>的信号，于是模型无法靠「显得聪明」骗分，只能<strong>真的把题做对</strong>。干净的奖励，才撑得起千万次的自我训练。</p></div>
+
+<h3>测试时计算（Test-time / Inference-time Scaling）</h3>
+<p>这带来一条<strong>新的扩展维度</strong>：过去靠「训练时」堆参数和数据；现在发现，让模型在<strong>回答时多「想」一会儿（生成更长的思考、或采样多条路径再择优）</strong>，也能稳定提升正确率。也就是说——<strong>愿意多花推理算力，就能换来更高质量的答案</strong>。这把「扩展法则」从训练侧延伸到了推理侧。</p>
+
+<h3>过去 vs 现在</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前</div>
+    <ul><li>模型直接输出答案，复杂推理靠提示词里写「Let's think step by step」临时诱导</li><li>对齐主要追求「说得好听、有用、安全」</li><li>能力上限主要由训练时规模决定</li></ul></div>
+  <div class="box now"><div class="bt">现在</div>
+    <ul><li>把「深度思考」<strong>内化进权重</strong>，模型自发地长篇推理</li><li>用 RLVR + 客观验证器大规模训练推理能力</li><li>新增「测试时计算」维度：推理越久越准</li><li>催生 GRPO 等更高效的 RL 算法（去掉价值网络，降低成本）</li></ul></div>
+</div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>只在「可验证」领域好用</strong>：数学、代码容易自动判分，但写作、开放对话、共情这类<strong>没有标准答案</strong>的任务难以构造可靠奖励。</li>
+<li><strong>推理成本暴涨</strong>：一条长思维链可能消耗成千上万 token，又慢又贵；如何「该想多久想多久」（自适应思考预算）是难题。</li>
+<li><strong>过度思考</strong>：简单问题也长篇大论，浪费算力甚至把对的想错。</li>
+<li><strong>思考过程未必忠实</strong>：模型展示的「思路」不一定是它真实的决策依据，给可解释性和安全监督带来挑战。</li>
+<li><strong>RL 训练仍不稳定、对配方敏感</strong>，复现门槛高。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#rlhf" onclick="show('rlhf');return false;"><div class="dir">← 上一章</div><div class="t">对齐 RLHF / DPO</div></a>
+<a class="next" href="#inference" onclick="show('inference');return false;"><div class="dir">下一章 →</div><div class="t">推理与部署</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-inference" data-slug="inference">
+        <div class="crumb">首页 / 推理与部署</div>
+        <h2 class="page-title">推理部署：把模型跑得又快又便宜</h2>
+        <p class="subtitle">训练只做一次,推理却要服务亿万次请求。模型上线后,真正决定成本的是推理效率。</p>
+        
+<p>一个模型训练好只是开始。真正面对用户时，是<strong>推理（inference）</strong>在反复运行。对大规模服务来说，推理的总成本往往<strong>远超训练</strong>，所以「如何让模型又快又省又稳」是一门独立的硬功夫。</p>
+
+<h3>自回归推理为什么慢</h3>
+<p>生成是<strong>一个 token 一个 token</strong>挤出来的，每生成一个都要把整个模型跑一遍，且必须等前一个出来才能算下一个——天然无法并行。更要命的是，它是<strong>访存瓶颈（memory-bound）</strong>：瓶颈不在算力，而在把上百 GB 的权重反复从显存搬进计算单元。</p>
+
+<h3>关键优化技术</h3>
+<table>
+<tr><th>技术</th><th>解决什么</th><th>原理</th></tr>
+<tr><td><strong>KV Cache</strong></td><td>避免重复计算</td><td>缓存已生成 token 的 Key/Value，新 token 只需算自己，不必重算全部历史</td></tr>
+<tr><td><strong>量化 (Quantization)</strong></td><td>省显存、提速</td><td>把权重从 16 位压到 8 位、4 位甚至更低，模型变小、搬运更快，精度仅小幅损失</td></tr>
+<tr><td><strong>连续批处理</strong></td><td>提高吞吐</td><td>动态地把多个请求拼在一起处理，让 GPU 不空转（vLLM 等框架的核心）</td></tr>
+<tr><td><strong>PagedAttention</strong></td><td>省显存碎片</td><td>像操作系统分页一样管理 KV Cache，显存利用率大增</td></tr>
+<tr><td><strong>投机解码</strong></td><td>提速</td><td>用小模型先快速猜几个 token，大模型一次性批量验证，验证比逐个生成快</td></tr>
+<tr><td><strong>蒸馏 (Distillation)</strong></td><td>降本</td><td>用大模型当老师，训练一个小模型逼近其表现，上线跑小模型</td></tr>
+</table>
+
+<h3>过去 vs 现在</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前</div>
+    <ul><li>模型小，单卡就能跑，推理优化不太被重视</li><li>简单地一条条请求处理</li></ul></div>
+  <div class="box now"><div class="bt">现在</div>
+    <ul><li>专门的推理引擎（vLLM、TensorRT-LLM、SGLang 等）成为基础设施</li><li>KV Cache 管理、连续批处理、量化成为标配</li><li>MoE 模型推理：总参数大但单次激活少，专门优化专家路由与显存</li><li>推理模型（长思维链）让单次请求 token 暴增，推理优化更加关键</li></ul></div>
+</div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>显存带宽墙</strong>：推理受限于搬运权重的带宽，而非算力，这是根本约束。</li>
+<li><strong>长上下文 / 长思考的 KV Cache 膨胀</strong>：上下文越长，KV Cache 占的显存越多，可能比模型本身还大。</li>
+<li><strong>延迟 vs 吞吐 vs 成本的三角权衡</strong>：要快（低延迟）、要省（高吞吐）、要便宜，三者难以兼得。</li>
+<li><strong>量化的精度损失</strong>：压得太狠会掉点，尤其伤害推理类复杂任务。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#reasoning" onclick="show('reasoning');return false;"><div class="dir">← 上一章</div><div class="t">推理强化 RLVR</div></a>
+<a class="next" href="#eval" onclick="show('eval');return false;"><div class="dir">下一章 →</div><div class="t">评估 Evaluation</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-eval" data-slug="eval">
+        <div class="crumb">首页 / 评估 Evaluation</div>
+        <h2 class="page-title">评估：怎么知道模型到底行不行</h2>
+        <p class="subtitle">训练每一步都要回答一个问题:这个模型变好了吗?但评估大模型,远比想象中困难和不可靠。</p>
+        
+<p>评估贯穿整条流水线：选数据配比要评、预训练中途要评、对齐前后要评、上线前更要评。但「衡量一个通用智能体到底有多强」本身就是个未解难题。</p>
+
+<h3>评估的几个层次</h3>
+<ul>
+<li><strong>基准测试（Benchmarks）</strong>：标准化考试。如 MMLU（多学科知识）、GSM8K / MATH（数学）、HumanEval（代码）、知识问答、常识推理等，能给出可比较的分数。</li>
+<li><strong>人工评测</strong>：让人对回答打分或两两比较，更贴近真实体验，但慢、贵、主观。</li>
+<li><strong>LLM-as-a-Judge</strong>：用强模型当裁判自动评分，便宜可扩展，是现在的主流之一，但裁判本身有偏见。</li>
+<li><strong>竞技场（Arena）</strong>：让真实用户盲选两个模型的回答，用类似象棋 Elo 的机制排名，反映真实偏好。</li>
+</ul>
+
+<h3>过去 vs 现在</h3>
+<div class="vs">
+  <div class="box before"><div class="bt">之前</div>
+    <ul><li>任务单一，指标明确（翻译看 BLEU、分类看准确率）</li><li>一个测试集就能说明问题</li></ul></div>
+  <div class="box now"><div class="bt">现在</div>
+    <ul><li>模型是通用的，<strong>没有单一指标能概括</strong>，要一整套基准 + 人评 + 竞技场组合</li><li>越来越重视<strong>真实任务、智能体（agent）能力、长上下文、安全性、多模态</strong></li><li>不断推出更难的基准（旧的很快被刷满），如研究生级难题、前沿数学</li></ul></div>
+</div>
+
+<div class="box bottleneck"><div class="bt">核心瓶颈</div>
+<ul>
+<li><strong>数据污染</strong>：基准题目泄漏进训练数据，分数虚高，无法反映真实能力（评估的头号公敌）。</li>
+<li><strong>基准饱和 / 应试</strong>：模型针对刷榜优化，高分不等于真本事；好的基准很快被刷爆。</li>
+<li><strong>裁判偏见</strong>：LLM 裁判偏爱更长、格式更漂亮、和自己风格相近的回答。</li>
+<li><strong>开放任务无标准答案</strong>：创意写作、对话、共情等难以客观打分。</li>
+<li><strong>能力越强越难评</strong>：当模型在某领域超过普通标注者，人类已难以判断对错（可扩展监督难题）。</li>
+</ul></div>
+
+        <div class="pager">
+<a href="#inference" onclick="show('inference');return false;"><div class="dir">← 上一章</div><div class="t">推理与部署</div></a>
+<a class="next" href="#bottleneck" onclick="show('bottleneck');return false;"><div class="dir">下一章 →</div><div class="t">瓶颈总结 & 展望</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-bottleneck" data-slug="bottleneck">
+        <div class="crumb">首页 / 瓶颈总结 & 展望</div>
+        <h2 class="page-title">核心瓶颈总表与未来展望</h2>
+        <p class="subtitle">把全流程的瓶颈收口成一张总表,再看清当下范式正往哪走。</p>
+        
+<p>读到这里，你已经走完了从数据到部署的完整流水线。这一章把每个阶段的<strong>核心瓶颈</strong>汇成一张总表，并谈谈整体趋势。瓶颈不是缺陷清单，而是<strong>下一次范式跃迁的发生地</strong>——回顾第 2 章会发现，技术史就是一部「瓶颈被打破」的历史。</p>
+
+<h3>全流程瓶颈总表</h3>
+<table>
+<tr><th>阶段</th><th>核心瓶颈</th><th>当前主要应对</th></tr>
+<tr><td>数据</td><td>高质量数据枯竭、污染、版权、配比靠试错</td><td>合成数据、严格去重去污、数据质量打分</td></tr>
+<tr><td>分词</td><td>多语言不公平、数字/代码处理别扭</td><td>字节级 BPE、探索无分词</td></tr>
+<tr><td>架构</td><td>注意力二次复杂度、长上下文外推</td><td>FlashAttention、稀疏/线性注意力、MoE、RoPE</td></tr>
+<tr><td>预训练</td><td>算力成本极高、训练不稳定、数据见顶</td><td>更优配方(Chinchilla)、容错、退火</td></tr>
+<tr><td>算力基建</td><td>通信墙、显存墙、利用率低、故障率高</td><td>3D 并行、ZeRO/FSDP、混合精度、高速互联</td></tr>
+<tr><td>SFT</td><td>数据质量天花板、只会模仿、幻觉、遗忘</td><td>高质量/合成示范、LoRA、控制规模</td></tr>
+<tr><td>对齐</td><td>奖励黑客、偏好有偏、谄媚、对齐税</td><td>DPO 系、RLAIF/宪法 AI、KL 约束</td></tr>
+<tr><td>推理强化</td><td>仅限可验证领域、成本暴涨、过度思考、思路不忠实</td><td>RLVR、自适应思考预算、GRPO</td></tr>
+<tr><td>部署</td><td>带宽墙、KV Cache 膨胀、延迟/成本权衡</td><td>KV Cache、量化、连续批处理、蒸馏</td></tr>
+<tr><td>评估</td><td>污染、饱和、裁判偏见、开放任务难评</td><td>新基准、竞技场、人评 + LLM 裁判组合</td></tr>
+</table>
+
+<h3>贯穿始终的三道「墙」</h3>
+<div class="kpi">
+  <div class="k"><div class="n">数据墙</div><div class="l">优质人类数据接近用尽，合成数据与数据效率成关键</div></div>
+  <div class="k"><div class="n">算力墙</div><div class="l">成本、能耗、芯片供应都成现实约束</div></div>
+  <div class="k"><div class="n">评估墙</div><div class="l">模型越强，越难判断它到底有多强、是否可信</div></div>
+</div>
+
+<h3>范式正在往哪走</h3>
+<ul>
+<li><strong>从「训练时扩展」到「推理时扩展」</strong>：愿意多花推理算力换正确率，是 2024 以来最重要的新轴。</li>
+<li><strong>从「会聊天」到「会做事」</strong>：智能体（agent）方向——模型调用工具、写代码、多步规划、与环境交互，RL 在真实环境里训练成为热点。</li>
+<li><strong>数据效率优先</strong>：在数据见顶的前提下，「用更少数据学更多」比「无脑堆量」更重要。</li>
+<li><strong>多模态融合</strong>：文本、图像、音频、视频统一进同一模型。</li>
+<li><strong>小模型 + 蒸馏 + 端侧</strong>：高性价比小模型让能力下沉到手机和边缘设备。</li>
+<li><strong>对齐与安全的长期挑战</strong>：当模型能力逼近甚至超过人类评判水平，「可扩展监督」「忠实可解释」成为核心研究方向。</li>
+</ul>
+
+<div class="box note"><div class="bt">把整份文档浓缩成三句话</div>
+<p>① 大模型 = <strong>预训练学知识 + 后训练学做人 + 推理强化学思考</strong>。<br>
+② 每一次范式跃迁，都源于<strong>上一代瓶颈被打破</strong>：规则→统计→RNN→Transformer→RLHF→推理强化。<br>
+③ 当下三道墙——<strong>数据、算力、评估</strong>——既是约束，也指向下一个突破口。</p></div>
+
+<div class="box note"><div class="bt">说明</div>
+<p>本文档为概念性科普框架，内容基于截至 2025 年中的公开理解整理，意在建立完整心智地图，不追求每个数字的精确实时性。具体模型的最新参数、跑分请以官方资料为准。</p></div>
+
+        <div class="pager">
+<a href="#eval" onclick="show('eval');return false;"><div class="dir">← 上一章</div><div class="t">评估 Evaluation</div></a>
+<a class="next" href="#landscape" onclick="show('landscape');return false;"><div class="dir">下一章 →</div><div class="t">竞争格局</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-landscape" data-slug="landscape">
+        <div class="crumb">首页 / 竞争格局</div>
+        <h2 class="page-title">顶级模型公司在如何竞争？训练方式还在变吗？</h2>
+        <p class="subtitle">前面讲的是「怎么训练一个模型」。这一章拉远镜头：站在 2026 年，头部公司在比什么、主要做什么，以及在模型周以周计迭代的今天,训练范式本身正在怎样改变。</p>
+        
+<div class="box note"><div class="bt">时效说明</div>
+<p>本章涉及快速变化的产业格局，下述信息整合自 2026 年中的公开报道与排行榜，<strong>具体型号/跑分会很快过时</strong>，请把重点放在「竞争的逻辑」而非某个数字。文末附信息来源。</p></div>
+
+<h3>谁在牌桌上</h3>
+<p>到 2026 年，绝对前沿能力基本被三家「拉开身位」：<strong>OpenAI（GPT-5 系）、Anthropic（Claude 系）、Google DeepMind（Gemini 系）</strong>，迭代周期已快到<strong>以周计</strong>。紧随其后的是 <strong>xAI（Grok）</strong>，以及来势汹汹的开源/开放权重阵营——<strong>DeepSeek、阿里 Qwen、Z.AI（GLM）、Meta（Llama）</strong>。Meta 一度因旗舰内测追不上头部三家而推迟发布，说明这条赛道有多残酷。</p>
+<div class="kpi">
+  <div class="k"><div class="n">3 家</div><div class="l">真正争夺「绝对前沿」的公司</div></div>
+  <div class="k"><div class="n">以周计</div><div class="l">头部模型的迭代节奏</div></div>
+  <div class="k"><div class="n">数亿美元</div><div class="l">单次顶级训练运行的成本量级</div></div>
+</div>
+
+<h3>他们到底在比什么</h3>
+<p>竞争早已不只是「谁的模型更聪明」这一个维度，而是分化成好几条战线：</p>
+<table>
+<tr><th>竞争维度</th><th>在比什么</th><th>典型表现</th></tr>
+<tr><td><strong>绝对智能上限</strong></td><td>最难的推理、数学、科研级任务谁更强</td><td>各家轮流登顶各类高难基准</td></tr>
+<tr><td><strong>垂直专长</strong></td><td>没有谁全面碾压，转向「单项最强」</td><td>有的主打编程/软件工程，有的主打推理，有的写作最自然，有的当「全能 + 生态最大」</td></tr>
+<tr><td><strong>智能体能力</strong></td><td>能否长时间自主干活、可靠调用工具、多步规划</td><td>「能自主工作数小时」的 agent、工具调用基准（如 MCP 类）成新战场</td></tr>
+<tr><td><strong>成本 / 速度</strong></td><td>同等智能下谁更便宜更快</td><td>开放权重模型大幅降价（动辄腰斩），逼得闭源比拼性价比</td></tr>
+<tr><td><strong>上下文长度</strong></td><td>能一次吞下多少内容</td><td>主流已达百万 token 级，个别冲到千万级</td></tr>
+<tr><td><strong>生态与分发</strong></td><td>谁绑定了开发者、云、操作系统、办公套件</td><td>云厂商自研模型降低对单一供应商依赖；叙事/品牌之争同样激烈</td></tr>
+</table>
+
+<div class="box note"><div class="bt">关键趋势：从「一家通吃」到「专业分工」</div>
+<p>2026 年最明显的特征是<strong>没有任何单一模型在所有品类都最好</strong>。编程、推理、写作、多模态、工具调用各有领跑者。竞争从「一个全能冠军」转向「<strong>多个单项冠军 + 一个生态最大的全能选手</strong>」的格局。</p></div>
+
+<h3>头部公司主要在做的几件事</h3>
+<ul>
+<li><strong>把「推理/思考」做深</strong>：用强化学习训练模型先长篇思考再作答，并能<strong>动态分配思考算力</strong>（简单题快答、难题多想）。</li>
+<li><strong>押注智能体（Agent）</strong>：让模型不只是对话，而是能连续操作工具、写代码、跑任务、自主工作几小时——这被普遍视为下一个主战场。</li>
+<li><strong>统一/路由架构</strong>：把「快模型」和「深思考模型」合成一个系统，用内部<strong>路由器</strong>按请求难度实时选择，兼顾体验与成本。</li>
+<li><strong>死磕推理成本</strong>：模型再强，跑得贵就没人用。量化、蒸馏、MoE、推理引擎优化成为产品竞争力的一部分。</li>
+<li><strong>抢生态位</strong>：绑定云平台、IDE、浏览器、办公软件，把模型变成「随处可用的能力」。</li>
+<li><strong>安全与对齐</strong>：能力越强，可控性、可解释、防滥用越成为差异化和合规门槛。</li>
+</ul>
+
+<h3>核心问题：迭代这么快，训练方式本身在变吗？</h3>
+<p>答案是<strong>正在发生明显转移</strong>。前几章描述的流水线骨架没变，但「投入的重心」和「能力的来源」已经和两三年前不同：</p>
+<div class="vs">
+  <div class="box before"><div class="bt">早期范式（GPT-3/4 时代）</div>
+    <ul><li>能力主要来自<strong>预训练时</strong>堆参数、堆数据、堆算力（Scaling Law 主导）</li><li>后训练（SFT + RLHF）是「锦上添花」的对齐环节</li><li>模型「脱口而出」，复杂推理靠提示词临时诱导</li><li>更大 = 更强，几乎是唯一信仰</li></ul></div>
+  <div class="box now"><div class="bt">当前范式（2025–2026）</div>
+    <ul><li>预训练的<strong>边际收益递减</strong>（叠加优质数据见顶），单纯做大不再稳赚</li><li>重心转向<strong>后训练与强化学习</strong>：用 RL（尤其可验证奖励 RLVR）大规模训练推理能力，成为拉开差距的关键</li><li>新增<strong>「测试时计算」</strong>这条扩展轴——让模型回答时多想、多采样、自我验证，花推理算力换正确率</li><li>转向<strong>智能体式训练</strong>：在真实/模拟环境里用 RL 训练模型完成多步任务、使用工具</li><li>数据从「堆量」转向「<strong>质量 + 合成数据 + 数据效率</strong>」</li></ul></div>
+</div>
+
+<div class="box note"><div class="bt">几条正在成形的新方向</div>
+<ul>
+<li><strong>把价值函数/验证器请回 RL</strong>：GRPO 等方法曾丢掉价值网络，新工作又把「推理器 + 验证器」联合训练，以更好支撑测试时的搜索与自我核查。</li>
+<li><strong>测试时训练 / 自我改进</strong>：让模型在面对新任务时临时用自己的「多数投票」当伪标签做轻量 RL，或用可训练的「记忆」组件提升多轮表现。</li>
+<li><strong>自适应思考预算</strong>：训练模型自己判断「该想多久」，避免简单题过度思考、难题想得不够。</li>
+</ul></div>
+
+<div class="box bottleneck"><div class="bt">这一阶段的核心瓶颈</div>
+<ul>
+<li><strong>预训练红利见顶</strong>：再做大的回报不如从前，必须从别处（RL、推理、数据效率）找增量。</li>
+<li><strong>RL 的可扩展性</strong>：RLVR 在数学/代码好用，但如何把可靠奖励推广到开放任务、智能体长流程，仍是难题。</li>
+<li><strong>推理成本与产品体验的拉扯</strong>：长思考、长上下文、智能体都极耗算力，「又强又快又便宜」三角依旧难破。</li>
+<li><strong>评估与可信</strong>：能力越强越难判断真伪（见评估章），叠加安全合规压力，成为头部公司的长期负担。</li>
+<li><strong>同质化与护城河</strong>：开放权重快速追赶、彼此蒸馏，技术差距容易被抹平，竞争越来越落到生态、成本和工程执行力。</li>
+</ul></div>
+
+<div class="box note"><div class="bt">一句话收尾</div>
+<p>头部公司的竞争已从「<strong>谁的模型更大</strong>」演变为「<strong>谁更会用强化学习教模型思考、谁的智能体更能干活、谁能把这一切跑得更便宜并嵌进生态</strong>」。训练范式的重心，正从<strong>预训练时扩展</strong>滑向<strong>后训练与推理时扩展</strong>——这也呼应了第 10 章「推理强化」的主线。</p></div>
+
+<div class="box note"><div class="bt">下一章深入</div>
+<p>那么，顶级公司<strong>为什么能以「周」为单位刷新模型</strong>？为什么中国头部公司处境不同？下一章「迭代速度之谜」会把背后的飞轮与约束彻底拆开。</p></div>
+
+<h4>信息来源</h4>
+<ul style="font-size:13px;color:#9aa3b2">
+<li>Stanford HAI《2026 AI Index Report》— hai.stanford.edu</li>
+<li>LLM-Stats 排行榜与模型动态 — llm-stats.com</li>
+<li>CNBC：科技巨头在 AI 编程模型上的竞争（2026-06）— cnbc.com</li>
+<li>Sebastian Raschka《The State of Reinforcement Learning for LLM Reasoning》— magazine.sebastianraschka.com</li>
+<li>arXiv 关于测试时计算 / 智能体 RL 的近期论文</li>
+</ul>
+
+        <div class="pager">
+<a href="#bottleneck" onclick="show('bottleneck');return false;"><div class="dir">← 上一章</div><div class="t">瓶颈总结 & 展望</div></a>
+<a class="next" href="#iteration" onclick="show('iteration');return false;"><div class="dir">下一章 →</div><div class="t">迭代速度之谜</div></a>
+</div>
+      </section>
+      <section class="chapter" id="ch-iteration" data-slug="iteration">
+        <div class="crumb">首页 / 迭代速度之谜</div>
+        <h2 class="page-title">迭代速度之谜：为什么有人快，有人慢</h2>
+        <p class="subtitle">顶级公司为何能以「周」为单位刷新模型？而中国头部公司又面临什么不同的处境？这一章把「迭代速度」拆开，看清背后的飞轮与约束。</p>
+        
+<div class="box note"><div class="bt">时效与立场说明</div>
+<p>本章是<strong>产业分析</strong>，整合自 2026 年中的公开报道与行业数据，存在不确定性与不同观点；目的是讲清「速度差异背后的结构性原因」，而非评判优劣或选边。具体数字会很快变化，请关注逻辑。文末附来源。</p></div>
+
+<h3>先看一组数字：迭代到底有多快</h3>
+<div class="kpi">
+  <div class="k"><div class="n">~37.5 天</div><div class="l">2023 年前沿模型的发布间隔（中位数）</div></div>
+  <div class="k"><div class="n">~11 天</div><div class="l">2026 年至今的发布间隔（中位数）</div></div>
+  <div class="k"><div class="n">6月→4周</div><div class="l">主力迭代周期：2024 半年 → 2025 三月 → 2026 四周</div></div>
+</div>
+<p>三年间，前沿模型的更新频率压缩了三倍以上。这种速度本身已经成为一种<strong>竞争武器</strong>——谁能更快把改进推给用户、更快收集反馈，谁就能滚得更快。问题来了：这种速度从哪来？</p>
+
+<h3>问题一：顶级公司为什么能这么快？</h3>
+<p>关键要打破一个误解：<strong>他们并不是每周从头训练一个新基座模型</strong>（那需要三四个月、上千万美元，不可能每周来一次）。真正的秘密，是一套环环相扣的<strong>迭代飞轮</strong>。</p>
+
+<div class="box deep"><div class="bt">飞轮的核心：预训练一次，后训练很多次</div>
+<p>最贵最慢的<strong>预训练（基座）只做少数几次</strong>。一旦有了强基座，后续大量的版本更新发生在<strong>后训练阶段</strong>——SFT、对齐、推理强化。按 2025 年的数据，后训练大约只占整体算力的 <strong>15%～25%</strong>，相对便宜得多。这意味着：<strong>同一个基座，可以快速衍生出一连串后训练版本</strong>（更会推理的、更会用工具的、更安全的）。绝大多数「这周的新模型」其实是后训练层面的迭代，而非重新预训练。这就是高频发布的物理基础。</p></div>
+
+<h4>支撑飞轮高速转动的五个轮轴</h4>
+<table>
+<tr><th>要素</th><th>为什么能加速迭代</th></tr>
+<tr><td><strong>常备评测流水线</strong></td><td>建好一整套自动化评测（占 AI 总开销约 3%～5%），任何改动几小时内就知道「变好还是变坏」，于是敢于高频发布。<strong>能快速、可信地度量，是敢快的前提。</strong></td></tr>
+<tr><td><strong>基础设施复用</strong></td><td>训练框架、数据管线、RL 环境、部署引擎一次建好反复用。新模型是「在成熟流水线上跑一遍」，而不是从零搭。</td></tr>
+<tr><td><strong>资本 + 算力飞轮</strong></td><td>收入→融资→买更多卡→训更强模型→更多收入。美国头部实验室的资本量级是中国同行的 <strong>30 倍以上</strong>（如有报道称的千亿级算力投入），算力不再是稀缺品，可以同时跑很多实验。</td></tr>
+<tr><td><strong>蒸馏 + 合成数据</strong></td><td>用最强的「教师模型」快速生成训练数据、或蒸馏出更小更快的版本，免去重新积累数据的漫长过程。</td></tr>
+<tr><td><strong>人才密度 + 产研一体</strong></td><td>顶尖研究者高度集中，研究与产品紧耦合，线上反馈直接喂回训练，形成「真实使用 → 数据 → 更强模型」的闭环。</td></tr>
+</table>
+
+<div class="box note"><div class="bt">一个反直觉的现实：现在的瓶颈常常是「卡和电」，不是「会不会做」</div>
+<p>2026 年的新约束是：用最新一代芯片训出的模型，<strong>要等到有足够的推理部署容量（GPU + 电力 + 数据中心）才能上线</strong>。也就是说，限制发布的越来越是<strong>物理产能</strong>，而非算法能力。这反过来解释了为什么「算力 + 资本 + 电力」成了头部公司军备竞赛的真正战场。</p></div>
+
+<h3>问题二：中国头部公司是不是「没那么快」？</h3>
+<div class="box note"><div class="bt">先校正前提：在「效率赛道」上，中国头部模型其实迭代得又快又省</div>
+<p>事实上，<strong>DeepSeek、阿里 Qwen、月之暗面 Kimi、智谱 GLM</strong> 等近年的迭代节奏相当快，而且以「高性价比」著称：在编程、数学等部分基准上达到甚至领先国际水平，开源影响力很大。最有代表性的是，有报道称 DeepSeek 的 R1 训练成本约 <strong>600 万美元</strong>，相比 GPT-4 约 <strong>1 亿美元</strong>量级低了一个数量级，靠的正是 MoE「只激活一小部分参数」等效率优化。所以「中国公司迭代慢」并不准确——更准确的说法是：<strong>在「绝对前沿」（最大规模、最尖端硬件、最大推理集群）这条特定赛道上，节奏受到结构性约束，而且战略重心本就不同。</strong></p></div>
+
+<h4>真正的约束在哪：四个结构性因素</h4>
+<div class="vs">
+  <div class="box bottleneck"><div class="bt">① 算力 / 芯片</div>
+    <p>美国出口管制切断了最先进 GPU（H100/A100 及其降配版 H800/A800 均受限），中国实验室主要依赖受限的 H20，并被引导转向华为昇腾等国产芯片。这直接卡住了<strong>最大规模的预训练长跑</strong>和<strong>大规模推理部署</strong>——不是不会做，而是「同时能开多少张卡、训多久」被限制了。</p></div>
+  <div class="box bottleneck"><div class="bt">② 资本规模</div>
+    <p>有统计称 2024–2026 年中国前沿实验室公开融资合计不足百亿美元，而美国同行高出 <strong>数十倍</strong>；叠加资本管制、CFIUS/出境投资限制，国际资本难以进入。最烧钱的「超大训练 run + 海量买卡」因此更难承受。</p></div>
+  <div class="box bottleneck"><div class="bt">③ 人才结构</div>
+    <p>顶尖研究者并不缺，但有分析指出<strong>大批量工程人才与落地工程能力</strong>相对紧张；同时人才流动与外流受到更多限制，影响规模化扩张的速度。</p></div>
+  <div class="box bottleneck"><div class="bt">④ 战略与生态差异</div>
+    <p>中国路线更强调<strong>效率、开源、落地（AI+ 各行业）</strong>，是「多条赛道并进」而非单押「绝对前沿 AGI」；同时在全球云分发、海外产品生态上的触达较弱，商业化与监管环境也不同。重心不同，自然不会在「刷最大模型」上和对手比谁更快。</p></div>
+</div>
+
+<div class="box deep"><div class="bt">所以更精确的结论是</div>
+<p>中国头部公司选择了一条<strong>「用效率与开源对冲算力与资本劣势」</strong>的路线：把每一张卡、每一块钱的产出做到极致（MoE 稀疏激活、蒸馏、极致工程优化）。在<strong>效率与性价比维度，迭代很快</strong>；但在<strong>「绝对前沿军备竞赛」（最大模型、最长训练、最大推理集群）维度，节奏被芯片与资本约束、战略上也不强求</strong>。换句话说，「快慢」取决于你拿哪条赛道做标尺。</p></div>
+
+<h3>两条路线的对照</h3>
+<table>
+<tr><th>维度</th><th>美国头部实验室</th><th>中国头部实验室（典型）</th></tr>
+<tr><td>核心打法</td><td>资本 + 算力堆绝对前沿，产研闭环高频发布</td><td>效率优先、开源放大影响、深耕落地</td></tr>
+<tr><td>硬件</td><td>最新一代 GPU 充足，瓶颈在部署产能与电力</td><td>受出口管制，依赖受限芯片 / 国产芯片</td></tr>
+<tr><td>资本</td><td>千亿级融资与营收，算力近乎不设限</td><td>融资规模小一个数量级，资本管制约束</td></tr>
+<tr><td>开源态度</td><td>旗舰多为闭源（少数开放权重）</td><td>大量开放权重，借生态扩散影响力</td></tr>
+<tr><td>迭代特征</td><td>绝对能力领先 + 周级发布节奏</td><td>性价比与效率领先，部分基准追平/反超</td></tr>
+</table>
+
+<h3>把训练范式的变化和迭代速度联系起来</h3>
+<p>回到全文主线：正因为能力来源正从「预训练时扩展」转向「<strong>后训练 + 强化学习 + 推理时扩展</strong>」（第 10、14 章），<strong>迭代才可能这么快</strong>——后训练便宜、可快速试错、效果可即时评测。这也给了算力受限者一条出路：<strong>与其在预训练上和对手拼卡，不如在后训练、数据效率、推理优化上拼巧劲</strong>。范式的变化，既解释了「为什么快」，也重塑了「谁有机会追上」。</p>
+
+<div class="box note"><div class="bt">一句话收尾</div>
+<p>顶级公司快，是因为<strong>「预训练一次、后训练多次」+ 自动评测 + 基建复用 + 资本算力飞轮</strong>把迭代变成了流水线；中国头部公司并非整体慢，而是<strong>在绝对前沿被芯片与资本约束、战略上转而主打效率与开源</strong>——这是一场「<strong>算力的豪赌</strong>」与「<strong>效率的巧劲</strong>」之间的竞赛，而非简单的快与慢。</p></div>
+
+<h4>信息来源</h4>
+<ul style="font-size:13px;color:#9aa3b2">
+<li>Frontier Model Release Velocity / 发布节奏数据 — digitalapplied.com、officechai.com</li>
+<li>前沿训练成本与后训练占比 — deluair.com、Stanford HAI 2026 AI Index</li>
+<li>中国模型与芯片/管制 — digitalinasia.com、radarai.top、USCC《Two Loops》报告</li>
+<li>中国 AI 资本约束 — East Asia Forum、RAND、TechCrunch（人才）</li>
+<li>美中战略对比 — Brookings、Anthropic《2028: Two scenarios》</li>
+</ul>
+
+        <div class="pager">
+<a href="#landscape" onclick="show('landscape');return false;"><div class="dir">← 上一章</div><div class="t">竞争格局</div></a>
+<div class="ph"></div>
+</div>
+      </section>
+    </article>
+  </main>
+</div>
+<script>
+
+var ORDER = ['index','history','data','tokenize','architecture','pretrain','scaling','sft','rlhf','reasoning','inference','eval','bottleneck','landscape','iteration'];
+function show(slug){
+  document.querySelectorAll('.chapter').forEach(function(s){s.style.display='none';});
+  var el=document.getElementById('ch-'+slug);
+  if(!el){slug='index';el=document.getElementById('ch-index');}
+  el.style.display='block';
+  document.querySelectorAll('.nav a').forEach(function(a){a.classList.remove('active');});
+  var na=document.querySelector('.nav a[data-slug="'+slug+'"]');
+  if(na) na.classList.add('active');
+  if(history.replaceState) history.replaceState(null,'','#'+slug);
+  document.querySelector('.sidebar').classList.remove('open');
+  window.scrollTo(0,0);
+}
+function toggleMenu(){document.querySelector('.sidebar').classList.toggle('open');}
+window.addEventListener('hashchange',function(){show((location.hash||'#index').slice(1));});
+document.addEventListener('DOMContentLoaded',function(){
+  show((location.hash||'#index').slice(1));
+});
+document.addEventListener('click',function(e){
+  var sb=document.querySelector('.sidebar');var btn=document.querySelector('.menu-btn');
+  if(window.innerWidth<=900 && sb.classList.contains('open') && !sb.contains(e.target) && e.target!==btn && !btn.contains(e.target)){sb.classList.remove('open');}
+});
+
+</script>
+</body>
+</html>
