@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英伟达 vs 华为 AI芯片对比分析 · 2026</title>
+<style>
+  :root{
+    --nv:#76b900; --nv-d:#5a8c00;
+    --hw:#cf0a2c; --hw-d:#a00821;
+    --ink:#1a1f2b; --sub:#5b6472; --line:#e6e9ef;
+    --bg:#f6f7f9; --card:#ffffff; --soft:#f0f2f6;
+    --accent:#2563eb; --warn:#c2410c; --ok:#15803d;
+    --shadow:0 1px 3px rgba(20,30,50,.06),0 8px 24px rgba(20,30,50,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 80px}
+  header.hero{background:linear-gradient(120deg,#0f1729 0%,#1e293b 55%,#243044 100%);color:#fff;
+    padding:54px 22px 46px;margin-bottom:34px}
+  .hero-in{max-width:1080px;margin:0 auto}
+  .hero h1{font-size:30px;margin:0 0 10px;font-weight:750;letter-spacing:.3px}
+  .hero p{margin:0;color:#aeb8c8;font-size:15px;max-width:760px}
+  .vs-badge{display:inline-flex;gap:10px;align-items:center;margin-bottom:18px;font-weight:700}
+  .pill{padding:5px 13px;border-radius:999px;font-size:13px;color:#fff}
+  .pill.nv{background:var(--nv)} .pill.hw{background:var(--hw)}
+  .vs{color:#94a3b8;font-size:13px;font-weight:600}
+  .meta{margin-top:18px;font-size:12.5px;color:#7c8aa0}
+  h2{font-size:21px;margin:46px 0 14px;padding-bottom:10px;border-bottom:2px solid var(--line);
+    display:flex;align-items:center;gap:10px}
+  h2 .n{display:inline-flex;width:30px;height:30px;border-radius:8px;background:var(--ink);color:#fff;
+    align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+  h3{font-size:16.5px;margin:26px 0 8px;color:var(--ink)}
+  p{margin:10px 0}
+  .lead{font-size:15.5px;color:#374151;background:var(--card);border-left:4px solid var(--accent);
+    padding:16px 18px;border-radius:0 10px 10px 0;box-shadow:var(--shadow)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+    box-shadow:var(--shadow);margin:16px 0}
+  table{width:100%;border-collapse:collapse;font-size:13.7px;background:var(--card);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin:14px 0}
+  th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:#0f1729;color:#fff;font-weight:650;font-size:13px}
+  thead th.nv{background:var(--nv-d)} thead th.hw{background:var(--hw-d)}
+  tbody tr:nth-child(even){background:#fafbfc}
+  td.dim{color:var(--sub);font-weight:600;width:130px}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+  .panel{border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .panel.nv{background:linear-gradient(180deg,#f7fcef,#fff);border-top:4px solid var(--nv)}
+  .panel.hw{background:linear-gradient(180deg,#fff5f6,#fff);border-top:4px solid var(--hw)}
+  .panel h4{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+  .panel.nv h4{color:var(--nv-d)} .panel.hw h4{color:var(--hw-d)}
+  ul{margin:8px 0;padding-left:20px} li{margin:6px 0}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:6px;margin-right:6px}
+  .tag.adv{background:#dcfce7;color:#15803d} .tag.gap{background:#fee2e2;color:#b91c1c}
+  .tag.neu{background:#e0e7ff;color:#3730a3}
+  .bars{margin:14px 0}
+  .bar-row{display:grid;grid-template-columns:128px 1fr;align-items:center;gap:12px;margin:9px 0;font-size:13px}
+  .bar-track{background:var(--soft);border-radius:8px;height:26px;position:relative;overflow:hidden}
+  .bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:10px;
+    color:#fff;font-size:12px;font-weight:700;white-space:nowrap}
+  .bar-fill.nv{background:linear-gradient(90deg,var(--nv-d),var(--nv))}
+  .bar-fill.hw{background:linear-gradient(90deg,var(--hw-d),var(--hw))}
+  .callout{border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14px}
+  .callout.warn{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12}
+  .callout.key{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a}
+  .factor{display:grid;grid-template-columns:42px 1fr;gap:14px;align-items:start;
+    padding:14px 0;border-bottom:1px dashed var(--line)}
+  .factor:last-child{border-bottom:0}
+  .factor .ic{width:42px;height:42px;border-radius:10px;background:var(--soft);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+  .factor h4{margin:0 0 4px;font-size:15px}
+  .factor p{margin:0;font-size:13.7px;color:#4b5563}
+  .scenario{border-left:3px solid var(--accent);padding:4px 0 4px 16px;margin:14px 0}
+  .scenario.b{border-color:var(--ok)} .scenario.w{border-color:var(--warn)}
+  .scenario b{display:block;margin-bottom:3px}
+  .src{font-size:12.5px;color:var(--sub)}
+  .src a{color:var(--accent);text-decoration:none} .src a:hover{text-decoration:underline}
+  .src li{margin:4px 0}
+  .disc{font-size:12px;color:#94a3b8;margin-top:8px;font-style:italic}
+  footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--sub)}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;
+    box-shadow:var(--shadow);font-size:14px}
+  .toc a{color:var(--ink);text-decoration:none;display:block;padding:4px 0;border-bottom:1px solid #f0f2f6}
+  .toc a:hover{color:var(--accent)} .toc a:last-child{border:0}
+
+  /* ---- interactive pod modules ---- */
+  .hot{fill:#ffffff;fill-opacity:0;pointer-events:all;cursor:pointer;
+    stroke:rgba(255,255,255,.5);stroke-width:1.4;stroke-dasharray:5 4;
+    animation:hotpulse 2.6s ease-in-out infinite;transition:fill-opacity .18s}
+  .hot:hover{fill-opacity:.16;stroke:#fff;stroke-width:2;stroke-dasharray:0}
+  @keyframes hotpulse{0%,100%{stroke-opacity:.25}50%{stroke-opacity:.85}}
+  .pod-hint{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;
+    background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe;border-radius:999px;
+    padding:6px 14px;margin:2px 0 10px}
+  .pod-hint .dot{width:9px;height:9px;border-radius:50%;background:#2563eb;animation:hotpulse 1.6s infinite}
+
+  /* ---- modal ---- */
+  .ov{position:fixed;inset:0;background:rgba(10,16,28,.62);
+    backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;
+    z-index:999;padding:20px;animation:ovin .25s ease}
+  .ov.show{display:flex}
+  @keyframes ovin{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff;border-radius:18px;max-width:560px;width:100%;max-height:88vh;overflow:auto;
+    box-shadow:0 24px 70px rgba(10,16,28,.5);transform-origin:center;
+    animation:popin .34s cubic-bezier(.2,.9,.25,1.15)}
+  @keyframes popin{0%{opacity:0;transform:scale(.82) translateY(24px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+  .modal .mhead{padding:20px 24px;color:#fff;position:relative;overflow:hidden}
+  .modal .mhead.nv{background:linear-gradient(120deg,#3a6600,#76b900)}
+  .modal .mhead.hw{background:linear-gradient(120deg,#a00821,#cf0a2c)}
+  .modal .mhead h3{margin:0;font-size:19px;color:#fff;border:0}
+  .modal .mhead .sub{font-size:12.5px;opacity:.9;margin-top:3px}
+  .modal .mhead .ic{font-size:26px;margin-bottom:6px;display:block}
+  /* animated flow band */
+  .flow{position:absolute;inset:0;opacity:.28;pointer-events:none}
+  .flow span{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;
+    transform:translateY(-50%);animation:flowmove 3.2s linear infinite}
+  @keyframes flowmove{0%{left:-8%;opacity:0}10%{opacity:.9}90%{opacity:.9}100%{left:104%;opacity:0}}
+  .mbody{padding:18px 24px 24px}
+  .mbody section{margin:14px 0 0;opacity:0;animation:rise .4s ease forwards}
+  .mbody section:nth-of-type(1){animation-delay:.08s}
+  .mbody section:nth-of-type(2){animation-delay:.18s}
+  .mbody section:nth-of-type(3){animation-delay:.28s}
+  .mbody section:nth-of-type(4){animation-delay:.38s}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .mbody h4{margin:0 0 6px;font-size:13.5px;color:#0f1729;display:flex;align-items:center;gap:7px}
+  .mbody h4 .tag{font-size:11px;padding:2px 8px;border-radius:6px;background:#eef2ff;color:#3730a3}
+  .mbody p{margin:0;font-size:13.7px;color:#374151}
+  .mbody ul{margin:6px 0 0;padding-left:20px}.mbody li{margin:4px 0;font-size:13.5px;color:#374151}
+  .specgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .specgrid div{background:#f6f7f9;border-radius:9px;padding:8px 11px;font-size:12.5px}
+  .specgrid b{display:block;font-size:15px;color:#0f1729}
+  .mlinks a{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#2563eb;
+    text-decoration:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;
+    padding:5px 11px;margin:5px 6px 0 0}
+  .mlinks a:hover{background:#dbeafe}
+  .mclose{position:absolute;top:14px;right:16px;width:32px;height:32px;border-radius:50%;
+    border:0;background:rgba(255,255,255,.22);color:#fff;font-size:18px;cursor:pointer;line-height:1}
+  .mclose:hover{background:rgba(255,255,255,.38)}
+  .mnav{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .mnav button{font-size:12px;border:1px solid var(--line);background:#fff;border-radius:999px;
+    padding:5px 11px;cursor:pointer;color:#475569}
+  .mnav button:hover{border-color:#94a3b8} .mnav button.act{background:#0f1729;color:#fff;border-color:#0f1729}
+
+  /* ---- sidebar layout + chapter paging ---- */
+  .layout{display:flex;max-width:1340px;margin:0 auto;align-items:flex-start;gap:0}
+  .side{position:sticky;top:0;align-self:flex-start;width:266px;flex:none;height:100vh;
+    overflow-y:auto;background:var(--card);border-right:1px solid var(--line);padding:22px 14px 30px}
+  .side .brand{font-size:14.5px;font-weight:750;line-height:1.45;margin:4px 10px 8px;color:var(--ink)}
+  .side .brand small{display:block;font-weight:500;font-size:11.5px;color:var(--sub);margin-top:4px}
+  .side .navlabel{font-size:11px;font-weight:700;color:#9aa4b2;letter-spacing:.5px;
+    margin:14px 12px 6px;text-transform:uppercase}
+  .side nav a{display:block;padding:9px 12px;border-radius:9px;font-size:13px;color:var(--ink);
+    text-decoration:none;cursor:pointer;margin:3px 0;line-height:1.35;border:1px solid transparent;transition:.15s}
+  .side nav a:hover{background:var(--soft)}
+  .side nav a.act{background:#0f1729;color:#fff;font-weight:600}
+  .main{flex:1;min-width:0;padding:0 30px 56px}
+  .chap{display:none;animation:chapin .32s ease}
+  .chap.show{display:block}
+  @keyframes chapin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .chap h2{margin-top:30px}
+  .chap-nav{display:flex;justify-content:space-between;gap:12px;margin:38px 0 0;padding-top:18px;border-top:1px solid var(--line)}
+  .chap-nav button{font-size:13px;border:1px solid var(--line);background:#fff;border-radius:10px;
+    padding:10px 16px;cursor:pointer;color:#334155;font-weight:600;max-width:47%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+  .chap-nav button:hover{border-color:#94a3b8;background:var(--soft)}
+  .chap-nav button:disabled{opacity:.35;cursor:default}
+  .chap-nav .nxt{text-align:right}
+  @media(max-width:860px){
+    .layout{flex-direction:column}
+    .side{position:static;width:auto;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:12px}
+    .side nav{display:flex;flex-wrap:wrap;gap:4px}
+    .side nav a{font-size:12px;padding:6px 10px;margin:0}
+    .main{padding:0 16px 40px}
+  }
+
+  /* ---- lightweight diagrams ---- */
+  .viz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin:18px 0}
+  .viz .vtitle{font-size:13.5px;font-weight:700;color:#334155;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+  /* supply chain */
+  .chain{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+  .chain .stage{flex:1 1 110px;min-width:104px;background:var(--soft);border-radius:10px;padding:11px 9px;text-align:center;border-top:3px solid #94a3b8}
+  .chain .stage.ok{border-top-color:#15803d;background:#f0fdf4}
+  .chain .stage.warn{border-top-color:#c2410c;background:#fff7ed}
+  .chain .stage.bad{border-top-color:#b91c1c;background:#fef2f2}
+  .chain .stage .ic{font-size:21px;line-height:1}
+  .chain .stage .nm{font-size:12.5px;font-weight:700;margin:5px 0 3px;color:#1a1f2b}
+  .chain .stage .st{font-size:10.5px;color:#5b6472;line-height:1.3}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:#475569}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+  /* causal flow */
+  .cflow{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+  .cflow .node{background:#0f1729;color:#fff;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600}
+  .cflow .node.a{background:#a00821} .cflow .node.b{background:#c2410c}
+  .cflow .ar{color:#94a3b8;font-size:18px;font-weight:800}
+  /* horizontal bars */
+  .hbars{margin-top:4px}
+  .hbar{display:grid;grid-template-columns:118px 1fr 64px;align-items:center;gap:10px;margin:6px 0;font-size:12.5px}
+  .hbar .nmx{font-weight:600;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbar .tk{background:var(--soft);border-radius:7px;height:22px;overflow:hidden}
+  .hbar .fl{height:100%;border-radius:7px;min-width:2px}
+  .hbar .fl.us{background:linear-gradient(90deg,#3a6600,#76b900)}
+  .hbar .fl.cn{background:linear-gradient(90deg,#a00821,#cf0a2c)}
+  .hbar .vv{font-weight:700;text-align:right;color:#334155;white-space:nowrap}
+  /* scorecard */
+  .score{display:grid;gap:7px}
+  .schead,.scrow{display:grid;grid-template-columns:128px 1fr 1fr;gap:8px;align-items:center}
+  .schead{font-size:11.5px;font-weight:700;color:#94a3b8}
+  .schead .h1{color:#5a8c00} .schead .h2x{color:#cf0a2c}
+  .scrow{font-size:12.5px}
+  .scrow .dm{font-weight:600;color:#5b6472}
+  .chip{border-radius:8px;padding:6px 8px;text-align:center;font-size:12px;font-weight:600}
+  .chip.win{background:#dcfce7;color:#15803d} .chip.lose{background:#f1f5f9;color:#9aa4b2} .chip.tie{background:#fef9c3;color:#854d0e}
+  /* roadmap timeline */
+  .tlwrap{overflow-x:auto}
+  .tl{display:grid;grid-template-columns:66px repeat(5,1fr);gap:7px;min-width:580px}
+  .tl .yr{font-size:11.5px;font-weight:700;color:#5b6472;text-align:center;padding:4px 0}
+  .tl .rl{font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;text-align:center;line-height:1.2}
+  .tl .rl.nv{background:#5a8c00}.tl .rl.hw{background:#cf0a2c}
+  .tl .cell{border-radius:8px;padding:8px 7px;font-size:11px;text-align:center;min-height:48px;display:flex;flex-direction:column;justify-content:center;gap:2px;color:#475569}
+  .tl .cell.nv{background:#f0fce3;border:1px solid #d6f0b3}
+  .tl .cell.hw{background:#fdeef0;border:1px solid #f6cdd4}
+  .tl .cell b{font-size:11.5px;color:#1a1f2b}
+  .tl .cell.empty{background:transparent;border:0;min-height:0}
+  /* player cards */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .pcard{border:1px solid var(--line);border-radius:12px;padding:15px;background:var(--card);box-shadow:var(--shadow)}
+  .pcard h4{margin:0 0 4px;font-size:14.5px;display:flex;align-items:center;gap:7px}
+  .pcard .role{font-size:11.5px;color:var(--accent);font-weight:700;margin-bottom:7px}
+  .pcard p{margin:0;font-size:12.7px;color:#475569}
+  /* scenario split */
+  .scen{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.scen{grid-template-columns:1fr}}
+  .scen .col{border-radius:12px;padding:15px 17px}
+  .scen .col.tight{background:#fff7ed;border:1px solid #fed7aa}
+  .scen .col.loose{background:#eff6ff;border:1px solid #bfdbfe}
+  .scen .col h4{margin:0 0 8px;font-size:14px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-in">
+    <div class="vs-badge">
+      <span class="pill nv">NVIDIA 英伟达</span>
+      <span class="vs">VS</span>
+      <span class="pill hw">HUAWEI 华为昇腾</span>
+    </div>
+    <h1>AI 芯片对比与市场格局分析</h1>
+    <p>系统化拆解两家芯片的技术差异、研究方向异同、昇腾 950 系列短板，以及中国与全球 AI 芯片格局的核心驱动因素。</p>
+    <div class="meta">行业综合分析 · 数据基于公开资料整理 · 更新于 2026 年 6 月</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <div class="brand">英伟达 vs 华为 · AI 芯片对比分析<small>行业综合分析 · 2026 · 点击章节跳转</small></div>
+    <div class="navlabel">目录</div>
+    <nav id="nav"></nav>
+  </aside>
+  <main class="main" id="main">
+
+  <h2 id="sum">执行摘要</h2>
+  <div class="lead">
+    两家走的不是同一条路。<b>英伟达靠最先进制程 + CUDA 生态打"单芯片性能 + 通用生态"的硬仗</b>；
+    <b>华为在被切断先进制程后，转向"系统级架构 + 自研内存 + 全栈自主"的打法</b>，用超节点（SuperPoD）把成千上万颗中等性能的芯片用全光互联拼成一个超大算力域，以系统赢回单芯片输掉的部分。
+    单芯片层面英伟达仍领先约一代到两代；系统/集群层面与价格层面华为已具备正面竞争力。中国市场正快速向昇腾倾斜，全球市场则仍是英伟达 + CUDA 的天下。
+  </div>
+
+  <div class="viz">
+    <div class="vtitle">🏁 能力记分卡:谁在哪领先</div>
+    <div class="score">
+      <div class="schead"><span></span><span class="h1">🟢 英伟达</span><span class="h2x">🔴 华为</span></div>
+      <div class="scrow"><span class="dm">单芯片性能</span><span class="chip win">领先 ✓</span><span class="chip lose">落后约1代</span></div>
+      <div class="scrow"><span class="dm">软件生态</span><span class="chip win">CUDA 领先 ✓</span><span class="chip lose">CANN 追赶</span></div>
+      <div class="scrow"><span class="dm">系统/集群规模</span><span class="chip tie">强</span><span class="chip tie">强(超节点)</span></div>
+      <div class="scrow"><span class="dm">价格/性价比</span><span class="chip lose">贵</span><span class="chip win">领先 ✓</span></div>
+      <div class="scrow"><span class="dm">供应链自主</span><span class="chip lose">受出口管制</span><span class="chip win">全栈自主 ✓</span></div>
+      <div class="scrow"><span class="dm">能效(宣称)</span><span class="chip lose">~3.8 TOPS/W</span><span class="chip win">~5 TOPS/W ✓</span></div>
+    </div>
+  </div>
+
+  <!-- ====================== 1. 对比 ====================== -->
+  <h2 id="cmp"><span class="n">①</span>英伟达 vs 华为：芯片硬核对比</h2>
+  <p>下表对比英伟达当前主力 <b>Blackwell B200 / B300</b>（及 2026 下半年的 Rubin）与华为 <b>昇腾 950 系列</b>（950PR / 950DT，2026 年发布）。注意：昇腾参数多为厂商路线图披露值，且两家算力口径（FP8/FP4/MXFP4）不完全可比。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>维度</th>
+        <th class="nv">英伟达 B200 / B300</th>
+        <th class="hw">华为昇腾 950PR / 950DT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="dim">制程工艺</td>
+        <td>台积电 4NP（4nm 级，EUV）；Rubin 转 3nm</td>
+        <td>受制裁无法用台积电，推测中芯国际 N+ 工艺（约 7nm 级 / 5nm 等效，无 EUV）</td></tr>
+      <tr><td class="dim">单芯片算力</td>
+        <td>B200 FP4 高达 ~9 PFLOPS；B300 稠密 FP4 ~15 PFLOPS</td>
+        <td>FP8 1 PFLOPS / MXFP4 2 PFLOPS（单芯片约为 B200 的 1/4~1/5）</td></tr>
+      <tr><td class="dim">显存容量</td>
+        <td>B200 192GB HBM3e；B300 288GB HBM3e</td>
+        <td>950PR 128GB（HiBL 1.0）；950DT 144GB（HiZQ 2.0）— 均为<b>自研 HBM</b></td></tr>
+      <tr><td class="dim">显存带宽</td>
+        <td>B200 8 TB/s；Rubin 用 HBM4 达 13 TB/s</td>
+        <td>950PR 1.6 TB/s；950DT 4 TB/s</td></tr>
+      <tr><td class="dim">片间互联</td>
+        <td>第五代 NVLink 1.8 TB/s + NVSwitch（铜缆，&lt;1m）</td>
+        <td>灵衢（UB）2.0，卡间带宽提升至 2 TB/s；超节点用<b>全光互联</b>（可 &gt;2m 部署）</td></tr>
+      <tr><td class="dim">软件生态</td>
+        <td>CUDA：20 年积累，cuDNN/NCCL/TensorRT 全套，开发者默认平台</td>
+        <td>CANN + MindSpore；CANN Next 宣称兼容 90%+ CUDA 代码、一键迁移</td></tr>
+      <tr><td class="dim">能效</td>
+        <td>约 3.8 TOPS/W（B200/GB200 高 TDP，700W~1400W）</td>
+        <td>宣称约 5 TOPS/W，950PR 功耗控制在 ~300W 内（散热要求更低）</td></tr>
+      <tr><td class="dim">单卡价格</td>
+        <td>H200 在华约 25 万元，B 系列更高</td>
+        <td>950PR 定价约 7 万元（约为对标产品 1/3 甚至更低）</td></tr>
+      <tr><td class="dim">供应链</td>
+        <td>依赖台积电 + SK 海力士/美光 HBM，但产能被预订到 2026 年中</td>
+        <td>制程/HBM 全链国产化，受制裁但抗外部断供能力强</td></tr>
+    </tbody>
+  </table>
+
+  <h3>相对实力可视化（单芯片视角，B200=100 基准·示意）</h3>
+  <div class="card bars">
+    <div class="bar-row"><span>峰值算力</span><div class="bar-track"><div class="bar-fill nv" style="width:100%">B200 · 100</div></div></div>
+    <div class="bar-row"><span></span><div class="bar-track"><div class="bar-fill hw" style="width:22%">昇腾950 · ~22</div></div></div>
+    <div class="bar-row"><span>显存带宽</span><div class="bar-track"><div class="bar-fill nv" style="width:100%">8 TB/s</div></div></div>
+    <div class="bar-row"><span></span><div class="bar-track"><div class="bar-fill hw" style="width:50%">950DT 4 TB/s</div></div></div>
+    <div class="bar-row"><span>能效(TOPS/W)</span><div class="bar-track"><div class="bar-fill nv" style="width:76%">~3.8</div></div></div>
+    <div class="bar-row"><span></span><div class="bar-track"><div class="bar-fill hw" style="width:100%">~5（宣称）</div></div></div>
+    <div class="bar-row"><span>性价比(每元算力)</span><div class="bar-track"><div class="bar-fill nv" style="width:30%">基准</div></div></div>
+    <div class="bar-row"><span></span><div class="bar-track"><div class="bar-fill hw" style="width:100%">显著领先</div></div></div>
+    <p class="disc">示意性相对比例，用于直观感受差距方向，非精确基准测试。算力为不同精度口径折算后的粗略对比。</p>
+  </div>
+
+  <div class="callout key">
+    <b>一句话对比：</b>英伟达"单点最强、生态最厚、最贵、受出口管制约束"；华为"单芯片落后约一代、靠系统/集群与价格补回、全栈自主、生态仍在追赶"。
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">代差到底意味着什么:单卡差距如何被部分抵消</h4>
+    <p style="margin:6px 0">单卡看,B200 的 FP4 算力约为昇腾 950PR 的 4–5 倍,代差明显。但<b>终端有效差距远没有这么大</b>,因为有三重抵消:</p>
+    <ul>
+      <li><b>系统级抵消:</b>华为用超节点(全光 UB)把更多中等卡拼成一个大算力域,集群层面差距收窄——CloudMatrix 384 的系统算力(稠密 BF16)约为 NVL72 的 1.7–2 倍。</li>
+      <li><b>算法/软件抵消:</b>模型侧效率优化(MoE、低精度、KV-Cache、并行策略,如 DeepSeek 的训练/推理优化)降低了对单卡峰值的依赖。</li>
+      <li><b>场景抵消:</b>推理场景对单卡峰值要求低、更看重显存/带宽/成本,差距进一步缩小(详见市场章)。</li>
+    </ul>
+    <div class="callout key" style="margin:12px 0 0"><b>可以这样理解:</b>有效差距 ≈ 代差 ÷(系统规模 × 算法效率 × 场景适配)。但分母放大并非无限——<b>堆系统要付出更多卡、功耗、占地与成本</b>,且算法红利两家都能吃;在<b>大模型训练、单卡密集算力</b>上,制程代差仍是绕不开的硬约束。</div>
+  </div>
+
+  <!-- ====================== 2. 研究方向 ====================== -->
+  <h2 id="dir"><span class="n">②</span>两家芯片研究方向的异同（拆开来讲）</h2>
+  <p>这是理解两者差异的关键——它们在解一道<b>同样的题（怎么提供更多有效 AI 算力）</b>，但<b>约束条件不同</b>，于是给出了截然不同的工程哲学。先分开讲各自方向，再讲异同。</p>
+
+  <div class="viz">
+    <div class="vtitle">🛣️ 两条技术路线示意</div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:12.5px;font-weight:700;color:#5a8c00;margin-bottom:8px">🟢 英伟达 · 芯片优先(Compute-first)</div>
+      <div class="cflow">
+        <span class="node" style="background:#5a8c00">💪 强单芯片<br><small style="font-weight:400;opacity:.85">最先进制程</small></span>
+        <span class="ar">→</span>
+        <span class="node" style="background:#3a6600">🔗 铜缆 NVLink</span>
+        <span class="ar">→</span>
+        <span class="node" style="background:#3a6600">🗄️ 单柜 = 超节点</span>
+        <span class="ar">→</span>
+        <span class="node" style="background:#0f1729">🌐 IB 横向扩集群</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12.5px;font-weight:700;color:#cf0a2c;margin-bottom:8px">🔴 华为 · 系统优先(System-first)</div>
+      <div class="cflow">
+        <span class="node a">🧩 中等芯片 ×N<br><small style="font-weight:400;opacity:.85">制程受限</small></span>
+        <span class="ar">→</span>
+        <span class="node" style="background:#0e7490">💡 全光 UB 总线</span>
+        <span class="ar">→</span>
+        <span class="node a">🏗️ 超大算力域</span>
+        <span class="ar">→</span>
+        <span class="node" style="background:#0f1729">🌐 RDMA 扩集群</span>
+      </div>
+    </div>
+    <p class="disc" style="margin-top:12px">同样的目标(更多有效算力),不同的出发点:英伟达从"单芯片最强"起步,华为从"系统最大"起步。</p>
+  </div>
+
+  <div class="twocol">
+    <div class="panel nv">
+      <h4>🟢 英伟达：芯片优先 (Compute-First)</h4>
+      <ul>
+        <li><b>极致单芯片：</b>用最先进制程（4nm→3nm）、最大裸片、最高密度晶体管堆出单卡峰值算力。</li>
+        <li><b>纵向 + 横向扩展：</b>机柜级 scale-up（NVL72）+ 集群级 scale-out（InfiniBand/Spectrum-X）。</li>
+        <li><b>生态护城河：</b>CUDA + 库 + 框架 + 网络（收购 Mellanox），软硬一体绑定开发者。</li>
+        <li><b>推理成本曲线：</b>Rubin 主打把单 token 推理成本相对 Blackwell 降一个数量级。</li>
+        <li><b>精度演进：</b>持续下探低精度（FP8→FP4），换取吞吐与能效。</li>
+      </ul>
+    </div>
+    <div class="panel hw">
+      <h4>🔴 华为：系统优先 (System-First)</h4>
+      <ul>
+        <li><b>系统补芯片：</b>单芯片落后就用"超节点"——把数千卡组成一个扁平、低延迟的大通信域，整体算力反超。</li>
+        <li><b>全光互联：</b>发挥三十年通信积累，用光模块替代铜缆，突破距离/带宽限制（卡间百纳秒级）。</li>
+        <li><b>自研内存：</b>HBM 被卡，就自研 HiBL/HiZQ，绕开海力士/美光供应。</li>
+        <li><b>全栈自主可控：</b>制程、内存、互联、CANN 软件栈尽量国产闭环，抗断供优先于追平制程。</li>
+        <li><b>场景拆分：</b>950PR 专攻推理 Prefill/推荐，950DT 专攻 Decode/训练——按负载分化产品。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>相同之处</h3>
+  <div class="card">
+    <ul>
+      <li><b>都在押注低精度计算：</b>FP8 / FP4(MXFP4) 成为两家算力标称的主战场，反映推理成本是共同的优化目标。</li>
+      <li><b>都从"卖芯片"转向"卖系统/机柜":</b>NVL72 与 Atlas/CloudMatrix 超节点本质都是把互联和整柜方案作为核心产品。</li>
+      <li><b>都重视互联带宽：</b>都认为"内存墙 + 通信墙"是大模型时代真正的瓶颈，争相提升卡间带宽。</li>
+      <li><b>都在构建软件锁定：</b>CUDA 与 CANN+MindSpore 都想成为开发者的默认栈。</li>
+    </ul>
+  </div>
+
+  <h3>不同之处（核心分歧）</h3>
+  <table>
+    <thead><tr><th>分歧点</th><th class="nv">英伟达</th><th class="hw">华为</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">取胜单元</td><td>单颗 GPU 的绝对性能</td><td>整个超节点/集群的系统性能</td></tr>
+      <tr><td class="dim">互联介质</td><td>铜缆 NVLink（成本低、距离短）</td><td>全光互联（成本高、距离长、带宽大）</td></tr>
+      <tr><td class="dim">内存来源</td><td>外购 HBM3e/HBM4</td><td>自研 HBM（被迫，但换来自主）</td></tr>
+      <tr><td class="dim">制程依赖</td><td>强依赖台积电领先节点</td><td>主动降低对先进制程的依赖</td></tr>
+      <tr><td class="dim">战略动因</td><td>商业竞争、维持技术代差</td><td>制裁倒逼下的"用工程绕过封锁"</td></tr>
+      <tr><td class="dim">能耗取向</td><td>不惜高功耗换峰值</td><td>更强调单位能效与系统散热友好</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn">
+    <b>本质：</b>华为的全光超节点路线，很大程度上是<b>美国制裁的直接产物</b>——既然拿不到最先进制程和外购 HBM，就把战场从"单芯片"挪到自己最擅长的"通信与系统集成"上。这是约束催生的差异化，而非单纯的技术偏好。
+  </div>
+
+  <!-- ====================== 3. 短板 ====================== -->
+  <div class="callout key"><b>对行业的影响:</b>路线分化正外溢到整条产业链——英伟达路线拉动<b>先进制程、HBM、铜缆 NVLink、InfiniBand</b>;华为路线拉动<b>光模块、光器件、液冷、国产 HBM 与先进封装</b>。对用户而言,选英伟达是"性能强 + 生态成熟,但受供应与价格约束",选华为是"高性价比 + 自主可控,但要承担生态迁移与系统复杂度"。两条路线之争,本质也是两套供应链与两类受益方之争。</div>
+
+  <h2 id="weak"><span class="n">③</span>昇腾 950 系列目前的短板</h2>
+  <p>950 系列在系统、价格、自主可控上亮点突出，但仍有结构性短板，主要集中在制程、单芯片性能、生态和制造端。其短板本质是一条因果链:</p>
+
+  <div class="viz">
+    <div class="vtitle">⛓️ 短板因果链:一个根因,层层传导</div>
+    <div class="cflow">
+      <span class="node a">🚫 制程受限<br><small style="font-weight:400;opacity:.85">无 EUV / 台积电</small></span>
+      <span class="ar">→</span>
+      <span class="node">📉 单芯片弱<br><small style="font-weight:400;opacity:.8">算力/带宽落后</small></span>
+      <span class="ar">→</span>
+      <span class="node">🧱 靠堆系统补<br><small style="font-weight:400;opacity:.8">超节点万卡</small></span>
+      <span class="ar">→</span>
+      <span class="node b">⚠️ 三重压力<br><small style="font-weight:400;opacity:.9">产能 · 成本 · 生态</small></span>
+    </div>
+    <div class="legend"><span><i style="background:#a00821"></i>根因(制程)</span><span><i style="background:#0f1729"></i>传导环节</span><span><i style="background:#c2410c"></i>最终代价</span></div>
+  </div>
+
+  <div class="card">
+    <h4><span class="tag gap">短板1</span>制程落后，存在代际差距</h4>
+    <p>无法使用台积电先进节点，受限于国产制程（约 7nm 级、无 EUV），相对 B200 的 4nm 落后约 1–2 代。这直接压制单芯片性能上限与能效天花板，并需要更多芯片才能堆出同等算力。</p>
+  </div>
+  <div class="card">
+    <h4><span class="tag gap">短板2</span>单芯片算力与带宽仍明显落后</h4>
+    <p>950PR FP8 仅 1 PFLOPS、显存带宽 1.6 TB/s，而 B200 FP4 约 9 PFLOPS、带宽 8 TB/s。单卡密集训练/复杂推理场景仍处于劣势，必须靠超节点规模来弥补。</p>
+  </div>
+  <div class="card">
+    <h4><span class="tag gap">短板3</span>软件生态与 CUDA 仍有差距</h4>
+    <p>CANN/MindSpore 工具链、算子库、社区成熟度、第三方框架适配度都不及 CUDA 二十年的积累。虽宣称兼容 90%+ CUDA 代码一键迁移，但真实迁移中性能调优、长尾算子、边角兼容仍是迁移摩擦点，开发者习惯迁移需要时间。</p>
+  </div>
+  <div class="card">
+    <h4><span class="tag gap">短板4</span>自研 HBM 处于早期</h4>
+    <p>HiBL/HiZQ 是首发自研内存，容量/带宽（128–144GB、1.6–4 TB/s）虽追平到 HBM3 级别，但相比 HBM3e/HBM4 仍有差距，且良率、成本、量产稳定性尚待长期验证。</p>
+  </div>
+  <div class="card">
+    <h4><span class="tag gap">短板5</span>产能与良率约束（最关键的现实瓶颈）</h4>
+    <p>国产先进制程产能有限、良率虽达 80%+ 但产线扩张受设备（光刻机）管制制约。"系统级堆卡"的打法对芯片数量需求极大（一个超节点动辄数千上万卡），这反过来对本就紧张的产能形成巨大压力——能否大规模供货，是比纸面参数更现实的短板。</p>
+  </div>
+  <div class="card">
+    <h4><span class="tag gap">短板6</span>系统功耗与 TCO 的隐性代价</h4>
+    <p>单芯片弱→需要更多芯片→单芯片能效虽好，但整系统的占地、光模块成本、整体电耗和运维复杂度上升。"用数量换性能"在超大规模下会推高整体拥有成本与数据中心基础设施压力。</p>
+  </div>
+
+  <div class="callout key">
+    <b>归纳：</b>950 系列的短板可压缩为一句话——<b>"制程受限 → 单芯片弱 → 靠堆系统补 → 转嫁为产能、成本、生态三重压力"</b>。其中<b>产能/良率</b>是最现实的天花板，<b>生态成熟度</b>是最持久的追赶项。
+  </div>
+
+  <!-- ====================== 4. 市场 ====================== -->
+  <h2 id="market"><span class="n">④</span>中国 / 全球 AI 芯片格局推演</h2>
+
+  <h3>中国市场：快速向昇腾倾斜</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>时间 / 口径</th><th class="nv">英伟达</th><th class="hw">华为昇腾</th><th>其他</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">2025 全年（出货量）</td><td>~55%</td><td>~20%</td><td>阿里平头哥 6.6%、AMD 4%、寒武纪 3%、昆仑芯 3%</td></tr>
+        <tr><td class="dim">2026 Q1（销售额）</td><td>15–20%（仅 H20 等合规型号）</td><td>35–40%</td><td>AMD 10–12%、寒武纪 7–9%</td></tr>
+        <tr><td class="dim">2026 底（投行预测）</td><td>~8%</td><td>~50%</td><td>国产替代率预计 2027 年达 ~55%</td></tr>
+      </tbody>
+    </table>
+    <p class="disc">不同来源口径（出货量 vs 销售额）和预测差异较大，趋势方向一致：英伟达份额因出口管制持续下滑，昇腾及国产快速补位。黄仁勋亦承认英伟达在华份额已从四年前的约 95% 降至约 50%。</p>
+  </div>
+  <p>驱动力是<b>政策而非纯市场</b>：美国对 H20 等中国特供芯片的反复管制，叠加 H200 供给受限与成本抬升，给了国产芯片在推理、微调场景规模化替代的窗口。多家中国 AI 芯片公司出货已超万卡，市场从"一家独大"走向"百花齐放"。</p>
+
+  <div class="viz">
+    <div class="vtitle">🔗 中国 AI 芯片全链条状态:哪些自主、哪些卡脖子</div>
+    <div class="chain">
+      <div class="stage ok"><div class="ic">🧠</div><div class="nm">芯片设计</div><div class="st">能力强<br>海思/寒武纪</div></div>
+      <div class="stage bad"><div class="ic">🛠️</div><div class="nm">EDA 工具</div><div class="st">依赖美三大<br>受限</div></div>
+      <div class="stage warn"><div class="ic">🏭</div><div class="nm">晶圆制造</div><div class="st">中芯7nm级<br>无 EUV</div></div>
+      <div class="stage bad"><div class="ic">🔬</div><div class="nm">光刻设备</div><div class="st">EUV 被禁<br>卡脖子</div></div>
+      <div class="stage warn"><div class="ic">💾</div><div class="nm">HBM 内存</div><div class="st">自研起步<br>HiBL/HiZQ</div></div>
+      <div class="stage warn"><div class="ic">📦</div><div class="nm">先进封装</div><div class="st">突破中<br>2.5D/3D</div></div>
+      <div class="stage ok"><div class="ic">💡</div><div class="nm">互联/光模块</div><div class="st">全光领先<br>华为强项</div></div>
+      <div class="stage warn"><div class="ic">🧩</div><div class="nm">软件生态</div><div class="st">CANN<br>追赶 CUDA</div></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#15803d"></i>自主可控 / 领先</span>
+      <span><i style="background:#c2410c"></i>部分受限 / 追赶中</span>
+      <span><i style="background:#b91c1c"></i>卡脖子 / 高度依赖</span>
+    </div>
+    <p class="disc" style="margin-top:10px">解读:中国在<b>设计与互联</b>两端较强,真正的瓶颈集中在<b>上游(EDA、光刻设备)</b>与<b>制造制程</b>;HBM、先进封装、软件生态处于"边追边用"的突破期。华为的系统级路线,正是绕开最薄弱的"先进制程/光刻"环节,把竞争挪到自己占优的互联与系统集成上。</p>
+  </div>
+
+  <div class="viz">
+    <div class="vtitle">🎯 训练 vs 推理:需求分化决定替代节奏</div>
+    <div style="font-size:12px;color:#5b6472;margin-bottom:6px">国产可替代成熟度(示意)</div>
+    <div class="hbars">
+      <div class="hbar"><span class="nmx">推理</span><div class="tk"><div class="fl cn" style="width:75%"></div></div><span class="vv">较高</span></div>
+      <div class="hbar"><span class="nmx">训练</span><div class="tk"><div class="fl cn" style="width:35%"></div></div><span class="vv">较低</span></div>
+    </div>
+    <p class="disc" style="margin-top:10px"><b>推理是国产替代的突破口:</b>对单卡峰值要求低,更看重显存/带宽/成本/吞吐与能效,国产卡(昇腾、寒武纪、昆仑芯、PPU)在推理已接近或部分超过 H20。<b>训练仍是英伟达腹地:</b>大模型训练需要单卡密集算力 + 成熟分布式训练栈(NCCL/并行框架)+ 生态,国产追赶更难。随着模型进入大规模落地期,<b>推理算力需求增速快于训练</b>——需求结构向推理倾斜,正好利好国产替代。替代路径因此大概率是"<b>先推理、后训练</b>":谁先在推理规模化站稳,再逐步向训练渗透。</p>
+  </div>
+
+  <h3>全球市场：英伟达 + CUDA 的护城河仍稳固</h3>
+  <div class="card">
+    <p>全球范围内，英伟达凭借 CUDA 生态、最先进制程、机柜级方案和先发的开发者锁定，仍占据绝对主导（数据中心 AI 加速器份额长期 80%+），B200/GB200 已被预订到 2026 年中、积压订单数百万颗，Rubin 接力。华为受出口与生态限制，海外市场拓展空间有限，短期内昇腾主要是<b>"中国及部分友好市场"的故事</b>，而非全球替代。</p>
+    <p>真正可能蚕食英伟达全球份额的，更可能是<b>云厂商自研 ASIC</b>（谷歌 TPU、亚马逊 Trainium、微软 Maia 等）和 AMD MI 系列，而非华为。</p>
+  </div>
+
+  <div class="twocol">
+    <div class="panel nv" style="border-top-color:var(--accent)">
+      <h4 style="color:var(--accent)">🌐 最可能的格局</h4>
+      <p style="font-size:13.7px;margin:0">"<b>一球两制</b>"——全球市场英伟达 + CUDA + 云自研 ASIC 主导；中国市场昇腾领衔、多家国产并存。两个生态逐步分叉，软件栈、互联标准、精度格式各自演进。</p>
+    </div>
+    <div class="panel hw" style="border-top-color:var(--warn)">
+      <h4 style="color:var(--warn)">⚠️ 关键变量</h4>
+      <p style="font-size:13.7px;margin:0">出口管制松紧、国产制程/HBM 产能爬坡、CANN 生态成熟速度、以及英伟达能否拿到合规重返中国的产品——任一变化都可能改写份额曲线。</p>
+    </div>
+  </div>
+
+  <!-- ====================== 5. 核心因素 ====================== -->
+  <h2 id="factor"><span class="n">⑤</span>决定格局的核心因素</h2>
+  <div class="card">
+    <div class="factor"><div class="ic">🏛️</div><div><h4>1. 地缘政治与出口管制</h4><p>最大单一变量。管制收紧 → 加速国产替代；松动 → 英伟达合规产品回流。中国市场格局基本由政策曲线决定。</p></div></div>
+    <div class="factor"><div class="ic">🏭</div><div><h4>2. 先进制程与产能</h4><p>EUV 光刻机管制、中芯国际良率与扩产速度，决定昇腾能"堆"多少卡。产能是比参数更硬的约束。</p></div></div>
+    <div class="factor"><div class="ic">💾</div><div><h4>3. 高带宽内存 (HBM)</h4><p>大模型的真正瓶颈在内存墙。自研 HBM 的容量/带宽/良率追赶速度，直接决定昇腾天花板。</p></div></div>
+    <div class="factor"><div class="ic">🔗</div><div><h4>4. 互联与系统架构</h4><p>全光 vs 铜缆、scale-up vs scale-out。谁能把更多芯片低延迟地连成一个域，谁就能在系统层赢回单芯片的差距。</p></div></div>
+    <div class="factor"><div class="ic">🧩</div><div><h4>5. 软件生态与迁移成本</h4><p>CUDA 的二十年锁定 vs CANN 的兼容追赶。开发者习惯、算子库、框架适配是最持久的护城河，也是最慢的变量。</p></div></div>
+    <div class="factor"><div class="ic">💰</div><div><h4>6. 成本 / TCO 与性价比</h4><p>昇腾单卡约对标产品 1/3 价格，但要算上系统、光模块、电耗的整体 TCO。性价比是国产替代的核心说服力。</p></div></div>
+    <div class="factor"><div class="ic">🤖</div><div><h4>7. 下游需求结构（训练 vs 推理）</h4><p>推理对单芯片极致性能要求较低、对成本敏感，是国产芯片最先攻破的市场；训练仍是英伟达腹地。需求向推理倾斜利好华为。</p></div></div>
+    <div class="factor"><div class="ic">☁️</div><div><h4>8. 自研 ASIC 与客户集中度</h4><p>大客户（云厂商）自研芯片是全球层面侵蚀通用 GPU 份额的关键力量，也压缩英伟达和华为的通用算力空间。</p></div></div>
+  </div>
+
+  <!-- ====================== 6. 造价测算 ====================== -->
+  <div class="viz">
+    <div class="vtitle">🧭 八个因素不是并列,而是分层的</div>
+    <div class="cflow">
+      <span class="node b">🏛️ 政策 / 管制<br><small style="font-weight:400;opacity:.9">开关 · 最上游</small></span>
+      <span class="ar">→</span>
+      <span class="node a">🏭 制程产能 + HBM<br><small style="font-weight:400;opacity:.9">决定上限</small></span>
+      <span class="ar">→</span>
+      <span class="node" style="background:#0f1729">🧩 软件生态<br><small style="font-weight:400;opacity:.85">慢变量 · 决定长期</small></span>
+    </div>
+    <p class="disc" style="margin-top:10px">需求侧(训练/推理结构、客户自研 ASIC)贯穿其中、决定节奏。换算成时间维度的权重:<b>短期看政策,中期看产能与 HBM,长期看生态</b>。其余因素(互联、成本、能效)多是这三层的派生结果。</p>
+  </div>
+
+  <h2 id="cost"><span class="n">⑥</span>兆瓦 / 吉瓦级数据中心造价测算</h2>
+  <p>本章测算一个<b>给定供电规模（IT 负载）的 AI 数据中心</b>的总建造成本——分别按"美国 + 英伟达方案"与"中国 + 华为方案"两种情形，<b>其余条件尽量一致</b>。注意：这是基于业界公开成本结构的<b>量级测算</b>，非工程报价；芯片/电价/土建价格波动极大，结论看量级与结构，不看小数点。</p>
+
+  <h3>测算逻辑（业界标准成本结构）</h3>
+  <div class="card">
+    <p>AI 数据中心的总投资（CapEx）通常按"<b>每瓦 IT 负载</b>"为单位测算，再乘以规模。业界把成本拆为两大块：</p>
+    <ul>
+      <li><b>IT 设备（服务器 / GPU / 网络）≈ 全部 CapEx 的 60–64%</b>——这是 AI 数据中心与传统机房最大的不同，加速卡是最大单项。</li>
+      <li><b>物理基础设施 ≈ 35–40%</b>，其内部再拆为:供配电 40–45%、冷却 15–20%、土建外壳 + 土地为余下部分。</li>
+    </ul>
+    <p>行业基准:仅土建外壳约 <b>$10–12M / MW</b>;含 GPU 满配的"全包 AI 建设"约 <b>$30–40M / MW</b>;一个 1 GW 级 AI 数据中心前期 CapEx 约 <b>$38B</b>(服务器约占 60%)。下面以此为锚点,套用中美差异系数。</p>
+    <div class="callout key" style="margin-top:6px"><b>核心变量(两国差异):</b>① 芯片单价与每卡性能;② 电力/供配电设备成本;③ 土建与土地;④ 人工。美国方案贵在芯片单价 + 高功率配套;中国方案省在土建/电力/人工,但同等供电下需<b>更多张卡</b>且<b>单卡算力较低</b>。</div>
+  </div>
+
+  <h3>情形 A:每 1 MW(IT 负载)造价对比</h3>
+  <table>
+    <thead><tr><th>成本项</th><th class="nv">美国 · 英伟达(B/GB200)</th><th class="hw">中国 · 华为(昇腾)</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">IT 设备(服务器+网络)</td><td>~$22M</td><td>~$13–16M</td><td>英伟达单卡贵但能效高;昇腾单卡便宜但需更多卡+全光互联额外成本</td></tr>
+      <tr><td class="dim">供配电</td><td>~$7M</td><td>~$3.5–4M</td><td>中国电气设备与电网接入成本更低</td></tr>
+      <tr><td class="dim">冷却</td><td>~$3.5M</td><td>~$2–2.5M</td><td>均需液冷(单柜&gt;30–40kW)</td></tr>
+      <tr><td class="dim">土建外壳 + 土地</td><td>~$2.5M</td><td>~$1.5M</td><td>中国土地/人工/施工显著更低</td></tr>
+      <tr style="font-weight:700;background:#eef2ff"><td class="dim">合计 / MW</td><td>≈ $35M</td><td>≈ $20–24M</td><td>中国全包造价约为美国的 60–65%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>情形 B:1 GW(1000 MW)级园区总投资</h3>
+  <div class="twocol">
+    <div class="panel nv"><h4>🟢 美国 · 英伟达</h4>
+      <p style="font-size:24px;font-weight:800;margin:4px 0;color:var(--nv-d)">≈ $35–40B</p>
+      <p style="font-size:13px;margin:0;color:#475569">与 Epoch AI 的 ~$38B 锚点一致。服务器/GPU 约 $22–25B(60%+),供配电 ~$7B,冷却 ~$3.5B,土建+土地 ~$2.5B。单瓦约 $35/W。</p></div>
+    <div class="panel hw"><h4>🔴 中国 · 华为</h4>
+      <p style="font-size:24px;font-weight:800;margin:4px 0;color:var(--hw-d)">≈ $20–24B</p>
+      <p style="font-size:13px;margin:0;color:#475569">芯片+全光网络 ~$13–16B,供配电 ~$3.5–4B,冷却 ~$2–2.5B,土建+土地 ~$1.5B。土建/电力/人工低,折合人民币口径下相对更省。</p></div>
+  </div>
+
+  <div class="viz">
+    <div class="vtitle">💰 1 GW 园区总造价对比(量级 · 示意)</div>
+    <div class="hbars">
+      <div class="hbar"><span class="nmx">🇺🇸 英伟达</span><div class="tk"><div class="fl us" style="width:100%"></div></div><span class="vv">~$37B</span></div>
+      <div class="hbar"><span class="nmx">🇨🇳 华为</span><div class="tk"><div class="fl cn" style="width:60%"></div></div><span class="vv">~$22B</span></div>
+    </div>
+    <p class="disc" style="margin-top:10px">同等供电规模(1 GW),中国方案总造价约为美国的 60–65%(省在土建/电力/人工 + 芯片单价);但英伟达单瓦算力更高,"每美元有效算力"还需结合利用率与芯片实际供货价综合判断。</p>
+  </div>
+
+  <h3>成本结构可视化(每 MW · 示意)</h3>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:6px">美国 · 英伟达 ≈ $35M / MW</div>
+    <div style="display:flex;height:34px;border-radius:8px;overflow:hidden;font-size:11px;color:#fff;font-weight:700">
+      <div style="width:63%;background:#5a8c00;display:flex;align-items:center;justify-content:center">服务器/GPU 63%</div>
+      <div style="width:20%;background:#2563eb;display:flex;align-items:center;justify-content:center">供电 20%</div>
+      <div style="width:10%;background:#0891b2;display:flex;align-items:center;justify-content:center">冷却10%</div>
+      <div style="width:7%;background:#64748b;display:flex;align-items:center;justify-content:center">土建7%</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;margin:16px 0 6px">中国 · 华为 ≈ $22M / MW</div>
+    <div style="display:flex;height:34px;border-radius:8px;overflow:hidden;font-size:11px;color:#fff;font-weight:700">
+      <div style="width:65%;background:#a00821;display:flex;align-items:center;justify-content:center">芯片+光网络 65%</div>
+      <div style="width:17%;background:#2563eb;display:flex;align-items:center;justify-content:center">供电 17%</div>
+      <div style="width:10%;background:#0891b2;display:flex;align-items:center;justify-content:center">冷却10%</div>
+      <div style="width:8%;background:#64748b;display:flex;align-items:center;justify-content:center">土建8%</div>
+    </div>
+    <p class="disc">两种方案的 IT 设备占比都约六成,这是 AI 数据中心的共性。差异在绝对金额:美国方案总盘子更大,主要被高价 GPU 和高功率配套推高。</p>
+  </div>
+
+  <div class="callout warn">
+    <b>关键洞察:</b>同样供电规模下,<b>中国造价更低(约美国的 60–65%)</b>,但这不等于"算力更便宜"——因为英伟达单瓦算力更高,同样 1 MW 能产出更多有效算力。真正决定经济性的是"<b>每美元有效算力</b>":英伟达赢在单瓦性能,华为赢在低造价 + 低电价 + 低芯片单价 + 不受断供。结论高度依赖电价、芯片实际供货价与利用率。
+  </div>
+  <p class="disc">测算假设:N+1 冗余、液冷、PUE≈1.2–1.3;芯片采用渠道估价(英伟达 GB/B 系列整柜约 $3M/120kW;昇腾整柜按 950 系列量产估价)。所有数字为量级估算,供结构性对比,不构成报价或投资依据。</p>
+
+  <!-- ====================== 7. 头部算力 ====================== -->
+  <h2 id="fleet"><span class="n">⑦</span>中美头部公司算力水平推算（按等效 H100 / H100e）</h2>
+  <p>裸卡数量无法横向比较——一张 H20 和一张 GB200 差出十几倍。因此本章统一折算为 <b>"等效 H100（H100e）"</b>,并给出明确推算逻辑。包含自有与租用算力(租用会注明,避免与出租方重复计数)。</p>
+
+  <h3>推算方法（折算系数）</h3>
+  <div class="card">
+    <p><b>H100e = Σ(各型号卡数 × 该型号相对 H100 的等效系数)</b>。训练口径的粗略折算系数如下(不同负载会浮动):</p>
+    <table style="margin-top:8px">
+      <thead><tr><th>芯片</th><th>≈H100e 系数</th><th>芯片</th><th>≈H100e 系数</th></tr></thead>
+      <tbody>
+        <tr><td class="dim">H100 / H200</td><td>1.0 / 1.1</td><td class="dim">GB200 / B200</td><td>≈ 2.0–2.5</td></tr>
+        <tr><td class="dim">A100 / V100</td><td>0.5 / 0.15</td><td class="dim">Google TPU v5p/v6</td><td>≈ 0.6–1.0</td></tr>
+        <tr><td class="dim">H800(特供)</td><td>0.5–0.6</td><td class="dim">AWS Trainium2</td><td>≈ 0.5–0.7</td></tr>
+        <tr><td class="dim">H20(特供)</td><td>0.15–0.2</td><td class="dim">昇腾 910B / 910C</td><td>≈ 0.4–0.6 / 0.7–0.8</td></tr>
+      </tbody>
+    </table>
+    <p class="disc">系数为训练场景的行业经验值,含互联与生态效率折扣(特供卡因互联被阉割、国产卡因软件生态不成熟,实际有效系数低于纸面算力)。下列 H100e 为<b>区间估算</b>,用于看量级与中美对比,非精确盘点。</p>
+  </div>
+
+  <h3>🇺🇸 美国头部公司算力推算（H100e）</h3>
+  <table>
+    <thead><tr><th>公司</th><th>当前规模(推算口径)</th><th class="nv">≈ H100e(2025–26)</th><th>扩建计划</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">Google</td><td>主力为自研 TPU(v5p/v6)+ 少量 GPU,~数百万 TPU</td><td><b>~3.5–4.2M</b>(2024 约 1–1.5M)</td><td>2025 AI 基建 ~$85B;持续扩 TPU 自研,降低对英伟达依赖</td></tr>
+      <tr><td class="dim">Microsoft</td><td>全球最大单一英伟达存量(自有+供 OpenAI),~500k+ 纯 H100e 起</td><td><b>~2.5–3.1M</b>(2024 约 75–90 万)</td><td>年化 CapEx ~$145B;为 OpenAI 提供主力算力</td></tr>
+      <tr><td class="dim">Meta</td><td>2024 约 55–65 万 H100e;自有大集群</td><td><b>~1.3–1.9M</b> 且快速上升</td><td>Hyperion 满产目标 <b>500 万 H100e</b>(2027 末–28);2026 CapEx $115–135B</td></tr>
+      <tr><td class="dim">Amazon(AWS)</td><td>自研 Trainium/Inferentia 为主 + 英伟达</td><td><b>~1.0–1.5M</b>(含自研折算)</td><td>大规模扩 Trainium2 集群(Project Rainier 等)</td></tr>
+      <tr><td class="dim">xAI</td><td>Colossus 1:23 万卡(H100/H200);Colossus 2:55 万 Blackwell(GB200/GB300)</td><td><b>~0.7–1.2M</b>(自有),随 Blackwell 爬坡</td><td>目标 2026 年底 ~200 万张 GPU;2030 年 <b>5000 万 H100e</b>;园区 1GW→3GW</td></tr>
+      <tr style="background:#fffaf0"><td class="dim">OpenAI<br><small style="color:#c2410c">模型公司·租赁/合约</small></td><td><b>几乎全部租用/合约</b>:微软 Azure、甲骨文/Stargate、CoreWeave、英伟达、AMD、博通(自研)</td><td><b>~1.5–2.5M</b>(租赁,快速爬坡)</td><td>已签约算力 ~10 GW($500B,2025 底达成);Stargate 3 年 ~7 GW;2025–35 承诺约 <b>$1.15 万亿</b>(博通$350B/甲骨文$300B/微软$250B/英伟达$100B/AMD$90B/AWS$38B/CoreWeave$22B)</td></tr>
+      <tr style="background:#fffaf0"><td class="dim">Anthropic<br><small style="color:#c2410c">模型公司·租赁/合约</small></td><td><b>多云租用</b>:AWS Trainium、谷歌 TPU、英伟达 GPU(三平台并用)</td><td><b>~0.5–1.0M</b>(租赁,爬坡)</td><td>AWS 最高 <b>5 GW</b>、$100B/10 年,Project Rainier ~50 万 Trainium2 已上线、年底超 100 万;谷歌 TPU 最高 <b>100 万颗</b>,2026 达多 GW</td></tr>
+    </tbody>
+  </table>
+  <div class="callout key"><b>合计量级:</b>2025 年美国前五大<b>自有</b>玩家合计 <b>&gt;1240 万 H100e</b>。<b>OpenAI 与 Anthropic 是"模型公司",自身不建大量芯片,算力几乎全部来自租赁与长期合约</b>——它们的算力与云厂商(微软/谷歌/AWS/甲骨文/CoreWeave)部分<b>重叠</b>,合计时须避免重复计数;但其专属园区(如 Stargate、Project Rainier)是实打实的新增专用产能。</div>
+
+  <h3>🇨🇳 中国头部公司算力推算（H100e）</h3>
+  <table>
+    <thead><tr><th>公司</th><th>当前规模(推算口径)</th><th class="hw">≈ H100e</th><th>扩建 / 资本开支</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">字节跳动</td><td>裸卡 <b>~100 万张</b>(A100/H800/H20/昇腾混合);第三方测算训练需求 ~26.7 万卡、推理 ~33.7 万卡</td><td><b>~0.35–0.5M</b></td><td>2026 CapEx ~¥1600–2000 亿,约一半(~¥900 亿)投芯片采购</td></tr>
+      <tr><td class="dim">阿里巴巴</td><td>~10 万顶级卡(A100/V100)+ H20 + 自研 PPU</td><td><b>~0.15–0.25M</b></td><td>三年 AI 投入 ¥3800 亿;CapEx 2025 破千亿</td></tr>
+      <tr><td class="dim">腾讯</td><td>H20 大量囤货 + 国产卡(与字节合囤约 46 万卡/2024)</td><td><b>~0.15–0.25M</b></td><td>CapEx 2025 ¥792 亿;韶关智算 2026/6 投产</td></tr>
+      <tr><td class="dim">百度</td><td>自研昆仑芯 P800 + 昇腾 + 少量英伟达</td><td><b>~0.1–0.15M</b></td><td>推"芯片-模型-应用"国产闭环</td></tr>
+      <tr><td class="dim">华为(云/自用)</td><td>2025 出货 ~81.2 万颗昇腾;Atlas 超节点</td><td>对外供给为主</td><td>昇腾路线 950PR→950DT→960→970</td></tr>
+    </tbody>
+  </table>
+  <p class="disc">推算依据:中国头部裸卡数看似巨大,但其中大量为 H20(系数仅 0.15–0.2)、H800(0.5–0.6)及生态效率打折的国产卡,故 H100e 显著缩水。2024 年中国新增 AI 芯片 ≥100 万颗(约 70% 英伟达特供、30% 华为)。</p>
+
+  <div class="viz">
+    <div class="vtitle">📊 头部公司算力对比(等效 H100,区间中值 · 示意)</div>
+    <div class="hbars">
+      <div class="hbar"><span class="nmx">🇺🇸 谷歌</span><div class="tk"><div class="fl us" style="width:95%"></div></div><span class="vv">~3.8M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 微软</span><div class="tk"><div class="fl us" style="width:70%"></div></div><span class="vv">~2.8M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 Meta</span><div class="tk"><div class="fl us" style="width:40%"></div></div><span class="vv">~1.6M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 AWS</span><div class="tk"><div class="fl us" style="width:31%"></div></div><span class="vv">~1.2M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 xAI</span><div class="tk"><div class="fl us" style="width:24%"></div></div><span class="vv">~0.9M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 OpenAI*</span><div class="tk"><div class="fl us" style="width:50%;background:repeating-linear-gradient(45deg,#3a6600,#3a6600 8px,#76b900 8px,#76b900 16px)"></div></div><span class="vv">~2.0M</span></div>
+      <div class="hbar"><span class="nmx">🇺🇸 Anthropic*</span><div class="tk"><div class="fl us" style="width:18%;background:repeating-linear-gradient(45deg,#3a6600,#3a6600 8px,#76b900 8px,#76b900 16px)"></div></div><span class="vv">~0.7M</span></div>
+      <div class="hbar"><span class="nmx">🇨🇳 字节跳动</span><div class="tk"><div class="fl cn" style="width:11%"></div></div><span class="vv">~0.4M</span></div>
+      <div class="hbar"><span class="nmx">🇨🇳 阿里</span><div class="tk"><div class="fl cn" style="width:5.5%"></div></div><span class="vv">~0.2M</span></div>
+      <div class="hbar"><span class="nmx">🇨🇳 腾讯</span><div class="tk"><div class="fl cn" style="width:5.5%"></div></div><span class="vv">~0.2M</span></div>
+      <div class="hbar"><span class="nmx">🇨🇳 百度</span><div class="tk"><div class="fl cn" style="width:3%"></div></div><span class="vv">~0.12M</span></div>
+    </div>
+    <p class="disc" style="margin-top:10px">条形按等效 H100(H100e)区间中值绘制,横向可比。可见美国单家(谷歌/微软)即超过中国头部四家之和。<b>* OpenAI、Anthropic 为模型公司,算力主要靠租赁/合约(斜纹表示),部分与云厂商重叠,不应简单相加</b>。数字为量级估算,非精确盘点。</p>
+  </div>
+
+  <div class="callout warn">
+    <b>中美量级对比(关键结论):</b>单看裸卡,字节(~100 万张)不输任一美国巨头;但折算 H100e 后,<b>中国头部四家合计约 0.7–1.1M H100e,仅相当于美国一家(谷歌或微软 2.5–4M)的 1/3 左右,甚至不及 xAI 一个园区的扩建增量</b>。差距主因有三:① 拿不到最先进 Blackwell;② 特供卡(H20)等效系数极低;③ 国产卡生态效率折扣。中国靠规模化国产替代、高利用率与算法效率(如 DeepSeek 的训练效率优化)来缩小<b>有效</b>差距,而非纸面卡数。
+  </div>
+
+  <!-- ====================== 8. Pod 架构 ====================== -->
+  <h2 id="pod"><span class="n">⑧</span>典型 Pod 架构拆解</h2>
+  <p>"Pod / 超节点"是当代 AI 算力的基本交付单元——把几十到几百颗加速卡用高速互联拼成一个"<b>逻辑上的大芯片</b>"。下面拆解两家的代表作:英伟达 <b>GB200 NVL72</b> 与华为 <b>CloudMatrix 384</b>,并逐模块讲解。</p>
+  <div class="pod-hint"><span class="dot"></span>互动提示:下面三张架构图(NVL72 / CloudMatrix 384 / Atlas 950 SuperPoD)的每个模块都可<b>点击</b>,会弹出该模块的功能框架、包含内容、关键参数与相关链接。</div>
+
+  <!-- NVL72 图 -->
+  <h3>🟢 英伟达 GB200 NVL72(单机柜超节点)</h3>
+  <div class="card">
+  <svg viewBox="0 0 770 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit">
+    <defs><style>
+      .lbl{font-size:11px;fill:#1a1f2b;font-weight:600}
+      .sm{font-size:9.5px;fill:#5b6472}
+      .smw{font-size:9.5px;fill:#fff}
+      .ttl{font-size:12px;fill:#fff;font-weight:700}
+      .pin{font-size:9px;fill:#3a6600;font-weight:700}
+    </style></defs>
+
+    <!-- rack outline -->
+    <rect x="36" y="44" width="322" height="430" rx="10" fill="#f0f2f6" stroke="#5a8c00" stroke-width="2.5"/>
+    <text x="197" y="22" text-anchor="middle" class="lbl" style="font-weight:700">GB200 NVL72 · 单机柜 ~120kW · 全液冷</text>
+    <text x="197" y="38" text-anchor="middle" class="sm">42U · 18 计算托盘 + 9 NVLink 交换托盘</text>
+
+    <!-- compute trays (top zone) -->
+    <rect x="48" y="54" width="298" height="150" rx="5" fill="#76b900"/>
+    <text x="197" y="70" text-anchor="middle" class="ttl">① 计算托盘 ×18(各 1U,6.3kW)</text>
+    <!-- 4 trays illustrated, each shows 2 Bianca boards -->
+    <g>
+      <!-- tray template: 2 Bianca boards, each = 1 Grace + 2 Blackwell -->
+      <rect x="56" y="80" width="282" height="26" rx="3" fill="#fff" opacity=".92"/>
+      <text x="63" y="97" class="sm" fill="#3a6600" style="font-weight:700">托盘</text>
+      <rect x="92" y="84" width="112" height="18" rx="2" fill="#dff3bf"/><text x="148" y="96" text-anchor="middle" class="sm">Bianca板:Grace+2×Blackwell</text>
+      <rect x="210" y="84" width="120" height="18" rx="2" fill="#dff3bf"/><text x="270" y="96" text-anchor="middle" class="sm">Bianca板:Grace+2×Blackwell</text>
+      <rect x="56" y="110" width="282" height="20" rx="3" fill="#fff" opacity=".75"/><text x="197" y="124" text-anchor="middle" class="sm">↕ 同结构 ×18 托盘</text>
+    </g>
+    <text x="197" y="150" text-anchor="middle" class="smw" style="font-weight:700">合计 36× Grace CPU + 72× Blackwell GPU</text>
+    <text x="197" y="166" text-anchor="middle" class="smw">每托盘 = 2 Bianca 板 = 2 Grace + 4 Blackwell</text>
+    <text x="197" y="182" text-anchor="middle" class="smw">13.5 TB HBM3e 统一显存池</text>
+    <text x="197" y="197" text-anchor="middle" class="smw">冷板贴附 CPU/GPU(液冷)</text>
+
+    <!-- NVLink switch trays -->
+    <rect x="48" y="212" width="298" height="92" rx="5" fill="#3a6600"/>
+    <text x="197" y="230" text-anchor="middle" class="ttl">② NVLink 交换托盘 ×9</text>
+    <text x="197" y="247" text-anchor="middle" class="smw">每托盘 2× NVSwitch5 ASIC(各 28.8 Tb/s)</text>
+    <text x="197" y="262" text-anchor="middle" class="smw">144 NVLink 端口/托盘 @ 100 GB/s</text>
+    <text x="197" y="279" text-anchor="middle" class="smw">第五代 NVLink:1.8 TB/s·卡 · 聚合 130 TB/s</text>
+    <text x="197" y="295" text-anchor="middle" class="smw">扁平 1 跳全互联(任意两 GPU 一跳可达)</text>
+
+    <!-- backplane -->
+    <rect x="48" y="312" width="298" height="34" rx="5" fill="#8a6d2f"/>
+    <text x="197" y="333" text-anchor="middle" class="smw" style="font-weight:700">③ 无源铜缆背板 · 后侧盲插(blind-mate)</text>
+
+    <!-- power -->
+    <rect x="48" y="354" width="146" height="54" rx="5" fill="#475569"/>
+    <text x="121" y="374" text-anchor="middle" class="ttl">④ 供电架</text>
+    <text x="121" y="390" text-anchor="middle" class="smw">AC→50V DC 母线</text>
+    <text x="121" y="403" text-anchor="middle" class="smw">N+N 冗余</text>
+    <!-- cooling -->
+    <rect x="200" y="354" width="146" height="54" rx="5" fill="#0891b2"/>
+    <text x="273" y="374" text-anchor="middle" class="ttl">⑤ 液冷歧管</text>
+    <text x="273" y="390" text-anchor="middle" class="smw">冷板+Manifold</text>
+    <text x="273" y="403" text-anchor="middle" class="smw">高功率密度必需</text>
+
+    <!-- scale out -->
+    <rect x="48" y="416" width="298" height="50" rx="5" fill="#1e293b"/>
+    <text x="197" y="436" text-anchor="middle" class="ttl">⑥ 对外扩展(Scale-out)</text>
+    <text x="197" y="453" text-anchor="middle" class="smw">每 GPU 配 ConnectX-7/BlueField → InfiniBand/Spectrum-X → 多柜万卡集群</text>
+
+    <!-- right notes -->
+    <text x="388" y="60" class="lbl" style="font-weight:700">模块逐一拆解</text>
+    <text x="388" y="84" class="pin">① 计算托盘 (Compute Tray)</text><text x="388" y="99" class="sm">CPU+GPU 同板(Bianca),液冷;18 托盘</text><text x="388" y="112" class="sm">堆出 72 GPU,是算力本体</text>
+    <text x="388" y="136" class="pin">② NVLink 交换托盘</text><text x="388" y="151" class="sm">9 托盘把 72 GPU 连成单一 NVLink 域,</text><text x="388" y="164" class="sm">提供 130TB/s 卡间带宽,1 跳全互联</text>
+    <text x="388" y="188" class="pin">③ 铜缆背板</text><text x="388" y="203" class="sm">无源铜缆 + 后侧盲插,成本低、距离短</text><text x="388" y="216" class="sm">(&lt;1m),迫使所有器件紧密堆叠在一柜内</text>
+    <text x="388" y="240" class="pin">④ 供电架</text><text x="388" y="255" class="sm">AC 整流为 50V 直流母线,~120kW/柜,N+N</text>
+    <text x="388" y="279" class="pin">⑤ 液冷</text><text x="388" y="294" class="sm">冷板直触 GPU/CPU/NVSwitch,余件风冷</text>
+    <text x="388" y="318" class="pin">⑥ 对外扩展</text><text x="388" y="333" class="sm">柜外用 IB/以太横向扩成集群(scale-out)</text>
+    <text x="388" y="360" class="pin">设计理念:芯片优先</text><text x="388" y="375" class="sm">单柜即超节点,柜内极致集成 + 柜外联邦</text>
+    <rect x="386" y="392" width="360" height="74" rx="6" fill="#f7fcef" stroke="#76b900"/>
+    <text x="400" y="412" class="sm" fill="#3a6600" style="font-weight:700">关键数:72 GPU · 36 CPU · 13.5TB HBM3e</text>
+    <text x="400" y="430" class="sm" fill="#3a6600">130 TB/s NVLink · ~120kW · 1 跳全互联</text>
+    <text x="400" y="448" class="sm" fill="#3a6600">优势:单卡强+生态成熟;约束:铜缆距离</text>
+    <text x="400" y="461" class="sm" fill="#3a6600">→ 整柜高度集中,扩展靠堆机柜</text>
+    <!-- clickable hotspots -->
+    <rect class="hot" x="48" y="54" width="298" height="150" rx="5" onclick="openMod('nv','compute')"><title>① 计算托盘 — 点击查看</title></rect>
+    <rect class="hot" x="48" y="212" width="298" height="92" rx="5" onclick="openMod('nv','nvlink')"><title>② NVLink 交换托盘 — 点击查看</title></rect>
+    <rect class="hot" x="48" y="312" width="298" height="34" rx="5" onclick="openMod('nv','backplane')"><title>③ 铜缆背板 — 点击查看</title></rect>
+    <rect class="hot" x="48" y="354" width="146" height="54" rx="5" onclick="openMod('nv','power')"><title>④ 供电架 — 点击查看</title></rect>
+    <rect class="hot" x="200" y="354" width="146" height="54" rx="5" onclick="openMod('nv','cooling')"><title>⑤ 液冷 — 点击查看</title></rect>
+    <rect class="hot" x="48" y="416" width="298" height="50" rx="5" onclick="openMod('nv','scaleout')"><title>⑥ 对外扩展 — 点击查看</title></rect>
+  </svg>
+  <p class="disc">结构依据 NVIDIA 官方 GB200 NVL72 资料与 DGX GB200 用户指南、SemiAnalysis 硬件拆解。官方/详细示意图见:
+    <a href="https://www.nvidia.com/en-us/data-center/gb200-nvl72/">NVIDIA 官方 NVL72</a> ·
+    <a href="https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html">DGX GB200 硬件指南(含机柜爆炸图)</a> ·
+    <a href="https://newsletter.semianalysis.com/p/gb200-hardware-architecture-and-component">SemiAnalysis 拆解</a>。
+  </p>
+  </div>
+
+  <!-- CloudMatrix 图 -->
+  <h3>🔴 华为 CloudMatrix 384(全光互联超节点)</h3>
+  <div class="card">
+  <svg viewBox="0 0 770 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit">
+    <defs><style>
+      .l2{font-size:11px;fill:#1a1f2b;font-weight:600}
+      .s2{font-size:9.5px;fill:#5b6472}
+      .s2w{font-size:9.5px;fill:#fff}
+      .t2{font-size:12px;fill:#fff;font-weight:700}
+      .pin2{font-size:9px;fill:#a00821;font-weight:700}
+    </style></defs>
+    <text x="225" y="20" text-anchor="middle" class="l2" style="font-weight:700">CloudMatrix 384 · 16 机柜 = 12 计算柜 + 4 交换柜 · 384× 昇腾910C</text>
+    <text x="225" y="36" text-anchor="middle" class="s2">全连接 Mesh · 占地约 1000㎡级 · 全光互联</text>
+
+    <!-- left compute cabinets ×6 -->
+    <g>
+      <rect x="22" y="48" width="96" height="400" rx="8" fill="#fff5f6" stroke="#cf0a2c" stroke-width="2"/>
+      <text x="70" y="64" text-anchor="middle" class="pin2">计算柜 ×6</text>
+      <rect x="30" y="72" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="70" y="88" text-anchor="middle" class="s2w">每柜 32 NPU</text><text x="70" y="101" text-anchor="middle" class="s2w" fill="#ffd4da">8卡服务器组</text>
+      <rect x="30" y="118" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="70" y="134" text-anchor="middle" class="s2w">2U+2U+4U</text><text x="70" y="147" text-anchor="middle" class="s2w" fill="#ffd4da">三台一组/8U</text>
+      <rect x="30" y="164" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="70" y="188" text-anchor="middle" class="s2w">910C ...</text>
+      <text x="70" y="240" text-anchor="middle" class="s2" fill="#a00821">12 计算柜</text>
+      <text x="70" y="256" text-anchor="middle" class="s2" fill="#a00821">×48 台服务器</text>
+      <text x="70" y="272" text-anchor="middle" class="s2" fill="#a00821">= 384 NPU</text>
+      <text x="70" y="288" text-anchor="middle" class="s2" fill="#a00821">+ 192 CPU</text>
+    </g>
+
+    <!-- center switch cabinets ×4 with 3 planes -->
+    <rect x="150" y="48" width="160" height="400" rx="8" fill="#1e293b"/>
+    <text x="230" y="66" text-anchor="middle" class="t2">全光交换柜 ×4</text>
+    <!-- UB plane -->
+    <rect x="160" y="76" width="140" height="86" rx="5" fill="#0e7490"/>
+    <text x="230" y="92" text-anchor="middle" class="s2w" style="font-weight:700">① UB 平面(Scale-up)</text>
+    <text x="230" y="107" text-anchor="middle" class="s2w">384 NPU+192 CPU 无阻塞全互联</text>
+    <text x="230" y="121" text-anchor="middle" class="s2w">L2 分 7 个子平面</text>
+    <text x="230" y="135" text-anchor="middle" class="s2w">每子平面 16 颗 UB 交换芯片</text>
+    <text x="230" y="149" text-anchor="middle" class="s2w">每芯片 48× 28GB/s 端口</text>
+    <!-- RDMA plane -->
+    <rect x="160" y="168" width="140" height="52" rx="5" fill="#3730a3"/>
+    <text x="230" y="186" text-anchor="middle" class="s2w" style="font-weight:700">② RDMA 平面(Scale-out)</text>
+    <text x="230" y="201" text-anchor="middle" class="s2w">RoCE,每 NPU 最高 400Gbps</text>
+    <text x="230" y="214" text-anchor="middle" class="s2w">跨超节点扩展</text>
+    <!-- VPC plane -->
+    <rect x="160" y="226" width="140" height="40" rx="5" fill="#475569"/>
+    <text x="230" y="244" text-anchor="middle" class="s2w" style="font-weight:700">③ VPC 平面</text>
+    <text x="230" y="258" text-anchor="middle" class="s2w">接入更广数据中心网络</text>
+    <!-- optics summary -->
+    <rect x="160" y="272" width="140" height="84" rx="5" fill="#0891b2"/>
+    <text x="230" y="290" text-anchor="middle" class="s2w" style="font-weight:700">④ 光互联</text>
+    <text x="230" y="305" text-anchor="middle" class="s2w">每 NPU 7× 400G 光模块</text>
+    <text x="230" y="319" text-anchor="middle" class="s2w">全系 6912× 400G SiPh LPO</text>
+    <text x="230" y="333" text-anchor="middle" class="s2w">+ 3168 根光纤</text>
+    <text x="230" y="348" text-anchor="middle" class="s2w">百纳秒级 · 可 &gt;2m 长距</text>
+    <rect x="160" y="362" width="140" height="76" rx="5" fill="#7c2d12"/>
+    <text x="230" y="380" text-anchor="middle" class="s2w" style="font-weight:700">⑤ 供电 / 液冷</text>
+    <text x="230" y="395" text-anchor="middle" class="s2w">高功率柜液冷</text>
+    <text x="230" y="409" text-anchor="middle" class="s2w">卡数多 → 总功耗/占地大</text>
+    <text x="230" y="423" text-anchor="middle" class="s2w">光模块功耗/成本占比高</text>
+
+    <!-- right compute cabinets ×6 -->
+    <g>
+      <rect x="342" y="48" width="96" height="400" rx="8" fill="#fff5f6" stroke="#cf0a2c" stroke-width="2"/>
+      <text x="390" y="64" text-anchor="middle" class="pin2">计算柜 ×6</text>
+      <rect x="350" y="72" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="390" y="88" text-anchor="middle" class="s2w">每柜 32 NPU</text><text x="390" y="101" text-anchor="middle" class="s2w" fill="#ffd4da">8卡服务器组</text>
+      <rect x="350" y="118" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="390" y="142" text-anchor="middle" class="s2w">910C×8</text>
+      <rect x="350" y="164" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="390" y="188" text-anchor="middle" class="s2w">...</text>
+      <text x="390" y="248" text-anchor="middle" class="s2" fill="#a00821">交换柜居中,</text>
+      <text x="390" y="264" text-anchor="middle" class="s2" fill="#a00821">两侧各 6 计算柜</text>
+    </g>
+    <!-- optical links -->
+    <line x1="118" y1="92" x2="150" y2="100" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="118" y1="138" x2="150" y2="130" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="118" y1="184" x2="150" y2="300" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="310" y1="100" x2="342" y2="92" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="310" y1="130" x2="342" y2="138" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="310" y1="300" x2="342" y2="184" stroke="#22d3ee" stroke-width="1.4"/>
+
+    <!-- right notes -->
+    <text x="458" y="64" class="l2" style="font-weight:700">模块逐一拆解</text>
+    <text x="458" y="88" class="pin2">① 计算节点</text><text x="458" y="103" class="s2">48 台 8 卡服务器(2U+2U+4U 一组),</text><text x="458" y="116" class="s2">共 384 颗 910C(每计算柜 32 卡)</text>
+    <text x="458" y="140" class="pin2">② UB 平面(核心创新)</text><text x="458" y="155" class="s2">全对等总线,L2 分 7 子平面 ×16 芯片,</text><text x="458" y="168" class="s2">实现 384 NPU 无阻塞 all-to-all</text>
+    <text x="458" y="192" class="pin2">③ RDMA / ④ VPC 平面</text><text x="458" y="207" class="s2">分别负责超节点间扩展与数据中心接入</text>
+    <text x="458" y="231" class="pin2">⑤ 全光互联</text><text x="458" y="246" class="s2">6912× 400G SiPh LPO 光模块 + 3168 纤,</text><text x="458" y="259" class="s2">光替代铜,突破距离、可分散部署</text>
+    <text x="458" y="283" class="pin2">⑥ 供电/液冷</text><text x="458" y="298" class="s2">卡多导致功耗、占地、光模块成本上升</text>
+    <text x="458" y="322" class="pin2">设计理念:系统优先</text><text x="458" y="337" class="s2">用全光把数百卡拼成一个大算力域,</text><text x="458" y="350" class="s2">以系统级规模反超单芯片差距</text>
+    <rect x="456" y="366" width="296" height="80" rx="6" fill="#fff5f6" stroke="#cf0a2c"/>
+    <text x="470" y="386" class="s2" fill="#a00821" style="font-weight:700">关键数:384 NPU · ~300 PFLOPS BF16</text>
+    <text x="470" y="404" class="s2" fill="#a00821">≈ NVL72 的 1.7–2×算力 · 显存容量 3.6×</text>
+    <text x="470" y="422" class="s2" fill="#a00821">优势:系统算力强+全光长距+自主可控</text>
+    <text x="470" y="438" class="s2" fill="#a00821">约束:卡多→功耗/占地大 · 光模块成本高</text>
+    <!-- clickable hotspots -->
+    <rect class="hot" x="22" y="48" width="96" height="400" rx="8" onclick="openMod('hw','compute')"><title>① 计算节点 — 点击查看</title></rect>
+    <rect class="hot" x="342" y="48" width="96" height="400" rx="8" onclick="openMod('hw','compute')"><title>① 计算节点 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="76" width="140" height="86" rx="5" onclick="openMod('hw','ub')"><title>② UB 平面 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="168" width="140" height="52" rx="5" onclick="openMod('hw','rdma')"><title>③ RDMA 平面 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="226" width="140" height="40" rx="5" onclick="openMod('hw','vpc')"><title>④ VPC 平面 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="272" width="140" height="84" rx="5" onclick="openMod('hw','optics')"><title>⑤ 全光互联 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="362" width="140" height="76" rx="5" onclick="openMod('hw','power')"><title>⑥ 供电/液冷 — 点击查看</title></rect>
+  </svg>
+  <p class="disc">结构依据 SemiAnalysis CloudMatrix 384 拆解、华为官方深度解读及光模块产业分析(6912× 400G SiPh LPO)。详细架构/拓扑图见:
+    <a href="https://newsletter.semianalysis.com/p/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72">SemiAnalysis CloudMatrix 384</a> ·
+    <a href="https://www.163.com/dy/article/K2AV0K0I0511CPMT.html">华为官方深度解读(含拓扑图)</a> ·
+    <a href="https://www.qsfptek.com/qt-news/400g-osfp-siph-lpos-in-huawei-ai-cloudmatrix384-super-node.html">光模块拆解</a>。
+  </p>
+  </div>
+
+  <!-- Atlas 950 SuperPoD 图 -->
+  <h3>🔴 华为 Atlas 950 SuperPoD(昇腾 950DT 超节点 · 2026 Q4)</h3>
+  <p>这是华为基于<b>昇腾 950DT</b> 的新一代超节点,把 CloudMatrix 384 的全光思路放大到<b>8192 卡</b>规模——满配 160 机柜(128 计算柜 + 32 互联柜),用升级的<b>灵衢(UnifiedBus)2.0 + UB-Mesh 递归直连拓扑</b>实现 8192 卡无收敛全互联。模块同样<b>可点击</b>。</p>
+  <div class="card">
+  <svg viewBox="0 0 770 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:inherit">
+    <defs><style>
+      .l3{font-size:11px;fill:#1a1f2b;font-weight:600}
+      .s3{font-size:9.5px;fill:#5b6472}
+      .s3w{font-size:9.5px;fill:#fff}
+      .t3{font-size:12px;fill:#fff;font-weight:700}
+      .pin3{font-size:9px;fill:#a00821;font-weight:700}
+    </style></defs>
+    <text x="225" y="20" text-anchor="middle" class="l3" style="font-weight:700">Atlas 950 SuperPoD · 160 机柜 = 128 计算柜 + 32 互联柜 · 8192× 昇腾950DT</text>
+    <text x="225" y="36" text-anchor="middle" class="s3">满配占地约 1000㎡ · 8 EFLOPS(FP8) / 16 EFLOPS(FP4) · 1152 TB 全 HBM</text>
+
+    <!-- left compute cabinets -->
+    <g>
+      <rect x="22" y="48" width="96" height="420" rx="8" fill="#fff5f6" stroke="#cf0a2c" stroke-width="2"/>
+      <text x="70" y="64" text-anchor="middle" class="pin3">计算柜 ×128</text>
+      <rect x="30" y="72" width="80" height="46" rx="3" fill="#cf0a2c"/><text x="70" y="89" text-anchor="middle" class="s3w">计算节点 ×8</text><text x="70" y="103" text-anchor="middle" class="s3w" fill="#ffd4da">每节点 8× 950DT</text><text x="70" y="114" text-anchor="middle" class="s3w" fill="#ffd4da">→ 64 卡/柜</text>
+      <rect x="30" y="124" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="70" y="142" text-anchor="middle" class="s3w">950DT</text><text x="70" y="155" text-anchor="middle" class="s3w" fill="#ffd4da">FP8 1P/FP4 2P</text>
+      <rect x="30" y="170" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="70" y="194" text-anchor="middle" class="s3w">...</text>
+      <text x="70" y="250" text-anchor="middle" class="s3" fill="#a00821">128 计算柜</text>
+      <text x="70" y="266" text-anchor="middle" class="s3" fill="#a00821">×64 卡</text>
+      <text x="70" y="282" text-anchor="middle" class="s3" fill="#a00821">= 8192 卡</text>
+    </g>
+
+    <!-- center interconnect cabinets -->
+    <rect x="150" y="48" width="160" height="420" rx="8" fill="#1e293b"/>
+    <text x="230" y="66" text-anchor="middle" class="t3">互联柜 ×32(全光)</text>
+    <!-- UB 2.0 -->
+    <rect x="160" y="76" width="140" height="92" rx="5" fill="#0e7490"/>
+    <text x="230" y="93" text-anchor="middle" class="s3w" style="font-weight:700">① 灵衢 UnifiedBus 2.0</text>
+    <text x="230" y="108" text-anchor="middle" class="s3w">UB-Mesh 递归直连拓扑</text>
+    <text x="230" y="122" text-anchor="middle" class="s3w">板内/板间/柜间全互联</text>
+    <text x="230" y="136" text-anchor="middle" class="s3w">64 卡粒度灵活扩展</text>
+    <text x="230" y="150" text-anchor="middle" class="s3w">→ 8192 卡无收敛</text>
+    <text x="230" y="163" text-anchor="middle" class="s3w">片间互联 2 TB/s</text>
+    <!-- optics -->
+    <rect x="160" y="174" width="140" height="80" rx="5" fill="#0891b2"/>
+    <text x="230" y="192" text-anchor="middle" class="s3w" style="font-weight:700">② 全光互联</text>
+    <text x="230" y="207" text-anchor="middle" class="s3w">灵衢全光接口</text>
+    <text x="230" y="221" text-anchor="middle" class="s3w">柜内/柜间低延迟</text>
+    <text x="230" y="235" text-anchor="middle" class="s3w">互联总带宽 16 PB/s</text>
+    <text x="230" y="249" text-anchor="middle" class="s3w">突破铜缆距离</text>
+    <!-- HBM -->
+    <rect x="160" y="260" width="140" height="76" rx="5" fill="#6d28d9"/>
+    <text x="230" y="278" text-anchor="middle" class="s3w" style="font-weight:700">③ HBM 显存池</text>
+    <text x="230" y="293" text-anchor="middle" class="s3w">全 HBM,自研 HiZQ</text>
+    <text x="230" y="307" text-anchor="middle" class="s3w">满配 1152 TB</text>
+    <text x="230" y="321" text-anchor="middle" class="s3w">单卡 950DT 144GB/4TB·s</text>
+    <!-- power -->
+    <rect x="160" y="342" width="140" height="118" rx="5" fill="#7c2d12"/>
+    <text x="230" y="360" text-anchor="middle" class="s3w" style="font-weight:700">④ 供电 / 液冷 / 占地</text>
+    <text x="230" y="375" text-anchor="middle" class="s3w">高功率柜液冷</text>
+    <text x="230" y="389" text-anchor="middle" class="s3w">满配占地约 1000㎡</text>
+    <text x="230" y="403" text-anchor="middle" class="s3w">多兆瓦级整系统功耗</text>
+    <text x="230" y="417" text-anchor="middle" class="s3w">8192 卡 → 空间/电力/</text>
+    <text x="230" y="431" text-anchor="middle" class="s3w">冷却配套压力大</text>
+    <text x="230" y="448" text-anchor="middle" class="s3w">(系统级路线的代价)</text>
+
+    <!-- right compute cabinets -->
+    <g>
+      <rect x="342" y="48" width="96" height="420" rx="8" fill="#fff5f6" stroke="#cf0a2c" stroke-width="2"/>
+      <text x="390" y="64" text-anchor="middle" class="pin3">计算柜 ×128</text>
+      <rect x="350" y="72" width="80" height="46" rx="3" fill="#cf0a2c"/><text x="390" y="89" text-anchor="middle" class="s3w">计算节点 ×8</text><text x="390" y="103" text-anchor="middle" class="s3w" fill="#ffd4da">8× 950DT/节点</text>
+      <rect x="350" y="124" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="390" y="148" text-anchor="middle" class="s3w">64 卡/柜</text>
+      <rect x="350" y="170" width="80" height="40" rx="3" fill="#cf0a2c"/><text x="390" y="194" text-anchor="middle" class="s3w">...</text>
+      <text x="390" y="250" text-anchor="middle" class="s3" fill="#a00821">互联柜居中</text>
+      <text x="390" y="266" text-anchor="middle" class="s3" fill="#a00821">两侧布计算柜</text>
+    </g>
+    <!-- optical links -->
+    <line x1="118" y1="95" x2="150" y2="110" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="118" y1="145" x2="150" y2="210" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="310" y1="110" x2="342" y2="95" stroke="#22d3ee" stroke-width="1.4"/>
+    <line x1="310" y1="210" x2="342" y2="145" stroke="#22d3ee" stroke-width="1.4"/>
+
+    <!-- right notes -->
+    <text x="458" y="64" class="l3" style="font-weight:700">模块逐一拆解</text>
+    <text x="458" y="88" class="pin3">① 计算节点 / 计算柜</text><text x="458" y="103" class="s3">每节点 8× 昇腾950DT,8 节点/柜 = 64 卡;</text><text x="458" y="116" class="s3">128 计算柜共 8192 卡</text>
+    <text x="458" y="140" class="pin3">② 灵衢 UB 2.0(核心)</text><text x="458" y="155" class="s3">UB-Mesh 递归直连,64 卡粒度无收敛扩</text><text x="458" y="168" class="s3">展至 8192 卡,片间互联 2 TB/s</text>
+    <text x="458" y="192" class="pin3">③ 全光互联</text><text x="458" y="207" class="s3">32 互联柜全光,互联总带宽 16 PB/s</text>
+    <text x="458" y="231" class="pin3">④ HBM 显存池</text><text x="458" y="246" class="s3">满配 1152 TB 全 HBM(自研 HiZQ)</text>
+    <text x="458" y="270" class="pin3">⑤ 供电/液冷/占地</text><text x="458" y="285" class="s3">~1000㎡、多兆瓦级,配套压力大</text>
+    <text x="458" y="309" class="pin3">设计理念:系统优先(放大版)</text><text x="458" y="324" class="s3">把 384 卡级思路放大到 8192 卡,</text><text x="458" y="337" class="s3">以超大系统对标英伟达 Rubin 级集群</text>
+    <rect x="456" y="354" width="296" height="106" rx="6" fill="#fff5f6" stroke="#cf0a2c"/>
+    <text x="470" y="374" class="s3" fill="#a00821" style="font-weight:700">关键数:8192× 950DT · 160 机柜</text>
+    <text x="470" y="392" class="s3" fill="#a00821">8 EFLOPS FP8 / 16 EFLOPS FP4</text>
+    <text x="470" y="410" class="s3" fill="#a00821">1152 TB HBM · 互联 16 PB/s</text>
+    <text x="470" y="428" class="s3" fill="#a00821">↕ 多个 SuperPoD → Atlas 950 SuperCluster</text>
+    <text x="470" y="445" class="s3" fill="#a00821">(集群级达 ZettaFLOPS 量级,2026 Q4)</text>
+    <!-- clickable hotspots -->
+    <rect class="hot" x="22" y="48" width="96" height="420" rx="8" onclick="openMod('p950','compute')"><title>① 计算柜 — 点击查看</title></rect>
+    <rect class="hot" x="342" y="48" width="96" height="420" rx="8" onclick="openMod('p950','compute')"><title>① 计算柜 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="76" width="140" height="92" rx="5" onclick="openMod('p950','ub2')"><title>② 灵衢 UB 2.0 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="174" width="140" height="80" rx="5" onclick="openMod('p950','optics')"><title>③ 全光互联 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="260" width="140" height="76" rx="5" onclick="openMod('p950','hbm')"><title>④ HBM 显存池 — 点击查看</title></rect>
+    <rect class="hot" x="160" y="342" width="140" height="118" rx="5" onclick="openMod('p950','power')"><title>⑤ 供电/液冷/占地 — 点击查看</title></rect>
+  </svg>
+  <p class="disc">结构依据华为全联接 2025 / MWC 2026 发布信息与媒体拆解。8192 卡满配规模与 1152TB HBM、16PB/s 互联为官方披露;整系统功耗官方未给精确值(报道指"更多空间、电力与冷却")。详细资料见:
+    <a href="https://www.huawei.com/en/news/2025/9/hc-lingqu-ai-superpod">华为官方:灵衢 SuperPoD</a> ·
+    <a href="https://www.eet-china.com/mp/a440308.html">电子工程专辑:Atlas 950/960</a> ·
+    <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/huawei-unveils-atlas-950-supercluster-touting-1-fp4-zettaflops-performance-for-ai-inference-and-524-fp8-exaflops-for-ai-training-features-hundreds-of-thousands-of-950dt-apus">Tom's Hardware:Atlas 950 SuperCluster</a>。
+  </p>
+  </div>
+
+  <h3>三种 Pod 对照</h3>
+  <table>
+    <thead><tr><th>维度</th><th class="nv">NVL72</th><th class="hw">CloudMatrix 384</th><th class="hw">Atlas 950 SuperPoD</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">芯片</td><td>72× Blackwell</td><td>384× 昇腾910C</td><td>8192× 昇腾950DT</td></tr>
+      <tr><td class="dim">基本单元</td><td>1 机柜 = 72 GPU</td><td>16 机柜 = 384 NPU</td><td>160 机柜 = 8192 卡</td></tr>
+      <tr><td class="dim">互联介质</td><td>铜缆 NVLink(&lt;1m)</td><td>全光 UB 总线(&gt;2m)</td><td>全光 灵衢 UB 2.0</td></tr>
+      <tr><td class="dim">互联拓扑</td><td>扁平 1 跳,聚合 130 TB/s</td><td>全对等,百纳秒级延迟(每卡 7×400G≈2.8 Tbps)</td><td>UB-Mesh 递归直连,聚合 16 PB/s</td></tr>
+      <tr><td class="dim">系统算力</td><td>FP4 ~1.4 EFLOPS(含稀疏)</td><td>~300 PFLOPS BF16(稠密)</td><td>8 EFLOPS FP8 / 16 EFLOPS FP4</td></tr>
+      <tr><td class="dim">显存</td><td>13.5 TB HBM3e</td><td>~3.6× NVL72 容量</td><td>1152 TB 全 HBM</td></tr>
+      <tr><td class="dim">占地/功耗</td><td>单柜高度集成</td><td>占地与功耗较大</td><td>~1000㎡,多兆瓦级</td></tr>
+      <tr><td class="dim">取胜逻辑</td><td>单卡强 + 柜内极致集成</td><td>系统级规模 + 光互联</td><td>放大版系统级(8192 卡)对标集群</td></tr>
+    </tbody>
+  </table>
+  <p class="disc">更大规模:英伟达向 NVL576 等更大域演进;华为 Atlas 950 SuperPoD 由 160 机柜、约 8192 卡组成,提供约 8 EFLOPS(FP8)/16 EFLOPS(FP4),占地约 1000㎡。架构图为示意,具体配置以官方文档为准。</p>
+
+  <!-- ====================== 路线图时间线 ====================== -->
+  <h2 id="roadmap"><span class="n">•</span>路线图时间线(2024–2028)</h2>
+  <p>两家都有清晰的多年迭代节奏。下面把芯片与超节点路线放在同一条时间轴上对比——英伟达约一年一代、持续下探低精度;华为按 PR/DT 分推理/训练双线推进,逐代提升自研 HBM 与超节点规模。</p>
+  <div class="viz">
+    <div class="vtitle">🗓️ 英伟达 vs 华为 芯片路线时间轴</div>
+    <div class="tlwrap"><div class="tl">
+      <div class="yr"></div><div class="yr">2024</div><div class="yr">2025</div><div class="yr">2026</div><div class="yr">2027</div><div class="yr">2028</div>
+      <div class="rl nv">🟢<br>英伟达</div>
+      <div class="cell nv"><b>Hopper</b>H100/H200</div>
+      <div class="cell nv"><b>Blackwell</b>B200/GB200<br>→ Ultra B300</div>
+      <div class="cell nv"><b>Rubin</b>(VR,H2)<br>HBM4·3nm</div>
+      <div class="cell nv"><b>Rubin Ultra</b></div>
+      <div class="cell nv"><b>Feynman</b></div>
+      <div class="rl hw">🔴<br>华为</div>
+      <div class="cell empty"></div>
+      <div class="cell hw"><b>昇腾910C</b>CloudMatrix384</div>
+      <div class="cell hw"><b>950PR</b>(Q1)·Atlas350<br><b>950DT</b>(Q4)·Atlas950</div>
+      <div class="cell hw"><b>昇腾960</b>(Q4)</div>
+      <div class="cell hw"><b>昇腾970</b>(Q4)</div>
+    </div></div>
+    <p class="disc" style="margin-top:10px">英伟达单芯片代际领先约 1–2 年;华为以"系统规模 + 自研 HBM 逐代升级"追赶(950DT 144GB→后续路线显存与带宽持续抬升)。两家节奏都锚定"低精度(FP8/FP4)+ 整柜/超节点交付"。时间与型号以官方路线图披露为准,可能调整。</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">从时间线能读出三点</h4>
+    <ul>
+      <li><b>节奏不同源:</b>英伟达约一年一代,由<b>制程</b>驱动(4nm→3nm→更先进);华为按 PR(推理)/ DT(训练)分双线、节点更长,由<b>系统与自研 HBM</b>驱动。</li>
+      <li><b>华为的追赶主抓手是显存:</b>受制程所限,华为靠逐代自研 HBM(HiBL→HiZQ→后续)抬升容量与带宽,用"内存 + 系统"去补"算力 + 制程"的差距,而非正面拼制程。</li>
+      <li><b>关键拐点在 2026–27:</b>英伟达 Rubin 转 3nm + HBM4 会<b>再拉大</b>单芯片差距;华为能否用 960/970 + 更大超节点把"系统差距"持续压住,取决于<b>产能与良率</b>——纸面路线能否按时规模交付,是比型号本身更现实的问题。</li>
+    </ul>
+  </div>
+
+  <!-- ====================== 软件生态 ====================== -->
+  <h2 id="ecosystem"><span class="n">•</span>软件生态对比:CUDA vs CANN</h2>
+  <p>芯片只是硬件,真正的护城河是软件栈。英伟达用 <b>CUDA</b> 二十年积累锁定了几乎所有 AI 开发者;华为以 <b>CANN + MindSpore</b> 自建全栈并主打"兼容 CUDA、降低迁移成本"。这是华为追赶中<b>最持久、最慢</b>的一环。</p>
+  <div class="viz">
+    <div class="vtitle">🧩 生态成熟度(示意,CUDA=100)</div>
+    <div class="hbars">
+      <div class="hbar"><span class="nmx">🟢 CUDA</span><div class="tk"><div class="fl us" style="width:100%"></div></div><span class="vv">~100</span></div>
+      <div class="hbar"><span class="nmx">🔴 CANN/MindSpore</span><div class="tk"><div class="fl cn" style="width:40%"></div></div><span class="vv">~40</span></div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>维度</th><th class="nv">CUDA(英伟达)</th><th class="hw">CANN + MindSpore(华为)</th></tr></thead>
+    <tbody>
+      <tr><td class="dim">历史积累</td><td>~20 年,事实标准</td><td>起步较晚,快速迭代中</td></tr>
+      <tr><td class="dim">核心库/工具</td><td>cuDNN / NCCL / TensorRT 全套成熟</td><td>CANN 算子库 + MindSpore,覆盖在补齐</td></tr>
+      <tr><td class="dim">开发者规模</td><td>全球数百万,默认平台</td><td>国内为主,生态在聚集</td></tr>
+      <tr><td class="dim">框架支持</td><td>PyTorch/JAX/TF 原生深度优化</td><td>PyTorch 适配 + 自家 MindSpore 深度优化</td></tr>
+      <tr><td class="dim">迁移成本</td><td>—(原生)</td><td>CANN Next 称兼容 90%+ CUDA 代码、一键迁移,成本降约 80%</td></tr>
+      <tr><td class="dim">锁定/粘性</td><td>极强(切换成本高)</td><td>逐步建立,长尾算子/调优仍有摩擦</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn"><b>判断:</b>硬件差距可以靠"堆系统 + 自研 HBM"在数年内缩小,但<b>生态差距是用户习惯、工具链与社区的复利</b>,需要更长时间。CANN 的"高兼容 + 低迁移成本"是务实策略,但真实迁移中的性能调优、边角算子兼容仍是摩擦点——这是华为最关键的长期攻坚项。</div>
+
+  <!-- ====================== 第三极玩家 ====================== -->
+  <h2 id="players"><span class="n">•</span>"第三极"玩家:不止英伟达与华为</h2>
+  <p>把视角拉大,真正可能改写格局的不只两家。尤其在全球市场,<b>蚕食英伟达份额的更可能是云厂商自研 ASIC,而非华为</b>;在中国市场,昇腾之外还有一批国产力量。</p>
+  <div class="pgrid">
+    <div class="pcard"><h4>🔴 AMD</h4><div class="role">英伟达最直接挑战者</div><p>Instinct MI300X / MI350 / MI400 系列,ROCm 生态追赶 CUDA。微软、Meta、OpenAI 等采购以分散对英伟达的依赖,是全球第二大 AI GPU 供应商。</p></div>
+    <div class="pcard"><h4>🟦 谷歌 TPU</h4><div class="role">自研 ASIC · 体量最大</div><p>v5p / v6(Trillium)/ v7(Ironwood),主要自用 + 云租。等效算力或达数百万 H100e,是英伟达之外最大的单一算力来源。</p></div>
+    <div class="pcard"><h4>🟧 AWS Trainium</h4><div class="role">云自研 · 降本</div><p>Trainium2/3 + Inferentia,Project Rainier 大规模集群,目标降低训练/推理成本、减少英伟达占比。</p></div>
+    <div class="pcard"><h4>🟪 微软 Maia / Meta MTIA</h4><div class="role">超大客户自研</div><p>大客户纷纷自研推理/训练 ASIC,长期压缩通用 GPU 的份额空间——这是全球层面对英伟达最实质的侵蚀力量。</p></div>
+    <div class="pcard"><h4>🔴 寒武纪</h4><div class="role">国产 · A股算力龙头</div><p>思元(MLU)系列,字节等采购,国产替代核心标的之一,推理场景性价比突出。</p></div>
+    <div class="pcard"><h4>🔴 阿里平头哥 / 百度昆仑芯</h4><div class="role">国产 · 自研自用</div><p>阿里 PPU(2025 市占约 6.6%)、百度昆仑芯 P800,均走"自研芯片 + 自家模型/云"闭环路线。</p></div>
+  </div>
+  <div class="callout key"><b>格局含义:</b>全球市场是"英伟达 + AMD + 云自研 ASIC"的竞争;中国市场是"昇腾领衔 + 寒武纪/平头哥/昆仑芯/海光并存"。华为的主战场是中国及部分友好市场,真正威胁英伟达全球地位的,是云厂商的自研芯片。</div>
+
+  <!-- ====================== 结论与展望 ====================== -->
+  <div class="callout warn"><b>更深一层的逻辑:</b>为什么"第三极"里<b>云自研 ASIC 才是英伟达全球地位的真正变量</b>?因为大客户(谷歌/亚马逊/微软/Meta)既是英伟达最大买家、又在自研——需求一旦"内化",就直接从英伟达订单里扣除;且自研芯片针对自家负载优化、性价比更高。但 ASIC 通用性与生态不及英伟达,所以是"<b>分流</b>"而非"取代"。中国国产则是<b>政策 + 成本</b>驱动的确定性替代:确定性高,但厂商分散、生态各自为政,是其相对华为/英伟达的短板。</div>
+
+  <h2 id="conclusion">🎯 结论与展望</h2>
+  <p>把全篇线索收拢为几条核心判断,并给出两种政策情景下的走向。</p>
+  <div class="card">
+    <h4 style="margin-top:0">五条核心判断</h4>
+    <ol style="margin:6px 0;padding-left:22px">
+      <li style="margin:8px 0"><b>单芯片与生态:英伟达短期难撼动。</b>制程领先 1–2 代 + CUDA 二十年护城河,全球主导地位短期稳固。</li>
+      <li style="margin:8px 0"><b>中国市场:政策驱动,快速向昇腾倾斜。</b>"一球两制"的分叉格局正在成型,两个生态各自演进。</li>
+      <li style="margin:8px 0"><b>系统级路线有效但有顶。</b>华为超节点能在集群层面正面竞争,但受国产制程<b>产能/良率</b>天花板制约——这是比纸面参数更现实的瓶颈。</li>
+      <li style="margin:8px 0"><b>全球真正的变量是云自研 ASIC,而非华为。</b>谷歌 TPU、AWS Trainium 等更可能蚕食英伟达全球份额。</li>
+      <li style="margin:8px 0"><b>决胜点已转移。</b>从"单芯片最强"转向"<b>每美元 / 每瓦有效算力 + 生态成熟度</b>",并日益受电力与产能约束。</li>
+    </ol>
+  </div>
+  <h3>两种政策情景</h3>
+  <div class="scen">
+    <div class="col tight"><h4>🔒 管制收紧</h4><p style="font-size:13px;margin:0;color:#7c2d12">国产替代进一步加速,昇腾及国产份额快速上行,中美生态分叉加深;华为产能/良率与生态成熟成为决定上限的关键。</p></div>
+    <div class="col loose"><h4>🔓 管制放松</h4><p style="font-size:13px;margin:0;color:#1e3a8a">英伟达合规产品回流中国,昇腾短期承压;但国产已建立根据地与供应链,替代趋势不会逆转,只是节奏放缓。</p></div>
+  </div>
+  <div class="callout key" style="margin-top:16px"><b>一句话收尾:</b>这不再是"谁的芯片更快"的单点比拼,而是<b>两套技术哲学、两个软件生态、两条供应链</b>在不同约束下的长期博弈。英伟达赢在当下的性能与生态,华为赌的是系统创新、自主可控与时间。</div>
+
+  <!-- ====================== 来源 ====================== -->
+  <h2 id="src">参考来源</h2>
+  <div class="card src">
+    <ul>
+      <li><a href="https://finance.sina.com.cn/roll/2025-09-19/doc-infqytkr3184032.shtml">新浪财经：华为昇腾950/960/970发布与B200对比</a></li>
+      <li><a href="https://www.eetrend.com/content/2025/100594934.html">电子创新网：昇腾950 vs 英伟达B200 对比</a></li>
+      <li><a href="https://news.mydrivers.com/1/1075/1075358.htm">快科技：昇腾950首发自研HBM内存（144GB / 4TB/s）</a></li>
+      <li><a href="https://www.esshow.cn/Document/detail/id/8434.html">华为昇腾路线图：2026 Q1 昇腾950PR</a></li>
+      <li><a href="https://www.eet-china.com/mp/a486527.html">电子工程专辑：昇腾系列详细参数对比（2025–2028）</a></li>
+      <li><a href="https://caifuhao.eastmoney.com/news/20260226152924915561010">东方财富：昇腾950深度解读——不靠先进制程，用系统战对标英伟达</a></li>
+      <li><a href="https://zhuanlan.zhihu.com/p/2026893491125467122">知乎：昇腾950PR量产与7万元定价</a></li>
+      <li><a href="https://blog.csdn.net/Peter_Changyb/article/details/151934401">CSDN：华为昇腾910到950系列NPU深度解析</a></li>
+      <li><a href="https://zhuanlan.zhihu.com/p/1919101924445254162">知乎：CloudMatrix 384 vs NVIDIA GB200 NVL72 架构解析</a></li>
+      <li><a href="https://www.infoq.cn/article/lzg1tvcl4by65xpd9ftb">InfoQ：CloudMatrix384 超节点论文解读</a></li>
+      <li><a href="https://intuitionlabs.ai/articles/nvidia-data-center-gpu-specs">IntuitionLabs：NVIDIA 数据中心 GPU 规格对比</a></li>
+      <li><a href="https://investor.wedbush.com/wedbush/article/tokenring-2026-2-5-nvidia-blackwell-b200-and-gb200-chips-enter-volume-production-fueling-the-trillion-parameter-ai-era">Wedbush：Blackwell B200/GB200 量产与 Rubin 路线</a></li>
+      <li><a href="https://www.mycaijing.com/article/detail/563097?source_id=40">财经：九家中国AI芯片公司出货超万卡</a></li>
+      <li><a href="https://www.sina.cn/news/detail/5291341747851296.html">新浪新闻：中国AI芯片市场份额变化</a></li>
+      <li><a href="https://www.stcn.com/article/detail/1839141.html">证券时报：黄仁勋抨击对华AI芯片出口管制</a></li>
+      <li><a href="https://www.sohu.com/a/1025738051_122643244">搜狐：H200供给受限，国产算力推理替代窗口</a></li>
+      <li><a href="https://epoch.ai/data-insights/ai-datacenter-cost-breakdown">Epoch AI：1GW AI 数据中心总拥有成本拆解（~$38B）</a></li>
+      <li><a href="https://www.leanrs.com/insights/data-center-equipment-growth">Lean Research：$11B 数据中心成本结构（每瓦 / IT vs 基础设施）</a></li>
+      <li><a href="https://archdesk.com/blog/global-ai-data-center-construction-2026">Archdesk：2026 全球 AI 数据中心建设成本与展望</a></li>
+      <li><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Futurum：2026 AI CapEx 约 $690B</a></li>
+      <li><a href="https://www.nextbigfuture.com/2025/08/xai-google-openai-and-meta-race-to-gigawatts-of-ai-data-centers.html">NextBigFuture：xAI/Google/OpenAI/Meta 吉瓦级算力竞赛</a></li>
+      <li><a href="https://www.chinastarmarket.cn/detail/2370802">财联社：腾讯、阿里上调 AI 资本开支预期</a></li>
+      <li><a href="https://36kr.com/p/3829726886847879">36氪：阿里/百度/腾讯/字节 Q1 财报与云战</a></li>
+      <li><a href="https://newsletter.semianalysis.com/p/gb200-hardware-architecture-and-component">SemiAnalysis：GB200 硬件架构与 BOM</a></li>
+      <li><a href="https://www.nvidia.com/en-us/data-center/gb200-nvl72/">NVIDIA：GB200 NVL72 官方规格</a></li>
+      <li><a href="https://zhuanlan.zhihu.com/p/1923683005421028971">知乎：CloudMatrix 384 结构详解（机柜/光模块）</a></li>
+      <li><a href="https://www.eet-china.com/mp/a424237.html">电子工程专辑：昇腾 384 超节点现场拆解</a></li>
+      <li><a href="https://epoch.ai/data-insights/computing-capacity">Epoch AI：头部 AI 公司算力存量(H100e)</a></li>
+      <li><a href="https://jefftech.substack.com/p/global-gpu-powerhouses-revealed-over">JeffTech：2025 全球前五约 1240 万 H100e</a></li>
+      <li><a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/elon-musk-says-xai-is-targeting-50-million-h100-equivalent-ai-gpus-in-five-years-230k-gpus-including-30k-gb200s-already-reportedly-operational-for-training-grok">Tom's Hardware：xAI 230k 卡运行、目标 5000 万 H100e</a></li>
+      <li><a href="https://finance.sina.com.cn/roll/2025-04-28/doc-ineutcss8964753.shtml">新浪财经：腾讯/阿里/字节算力抢购(字节~百万卡、训练需求测算)</a></li>
+      <li><a href="https://www.infoobs.com/article/20241220/68011.html">信息化观察网：腾讯字节囤 46 万张 GPU</a></li>
+      <li><a href="https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html">NVIDIA：DGX GB200 硬件指南(Bianca 板/NVSwitch5/背板)</a></li>
+      <li><a href="https://www.163.com/dy/article/K2AV0K0I0511CPMT.html">华为官方：CloudMatrix384 深度解读(UB/RDMA/VPC 三平面)</a></li>
+      <li><a href="https://www.qsfptek.com/qt-news/400g-osfp-siph-lpos-in-huawei-ai-cloudmatrix384-super-node.html">QSFPTEK：CloudMatrix384 的 6912×400G SiPh LPO 光模块拆解</a></li>
+      <li><a href="https://www.anthropic.com/news/anthropic-amazon-compute">Anthropic：与亚马逊扩展合作,最高 5GW Trainium 算力</a></li>
+      <li><a href="https://www.anthropic.com/news/expanding-our-use-of-google-cloud-tpus-and-services">Anthropic：扩大使用 Google Cloud TPU(最高 100 万颗)</a></li>
+      <li><a href="https://www.datacenterfrontier.com/machine-learning/article/55335703/inside-anthropics-multi-cloud-ai-factory-how-aws-trainium-and-google-tpus-shape-its-next-phase">Data Center Frontier：Anthropic 多云算力(Trainium + TPU)</a></li>
+      <li><a href="https://openai.com/index/stargate-advances-with-partnership-with-oracle/">OpenAI：Stargate 与甲骨文 4.5GW 合作</a></li>
+      <li><a href="https://tomtunguz.com/openai-hardware-spending-2025-2035/">OpenAI 2025–35 约 $1.15 万亿硬件/云支出拆解</a></li>
+      <li><a href="https://www.ciodive.com/news/openai-amd-gpu-infrastructure-partnership-coreweave-oracle-nvidia/802163/">CIO Dive：OpenAI 与 AMD/英伟达/甲骨文/CoreWeave 算力布局</a></li>
+    </ul>
+  </div>
+
+  <footer>
+    <p><b>免责声明：</b>本文为基于公开媒体与厂商披露资料整理的行业综合分析，非投资建议。昇腾 950 系列多项参数为厂商路线图披露值，量产规格、良率、产能与实际性能以后续官方发布与第三方实测为准；两家算力口径（FP8/FP4/MXFP4）、份额统计（出货量/销售额）来源不同，存在不可完全可比与预测偏差。部分数据点存在来源间分歧，已在正文标注。</p>
+    <p style="margin-top:8px;color:#aab2c0">英伟达 vs 华为 AI 芯片对比分析 · 行业综合分析版 · 2026</p>
+  </footer>
+
+  </main>
+</div>
+
+<!-- ===== interactive module modal ===== -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeMod()">
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="mhead" id="mhead">
+      <button class="mclose" onclick="closeMod()" aria-label="关闭">&times;</button>
+      <div class="flow"><span style="animation-delay:0s"></span><span style="animation-delay:1s"></span><span style="animation-delay:2s"></span></div>
+      <span class="ic" id="mIc">🔧</span>
+      <h3 id="mTitle">模块</h3>
+      <div class="sub" id="mSub"></div>
+    </div>
+    <div class="mbody" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+const POD = {
+  nv:{name:"GB200 NVL72",cls:"nv",
+    mods:{
+      compute:{ic:"🧮",title:"① 计算托盘 Compute Tray",sub:"算力本体 · 1U · 液冷",
+        fn:"机柜的算力来源。每个 1U 托盘内置 2 块 Bianca 板,每块 = 1 颗 Grace CPU + 2 颗 Blackwell GPU;18 个托盘堆叠出整柜算力。",
+        has:["2× Bianca 板 / 托盘(CPU+GPU 同板)","Grace CPU(Arm 架构)+ Blackwell GPU","HBM3e 高带宽显存","贴附 GPU/CPU 的液冷冷板"],
+        specs:[["托盘数","18 个"],["GPU 总数","72× Blackwell"],["CPU 总数","36× Grace"],["显存池","13.5 TB HBM3e"],["单托盘 TDP","6.3 kW"],["冷却","液冷冷板"]],
+        links:[["NVIDIA 官方 NVL72","https://www.nvidia.com/en-us/data-center/gb200-nvl72/"],["DGX GB200 硬件指南","https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html"]]},
+      nvlink:{ic:"🔗",title:"② NVLink 交换托盘",sub:"卡间互联核心 · 1 跳全互联",
+        fn:"把 72 颗 GPU 连成一个统一的 NVLink 域,任意两颗 GPU 仅需 1 跳即可通信——这是 NVL72 作为'一个大 GPU'的关键。",
+        has:["9 个 NVLink 交换托盘","每托盘 2× NVSwitch5 ASIC","每托盘 144 个 NVLink 端口","第五代 NVLink 链路"],
+        specs:[["交换托盘","9 个"],["单 ASIC 带宽","28.8 Tb/s"],["单端口","100 GB/s"],["单卡 NVLink","1.8 TB/s"],["聚合带宽","130 TB/s"],["拓扑","扁平 1 跳"]],
+        links:[["SemiAnalysis 硬件拆解","https://newsletter.semianalysis.com/p/gb200-hardware-architecture-and-component"]]},
+      backplane:{ic:"🧵",title:"③ 无源铜缆背板",sub:"NVLink 物理介质 · 后侧盲插",
+        fn:"NVLink 信号通过机柜后侧的无源铜缆背板、以盲插(blind-mate)方式连接。成本低、可靠,但传输距离短(<1m),因此所有器件必须紧密堆叠在同一机柜内。",
+        has:["无源铜缆(约数千根)","后侧盲插连接器","Cable Cartridge 线盒"],
+        specs:[["介质","无源铜缆"],["有效距离","< 1 m"],["连接方式","后侧盲插"],["代价","器件须紧凑集中"]],
+        links:[["SemiAnalysis 硬件拆解","https://newsletter.semianalysis.com/p/gb200-hardware-architecture-and-component"]]},
+      power:{ic:"⚡",title:"④ 供电架 Power Shelf",sub:"AC→DC 母线 · N+N 冗余",
+        fn:"把交流电整流为 ~50V 直流,经母线(bus bar)分配给机柜各部件,支撑约 120kW 的整柜功耗,采用 N+N 冗余保障可用性。",
+        has:["多个电源架(PSU)","50V 直流母线 Bus Bar","N+N 冗余设计"],
+        specs:[["输出","~50V DC"],["整柜功率","~120 kW"],["冗余","N+N"],["分配","直流母线"]],
+        links:[["DGX GB200 硬件指南","https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html"]]},
+      cooling:{ic:"💧",title:"⑤ 液冷系统",sub:"冷板 + 歧管 · 高密度必需",
+        fn:"高功率密度下风冷已不够用。冷板直接贴在 GPU/CPU/NVSwitch 上吸热,冷却液经机柜上下的歧管(manifold)循环,其余器件风冷;显著降低 PUE。",
+        has:["GPU/CPU/NVSwitch 冷板","上下贯穿的液冷歧管","冷却液循环回路","余件风冷"],
+        specs:[["方式","直触冷板液冷"],["覆盖","GPU/CPU/NVSwitch"],["触发","单柜 >30–40kW"],["收益","降低 PUE"]],
+        links:[["DGX GB200 硬件指南","https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html"]]},
+      scaleout:{ic:"🌐",title:"⑥ 对外扩展 Scale-out",sub:"柜外组网 · 万卡集群",
+        fn:"单柜算力封顶后,通过每 GPU 配套的 ConnectX-7/BlueField 网卡接入 InfiniBand 或 Spectrum-X 以太网,把多个机柜横向联邦成万卡级集群。",
+        has:["ConnectX-7 / BlueField DPU","InfiniBand / Spectrum-X 网络","多机柜集群编排"],
+        specs:[["柜内","NVLink 1 跳"],["柜间","IB / 以太"],["策略","scale-up + scale-out"],["规模","可达万卡"]],
+        links:[["NVIDIA 官方 NVL72","https://www.nvidia.com/en-us/data-center/gb200-nvl72/"]]}
+    }},
+  hw:{name:"CloudMatrix 384",cls:"hw",
+    mods:{
+      compute:{ic:"🧮",title:"① 计算节点",sub:"384× 昇腾910C · 12 计算柜",
+        fn:"算力本体。48 台 8 卡服务器(2U+2U+4U 三台一组)承载 384 颗昇腾 910C,分布在 12 个计算柜中,每柜 32 颗 NPU。",
+        has:["48 台 8 卡服务器","384× 昇腾 910C NPU","192× CPU","2U+2U+4U 服务器组合"],
+        specs:[["NPU 总数","384× 910C"],["每柜","32 NPU"],["计算柜","12 个"],["服务器","48 台"],["CPU","192 颗"],["系统算力","~300 PFLOPS BF16"]],
+        links:[["SemiAnalysis CloudMatrix 384","https://newsletter.semianalysis.com/p/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72"]]},
+      ub:{ic:"🕸️",title:"② UB 平面(核心创新)",sub:"Scale-up · 无阻塞全互联",
+        fn:"统一总线(UB)平面把 384 NPU + 192 CPU 连成无阻塞的 all-to-all 全互联——相当于华为版的'NVLink 域',是 CloudMatrix 以系统反超单芯片的关键。",
+        has:["L2 交换分 7 个独立子平面","每子平面 16 颗 UB 交换芯片","每芯片 48 个 28GB/s 端口","全对等(Peer-to-Peer)拓扑"],
+        specs:[["互联对象","384 NPU + 192 CPU"],["子平面","7 个"],["每子平面芯片","16 颗"],["单端口","28 GB/s"],["拓扑","无阻塞 all-to-all"],["介质","全光"]],
+        links:[["SemiAnalysis CloudMatrix 384","https://newsletter.semianalysis.com/p/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72"],["华为官方深度解读","https://www.163.com/dy/article/K2AV0K0I0511CPMT.html"]]},
+      rdma:{ic:"📡",title:"③ RDMA 平面",sub:"Scale-out · 跨超节点扩展",
+        fn:"基于 RoCE 的横向扩展网络,负责把多个超节点连成更大集群,每颗 NPU 最高 400Gbps。对应英伟达的 InfiniBand/以太 scale-out 角色。",
+        has:["RoCE(RDMA over Ethernet)","每 NPU 最高 400Gbps","跨超节点互联"],
+        specs:[["协议","RoCE"],["每 NPU","≤400 Gbps"],["角色","scale-out"],["对标","IB / 以太"]],
+        links:[["华为官方深度解读","https://www.163.com/dy/article/K2AV0K0I0511CPMT.html"]]},
+      vpc:{ic:"🔌",title:"④ VPC 平面",sub:"数据中心接入网络",
+        fn:"虚拟私有云(VPC)平面,负责把超节点接入更广的数据中心网络,处理存储、管理与业务流量。",
+        has:["VPC 数据中心网络","存储/管理/业务流量","对外服务接入"],
+        specs:[["角色","DC 接入"],["承载","存储/管理流量"],["范围","数据中心级"]],
+        links:[["华为官方深度解读","https://www.163.com/dy/article/K2AV0K0I0511CPMT.html"]]},
+      optics:{ic:"💡",title:"⑤ 全光互联",sub:"光替代铜 · 可长距部署",
+        fn:"CloudMatrix 的物理底座:用光模块取代铜缆,突破铜缆距离限制,使数百卡可分散部署仍保持百纳秒级低延迟。这是华为发挥三十年通信积累的核心差异化。",
+        has:["每 NPU 7× 400G 光模块","全系 6912× 400G SiPh LPO 光模块","3168 根光纤","硅光线性直驱(LPO)技术"],
+        specs:[["光模块","6912× 400G"],["每 NPU","7 个"],["光纤","3168 根"],["类型","SiPh LPO"],["延迟","百纳秒级"],["部署距离",">2 m"]],
+        links:[["光模块拆解(QSFPTEK)","https://www.qsfptek.com/qt-news/400g-osfp-siph-lpos-in-huawei-ai-cloudmatrix384-super-node.html"],["SemiAnalysis CloudMatrix 384","https://newsletter.semianalysis.com/p/huawei-ai-cloudmatrix-384-chinas-answer-to-nvidia-gb200-nvl72"]]},
+      power:{ic:"⚡",title:"⑥ 供电 / 液冷",sub:"高功率柜 · 卡多代价",
+        fn:"高功率机柜采用液冷散热。由于系统靠'堆卡'取胜,卡数远多于 NVL72,带来更高的总功耗、占地与光模块功耗/成本——这是系统级路线的隐性代价。",
+        has:["高功率柜液冷","大量光模块供电","更高总功耗与占地"],
+        specs:[["散热","液冷"],["代价","功耗/占地大"],["光模块","成本占比高"],["占地","约 1000㎡ 级(更大超节点)"]],
+        links:[["光模块拆解(QSFPTEK)","https://www.qsfptek.com/qt-news/400g-osfp-siph-lpos-in-huawei-ai-cloudmatrix384-super-node.html"]]}
+    }},
+  p950:{name:"Atlas 950 SuperPoD",cls:"hw",
+    mods:{
+      compute:{ic:"🧮",title:"① 计算柜 / 计算节点",sub:"8192× 昇腾950DT · 128 计算柜",
+        fn:"算力本体。每个计算节点 = 8 颗昇腾 950DT;每个计算柜 = 8 个计算节点 = 64 卡;128 个计算柜堆出 8192 卡的超节点算力。",
+        has:["128 个计算柜","每柜 8 个计算节点","每节点 8× 昇腾950DT","共 8192 颗 950DT NPU"],
+        specs:[["NPU 总数","8192× 950DT"],["每节点","8 卡"],["每柜","64 卡"],["计算柜","128 个"],["单卡算力","FP8 1P / FP4 2P"],["单卡显存","144GB / 4TB·s"]],
+        links:[["华为官方:灵衢 SuperPoD","https://www.huawei.com/en/news/2025/9/hc-lingqu-ai-superpod"],["电子工程专辑:Atlas 950/960","https://www.eet-china.com/mp/a440308.html"]]},
+      ub2:{ic:"🕸️",title:"② 灵衢 UnifiedBus 2.0(核心)",sub:"UB-Mesh 递归直连 · 无收敛全互联",
+        fn:"升级版统一总线,采用 UB-Mesh 递归直连拓扑,支持板内/板间/柜间全互联,以 64 卡为粒度灵活扩展,可一路无收敛扩到 8192 卡——这是把 CloudMatrix 思路放大到万卡级的关键。",
+        has:["灵衢 UnifiedBus 2.0 协议","UB-Mesh 递归直连拓扑","64 卡粒度弹性扩展","板内/板间/柜间全互联"],
+        specs:[["拓扑","UB-Mesh 递归直连"],["扩展粒度","64 卡"],["最大规模","8192 卡无收敛"],["片间互联","2 TB/s"],["介质","全光"],["对标","NVLink 域(放大版)"]],
+        links:[["华为官方:灵衢 SuperPoD","https://www.huawei.com/en/news/2025/9/hc-lingqu-ai-superpod"]]},
+      optics:{ic:"💡",title:"③ 全光互联 / 互联柜",sub:"32 互联柜 · 16 PB/s",
+        fn:"32 个互联柜承载灵衢全光接口,实现柜内、柜间的低延迟高带宽通信,整系统互联总带宽达 16 PB/s,延续华为'光替代铜、可长距部署'的差异化优势。",
+        has:["32 个互联柜","灵衢全光接口","柜内/柜间全光链路"],
+        specs:[["互联柜","32 个"],["互联总带宽","16 PB/s"],["介质","全光"],["优势","低延迟、可长距"]],
+        links:[["华为官方:灵衢 SuperPoD","https://www.huawei.com/en/news/2025/9/hc-lingqu-ai-superpod"]]},
+      hbm:{ic:"💾",title:"④ HBM 显存池",sub:"全 HBM · 满配 1152 TB",
+        fn:"整系统采用全 HBM 显存,搭载华为自研 HBM(HiZQ)。满配 8192 卡时显存总容量达 1152 TB,为超大模型的参数与 KV-Cache 提供充裕的内存空间。",
+        has:["全 HBM 架构","自研 HBM(HiZQ)","8192 卡聚合显存池"],
+        specs:[["满配显存","1152 TB"],["类型","全 HBM(自研)"],["单卡 950DT","144 GB / 4 TB·s"],["用途","大模型参数 / KV-Cache"]],
+        links:[["智东西:自研 HBM 超节点","https://zhidx.com/p/504914.html"]]},
+      power:{ic:"⚡",title:"⑤ 供电 / 液冷 / 占地",sub:"~1000㎡ · 多兆瓦级",
+        fn:"满配 160 机柜部署在约 1000㎡ 空间,高功率柜采用液冷。8192 卡的'堆卡'路线带来多兆瓦级整系统功耗,以及更大的空间、电力与冷却配套压力——这是系统级路线的代价。",
+        has:["160 机柜(128 计算 + 32 互联)","高功率柜液冷","约 1000㎡ 占地","多兆瓦级供电配套"],
+        specs:[["机柜","160 个"],["占地","~1000㎡"],["散热","液冷"],["功耗","多兆瓦级(官方未给精确值)"]],
+        links:[["华为官方:灵衢 SuperPoD","https://www.huawei.com/en/news/2025/9/hc-lingqu-ai-superpod"],["Tom's Hardware:Atlas 950 SuperCluster","https://www.tomshardware.com/tech-industry/artificial-intelligence/huawei-unveils-atlas-950-supercluster-touting-1-fp4-zettaflops-performance-for-ai-inference-and-524-fp8-exaflops-for-ai-training-features-hundreds-of-thousands-of-950dt-apus"]]}
+    }}
+};
+const ORDER={nv:["compute","nvlink","backplane","power","cooling","scaleout"],
+             hw:["compute","ub","rdma","vpc","optics","power"],
+             p950:["compute","ub2","optics","hbm","power"]};
+let CUR={pod:"nv",key:"compute"};
+
+function openMod(pod,key){
+  CUR={pod,key};
+  const p=POD[pod], m=p.mods[key];
+  document.getElementById("mhead").className="mhead "+p.cls;
+  document.getElementById("mIc").textContent=m.ic;
+  document.getElementById("mTitle").textContent=m.title;
+  document.getElementById("mSub").textContent=p.name+" · "+m.sub;
+  let h="";
+  h+='<section><h4>功能框架 <span class="tag">做什么</span></h4><p>'+m.fn+'</p></section>';
+  h+='<section><h4>包含什么 <span class="tag">组成</span></h4><ul>'+m.has.map(x=>'<li>'+x+'</li>').join("")+'</ul></section>';
+  h+='<section><h4>关键参数 <span class="tag">数据</span></h4><div class="specgrid">'+
+     m.specs.map(s=>'<div>'+s[0]+'<b>'+s[1]+'</b></div>').join("")+'</div></section>';
+  h+='<section><h4>相关链接 <span class="tag">来源</span></h4><div class="mlinks">'+
+     m.links.map(l=>'<a href="'+l[1]+'" target="_blank" rel="noopener">🔗 '+l[0]+'</a>').join("")+'</div>';
+  h+='<div class="mnav">'+ORDER[pod].map(k=>'<button class="'+(k===key?'act':'')+'" onclick="openMod(\''+pod+'\',\''+k+'\')">'+POD[pod].mods[k].title.replace(/ .*/,'').replace(/[①②③④⑤⑥]/,m=>m)+' '+POD[pod].mods[k].title.split(' ')[1]+'</button>').join("")+'</div>';
+  h+='</section>';
+  const body=document.getElementById("mBody");
+  body.innerHTML=h;
+  // restart entrance animations
+  body.querySelectorAll("section").forEach(s=>{s.style.animation="none";s.offsetHeight;s.style.animation="";});
+  const modal=document.getElementById("modal");modal.style.animation="none";modal.offsetHeight;modal.style.animation="";
+  document.getElementById("ov").classList.add("show");
+}
+function closeMod(){document.getElementById("ov").classList.remove("show");}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMod();});
+
+/* ===== sidebar nav + chapter paging (3-part structure) ===== */
+let CHAPS=[],CURC=0;
+const STRUCT=[
+  {part:null,ids:['sum']},
+  {part:'第一篇 · 技术怎么打',ids:['cmp','roadmap','dir','pod','ecosystem','weak']},
+  {part:'第二篇 · 格局怎么走',ids:['market','fleet','players','factor']},
+  {part:'第三篇 · 钱怎么算',ids:['cost']},
+  {part:null,ids:['conclusion','src']}
+];
+function secTitle(sec){const h=sec.querySelector('h2');return (h?h.textContent.trim():'').replace(/^\d+[\.\s]*/,'');}
+function buildChapters(){
+  const main=document.getElementById('main');
+  const footer=main.querySelector('footer');
+  const kids=Array.from(main.childNodes);
+  let cur=null;const map={};const found=[];
+  kids.forEach(n=>{
+    if(n.nodeType===1&&n.tagName==='H2'){
+      cur=document.createElement('section');cur.className='chap';
+      const id=n.id||('s'+found.length);cur.setAttribute('data-id',id);
+      map[id]=cur;found.push(id);cur.appendChild(n);
+    }else if(n===footer){/* keep footer */}
+    else if(cur){cur.appendChild(n);}
+  });
+  // ordered list per STRUCT, then any leftovers
+  let order=[];STRUCT.forEach(g=>g.ids.forEach(id=>{if(map[id])order.push(id);}));
+  found.forEach(id=>{if(order.indexOf(id)<0)order.push(id);});
+  CHAPS=order.map(id=>map[id]);
+  CHAPS.forEach(s=>main.insertBefore(s,footer));
+  // numbering + grouped sidebar
+  const nav=document.getElementById('nav');nav.innerHTML='';let counter=0;
+  STRUCT.forEach(g=>{
+    const ids=g.ids.filter(id=>map[id]);if(!ids.length)return;
+    if(g.part){const lab=document.createElement('div');lab.className='navlabel';lab.textContent=g.part;nav.appendChild(lab);}
+    ids.forEach(id=>{
+      const sec=map[id];const idx=CHAPS.indexOf(sec);let label;
+      if(g.part){counter++;const sp=sec.querySelector('h2 .n');if(sp)sp.textContent=counter;label=counter+'. '+secTitle(sec);}
+      else{label=secTitle(sec);}
+      const a=document.createElement('a');a.setAttribute('data-i',idx);a.textContent=label;
+      a.onclick=()=>showChap(idx);nav.appendChild(a);
+    });
+  });
+  // prev/next bar
+  const cn=document.createElement('div');cn.className='chap-nav';
+  cn.innerHTML='<button id="prevC"></button><button id="nextC" class="nxt"></button>';
+  main.insertBefore(cn,footer);
+  document.getElementById('prevC').onclick=()=>showChap(CURC-1);
+  document.getElementById('nextC').onclick=()=>showChap(CURC+1);
+  const h=parseInt(location.hash.replace('#c',''));
+  showChap(!isNaN(h)&&h>=0&&h<CHAPS.length?h:0,true);
+}
+function showChap(i,noscroll){
+  if(i<0||i>=CHAPS.length)return;CURC=i;
+  CHAPS.forEach((s,j)=>s.classList.toggle('show',j===i));
+  document.querySelectorAll('#nav a[data-i]').forEach(a=>a.classList.toggle('act',+a.getAttribute('data-i')===i));
+  const prev=document.getElementById('prevC'),next=document.getElementById('nextC');
+  prev.disabled=(i===0);next.disabled=(i===CHAPS.length-1);
+  prev.textContent=i>0?('‹ '+secTitle(CHAPS[i-1]).slice(0,14)):'‹ 上一章';
+  next.textContent=i<CHAPS.length-1?(secTitle(CHAPS[i+1]).slice(0,14)+' ›'):'下一章 ›';
+  history.replaceState(null,'','#c'+i);
+  if(!noscroll)window.scrollTo({top:0,behavior:'smooth'});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildChapters);
+else buildChapters();
+</script>
+</body>
+</html>
