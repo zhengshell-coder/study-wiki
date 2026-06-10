@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>具身智能整体洞察分析报告 · 2026</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --paper:#ffffff; --ink:#1a2233; --ink2:#4a5568; --ink3:#8a94a6;
+    --accent:#0f5fde; --accent2:#0a3d8f; --gold:#b7791f; --line:#e4e8ef;
+    --side-bg:#101725; --side-ink:#aeb8cc; --side-active:#ffffff;
+    --green:#1f7a4d; --red:#b3362c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh;}
+
+  /* ---------- 侧边栏 ---------- */
+  nav{width:272px;min-width:272px;background:var(--side-bg);color:var(--side-ink);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:10;}
+  .brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .brand h1{font-size:17px;color:#fff;letter-spacing:.5px;}
+  .brand p{font-size:12px;margin-top:6px;color:var(--side-ink);line-height:1.5;}
+  .brand .tag{display:inline-block;margin-top:10px;font-size:11px;color:#9cc0ff;border:1px solid rgba(120,165,255,.35);border-radius:99px;padding:2px 10px;}
+  .nav-list{flex:1;overflow-y:auto;padding:12px 0;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:12px 22px;cursor:pointer;font-size:14px;line-height:1.4;border-left:3px solid transparent;transition:all .15s;}
+  .nav-item:hover{background:rgba(255,255,255,.05);color:#dde4f0;}
+  .nav-item.active{background:rgba(15,95,222,.18);color:var(--side-active);border-left-color:#4d8dff;}
+  .nav-item .num{font-size:11px;color:#6b7892;font-family:Georgia,serif;min-width:18px;}
+  .nav-item.active .num{color:#9cc0ff;}
+  .nav-foot{padding:14px 22px;font-size:11px;color:#5d6880;border-top:1px solid rgba(255,255,255,.08);line-height:1.6;}
+
+  /* ---------- 主区域 ---------- */
+  main{margin-left:272px;flex:1;display:flex;justify-content:center;padding:42px 48px 80px;}
+  .page{display:none;max-width:880px;width:100%;animation:fadein .35s ease;}
+  .page.active{display:block;}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .kicker{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:600;margin-bottom:10px;}
+  h2.title{font-size:30px;line-height:1.3;margin-bottom:8px;}
+  .subtitle{color:var(--ink2);font-size:15px;line-height:1.7;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--line);}
+
+  h3{font-size:20px;margin:34px 0 14px;padding-left:12px;border-left:4px solid var(--accent);}
+  h4{font-size:16px;margin:22px 0 10px;color:var(--accent2);}
+  p{font-size:15px;line-height:1.95;color:var(--ink);margin-bottom:14px;text-align:justify;}
+  strong{color:var(--accent2);}
+  em{font-style:normal;background:linear-gradient(transparent 65%, #ffe9a8 65%);}
+
+  .insight{background:#0f1726;color:#dfe6f3;border-radius:12px;padding:20px 24px;margin:20px 0;}
+  .insight .lab{font-size:12px;letter-spacing:2px;color:#8db4ff;font-weight:700;margin-bottom:8px;}
+  .insight p{color:#dfe6f3;font-size:14.5px;margin-bottom:8px;}
+  .insight p:last-child{margin-bottom:0;}
+
+  .callout{background:#fff8ec;border:1px solid #f0dcb4;border-left:4px solid var(--gold);border-radius:8px;padding:16px 20px;margin:18px 0;}
+  .callout p{font-size:14px;margin-bottom:6px;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .lab{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:6px;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0;}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .card h5{font-size:14.5px;margin-bottom:8px;color:var(--ink);}
+  .card p{font-size:13.5px;color:var(--ink2);line-height:1.8;margin-bottom:0;}
+  .card .big{font-size:26px;font-weight:700;color:var(--accent);font-family:Georgia,serif;}
+  .card .cap{font-size:12px;color:var(--ink3);margin-top:2px;}
+
+  table{width:100%;border-collapse:collapse;margin:18px 0;background:var(--paper);border-radius:10px;overflow:hidden;font-size:13.5px;}
+  th{background:#eef2f8;text-align:left;padding:11px 13px;font-size:13px;color:var(--accent2);white-space:nowrap;}
+  td{padding:11px 13px;border-top:1px solid var(--line);line-height:1.7;vertical-align:top;color:var(--ink2);}
+  td:first-child{color:var(--ink);font-weight:600;white-space:nowrap;}
+
+  /* 时间轴 */
+  .tl{position:relative;margin:24px 0 10px;padding-left:26px;}
+  .tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--accent),#cfd8e6);}
+  .tl-item{position:relative;margin-bottom:26px;}
+  .tl-item::before{content:"";position:absolute;left:-25px;top:7px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--accent);}
+  .tl-item .when{font-size:13px;font-weight:700;color:var(--accent);font-family:Georgia,serif;letter-spacing:.5px;}
+  .tl-item .what{font-size:15px;font-weight:600;margin:3px 0 4px;}
+  .tl-item p{font-size:14px;color:var(--ink2);margin-bottom:0;}
+
+  .pill{display:inline-block;font-size:11.5px;padding:2px 10px;border-radius:99px;margin:0 4px 4px 0;background:#e8f0fe;color:var(--accent2);}
+  .pill.cn{background:#fdeaea;color:var(--red);}
+  .pill.us{background:#e6f4ec;color:var(--green);}
+
+  .pager{display:flex;justify-content:space-between;margin-top:48px;padding-top:22px;border-top:1px solid var(--line);}
+  .pager button{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 20px;font-size:14px;color:var(--accent2);cursor:pointer;transition:all .15s;font-family:inherit;}
+  .pager button:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 2px 8px rgba(15,95,222,.12);}
+  .pager button:disabled{opacity:.35;cursor:default;box-shadow:none;}
+
+  .src{margin-top:34px;padding:16px 20px;background:#f0f3f8;border-radius:10px;font-size:12.5px;color:var(--ink3);line-height:1.9;}
+  .src b{color:var(--ink2);}
+  .src a{color:var(--accent);text-decoration:none;}
+  ul.cl{margin:0 0 14px 22px;}
+  ul.cl li{font-size:14.5px;line-height:1.9;color:var(--ink);margin-bottom:6px;}
+
+  @media(max-width:900px){
+    nav{position:static;width:100%;min-width:0;}
+    body{flex-direction:column;}
+    main{margin-left:0;padding:24px 18px 60px;}
+    .grid2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">
+    <h1>具身智能 · 整体洞察</h1>
+    <p>历史 / 进展 / 公司 / 瓶颈 / 前沿 / 观点</p>
+    <span class="tag">2026 年 6 月版</span>
+  </div>
+  <div class="nav-list" id="navList">
+    <div class="nav-item" data-page="0"><span class="num">00</span>执行摘要：十个判断</div>
+    <div class="nav-item" data-page="1"><span class="num">01</span>历史沿革：七十年三次范式转移</div>
+    <div class="nav-item" data-page="2"><span class="num">02</span>目前进展：从「能走」到「能交付」</div>
+    <div class="nav-item" data-page="3"><span class="num">03</span>Top 公司：中美双极格局</div>
+    <div class="nav-item" data-page="4"><span class="num">04</span>核心瓶颈：数据、泛化与可靠性</div>
+    <div class="nav-item" data-page="5"><span class="num">05</span>前沿技术：VLA、世界模型与数据金字塔</div>
+    <div class="nav-item" data-page="6"><span class="num">06</span>宏观洞察与观点</div>
+  </div>
+  <div class="nav-foot">信息截至 2026 年 6 月，基于公开报道与论文整理；融资与出货数据以公司官方披露为准。</div>
+</nav>
+
+<main>
+
+<!-- ======================= 00 执行摘要 ======================= -->
+<section class="page" id="p0">
+  <div class="kicker">EXECUTIVE SUMMARY</div>
+  <h2 class="title">执行摘要：关于具身智能的十个判断</h2>
+  <p class="subtitle">具身智能（Embodied AI）正处在从「技术叙事」转向「工程交付」的临界点。本报告以 2026 年中为观察点，给出十个核心判断，作为全文导读。</p>
+
+  <ul class="cl">
+    <li><strong>① 范式已收敛，能力未涌现。</strong>VLA（视觉-语言-动作模型）+ 世界模型成为行业共识架构，但语言模型式的「涌现泛化」尚未在机器人上被证明——这是当前最大的科学不确定性。</li>
+    <li><strong>② 行走已解决，操作未解决。</strong>强化学习 + 仿真让双足行走成为商品化能力；而开放环境下的灵巧操作仍处在「演示惊艳、部署艰难」阶段。</li>
+    <li><strong>③ 数据是第一瓶颈，不是算力。</strong>机器人没有「互联网语料」可爬。谁先建成数据飞轮（部署→采数→变强→更多部署），谁拿走下一个十年。</li>
+    <li><strong>④ 2026 是「交付元年」而非「普及元年」。</strong>BMW、Mercedes、Amazon 等工厂物流场景已有真实 ROI 验证，但规模仍以「百台」计，距离「百万台」叙事差 3 个数量级。</li>
+    <li><strong>⑤ 中美双极、分工互补、加速对抗。</strong>美国强在「大脑」（基础模型 + 资本密度），中国强在「身体」（供应链 + 成本 + 出货量），双方都在全力补齐另一半。</li>
+    <li><strong>⑥ 估值跑在收入前面，「清场」已经开始。</strong>头部公司估值以百亿美元计、收入以千万美元计；2026 年资本从「赌概念」转向「验交付」，尾部出清不可避免。</li>
+    <li><strong>⑦ 世界模型成为头号技术叙事。</strong>从 NVIDIA GR00T N2 的 world-action 架构，到 LeCun 创立 AMI 拿下 10.3 亿美元种子轮，「理解物理、预测未来」正取代纯 VLA 成为前沿共识。</li>
+    <li><strong>⑧ 商业化次序：工厂 → 物流 → 商服 → 家庭。</strong>家庭是最大也是最难的市场；1X Neo、Figure 03 的家用尝试更多是数据采集入口与品牌占位。</li>
+    <li><strong>⑨ 人形不是终点，是训练接口。</strong>人形形态的真正价值在于复用人类环境与人类数据；长期看「一脑多形」（一个基础模型驱动多种本体）才是产业终局。</li>
+    <li><strong>⑩ 时间表会迟到，方向不会缺席。</strong>参照自动驾驶 2016—2024 的教训：乐观时间表大概率推迟 3—5 年，但工业场景的渗透已经不可逆。</li>
+  </ul>
+
+  <div class="insight">
+    <div class="lab">一句话总览</div>
+    <p>具身智能今天的位置，类似 2019 年的大语言模型：架构收敛（当年是 Transformer，今天是 VLA + 世界模型）、巨头入场、资本汹涌，但「GPT-3 时刻」——即规模化带来的能力跃迁——尚未发生。区别在于：机器人多了一条残酷的约束——物理世界不接受 99% 的正确率。</p>
+  </div>
+</section>
+
+<!-- ======================= 01 历史沿革 ======================= -->
+<section class="page" id="p1">
+  <div class="kicker">CHAPTER 01</div>
+  <h2 class="title">历史沿革：七十年，三次范式转移</h2>
+  <p class="subtitle">具身智能不是新概念。从 1950 年图灵的设想，到 2026 年的量产人形机器人，这个领域经历了「符号规划 → 行为主义 → 学习驱动」三次范式转移。理解历史，才能看清今天哪些是真突破、哪些是旧瓶新酒。</p>
+
+  <h3>三次范式转移</h3>
+  <div class="tl">
+    <div class="tl-item">
+      <div class="when">1950 — 1970s · 符号主义起点</div>
+      <div class="what">图灵设想与 Shakey：感知-规划-行动</div>
+      <p>图灵在 1950 年《Computing Machinery and Intelligence》中即提出「为机器配上传感器与轮子去学习世界」的路线。1966—1972 年，SRI 的 Shakey 成为第一台能感知环境并自主规划行动的移动机器人，确立了「Sense-Plan-Act」经典范式——也暴露了符号规划在真实世界中脆弱、缓慢的根本缺陷。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">1980s · 行为主义革命</div>
+      <div class="what">Moravec 悖论与 Brooks 的包容架构</div>
+      <p>Moravec 悖论点破要害：对 AI 而言，下棋容易、感知与运动极难——婴儿级别的感知运动能力比专家级推理更难复现。1986 年 Rodney Brooks 提出包容架构（Subsumption Architecture），主张「智能不需要表征、智能来自与世界的交互」，这是「具身智能（Embodied Intelligence）」一词的思想源头。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">1996 — 2015 · 硬件长跑</div>
+      <div class="what">ASIMO、BigDog 与 DARPA 挑战赛</div>
+      <p>本田 P2/ASIMO（1996/2000）证明双足行走在工程上可行；Boston Dynamics 的 BigDog（2005）与液压 Atlas（2013）展示了动态平衡的极限。但 2015 年 DARPA 机器人挑战赛上人形机器人接连摔倒的画面说明：没有「大脑」，再好的「身体」也只是遥控木偶。这一时期智能进展远落后于机械进展。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">2016 — 2021 · 深度学习入场</div>
+      <div class="what">深度强化学习与 Sim-to-Real</div>
+      <p>AlphaGo 之后，深度强化学习涌入机器人：OpenAI 的 Dactyl 用域随机化让仿真训练的灵巧手在真机上单手还原魔方（2019）；四足机器人借 RL + 仿真实现野外鲁棒行走。Sim-to-Real 成为方法论支柱。同期 Tesla 宣布 Optimus 计划（2021），把人形机器人从实验室叙事拉入产业叙事。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">2022 — 2023 · 大模型嫁接</div>
+      <div class="what">RT-1 / RT-2 与跨本体数据集</div>
+      <p>Google 的 RT-1（2022）证明 Transformer 可以直接输出机器人动作；RT-2（2023）首次把互联网级视觉-语言知识迁移到操作任务上，「VLA」一词由此确立。Open X-Embodiment 汇聚 20+ 机构的跨本体数据，开启「机器人数据也要规模化」的时代。Figure、智元等新一代公司密集成立。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">2024 — 2025 · VLA 元年</div>
+      <div class="what">π0、Helix、Gemini Robotics、GR00T</div>
+      <p>Physical Intelligence 发布 π0（2024.10，VLM 骨干 + flow-matching 动作头）；Figure 发布双系统架构 Helix（2025.2）；Google DeepMind 发布 Gemini Robotics（2025.3）；NVIDIA 发布 GR00T N1。VLA 从论文走向驱动真实人形机器人的生产系统。</p>
+    </div>
+    <div class="tl-item">
+      <div class="when">2025 — 2026 · 交付元年</div>
+      <div class="what">量产、商用、IPO 与世界模型</div>
+      <p>BMW 完成 Figure 02 长达 11 个月的产线试点；宇树 2025 年出货 5500+ 台、2026 年 6 月 IPO 过会；智元第 10000 台远征 A3 下线；Tesla Optimus V3 发布并启动量产线建设。技术叙事则从 VLA 转向「世界模型 × 具身智能」。</p>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="lab">洞察 · 历史的韵脚</div>
+    <p>七十年历史反复验证一个规律：<strong>具身智能的每次跃迁都不来自机器人学内部，而来自「外部智能技术的溢出」</strong>——符号 AI 溢出造就 Shakey，深度学习溢出造就 Sim-to-Real，大模型溢出造就 VLA。这意味着判断行业拐点的先行指标，永远是基础模型层的突破，而非机械硬件的迭代。</p>
+    <p>另一个教训是「演示陷阱」：从 ASIMO 上台阶到 DARPA 摔倒用了 15 年，演示能力与部署能力之间存在系统性时差。今天评估任何公司，都应将其 Demo 自动打三折。</p>
+  </div>
+</section>
+
+<!-- ======================= 02 目前进展 ======================= -->
+<section class="page" id="p2">
+  <div class="kicker">CHAPTER 02</div>
+  <h2 class="title">目前进展：从「能不能走」到「能不能交付」</h2>
+  <p class="subtitle">截至 2026 年中，行业关键词已经从 2024 年的「能不能走」、2025 年的「能不能干活」，切换为「能不能交付、能不能算清账」。模型、产能、商用、资本四条战线同时推进。</p>
+
+  <div class="grid2">
+    <div class="card"><div class="big">$40.7B / 年</div><div class="cap">2023—2025 全球机器人领域年均风险投资额</div></div>
+    <div class="card"><div class="big">5,500+ 台</div><div class="cap">宇树 2025 年人形机器人出货量，2026 目标 1—2 万台</div></div>
+    <div class="card"><div class="big">30,000+ 辆</div><div class="cap">BMW Spartanburg 试点中 Figure 02 参与支持生产的车辆数（11 个月）</div></div>
+    <div class="card"><div class="big">10,000 台</div><div class="cap">智元「远征 A3」2026 年累计下线里程碑</div></div>
+  </div>
+
+  <h3>战线一：模型 — VLA 成为生产系统</h3>
+  <p>2025 年，π0、GR00T N1、Gemini Robotics、Helix 相继从论文变成驱动真实人形机器人的生产系统。2026 年的竞争焦点已经不是「单一大脑能否驱动机器人」，而是<em>哪个大脑、配哪个本体、靠哪个数据集</em>赢得物理 AI 的基础模型时代。三个标志性进展：</p>
+  <ul class="cl">
+    <li><strong>NVIDIA GR00T N2</strong>（GTC 2026）引入 world-action 架构——不仅预测下一步动作，还预测执行动作后的下一帧观测，把世界模型内置进 VLA。</li>
+    <li><strong>π0.5</strong> 展示了跨家庭环境的开放世界泛化，是迄今最接近「通用操作策略」的公开结果。</li>
+    <li><strong>开源加速</strong>：宇树 2026 年 3 月开源 UnifoLM-VLA-0（可直接跑在 G1 上）；π0 开放权重 + LeRobot 生态让中小团队也能入场。</li>
+  </ul>
+
+  <h3>战线二：商用 — 真实 ROI 首次被验证</h3>
+  <table>
+    <tr><th>场景</th><th>案例</th><th>状态（2026 中）</th></tr>
+    <tr><td>汽车制造</td><td>BMW × Figure</td><td>Spartanburg 试点 11 个月：30,000+ 车、90,000+ 零件、1,250 小时运行；Figure 03 已部署 40 台，并扩展至德国莱比锡等工厂</td></tr>
+    <tr><td>汽车/电子制造</td><td>Mercedes、Jabil × Apptronik</td><td>Apollo 已进入真实产线运行，从试点转向多点部署</td></tr>
+    <tr><td>仓储物流</td><td>Amazon、GXO × Agility</td><td>Digit 进入履约中心商用，RaaS 模式跑通，RoboFab 产能向千台爬坡</td></tr>
+    <tr><td>零售/药店</td><td>银河通用</td><td>无人药店等场景批量落地，走「仿真合成数据」差异化路线</td></tr>
+    <tr><td>家庭</td><td>1X Neo、Figure 03</td><td>Neo 开启预订、2026 年在美交付早期用户；Figure 03 目标 2026 底有限家庭部署——本质是数据采集入口</td></tr>
+  </table>
+
+  <h3>战线三：产能 — 「百台试点」与「百万叙事」的落差</h3>
+  <p>Tesla 将 Optimus V3 量产时间表提前至 2026 年初，并宣称年内建成百万台年产能产线；Figure 的 BotQ 工厂达到每小时 1 台的节拍。中国侧，宇树以约 1.6 万美元的 G1 把入门价格打到消费级，2025 年以 5500+ 台出货量居全球之首。<em>但需要清醒：全行业人形机器人真实交付量仍在「万台」量级，与「百万台」叙事差着三个数量级</em>——产能宣称与有效需求之间的缺口，是 2027 年最值得跟踪的变量。</p>
+
+  <h3>战线四：资本 — 从「赌概念」到「验交付」</h3>
+  <p>中国 2026 年 Q1 具身智能赛道披露融资事件 50+ 起、涉及 30+ 家公司，同比增长约 60% 创历史新高；国家级 AI 产业基金（规模千亿级）入场，银河通用单笔完成 25 亿元融资。一级市场之外，<strong>IPO 潮开启</strong>：宇树 2026 年 6 月上交所过会，成为「具身智能第一股」的标志性事件，深圳多家人形机器人企业跟进申报。资本逻辑的根本变化在于：<em>从赌技术概念转向验证真实场景交付能力与商业闭环</em>，「清场」同步开始——拿不出交付数据的公司正在失去融资能力。</p>
+
+  <div class="insight">
+    <div class="lab">洞察 · 进展的真实读法</div>
+    <p>BMW 案例的意义被低估了：它不是又一个 Demo，而是<strong>第一份经第三方工业体系验证的 ROI 报告</strong>——1,250 小时连续运行意味着可靠性进入了「可被排产」的区间。这是从玩具到工具的分水岭。</p>
+    <p>但另一面：目前所有成功部署都发生在<strong>高度结构化、单一工位、节拍可控</strong>的场景。「通用」二字尚未兑现——今天的人形机器人更像「长得像人的专机」，离「通用劳动力」还有一次模型能力的跃迁距离。</p>
+  </div>
+</section>
+
+
+<!-- ======================= 03 Top 公司 ======================= -->
+<section class="page" id="p3">
+  <div class="kicker">CHAPTER 03</div>
+  <h2 class="title">Top 公司：中美双极格局</h2>
+  <p class="subtitle">全球具身智能已形成清晰的中美双极格局：美国阵营以「基础模型 + 巨额资本」取胜，中国阵营以「供应链 + 成本 + 出货量」取胜。平台层则由 NVIDIA 一家独占。</p>
+
+  <h3>美国阵营 <span class="pill us">模型与资本密度</span></h3>
+  <table>
+    <tr><th>公司</th><th>核心资产</th><th>关键事实（2026 中）</th></tr>
+    <tr><td>Figure AI</td><td>Helix 双系统 VLA + BotQ 工厂</td><td>估值约 390 亿美元（2025.9 C 轮后，累计融资 19 亿+，投资方含 NVIDIA、Microsoft、Bezos）；Figure 03 在 BMW Spartanburg 商用部署 40 台并扩展至德国工厂；BotQ 节拍 1 台/小时</td></tr>
+    <tr><td>Tesla</td><td>Optimus V3 + 自有产线/数据</td><td>2026 年 Q1 发布 V3，量产时间表提前，宣称建设百万台年产能；独有优势是车厂供应链、自建数据采集体系与终端场景（自有工厂先用）</td></tr>
+    <tr><td>Physical Intelligence</td><td>π0 / π0.5 基础模型</td><td>「只做大脑、不做身体」的旗帜性公司；π0 是引用最多的开放权重基线，π0.5 展示跨家庭开放世界泛化；OpenAI 式的行业地位</td></tr>
+    <tr><td>NVIDIA</td><td>GR00T + Isaac + 芯片</td><td>平台型玩家：GR00T N2（world-action 架构）、Isaac Sim 仿真、Jetson Thor 计算平台，「卖铲子 + 送地图」，几乎入股所有头部本体公司</td></tr>
+    <tr><td>Apptronik</td><td>Apollo</td><td>估值约 55 亿美元，新一轮融资 5.2 亿（Google、Mercedes 参投）；Apollo 已在 Mercedes、Jabil 产线运行，制造业商用化程度最高的公司之一</td></tr>
+    <tr><td>Agility Robotics</td><td>Digit + RoboFab</td><td>最早实现仓储商用闭环：Amazon、GXO 履约中心部署，RaaS 模式跑通，产能从百台向千台爬坡</td></tr>
+    <tr><td>1X Technologies</td><td>Neo（家用）</td><td>第一家以「消费级家用人形」开启预订的公司，2026 年在美交付早期用户；战略本质是抢家庭数据入口</td></tr>
+    <tr><td>Boston Dynamics</td><td>电动 Atlas</td><td>技术声望最高的老牌玩家，转向电驱 + 学习路线，与丰田研究院合作大模型；商业化节奏偏慢，更像「行业技术天花板的标尺」</td></tr>
+  </table>
+
+  <h3>中国阵营 <span class="pill cn">供应链与出货量</span></h3>
+  <table>
+    <tr><th>公司</th><th>核心资产</th><th>关键事实（2026 中）</th></tr>
+    <tr><td>宇树科技</td><td>G1/H 系列 + 极致成本</td><td>全球出货量第一（2025 年 5,500+ 台，2026 目标 1—2 万台）；G1 起价约 1.6 万美元击穿科研/教育市场；2026 年 6 月上交所 IPO 过会，「具身智能第一股」；开源 UnifoLM-VLA-0</td></tr>
+    <tr><td>智元机器人</td><td>远征系列 + GO-1 + AgiBot World</td><td>第 10,000 台远征 A3 下线，进入万台量产节点；开源 AgiBot World 2026 数据集（百万级真机轨迹）；GO-1 模型较 Open X-Embodiment 训练基线提升 30%——「数据 + 量产」双轮驱动的代表</td></tr>
+    <tr><td>银河通用</td><td>仿真合成数据路线</td><td>2026.3 完成 25 亿元融资（国家 AI 基金、产业资本入场）；以「十亿级仿真合成数据 + 少量真机」的差异化技术路线，在无人药店等零售场景率先规模化落地</td></tr>
+    <tr><td>优必选</td><td>Walker S 系列</td><td>港股上市公司，Walker S 进入比亚迪、富士康等工厂实训，车厂订单储备行业领先</td></tr>
+    <tr><td>第二梯队</td><td>星海图、千寻智能、智平方、自变量、灵初智能等</td><td>2026 年 Q1 集体进入「百亿人民币估值俱乐部」，路线各异（端到端 VLA、灵巧操作、世界模型），是「清场期」中分化最剧烈的一层</td></tr>
+  </table>
+
+  <h3>格局解读</h3>
+  <div class="grid2">
+    <div class="card"><h5>美国：垂直整合的「苹果模式」</h5><p>Figure、Tesla 走「自研模型 + 自研本体 + 自建工厂」的封闭垂直路线，赌的是软硬一体的体验壁垒；Physical Intelligence 则赌「Android 模式」——做所有机器人的大脑。两种模式的对决是未来五年最重要的产业实验。</p></div>
+    <div class="card"><h5>中国：供应链优势的「深圳模式」</h5><p>中国占据全球人形机器人零部件供应链的主导份额，宇树证明了「成本击穿 → 出货量 → 数据回流」的路径可行。叠加国家级基金与 IPO 通道打开，中国阵营正在用「身体」优势反向积累「大脑」筹码。</p></div>
+  </div>
+
+  <div class="insight">
+    <div class="lab">洞察 · 谁会赢</div>
+    <p><strong>短期（1—3 年）看交付能力</strong>：Agility、Apptronik、宇树、优必选这类「场景务实派」财务上最先跑通。<strong>中期（3—7 年）看数据飞轮</strong>：Figure、Tesla、智元谁先让部署量与模型能力形成正循环，谁就拿到复利。<strong>长期看大脑归属</strong>：如果泛化最终被基础模型层垄断（如 LLM 之于应用），那么 Physical Intelligence、Google DeepMind、NVIDIA 这一层会拿走利润的大头，本体公司将面临「安卓手机厂商化」的利润率宿命。</p>
+    <p>一个反共识判断：<em>估值最高的公司未必是赢家——39B 美元的 Figure 需要兑现的预期，远比 IPO 后市值理性的宇树更沉重。</em></p>
+  </div>
+</section>
+
+<!-- ======================= 04 核心瓶颈 ======================= -->
+<section class="page" id="p4">
+  <div class="kicker">CHAPTER 04</div>
+  <h2 class="title">核心瓶颈：数据、泛化与可靠性的三重墙</h2>
+  <p class="subtitle">如果说大语言模型的瓶颈曾经是算力，那么具身智能的瓶颈毫无疑问是数据——以及数据之上的泛化能力，和泛化之上的工业级可靠性。三重墙逐级递进，缺一不可。</p>
+
+  <h3>第一重墙：数据饥渴（最根本）</h3>
+  <p>机器人没有「互联网」可爬。LLM 吃掉了人类全部文本，而<strong>「状态-动作-结果」配对的操作数据在互联网上几乎不存在</strong>，只能靠真机遥操作一条条采集。行业测算给出残酷的对照：要达到类人操作水平，理想训练量约需 1 亿小时第一视角操作数据——相当于 150 个人类的完整一生；而当前全球最大的开源真机数据集（AgiBot World）仅在百万轨迹量级。更细的结构性短缺在于：<em>带力反馈的灵巧操作数据、真实工业件（金属件、铸件、线缆）的操作数据</em>几乎是空白，而这恰恰是工业落地最需要的。</p>
+  <div class="callout">
+    <div class="lab">数据效率悖论</div>
+    <p>人类婴儿用几十小时学会抓握，当前模型需要数万小时演示才能掌握人类认为「简单」的任务。这暗示当前架构可能缺失了某种先验（物理常识/世界模型）——单纯堆数据未必是正解，这正是世界模型路线兴起的根本原因。</p>
+  </div>
+
+  <h3>第二重墙：泛化之谜（最科学）</h3>
+  <p>当前领域最大的开放问题：<strong>扩大机器人训练数据规模，是否会像语言模型一样产生「涌现式泛化」？</strong>语言模型的 Scaling Law 已被反复验证，但机器人数据的异质性（不同本体、传感器、任务）远高于文本，目前没有任何公开证据表明「机器人 GPT-3 时刻」必然到来。如果答案为否，整个行业的资本叙事都需要重写。与之伴随的是长尾问题：产线上 99% 的情形可以覆盖，但剩下 1% 的角落情形（corner case）在物理世界中代价高昂——这与自动驾驶踩过的坑完全同构。</p>
+
+  <h3>第三重墙：硬件与可靠性（最工程）</h3>
+  <div class="grid2">
+    <div class="card"><h5>灵巧手：自由度 × 可靠性 × 成本的不可能三角</h5><p>人手 27 自由度 + 上万触觉感受器。当前灵巧手要么自由度高但脆弱昂贵，要么皮实便宜但只能做夹爪动作。触觉传感大规模缺失，使「盲操作」成为常态——没有触觉的操作如同戴着拳击手套绣花。</p></div>
+    <div class="card"><h5>续航与功率密度</h5><p>主流人形机器人满负荷续航 2—4 小时，换电/快充方案增加运营复杂度。执行器发热限制连续作业强度——「电池 + 散热」决定了机器人一天里真正能干活的时长。</p></div>
+    <div class="card"><h5>可靠性鸿沟：99% ≠ 可部署</h5><p>Demo 的成功率门槛是 90%，工业排产的门槛是 99.9%+ 与千小时级 MTBF。从 99% 到 99.9% 的难度可能超过从 0 到 99%。BMW 试点 1,250 小时连续运行之所以重要，正因为它是行业第一次摸到这条线。</p></div>
+    <div class="card"><h5>安全与标准缺位</h5><p>数十公斤的金属躯体在人类身边高速运动，目前没有成熟的人机共处安全标准（ISO 体系仍在制定中）。一次严重的伤人事故就可能让行业整体降速——这是被普遍低估的尾部风险。</p></div>
+  </div>
+
+  <h3>第四重墙：商业闭环（最现实）</h3>
+  <p>单台人形机器人 BOM 成本仍在数万美元量级，叠加部署、维护、集成成本后，<strong>多数场景的 ROI 测算依赖「未来三年成本下降 + 能力提升」的双重假设</strong>。当前可算清账的只有汽车制造、仓储物流等少数高人力成本、高结构化场景。RaaS（机器人即服务）降低了客户门槛，但把资本开支压力转移回了厂商资产负债表——在利率环境收紧时这是脆弱结构。</p>
+
+  <div class="insight">
+    <div class="lab">洞察 · 瓶颈的排序</div>
+    <p>四重墙的优先级排序是清晰的：<strong>数据 &gt; 泛化 &gt; 可靠性 &gt; 成本</strong>。成本会被中国供应链自然解决（参照电动车降价曲线）；可靠性是工程问题，时间可解；但数据与泛化是科学问题——<em>如果涌现泛化不成立，行业将退化为「数千个垂直专机市场」的总和，虽然依然巨大，但「通用机器人」的万亿叙事将不成立。</em>投资与研发资源应该优先押注在回答这个问题的公司与团队上。</p>
+  </div>
+</section>
+
+<!-- ======================= 05 前沿技术 ======================= -->
+<section class="page" id="p5">
+  <div class="kicker">CHAPTER 05</div>
+  <h2 class="title">前沿技术方案：VLA、世界模型与数据金字塔</h2>
+  <p class="subtitle">2026 年的技术前沿可以概括为一句话：VLA 负责「会做」，世界模型负责「懂为什么」，数据金字塔负责「喂得起」。三条主线相互交织，正在收敛为下一代「机器人基础模型」的统一形态。</p>
+
+  <h3>主线一：VLA 架构的三种流派</h3>
+  <table>
+    <tr><th>流派</th><th>代表</th><th>机制与权衡</th></tr>
+    <tr><td>双系统（快慢脑）</td><td>Figure Helix</td><td>S2 慢系统（VLM，~7-9Hz）负责语义理解与规划，S1 快系统（~200Hz）负责实时控制。仿照人类认知的 System 1/2，兼顾「想得深」与「动得快」，是目前商用部署的主流选择</td></tr>
+    <tr><td>扩散/流匹配动作头</td><td>π0 / π0.5</td><td>VLM 骨干 + flow-matching 生成连续动作序列，擅长高频灵巧操作（叠衣服、收拾桌面）；π0.5 在未见过的真实家庭中展示开放世界泛化，是「通用策略」最有力的公开证据</td></tr>
+    <tr><td>世界-动作模型</td><td>NVIDIA GR00T N2</td><td>同时预测「下一步动作」与「执行后的下一帧观测」，让模型在行动前先「想象后果」——VLA 与世界模型融合的第一个量产化尝试</td></tr>
+  </table>
+
+  <h3>主线二：世界模型 — 头号技术叙事</h3>
+  <p>2026 年行业风向的最大变化：<strong>从「VLA 扩数据」转向「世界模型补常识」</strong>。逻辑是：与其用百万小时演示数据教会机器人「怎么做」，不如先让模型从海量视频中学会「世界如何运转」（物理、因果、物体恒存性），再用少量机器人数据对齐到动作。标志性事件：</p>
+  <ul class="cl">
+    <li><strong>LeCun 出走创业</strong>：图灵奖得主杨立昆离开 Meta 创立世界模型公司 AMI，2026 年 3 月完成 10.3 亿美元种子轮——欧洲 AI 史上最大种子轮。他的核心论点：LLM 学的是统计规律而非物理理解，JEPA 式预测架构（在表征空间预测，而非像素生成）才是通往物理智能的路。</li>
+    <li><strong>V-JEPA 2 与视频预训练</strong>：用无标注的 YouTube / 第一视角视频学习世界动力学，再迁移到机器人——「先看一亿小时视频，再摸一千小时真机」。</li>
+    <li><strong>路线分歧</strong>：生成式世界模型（Sora 类，生成像素级未来）vs 预测式世界模型（JEPA 类，预测抽象表征）。前者可兼做仿真数据工厂，后者计算高效、更适合实时决策——中国公司多押前者（兼顾数据生成），LeCun 阵营押后者。</li>
+  </ul>
+
+  <h3>主线三：数据金字塔 — 四层供给体系</h3>
+  <table>
+    <tr><th>层级</th><th>来源</th><th>量级与角色</th></tr>
+    <tr><td>L1 互联网视频</td><td>YouTube、第一视角数据集</td><td>近乎无限；学世界常识与任务语义，但无动作标签（用 latent action 技术补齐）</td></tr>
+    <tr><td>L2 仿真合成</td><td>Isaac Sim、银河通用路线</td><td>十亿级可生成；便宜、可控、可做危险场景，但有 sim-to-real 鸿沟；行走类任务已被仿真 RL 基本解决</td></tr>
+    <tr><td>L3 真机遥操作</td><td>数据采集工厂（Tesla、智元等自建）</td><td>百万轨迹级；最高质量的金标准数据，但单条成本数美元至数十美元，是当前烧钱主战场</td></tr>
+    <tr><td>L4 部署回流</td><td>商用机器人在岗数据</td><td>当前最稀缺、长期最重要；这就是「数据飞轮」——部署越多→数据越多→模型越强→部署更多。先转起来的公司获得复利</td></tr>
+  </table>
+  <p>开源数据基建同步加速：智元 <strong>AgiBot World 2026</strong> 开源百万级真机轨迹（GO-1 模型借此较 Open X-Embodiment 基线提升 30%）；Open X-Embodiment、LeRobot 生态降低了全行业的入场门槛。<em>数据正在经历从「私有壁垒」到「开源共建 + 私有飞轮」的分层</em>：基础能力靠开源数据集追平，差异化能力靠部署回流数据拉开。</p>
+
+  <h3>主线四：训练后优化与硬件协同</h3>
+  <p><strong>RL 后训练</strong>成为新共识：先用模仿学习把 VLA 训到「会做」，再用强化学习（真机 + 仿真）把成功率从 80% 推向 99%——类比 LLM 的「预训练 + RLHF」两段式。硬件侧的前沿则是<strong>为模型设计身体</strong>：Figure 03 整机围绕 Helix 重新设计（指尖摄像头、掌心传感、柔性外壳），宣告「先造身体再装大脑」时代的结束；触觉皮肤、电驱灵巧手、低成本六维力传感是 2026—2027 最值得跟踪的硬件单点突破。</p>
+
+  <div class="insight">
+    <div class="lab">洞察 · 技术终局的形状</div>
+    <p>三条主线正在收敛为一个清晰的终局架构：<strong>「视频预训练的世界模型骨干 + 跨本体动作头 + RL 后训练 + 部署数据飞轮」</strong>。这个配方与 LLM 的「预训练 + 指令微调 + RLHF + 用户数据回流」惊人地同构——历史再次押韵。</p>
+    <p>但要警惕叙事泡沫：世界模型今天的位置类似 2023 年的「Agent」——方向正确、概念过热、可量产的成果还很少。GR00T N2 是第一个认真的工程化尝试，其真机表现（而非发布会）才是检验这条路线的试金石。</p>
+  </div>
+</section>
+
+<!-- ======================= 06 宏观洞察与观点 ======================= -->
+<section class="page" id="p6">
+  <div class="kicker">CHAPTER 06</div>
+  <h2 class="title">宏观洞察与观点</h2>
+  <p class="subtitle">跳出技术细节，本章给出对产业位置、竞争格局、泡沫风险与时间表的整体判断。观点鲜明，供批判性参考。</p>
+
+  <h3>观点一：现在是「BERT 时刻」，不是「GPT-3 时刻」</h3>
+  <p>架构已收敛（VLA + 世界模型）、巨头已入场、资本已汹涌——这是 2019 年 BERT 之后 NLP 的标准画面。但「规模化带来能力跃迁」的 GPT-3 式证据尚未出现。这个判断的实操含义：<em>当下的赢家是「卖确定性」的公司（工业场景交付、零部件、平台工具），而「赌涌现」的公司的估值本质上是一张科学彩票</em>——可能中头奖，也可能归零。理性的组合是两者都配置，但仓位泾渭分明。</p>
+
+  <h3>观点二：中美竞争的本质是「大脑」与「身体」的赛跑</h3>
+  <p>美国握有基础模型层的人才密度与资本密度（Physical Intelligence、DeepMind、NVIDIA），中国握有硬件供应链的成本与速度（零部件全球份额主导、宇树式成本击穿、万台级量产）。关键的不对称在于：<strong>身体的优势可以买到大脑的时间，大脑的优势买不到身体的产能</strong>——中国可以用出货量换数据、用数据补模型；美国却难以在五年内重建机电供应链。叠加 IPO 通道与国家基金，中国阵营的容错空间实际上更大。但反过来，若涌现泛化在美国基础模型上率先发生，「大脑断供」将成为比芯片更尖锐的卡点。这场赛跑没有安全侧。</p>
+
+  <h3>观点三：泡沫是真的，机会也是真的</h3>
+  <p>头部公司估值/收入比普遍超过 100 倍，2026 年的「清场」是健康的。但参照历史：2000 年互联网泡沫破裂没有杀死互联网，2016 年自动驾驶寒冬没有杀死自动驾驶——<em>泡沫淘汰的是资本结构脆弱的公司，不是技术方向</em>。值得警惕的具体信号：宣称产能而非交付量、Demo 视频而非客户复购、对标人力成本而算不出场景 ROI 的公司。值得加注的信号：千小时级连续运行数据、客户主动扩单（如 BMW 从试点转扩展）、数据回流量级。</p>
+
+  <h3>观点四：商业化次序不可跳跃，家庭是终点不是起点</h3>
+  <p>渗透次序由「环境结构化程度 × 容错成本」决定：<strong>汽车工厂（最结构化）→ 仓储物流 → 商业服务（药店/酒店）→ 家庭（最开放、容错最低）</strong>。家用机器人今天开启预订（1X Neo、Figure 03），战略本质是抢占数据入口与用户心智，而非真实盈利——家庭场景的「通用性税」最高，大概率是最后被攻克的市场，但也是最大的市场（全球家庭数 > 工厂数 ×1000）。对创业者的含义：直接做家庭是用最难的考题练级；先在结构化场景建立数据飞轮，再向开放场景迁移，才是被验证的路径。</p>
+
+  <h3>观点五：「人形」是手段，「一脑多形」是终局</h3>
+  <p>人形形态的真正价值不是美学，而是<strong>接口复用</strong>：人类环境（楼梯、门把手、工位）为人体设计，人类视频数据以人体为主体——人形是吃到这两份免费资源的唯一形态。但长期看，专用形态在单一场景的效率永远高于人形（轮式底盘在平整仓库里就是比双足便宜可靠）。终局更可能是「一个基础模型驱动人形、轮式、机械臂等多种本体」——届时本体形态退化为场景适配问题，价值向模型层集中。<em>今天重仓「人形」概念本身的投资逻辑，五年后可能需要重写。</em></p>
+
+  <h3>情景推演：2030 年的三种世界</h3>
+  <table>
+    <tr><th>情景</th><th>触发条件</th><th>2030 年图景</th></tr>
+    <tr><td>乐观（25%）</td><td>涌现泛化被证实，数据飞轮转动</td><td>全球人形机器人年出货百万台级，工厂物流标配，家庭早期渗透；模型层出现「机器人界 OpenAI」级公司</td></tr>
+    <tr><td>基准（55%）</td><td>泛化渐进改善但无跃迁</td><td>年出货数十万台，集中于结构化场景的「半通用专机」；行业健康但低于当前估值隐含预期，2026—27 年估值回调后重建</td></tr>
+    <tr><td>悲观（20%）</td><td>数据瓶颈无解 + 安全事故 + 资本退潮</td><td>第二次「机器人寒冬」，仅工业臂式与轮式 AGV 持续增长，人形回归实验室；但世界模型研究在寒冬中继续积累，为下一周期蓄力</td></tr>
+  </table>
+
+  <div class="insight">
+    <div class="lab">结语</div>
+    <p>具身智能是 AI 从「数字世界」走向「物理世界」的必经之路，这个方向上不存在「要不要」的问题，只存在「多快、谁来、以什么形态」的问题。2026 年的正确姿势是：<strong>对方向保持长期信仰，对时间表保持职业怀疑，对每一个 Demo 保持工程师的冷酷</strong>——用交付小时数、复购率和数据回流量级说话，其余皆是噪声。</p>
+  </div>
+
+  <div class="src">
+    <b>主要信息来源（2026 年 6 月检索）：</b><br>
+    KraneShares《Humanoid Robotics in 2026》· The Robot Report 2026 行业展望与 AgiBot World 2026 报道 · BMW Group 官方新闻（Spartanburg 试点与莱比锡部署）· 钛媒体《2026，具身智能开始「清场」》· 央广网（2026 具身智能投融资）· 证券时报（具身智能融资）· TechTimes《The Data Drought》· Figure AI / Apptronik / Agility / 1X / 宇树 / 智元 官方披露 · arXiv 具身智能与世界模型综述 · 知乎/CSDN 世界模型技术综述。融资、估值与出货数据均来自公开报道，请以公司官方口径为准；本报告观点部分为分析性判断，不构成投资建议。
+  </div>
+</section>
+
+</main>
+
+<script>
+const pages=document.querySelectorAll('.page');
+const items=document.querySelectorAll('.nav-item');
+let cur=0;
+function go(i){
+  i=Math.max(0,Math.min(pages.length-1,i));
+  cur=i;
+  pages.forEach((p,k)=>p.classList.toggle('active',k===i));
+  items.forEach((n,k)=>n.classList.toggle('active',k===i));
+  document.querySelector('main').scrollTop=0;
+  window.scrollTo({top:0});
+  history.replaceState(null,'','#p'+i);
+}
+items.forEach(n=>n.addEventListener('click',()=>go(+n.dataset.page)));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')go(cur+1);
+  if(e.key==='ArrowLeft')go(cur-1);
+});
+window.addEventListener('DOMContentLoaded',()=>{
+  const h=location.hash.match(/^#p(\d+)$/);
+  go(h?+h[1]:0);
+  // 生成每页的上一章/下一章
+  pages.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='pager';
+    const prev=document.createElement('button');prev.textContent='← 上一章';prev.disabled=(i===0);prev.onclick=()=>go(i-1);
+    const next=document.createElement('button');next.textContent=(i===pages.length-1)?'已是最后一章':'下一章 →';next.disabled=(i===pages.length-1);next.onclick=()=>go(i+1);
+    d.append(prev,next);p.appendChild(d);
+  });
+});
+</script>
+</body>
+</html>
