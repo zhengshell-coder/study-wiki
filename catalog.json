@@ -145,100 +145,10 @@
       "date": "2026-06-03"
     },
     {
-      "id": "mq8545ny9be0",
+      "id": "mq85hekxdgk8",
       "moduleId": "mq6wzs4fqo5b",
       "title": "大模型训练全过程",
       "file": "大模型训练全过程.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq854kuaxomr",
-      "moduleId": "tcm",
-      "title": "黄帝内经学习指南",
-      "file": "黄帝内经学习指南.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq854zro3jdz",
-      "moduleId": "tech",
-      "title": "具身智能洞察分析报告",
-      "file": "具身智能洞察分析报告.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq855fvvfupj",
-      "moduleId": "mq6vkeyltawt",
-      "title": "三大宗教研究",
-      "file": "三大宗教研究.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq855w4fgrw6",
-      "moduleId": "mq6wzv1de9ha",
-      "title": "昇腾950超节点数据中心规划方案",
-      "file": "昇腾950超节点数据中心规划方案.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq856jeo1x96",
-      "moduleId": "mq6wzv1de9ha",
-      "title": "昇腾950系列-全面学习材料",
-      "file": "昇腾950系列-全面学习材料.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq8576xrkbp6",
-      "moduleId": "mpvi40l3rkc5",
-      "title": "西方哲学史·时间线学习框架",
-      "file": "西方哲学史·时间线学习框架.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq857jqlg69a",
-      "moduleId": "tech",
-      "title": "自动驾驶中美体系深度报告",
-      "file": "自动驾驶中美体系深度报告.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq857z5veb0w",
-      "moduleId": "mq6wzv1de9ha",
-      "title": "AI数据中心产业洞察报告_交互版",
-      "file": "AI数据中心产业洞察报告_交互版.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq858fql08qu",
-      "moduleId": "mq6wzv1de9ha",
-      "title": "HBM-完全指南-单文件",
-      "file": "HBM-完全指南-单文件.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-10"
-    },
-    {
-      "id": "mq858vi1l1bx",
-      "moduleId": "mq6wzs4fqo5b",
-      "title": "Prefill与Decode概念",
-      "file": "Prefill与Decode概念.html",
       "desc": "",
       "tags": [],
       "date": "2026-06-10"
