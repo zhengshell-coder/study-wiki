@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内蒙古昇腾950超节点智算中心 · 端到端规划与执行方案</title>
+<style>
+:root{
+  --bg:#0e1726; --panel:#ffffff; --ink:#1f2733; --muted:#5b6b7e; --line:#e3e8ef;
+  --brand:#c8102e; --brand2:#0a3d62; --accent:#0d8a72; --warn:#b3541e; --risk:#c0392b;
+  --soft:#f5f7fa; --soft2:#eef3f8; --radius:12px;
+  --shadow:0 2px 10px rgba(20,40,80,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--ink);background:var(--soft);line-height:1.75;font-size:15.5px}
+a{color:var(--brand2);text-decoration:none}
+/* layout */
+.wrap{display:flex;max-width:1320px;margin:0 auto;background:var(--soft)}
+nav.toc{position:sticky;top:0;align-self:flex-start;width:268px;height:100vh;overflow:auto;
+  background:var(--bg);color:#cdd8e6;padding:24px 18px;flex-shrink:0}
+nav.toc h2{color:#fff;font-size:15px;letter-spacing:1px;margin:0 0 4px}
+nav.toc .sub{color:#7d93ad;font-size:12px;margin:0 0 18px}
+nav.toc a{display:block;color:#aebfd2;padding:6px 10px;border-radius:8px;font-size:13.5px;margin:2px 0}
+nav.toc a:hover{background:rgba(255,255,255,.07);color:#fff;cursor:pointer}
+nav.toc a.active{background:var(--brand);color:#fff;font-weight:600}
+nav.toc a.active:hover{background:var(--brand)}
+nav.toc a.grp{margin-top:14px;color:#6f86a3;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;padding-left:10px;pointer-events:none}
+main{flex:1;min-width:0;padding:0 0 80px}
+.inner{max-width:920px;margin:0 auto;padding:0 34px}
+/* hero */
+header.hero{background:linear-gradient(135deg,#0a3d62 0%,#12263a 60%,#1a1238 100%);
+  color:#fff;padding:54px 34px 46px}
+header.hero .inner{padding:0}
+.kbadge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  padding:4px 12px;border-radius:30px;font-size:12.5px;letter-spacing:.5px;margin-bottom:18px}
+header.hero h1{font-size:31px;line-height:1.3;margin:0 0 12px;font-weight:800}
+header.hero p.lede{color:#cfe0f0;font-size:16px;max-width:760px;margin:0}
+.herometa{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.herometa span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;padding:7px 13px;font-size:13px;color:#e8f0f8}
+/* sections — chapter switching: only active chapter visible */
+section{padding:42px 0 30px;display:none;animation:fade .25s ease}
+section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2.sec{font-size:23px;margin:0 0 6px;color:var(--brand2);font-weight:800;display:flex;align-items:center;gap:12px}
+h2.sec .n{background:var(--brand2);color:#fff;width:34px;height:34px;border-radius:9px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sec-tag{color:var(--muted);font-size:13px;margin:0 0 20px;padding-left:46px}
+h3{font-size:18px;color:#16314a;margin:30px 0 8px;font-weight:700}
+h4{font-size:15.5px;color:var(--brand);margin:20px 0 6px;font-weight:700}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+/* cards / metrics */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:22px 0}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 16px;box-shadow:var(--shadow)}
+.metric .v{font-size:24px;font-weight:800;color:var(--brand2);line-height:1.1}
+.metric .l{font-size:12.5px;color:var(--muted);margin-top:5px}
+.metric .s{font-size:11px;color:#93a3b5;margin-top:2px}
+/* callouts */
+.box{border-radius:var(--radius);padding:14px 18px;margin:18px 0;border:1px solid;font-size:14.5px}
+.box .t{font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.risk{background:#fdf1f0;border-color:#f0c4be;color:#7d241b}
+.risk .t{color:var(--risk)}
+.tip{background:#eefaf5;border-color:#bfe6da;color:#0a5c4a}
+.tip .t{color:var(--accent)}
+.note{background:#fff8ec;border-color:#f0dcb4;color:#7a5410}
+.note .t{color:var(--warn)}
+/* tables */
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.6px;background:var(--panel);
+  border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.tbl th{background:var(--brand2);color:#fff;text-align:left;padding:10px 12px;font-weight:600;font-size:13px}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:nth-child(even) td{background:var(--soft)}
+.tbl tr:last-child td{border-bottom:none}
+.sev{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.s-h{background:#fbe3e0;color:#b03224}
+.s-m{background:#fdf0d8;color:#9a6611}
+.s-l{background:#e2f3ec;color:#0c7a5d}
+/* phase chips & gantt */
+.gantt{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin:20px 0;box-shadow:var(--shadow);overflow-x:auto}
+.gantt table{border-collapse:collapse;width:100%;min-width:680px;font-size:12.5px}
+.gantt td,.gantt th{padding:5px 4px;text-align:center;border:none}
+.gantt th{color:var(--muted);font-weight:600;font-size:11.5px;border-bottom:1px solid var(--line)}
+.gantt .pl{text-align:left;color:var(--ink);font-weight:600;white-space:nowrap;padding-right:14px}
+.bar{height:18px;border-radius:5px;color:#fff;font-size:10.5px;line-height:18px;font-weight:600}
+.b1{background:#0a3d62}.b2{background:#0d8a72}.b3{background:#b3541e}.b4{background:#7d4ba0}.b5{background:#c0102e}
+/* exec checklist */
+.chk{background:var(--soft2);border-left:4px solid var(--brand2);border-radius:0 10px 10px 0;
+  padding:14px 18px;margin:16px 0}
+.chk .t{font-weight:700;color:var(--brand2);margin-bottom:6px}
+.chk ul{margin:6px 0;padding-left:20px}
+.deliver{font-size:12.5px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.deliver b{color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.two{grid-template-columns:1fr}nav.toc{display:none}.inner{padding:0 18px}header.hero{padding:36px 18px}}
+.print{display:inline-block;margin:18px 0 0;background:var(--brand2);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;cursor:pointer;border:none}
+footer{padding:30px 34px;color:var(--muted);font-size:12.5px;text-align:center}
+.src{font-size:12px;color:#90a0b2}
+.src a{color:#7089a3}
+.legend{font-size:11.5px;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:middle}
+hr.soft{border:none;border-top:1px solid var(--line);margin:30px 0}
+.pill{display:inline-block;background:var(--soft2);border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:12px;color:var(--brand2);font-weight:600}
+/* chapter prev/next */
+.chapnav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:34px 0 10px;padding-top:22px;border-top:1px solid var(--line)}
+.cn-btn{background:var(--brand2);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;font-weight:600;transition:background .15s}
+.cn-btn:hover{background:#0c4d7a}
+.cn-btn:disabled{background:var(--line);color:#9aa7b5;cursor:not-allowed}
+.cn-pos{color:var(--muted);font-size:13px}
+@media(max-width:860px){.chapnav{margin-top:24px}}
+/* print/PDF: show every chapter regardless of active state */
+@media print{section{display:block!important;border-bottom:1px solid var(--line)}nav.toc,.chapnav{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc">
+  <h2>规划方案导航</h2>
+  <p class="sub">内蒙古 · 昇腾950超节点智算中心</p>
+  <a class="grp">总览</a>
+  <a data-target="overview">0 · 执行摘要</a>
+  <a data-target="spec">1 · 技术规格基线</a>
+  <a class="grp">规划设计</a>
+  <a data-target="site">2 · 选址（内蒙古）</a>
+  <a data-target="vendor">3 · 供应商选择</a>
+  <a data-target="design">4 · 总体设计</a>
+  <a data-target="org">5 · 组织与治理</a>
+  <a data-target="build">6 · 建设搭建</a>
+  <a data-target="golive">7 · 快速上线</a>
+  <a data-target="ops">8 · 运维调测</a>
+  <a data-target="cost">9 · 投资估算</a>
+  <a data-target="risk">10 · 端到端风险册</a>
+  <a class="grp">执行实现</a>
+  <a data-target="exec">11 · 分章节执行</a>
+  <a data-target="timeline">12 · 总里程碑</a>
+  <a class="grp">进阶与前瞻</a>
+  <a data-target="bench">13 · 业界领先实践对标</a>
+  <a data-target="hybrid">14 · 英伟达跨平台异构训练</a>
+  <a data-target="scaleops">15 · 容量·规模·运维进阶</a>
+  <a data-target="future">16 · 面向未来：万亿→十万亿参数</a>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="inner">
+    <span class="kbadge">项目策划书 · 决策层 + 工程实施 双层视角</span>
+    <h1>内蒙古昇腾950超节点智算中心<br>端到端规划与执行方案</h1>
+    <p class="lede">基于华为 Atlas 950 SuperPoD（昇腾950DT，单超节点 8,192 卡）的国产万卡级智算中心，从选址、供应商、设计、建设、上线到运维调测的全生命周期规划，并逐章给出可落地的执行实现。</p>
+    <div class="herometa">
+      <span>📍 选址：内蒙古 · 和林格尔/乌兰察布枢纽</span>
+      <span>⚙️ 规模：1× Atlas 950 SuperPoD = 8,192 卡</span>
+      <span>⚡ 算力：8 EFLOPS FP8 / 16 EFLOPS FP4</span>
+      <span>🗓️ 目标：18–24 个月端到端上线</span>
+    </div>
+  </div>
+</header>
+
+<div class="inner">
+
+<!-- 0 执行摘要 -->
+<section id="overview">
+  <h2 class="sec"><span class="n">0</span>执行摘要</h2>
+  <p class="sec-tag">一页看懂：建什么、为什么在内蒙古、关键风险、投资量级</p>
+
+  <p>本方案规划在<b>内蒙古</b>建设一座以华为<b>昇腾950超节点（Atlas 950 SuperPoD）</b>为核心的国产万卡级人工智能算力中心。基线规模按<b>一个完整超节点 = 8,192 张昇腾950DT</b>设计（您提出的"8912卡"按整超节点配置理解为 <b>8,192 卡</b>，详见第1章说明），可扩展至多超节点 SuperCluster。目标是在 18–24 个月内完成从立项到稳定运营的端到端交付，支撑大模型训练与推理。</p>
+
+  <div class="metrics">
+    <div class="metric"><div class="v">8,192</div><div class="l">昇腾950DT 卡数</div><div class="s">128 算力柜 × 64 卡</div></div>
+    <div class="metric"><div class="v">8 EFLOPS</div><div class="l">FP8 总算力</div><div class="s">FP4 达 16 EFLOPS</div></div>
+    <div class="metric"><div class="v">~13 MW</div><div class="l">IT 负载（估）</div><div class="s">整机房 ~15 MW</div></div>
+    <div class="metric"><div class="v">1,152 TB</div><div class="l">统一内存池</div><div class="s">UnifiedBus 互联</div></div>
+    <div class="metric"><div class="v">¥25–40 亿</div><div class="l">总投资量级（估）</div><div class="s">详见第9章假设</div></div>
+    <div class="metric"><div class="v">PUE≤1.2</div><div class="l">能效目标</div><div class="s">冷板液冷 + 自然冷</div></div>
+  </div>
+
+  <div class="box tip">
+    <div class="t">✅ 为什么是内蒙古</div>
+    年均气温约7℃，每年约6个月可自然冷却；新能源装机全国第一，绿电占比可达80%+，电价显著低于东部；属"东数西算"和林格尔枢纽，政策与土地支持充分。电费占智算运营成本一半以上，西部选址直接决定项目经济性。
+  </div>
+  <div class="box risk">
+    <div class="t">⚠️ 三大顶层风险（详见第10章）</div>
+    <b>① 供货与排期：</b>昇腾950DT 计划 2026 Q4 才上市，整机交付与产能是关键路径，必须锁定配额合同。<b>② 电力与算电协同：</b>15MW 级用电的电网接入/绿电指标审批周期长。<b>③ 液冷与高密度：</b>单柜100kW 高密度液冷对土建、漏液防护、运维能力要求极高。
+  </div>
+</section>
+
+<!-- 1 技术规格 -->
+<section id="spec">
+  <h2 class="sec"><span class="n">1</span>技术规格基线（联网核实）</h2>
+  <p class="sec-tag">以华为2025-09官宣 + 后续路线图为准，标注上市时间与不确定项</p>
+
+  <p>方案的所有设计参数都以下表为单一事实来源（Single Source of Truth）。<b>关键提示：</b>您提出的"8912卡"在公开规格中并不存在；Atlas 950 SuperPoD 的标称满配为 <b>8,192 张</b>昇腾950DT（128 算力柜×64卡）。本方案据此按 8,192 卡设计；若确需 ~8,900 卡，则需跨超节点组成 SuperCluster（见第4章），互联与运维复杂度上升。</p>
+
+  <table class="tbl">
+    <tr><th>项目</th><th>规格</th><th>说明 / 不确定性</th></tr>
+    <tr><td>超节点产品</td><td>Atlas 950 SuperPoD</td><td>满配 8,192 卡，约 1,000 m²</td></tr>
+    <tr><td>核心芯片</td><td>昇腾 950DT</td><td>训练/推理Decode型；HiZQ 2.0 显存，128GB / 1.6TB/s</td></tr>
+    <tr><td>（对比）昇腾 950PR</td><td>HiBL 1.0 显存 144GB / 4TB/s</td><td>面向推理Prefill/推荐；<b>2026 Q1</b> 先上市</td></tr>
+    <tr><td>单卡算力</td><td>1 PFLOPS (FP8) / 2 PFLOPS (FP4)</td><td>首发支持 FP4/MXFP4</td></tr>
+    <tr><td>单柜配置</td><td>64 卡 / 柜，64 PFLOPS(FP8)，功耗 ~100 kW</td><td>正交架构，柜内0线缆互联</td></tr>
+    <tr><td>满配柜数</td><td>160 柜 = 128 算力柜 + 32 通信柜</td><td>全光互联</td></tr>
+    <tr><td>总算力</td><td>8 EFLOPS (FP8) / 16 EFLOPS (FP4)</td><td>单超节点</td></tr>
+    <tr><td>统一内存</td><td>1,152 TB</td><td>UnifiedBus 全互联池化</td></tr>
+    <tr><td>互联带宽</td><td>16 PB/s，柜间时延 ~2.1 µs</td><td>全光互联 fabric</td></tr>
+    <tr><td>冷却</td><td>冷板式液冷，浮动盲插防漏液</td><td>100kW/柜须全液冷</td></tr>
+    <tr><td>上市时间</td><td>昇腾950DT：<b>2026 Q4</b></td><td>排期最大约束，须按此倒排</td></tr>
+  </table>
+
+  <div class="box note">
+    <div class="t">📌 规格使用约定</div>
+    标"估"的数字（如 IT 负载 13MW、整机 15MW、面积、投资）为基于公开规格的工程推算，非厂商承诺值；签约前须以华为正式《技术建议书》与现场实测复核。下文成本/电力测算均沿用本表口径。
+  </div>
+</section>
+
+<!-- 2 选址 -->
+<section id="site">
+  <h2 class="sec"><span class="n">2</span>选址（内蒙古）</h2>
+  <p class="sec-tag">规划设计：候选枢纽、评估维度、推荐结论</p>
+
+  <h3>2.1 为什么落子内蒙古</h3>
+  <p>内蒙古是"东数西算"八大枢纽之一，同时具备<b>气候、绿电、电价、政策、土地</b>五重优势，是国产高密度液冷智算中心的最优解之一：</p>
+  <ul>
+    <li><b>气候自然冷：</b>和林格尔年均约7℃，每年约6个月免费冷却，直接拉低 PUE 与电费。</li>
+    <li><b>绿电充沛：</b>区内新能源装机全国第一，集群绿电占比超80%，可满足"算力即绿电"的 ESG 与合规要求。</li>
+    <li><b>电价优势：</b>电费占智算运营成本50%以上，西部电价较东部低 30–50%，是项目经济性的决定因素。</li>
+    <li><b>网络时延：</b>到呼包鄂乌城市群≤2ms，到京津冀枢纽约4.5ms，满足训练为主、推理可回传的时延需求。</li>
+  </ul>
+
+  <h3>2.2 候选枢纽与评估矩阵</h3>
+  <table class="tbl">
+    <tr><th>评估维度（权重）</th><th>和林格尔新区</th><th>乌兰察布</th><th>鄂尔多斯</th></tr>
+    <tr><td>绿电供给/指标（25%）</td><td>★★★★★</td><td>★★★★☆</td><td>★★★★★</td></tr>
+    <tr><td>电网接入与容量（20%）</td><td>★★★★☆</td><td>★★★★☆</td><td>★★★★☆</td></tr>
+    <tr><td>气候/自然冷（15%）</td><td>★★★★★</td><td>★★★★★</td><td>★★★★☆</td></tr>
+    <tr><td>网络/骨干出口（15%）</td><td>★★★★★</td><td>★★★★☆</td><td>★★★☆☆</td></tr>
+    <tr><td>政策/土地/人才（15%）</td><td>★★★★★</td><td>★★★★☆</td><td>★★★★☆</td></tr>
+    <tr><td>水资源/液冷补水（10%）</td><td>★★★★☆</td><td>★★★☆☆</td><td>★★★☆☆</td></tr>
+    <tr><td><b>推荐</b></td><td><b>首选</b></td><td>备选</td><td>备选（绿电富集）</td></tr>
+  </table>
+  <p class="tip" style="padding:10px 14px;border-radius:8px;background:#eefaf5">推荐<b>和林格尔新区</b>为主场地：枢纽政策最完整、网络出口最优、绿电可溯源；乌兰察布/鄂尔多斯作为扩容或多活备份场地纳入二期规划。</p>
+
+  <h3>2.3 选址必须落实的硬指标</h3>
+  <ul>
+    <li>电力：≥20MW 可用容量与扩容路径、双路市电、绿电指标/绿证可获得性。</li>
+    <li>水：液冷补水水源与全年水量保障、退水排放许可。</li>
+    <li>承重与层高：高密度液冷柜（满载含冷却液重）对楼板承重要求高，优先单层钢结构机房。</li>
+    <li>网络：至少双运营商、双物理路由骨干接入。</li>
+    <li>合规：节能审查、环评、能耗双控指标、土地性质与消防预审。</li>
+  </ul>
+
+  <div class="box risk">
+    <div class="t">⚠️ 选址阶段风险</div>
+    <b>电力指标不落实即一票否决：</b>"算电协同"绿电指标和电网接入需提前与电力公司/能源局对接，审批周期可达6–12个月，必须与设备排期并行启动。其次是<b>水资源</b>——西部缺水地区液冷补水需提前取得用水指标，否则被迫改用风冷将抬高 PUE。
+  </div>
+</section>
+
+<!-- 3 供应商 -->
+<section id="vendor">
+  <h2 class="sec"><span class="n">3</span>供应商选择</h2>
+  <p class="sec-tag">规划设计：供应商版图、选型策略、采购与合同要点</p>
+
+  <h3>3.1 供应商版图（端到端）</h3>
+  <table class="tbl">
+    <tr><th>包件</th><th>范围</th><th>候选/策略</th><th>选择要点</th></tr>
+    <tr><td>核心算力</td><td>Atlas 950 SuperPoD、昇腾950DT、CANN软件栈</td><td>华为（唯一源）</td><td>锁定产能配额、交付排期、备件与SLA</td></tr>
+    <tr><td>系统集成总包</td><td>设备到货、集成、组网、调试</td><td>华为生态金牌集成商（2–3家比选）</td><td>万卡级交付业绩、本地化团队</td></tr>
+    <tr><td>土建/机电总包</td><td>厂房、供配电、液冷、消防</td><td>具数据中心资质的工程总包</td><td>液冷高密度项目经验</td></tr>
+    <tr><td>供配电</td><td>变配电、UPS/HVDC、柴发</td><td>主流电气厂商</td><td>高功率密度、冗余等级</td></tr>
+    <tr><td>液冷系统</td><td>CDU、一次/二次侧、冷源</td><td>专业液冷厂商</td><td>与华为机柜兼容性、防漏液</td></tr>
+    <tr><td>网络/存储</td><td>参数面/业务面网络、并行存储</td><td>华为或国产并行存储</td><td>与CANN/训练框架适配</td></tr>
+    <tr><td>电力供应</td><td>绿电交易、电网接入</td><td>电网公司+售电公司</td><td>绿电比例、电价、可溯源</td></tr>
+  </table>
+
+  <h3>3.2 选型策略</h3>
+  <p>核心算力为<b>单一来源（华为）</b>，因此采购重心从"比价"转向"<b>锁量、锁期、锁服务</b>"：优先签订带产能保障条款的框架协议，将 2026Q4 的供货排期写入合同里程碑。对可竞争的包件（土建、电气、液冷、集成）采用 2–3 家比选，建立合格供应商库并保留第二供应商以对冲断供。</p>
+
+  <h3>3.3 合同与采购关键条款</h3>
+  <ul>
+    <li><b>交付里程碑与违约金：</b>分批到货节点、延迟赔偿、产能保障。</li>
+    <li><b>SLA：</b>整柜级备件响应、现场工程师驻场、MTTR 承诺、固件/CANN 升级支持。</li>
+    <li><b>验收口径：</b>单卡/整柜/超节点三级验收基准（算力、互联带宽、稳定性跑测）。</li>
+    <li><b>知识转移：</b>运维培训、文档、源码级问题支持渠道。</li>
+    <li><b>合规：</b>国产化清单、信创资质、数据安全与等保要求。</li>
+  </ul>
+
+  <div class="box risk">
+    <div class="t">⚠️ 供应商阶段风险</div>
+    <b>单一来源 + 新品产能 = 最高断供风险。</b>昇腾先进制程产能受限，950DT 又是新品，存在排期延后与配额不足风险。对冲：尽早签约锁定配额、设置"PR先行验证 / DT分批到货"的弹性方案、对非核心包件保留双供应商。同时警惕<b>集成商能力参差</b>——万卡级液冷集成经验稀缺，须以实绩和驻场能力为硬门槛。
+  </div>
+</section>
+
+<!-- 4 总体设计 -->
+<section id="design">
+  <h2 class="sec"><span class="n">4</span>总体设计</h2>
+  <p class="sec-tag">规划设计：架构 / 供电 / 制冷 / 网络 / 机房物理</p>
+
+  <h3>4.1 总体架构</h3>
+  <p>以"<b>1 个 Atlas 950 SuperPoD（8,192卡）</b>"为基本算力单元；若未来扩至 ~8,900+ 卡或更大，通过 UnifiedBus/全光互联组成 <b>SuperCluster</b>。逻辑分层：算力层（昇腾950DT）→ 互联层（超节点内全光 fabric / 集群间参数面网络）→ 存储层（高性能并行存储 + 对象存储）→ 平台层（CANN + 训练/推理调度 + 资源池化）→ 运营层（监控、调度、多租户）。</p>
+
+  <div class="metrics">
+    <div class="metric"><div class="v">128 柜</div><div class="l">算力柜</div><div class="s">64卡/柜</div></div>
+    <div class="metric"><div class="v">32 柜</div><div class="l">通信柜</div><div class="s">全光互联</div></div>
+    <div class="metric"><div class="v">~1,000 m²</div><div class="l">超节点占地</div><div class="s">机房白区</div></div>
+    <div class="metric"><div class="v">16 PB/s</div><div class="l">互联带宽</div><div class="s">柜间~2.1µs</div></div>
+  </div>
+
+  <h3>4.2 供配电设计</h3>
+  <p>IT 负载约 <b>13MW</b>（128柜×100kW≈12.8MW + 通信/存储/网络），按 PUE≤1.2 计整机房用电约 <b>15MW</b>。建议：</p>
+  <ul>
+    <li>双路市电 + 高压直流（HVDC）/UPS 冗余，关键负载 N+1 以上；柴发作为后备。</li>
+    <li>绿电直供 + 储能调峰，提升绿电消纳与电费稳定性。</li>
+    <li>高密度母线槽配电，预留二期扩容容量（≥20MW）。</li>
+  </ul>
+
+  <h3>4.3 制冷设计（高密度液冷）</h3>
+  <p>单柜100kW 必须<b>全冷板液冷</b>。一次侧利用内蒙古气候做自然冷（干冷器/冷却塔），二次侧通过 CDU 与机柜浮动盲插快接；少量风冷负载（网络/存储）用行级空调。设计 PUE 目标 1.15–1.2。</p>
+  <div class="box note"><div class="t">📌 设计要点</div>承重：满载液冷柜含冷却液重量大，楼板需专项承重核算；防漏液：盲插快接、漏液检测、分区隔离；余热回收可作为 ESG 加分项。</div>
+
+  <h3>4.4 网络与存储</h3>
+  <ul>
+    <li><b>超节点内：</b>全光 UnifiedBus fabric，免运维参数面。</li>
+    <li><b>集群间/南北向：</b>高速参数面网络 + 业务/管理网络分离。</li>
+    <li><b>存储：</b>并行文件系统（训练 checkpoint/数据集高吞吐）+ 对象存储分层；与 CANN/框架 IO 路径适配。</li>
+    <li><b>带外管理：</b>独立 BMC/管理网，支持远程开关机与固件升级。</li>
+  </ul>
+
+  <h3>4.5 软件与平台</h3>
+  <p>CANN 异构计算栈 + 训练框架（MindSpore/PyTorch on Ascend）+ 集群调度（资源池化、多租户、配额）+ 可观测（算力利用率、网络、温控、能耗一体监控）。</p>
+
+  <div class="box risk">
+    <div class="t">⚠️ 设计阶段风险</div>
+    <b>软件生态成熟度：</b>从 CUDA 迁移到 CANN 的模型适配、算子覆盖、调优工作量大，须预留迁移与压测周期。<b>高密度耦合风险：</b>电、冷、网在 100kW/柜下高度耦合，任一专业设计缺陷都会放大为系统级故障，必须做联合评审与全链路仿真。
+  </div>
+</section>
+
+<!-- 5 组织 -->
+<section id="org">
+  <h2 class="sec"><span class="n">5</span>组织与项目治理</h2>
+  <p class="sec-tag">规划设计：组织架构、决策机制、关键角色</p>
+
+  <h3>5.1 项目组织（矩阵式）</h3>
+  <table class="tbl">
+    <tr><th>层级</th><th>角色</th><th>职责</th></tr>
+    <tr><td>决策层</td><td>项目指导委员会（Sponsor/出资方/华为高层）</td><td>立项、预算、重大变更、风险升级裁决</td></tr>
+    <tr><td>管理层</td><td>项目总监（PM）+ PMO</td><td>整体计划、进度/成本/质量/风险、对外协调</td></tr>
+    <tr><td>技术线</td><td>总架构师 + 各专业负责人（电/冷/网/算/软）</td><td>设计评审、技术决策、验收基准</td></tr>
+    <tr><td>实施线</td><td>土建总包 / 集成总包 / 华为交付经理</td><td>现场施工、设备集成、联调</td></tr>
+    <tr><td>运营线</td><td>运维负责人 + SRE/驻场工程师</td><td>上线后稳定性、SLA、容量</td></tr>
+    <tr><td>支撑线</td><td>采购、合规、安全、财务、政府事务</td><td>合同、绿电指标、等保、资金、属地对接</td></tr>
+  </table>
+
+  <h3>5.2 治理机制</h3>
+  <ul>
+    <li><b>例会：</b>周项目例会 + 月度指导委员会；关键路径设每日站会。</li>
+    <li><b>变更控制：</b>统一变更流程（CR），区分技术/范围/合同变更审批权限。</li>
+    <li><b>风险管理：</b>风险登记册（第10章）双周复盘，红黄绿状态升级机制。</li>
+    <li><b>质量门禁：</b>设计评审、到货验收、隐蔽工程验收、上线评审多道 Gate。</li>
+  </ul>
+
+  <div class="box risk">
+    <div class="t">⚠️ 组织阶段风险</div>
+    <b>多方接口复杂：</b>出资方、华为、总包、电网、政府多方并行，界面不清易扯皮。对策：用 RACI 明确每个交付物的责任主体，设单一对外接口人（PM），并把跨方依赖写入主计划的关键路径。
+  </div>
+</section>
+
+<!-- 6 建设 -->
+<section id="build">
+  <h2 class="sec"><span class="n">6</span>建设搭建</h2>
+  <p class="sec-tag">规划设计：施工时序、并行策略、质量控制</p>
+
+  <h3>6.1 施工时序（前后置依赖）</h3>
+  <ol>
+    <li><b>场地与土建：</b>三通一平 → 厂房主体（优先选既有标准厂房改造以抢工期）→ 机房白区装修。</li>
+    <li><b>机电基础设施：</b>变配电、UPS/HVDC、柴发、液冷冷源与管路、消防、动环监控。</li>
+    <li><b>承重与管路预埋：</b>液冷一次侧管路、母线、桥架与白区同步。</li>
+    <li><b>设备进场：</b>超节点机柜到货 → 就位 → 上电 → 液冷接管 → 网络组线（柜内0线缆，柜间全光）。</li>
+    <li><b>系统集成：</b>固件/CANN 部署 → 单柜自检 → 超节点互联点亮。</li>
+  </ol>
+
+  <h3>6.2 提速策略（关键）</h3>
+  <ul>
+    <li><b>并行不串行：</b>土建/机电与设备生产、软件平台搭建并行推进。</li>
+    <li><b>预制化/模块化：</b>采用预制电力模块、预制液冷 skid，现场拼装减少湿作业。</li>
+    <li><b>既有厂房改造优先：</b>园区现成标准厂房改造比新建省 6–12 个月。</li>
+    <li><b>设备倒排：</b>以 950DT 2026Q4 到货为锚点倒排土建/机电完工时间，确保"楼等不到设备、设备一到就装"。</li>
+  </ul>
+
+  <h3>6.3 质量与安全控制</h3>
+  <ul>
+    <li>隐蔽工程（管路、接地、防水）逐项验收留痕。</li>
+    <li>液冷管路打压试验、漏液检测全覆盖后方可上设备。</li>
+    <li>供配电系统满载拉测、切换演练。</li>
+    <li>施工安全（高压电、起重、有限空间）专项方案。</li>
+  </ul>
+
+  <div class="box risk">
+    <div class="t">⚠️ 建设阶段风险</div>
+    <b>关键路径漂移：</b>电力接入或液冷验收延迟会让设备"到货即趴窝"。<b>隐蔽工程返工：</b>液冷漏液、承重不足一旦上设备后暴露，整改代价极高。对策：电力/液冷设为最高优先级里程碑，隐蔽工程实行第三方监理 + 影像留痕，先打压后上电、先上电后上算的严格门禁。
+  </div>
+</section>
+
+<!-- 7 上线 -->
+<section id="golive">
+  <h2 class="sec"><span class="n">7</span>快速上线</h2>
+  <p class="sec-tag">规划设计：分级点亮、灰度放量、验收标准</p>
+
+  <h3>7.1 分级点亮（Bring-up）</h3>
+  <ol>
+    <li><b>单卡/单节点：</b>上电自检、固件版本核对、单卡算力基准。</li>
+    <li><b>单柜（64卡）：</b>柜内互联、温控、功耗满载稳定性。</li>
+    <li><b>超节点（8,192卡）：</b>全光互联点亮、16PB/s 带宽实测、统一内存池验证。</li>
+    <li><b>集群级：</b>跨柜大模型训练 all-reduce 跑通、线性度测试。</li>
+  </ol>
+
+  <h3>7.2 灰度放量上线</h3>
+  <p>不一次性满负荷，而是按"<b>试运行 → 灰度业务 → 全量</b>"放量：先用标准 benchmark（如大模型预训练 step、推理吞吐）小批量验证稳定性与利用率，再逐步导入真实业务，边放量边调优。</p>
+
+  <h3>7.3 上线验收标准</h3>
+  <table class="tbl">
+    <tr><th>验收项</th><th>基准</th></tr>
+    <tr><td>算力达标</td><td>整超节点 FP8 实测达标称 8 EFLOPS 的约定比例</td></tr>
+    <tr><td>互联带宽</td><td>柜间带宽/时延达标（~16PB/s，~2.1µs）</td></tr>
+    <tr><td>训练线性度</td><td>万卡 all-reduce 扩展效率达约定阈值</td></tr>
+    <tr><td>稳定性</td><td>连续满载跑测（如72小时/7×24）无致命故障</td></tr>
+    <tr><td>能效</td><td>实测 PUE ≤ 设计目标</td></tr>
+    <tr><td>故障恢复</td><td>断点续训/checkpoint 恢复有效</td></tr>
+  </table>
+
+  <div class="box risk">
+    <div class="t">⚠️ 上线阶段风险</div>
+    <b>稳定性长尾：</b>万卡规模下单点故障概率被放大，长时间训练易因个别卡/光模块/网络抖动中断。对策：完善故障隔离与断点续训、备件快速更换、健康巡检自动化。<b>利用率不达预期：</b>软件调度/通信开销导致实际利用率远低于峰值——须在上线期做充分调优并设利用率验收门槛。
+  </div>
+</section>
+
+<!-- 8 运维 -->
+<section id="ops">
+  <h2 class="sec"><span class="n">8</span>运维调测</h2>
+  <p class="sec-tag">规划设计：运维体系、SLA、持续调优</p>
+
+  <h3>8.1 运维体系</h3>
+  <ul>
+    <li><b>一体化监控：</b>算力利用率、网络、温度/液冷、能耗、故障告警统一平台，分钟级感知。</li>
+    <li><b>AIOps：</b>异常预测、根因定位、自动隔离故障卡/节点，降低 MTTR。</li>
+    <li><b>备件与现场：</b>整柜级关键备件本地库存 + 华为驻场工程师，承诺响应/恢复时限。</li>
+    <li><b>容量管理：</b>多租户配额、资源池调度、扩容预案。</li>
+  </ul>
+
+  <h3>8.2 调测与持续优化</h3>
+  <ul>
+    <li>算子/通信调优持续迭代，提升训练线性度与推理吞吐。</li>
+    <li>液冷工况随季节调参（冬季加大自然冷比例进一步降 PUE）。</li>
+    <li>固件/CANN 版本灰度升级与回滚机制。</li>
+    <li>定期故障演练（断电、断网、断冷）。</li>
+  </ul>
+
+  <h3>8.3 关键 SLA 指标</h3>
+  <table class="tbl">
+    <tr><th>指标</th><th>目标（建议）</th></tr>
+    <tr><td>算力可用率</td><td>≥ 99.5%（按业务等级约定）</td></tr>
+    <tr><td>故障恢复 MTTR</td><td>关键故障 ≤ 数小时（备件就位）</td></tr>
+    <tr><td>PUE（年均）</td><td>≤ 1.2，冬季更低</td></tr>
+    <tr><td>绿电占比</td><td>≥ 80%</td></tr>
+    <tr><td>算力利用率（MFU）</td><td>训练场景达约定阈值并持续优化</td></tr>
+  </table>
+
+  <div class="box risk">
+    <div class="t">⚠️ 运维阶段风险</div>
+    <b>人才稀缺：</b>昇腾/液冷一体化运维人才在西部更稀缺，须提前培训储备并锁定华为驻场。<b>隐性成本：</b>故障卡更换、光模块损耗、电价波动会侵蚀运营利润——需建立备件消耗与能耗的精细化成本核算。
+  </div>
+</section>
+
+<!-- 9 成本 -->
+<section id="cost">
+  <h2 class="sec"><span class="n">9</span>投资估算（量级）</h2>
+  <p class="sec-tag">规划设计：CAPEX / OPEX 结构与量级，含假设</p>
+
+  <div class="box note">
+    <div class="t">📌 估算口径与假设</div>
+    以下为<b>量级估算</b>，用于立项判断，非报价。假设：1× SuperPoD = 8,192 卡；IT 负载约13MW、整机约15MW；PUE≈1.2；内蒙古综合电价按 <b>¥0.35–0.45/kWh</b>；满负荷年用电约 <b>1.3 亿 kWh</b>。实际以华为正式报价、设计院概算与电力协议为准。
+  </div>
+
+  <h3>9.1 CAPEX（一次性投资，量级）</h3>
+  <table class="tbl">
+    <tr><th>科目</th><th>量级估算（¥）</th><th>占比</th><th>备注</th></tr>
+    <tr><td>核心算力（超节点+卡+软件）</td><td>15–25 亿</td><td>~65%</td><td>单一来源，受产能/定价影响最大</td></tr>
+    <tr><td>供配电系统</td><td>2–3.5 亿</td><td>~10%</td><td>HVDC/UPS/柴发/储能</td></tr>
+    <tr><td>液冷与制冷</td><td>1.5–3 亿</td><td>~8%</td><td>CDU/冷源/管路</td></tr>
+    <tr><td>土建/机房装修</td><td>2–4 亿</td><td>~9%</td><td>改造可显著降低</td></tr>
+    <tr><td>网络与存储</td><td>1.5–3 亿</td><td>~7%</td><td>并行存储/参数面网络</td></tr>
+    <tr><td>集成/调测/其他</td><td>0.5–1.5 亿</td><td>~3%</td><td>集成、监理、不可预见费</td></tr>
+    <tr><td><b>合计（量级）</b></td><td><b>约 25–40 亿</b></td><td>100%</td><td>核心算力是最大变量</td></tr>
+  </table>
+
+  <h3>9.2 OPEX（年度运营，量级）</h3>
+  <table class="tbl">
+    <tr><th>科目</th><th>年化量级（¥）</th><th>说明</th></tr>
+    <tr><td>电费</td><td>约 0.45–0.6 亿</td><td>15MW、满负荷约1.3亿kWh × 电价；利用率/电价波动影响大</td></tr>
+    <tr><td>运维/驻场/备件</td><td>0.5–1 亿</td><td>含华为服务、SRE团队、光模块/卡损耗</td></tr>
+    <tr><td>带宽/网络</td><td>0.1–0.3 亿</td><td>骨干出口与专线</td></tr>
+    <tr><td>折旧（参考）</td><td>设备按3–5年</td><td>影响单位算力成本核算</td></tr>
+    <tr><td><b>现金 OPEX 合计</b></td><td><b>约 1–2 亿/年</b></td><td>电费 + 运维为主</td></tr>
+  </table>
+
+  <div class="box tip">
+    <div class="t">✅ 经济性洞察</div>
+    内蒙古低电价 + 高绿电直接决定 OPEX。相较东部，仅电费一项每年可省数千万级。建议把<b>单位算力成本（¥/PFLOPS·年）</b>作为核心经营指标，驱动选址、利用率与电价谈判。
+  </div>
+</section>
+
+<!-- 10 风险 -->
+<section id="risk">
+  <h2 class="sec"><span class="n">10</span>端到端风险登记册</h2>
+  <p class="sec-tag">跨阶段汇总：等级 / 影响 / 应对，供指导委员会复盘</p>
+
+  <table class="tbl">
+    <tr><th>#</th><th>风险</th><th>阶段</th><th>等级</th><th>影响</th><th>应对措施</th></tr>
+    <tr><td>R1</td><td>950DT 产能不足/排期延后（2026Q4上市）</td><td>供应</td><td><span class="sev s-h">高</span></td><td>整体上线延期</td><td>尽早锁产能配额；PR先行验证；分批到货；合同违约金</td></tr>
+    <tr><td>R2</td><td>电力指标/电网接入审批慢</td><td>选址/建设</td><td><span class="sev s-h">高</span></td><td>设备到货无法上电</td><td>立项即并行报批；绿电协议前置；储能兜底</td></tr>
+    <tr><td>R3</td><td>液冷漏液/高密度承重缺陷</td><td>设计/建设</td><td><span class="sev s-h">高</span></td><td>设备损坏、停机</td><td>盲插防漏、打压试验、专项承重核算、第三方监理</td></tr>
+    <tr><td>R4</td><td>CANN生态/模型迁移工作量大</td><td>设计/上线</td><td><span class="sev s-m">中</span></td><td>利用率与上线延迟</td><td>预留迁移压测期；华为联合调优；算子覆盖核查</td></tr>
+    <tr><td>R5</td><td>万卡稳定性长尾、训练中断</td><td>上线/运维</td><td><span class="sev s-m">中</span></td><td>训练效率下降</td><td>断点续训、故障自动隔离、备件就位、健康巡检</td></tr>
+    <tr><td>R6</td><td>水资源/补水指标不足</td><td>选址</td><td><span class="sev s-m">中</span></td><td>被迫改风冷、PUE升高</td><td>前置用水指标；干冷器方案;退水许可</td></tr>
+    <tr><td>R7</td><td>单一来源断供/被制裁波及</td><td>供应</td><td><span class="sev s-m">中</span></td><td>备件/升级受阻</td><td>提高备件库存；国产化替代清单；长期服务协议</td></tr>
+    <tr><td>R8</td><td>运维人才稀缺</td><td>运维</td><td><span class="sev s-m">中</span></td><td>故障恢复慢</td><td>提前培训；华为驻场；AIOps降本</td></tr>
+    <tr><td>R9</td><td>多方接口/界面不清</td><td>组织</td><td><span class="sev s-l">低</span></td><td>进度扯皮</td><td>RACI、单一接口人、主计划关键路径</td></tr>
+    <tr><td>R10</td><td>电价/利用率波动侵蚀收益</td><td>运营</td><td><span class="sev s-l">低</span></td><td>经济性下滑</td><td>绿电长协;利用率KPI;成本精细核算</td></tr>
+  </table>
+  <p class="src">注：等级为相对评估，随项目进展在双周风险会上动态更新。</p>
+</section>
+
+<!-- 11 执行 -->
+<section id="exec">
+  <h2 class="sec"><span class="n">11</span>分章节执行实现</h2>
+  <p class="sec-tag">从规划到落地：每章给出执行动作、交付物、检查清单</p>
+
+  <h3>执行章 A · 立项与选址落地</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>成立项目组与 PMO，明确 RACI 与主计划；召开立项指导委员会。</li>
+      <li>启动场地比选（和林格尔为主），完成现场踏勘与电力/水/网络尽调。</li>
+      <li><b>并行启动</b>电力接入与绿电指标报批、节能/环评预审、土地与消防预审。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>项目章程 · 选址评估报告 · 电力/用水/网络承诺函 · 报批受理回执　|　<b>门禁：</b>电力容量与绿电指标可获得性确认</div>
+  </div>
+
+  <h3>执行章 B · 供应商签约</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>与华为签订算力框架协议，<b>锁定950DT配额、2026Q4交付排期、SLA与备件</b>。</li>
+      <li>土建/机电/液冷/集成包件 2–3 家比选定标，建立合格供应商库与第二供应商。</li>
+      <li>明确三级验收基准（卡/柜/超节点）写入合同。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>主设备供货合同 · 各包件合同 · 验收基准书 · 供应商管理台账　|　<b>门禁：</b>核心算力交付里程碑与违约条款生效</div>
+  </div>
+
+  <h3>执行章 C · 详细设计与评审</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>完成供配电、液冷、网络、机房、软件平台详细设计与<b>联合评审</b>（电冷网算软联评）。</li>
+      <li>承重专项核算、PUE 仿真、全链路功率/热仿真。</li>
+      <li>制定 CANN 迁移与压测方案。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>各专业施工图 · 联合评审纪要 · 承重/能效计算书 · 迁移测试方案　|　<b>门禁：</b>设计冻结（Design Freeze）</div>
+  </div>
+
+  <h3>执行章 D · 建设施工</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>土建/装修与机电基础设施并行；预制电力/液冷模块现场拼装。</li>
+      <li>隐蔽工程逐项验收留影像；液冷管路<b>先打压后上电</b>。</li>
+      <li>供配电满载拉测与切换演练；动环监控上线。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>隐蔽工程验收记录 · 打压/漏液检测报告 · 供配电测试报告 · 机房就绪证明　|　<b>门禁：</b>机房具备上电上设备条件（Power-on Ready）</div>
+  </div>
+
+  <h3>执行章 E · 设备集成与点亮</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>超节点机柜进场就位、液冷接管、上电；柜内0线缆、柜间全光组网。</li>
+      <li>固件/CANN 部署 → 单卡 → 单柜 → 超节点<b>分级点亮</b>，实测算力/带宽。</li>
+      <li>并行搭建调度平台、存储、监控。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>分级点亮记录 · 算力/带宽实测报告 · 平台部署文档　|　<b>门禁：</b>超节点互联点亮通过</div>
+  </div>
+
+  <h3>执行章 F · 快速上线（灰度放量）</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>标准 benchmark 跑测 → 灰度真实业务 → 全量放量。</li>
+      <li>72小时/7×24 稳定性跑测；训练线性度与利用率验收。</li>
+      <li>断点续训与故障恢复演练。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>稳定性测试报告 · 利用率/线性度验收单 · 上线评审纪要　|　<b>门禁：</b>达验收标准，正式投运</div>
+  </div>
+
+  <h3>执行章 G · 运维调测与持续优化</h3>
+  <div class="chk">
+    <div class="t">执行动作</div>
+    <ul>
+      <li>一体化监控 + AIOps 上线；备件库与驻场机制运转。</li>
+      <li>季节性液冷调参降 PUE；算子/通信持续调优。</li>
+      <li>固件/CANN 灰度升级；定期断电/断网/断冷演练。</li>
+    </ul>
+    <div class="deliver"><b>交付物：</b>运维手册 · SLA 月报 · 优化迭代记录 · 演练报告　|　<b>门禁：</b>稳态运营，SLA 达标</div>
+  </div>
+</section>
+
+<!-- 12 timeline -->
+<section id="timeline">
+  <h2 class="sec"><span class="n">12</span>总里程碑（倒排）</h2>
+  <p class="sec-tag">以 950DT 2026Q4 到货为锚点，18–24 个月端到端</p>
+
+  <div class="gantt">
+    <table>
+      <tr><th class="pl">阶段 \ 季度</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>次Q1</th><th>次Q2</th></tr>
+      <tr><td class="pl">A 立项/选址/报批</td><td><div class="bar b1">　</div></td><td><div class="bar b1">　</div></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="pl">B 供应商签约/锁产能</td><td></td><td><div class="bar b5">　</div></td><td><div class="bar b5">　</div></td><td></td><td></td><td></td></tr>
+      <tr><td class="pl">C 详细设计/评审</td><td></td><td><div class="bar b4">　</div></td><td><div class="bar b4">　</div></td><td></td><td></td><td></td></tr>
+      <tr><td class="pl">D 建设施工（关键路径）</td><td></td><td></td><td><div class="bar b3">　</div></td><td><div class="bar b3">　</div></td><td><div class="bar b3">　</div></td><td></td></tr>
+      <tr><td class="pl">E 设备到货/集成点亮</td><td></td><td></td><td></td><td><div class="bar b2">DT到货</div></td><td><div class="bar b2">　</div></td><td></td></tr>
+      <tr><td class="pl">F 快速上线/验收</td><td></td><td></td><td></td><td></td><td><div class="bar b1">　</div></td><td><div class="bar b1">投运</div></td></tr>
+      <tr><td class="pl">G 运维稳态</td><td></td><td></td><td></td><td></td><td></td><td><div class="bar b2">→</div></td></tr>
+    </table>
+    <div class="legend">
+      <span><i style="background:#0a3d62"></i>立项/上线</span>
+      <span><i style="background:#c0102e"></i>签约</span>
+      <span><i style="background:#7d4ba0"></i>设计</span>
+      <span><i style="background:#b3541e"></i>建设</span>
+      <span><i style="background:#0d8a72"></i>集成/运维</span>
+    </div>
+  </div>
+
+  <div class="box tip">
+    <div class="t">✅ 提速关键</div>
+    ① 报批与签约<b>最早并行启动</b>，不等设备；② 优先<b>既有厂房改造</b>抢工期；③ 以 DT 到货为锚点<b>倒排</b>，确保"楼等设备而非设备等楼"；④ 预制模块化施工压缩现场周期。乐观可压至18个月，含审批余量按24个月稳健规划。
+  </div>
+
+  <button class="print" onclick="window.print()">🖨️ 打印 / 导出 PDF</button>
+</section>
+
+<!-- 13 业界对标 -->
+<section id="bench">
+  <h2 class="sec"><span class="n">13</span>业界领先实践对标</h2>
+  <p class="sec-tag">进阶与前瞻：以全球头部智算集群为标尺，校准本方案的架构与目标</p>
+
+  <p>把本方案放到全球前沿坐标系里看，能更准确地判断"建多大、怎么建、留多少冗余"。当前业界的事实标准是<b>英伟达 GB200 NVL72 机柜级超节点</b>与<b>十万卡级 SuperCluster</b>，最大单体集群（xAI Colossus）已扩至 <b>55.5 万张 GPU、2 GW</b> 量级，并规划向百万卡演进。对标的目的不是照搬，而是把这些工程化经验内化为本项目的设计准则。</p>
+
+  <h3>13.1 超节点对标：Atlas 950 SuperPoD vs GB200 NVL72</h3>
+  <table class="tbl">
+    <tr><th>维度</th><th>华为 Atlas 950 SuperPoD</th><th>英伟达 GB200 NVL72</th><th>对本方案的启示</th></tr>
+    <tr><td>Scale-up 域（高带宽互联卡数）</td><td><b>8,192 卡</b>（UnifiedBus 全光）</td><td>72 GPU（第5代 NVLink）</td><td>华为最大优势：超大 scale-up 域，张量/专家并行无需跨低速网络</td></tr>
+    <tr><td>单卡 FP8 算力</td><td>~1 PFLOPS</td><td>~10 PFLOPS（720/72）</td><td>单卡约 1/10，靠规模与互联弥补</td></tr>
+    <tr><td>整超节点 FP8</td><td><b>~8 EFLOPS</b></td><td>~0.72 EFLOPS / 柜</td><td>单超节点≈11个 NVL72 柜的 FP8</td></tr>
+    <tr><td>单卡显存</td><td>128 GB（950DT）</td><td>192 GB HBM3e（B200）</td><td>显存偏小，MoE/长序列需更细切分</td></tr>
+    <tr><td>单柜功耗</td><td>~100 kW</td><td>~120 kW</td><td>同属液冷高密度，机房设计逻辑互通</td></tr>
+    <tr><td>互联</td><td>全光 UnifiedBus，16 PB/s</td><td>NVLink 1.8 TB/s·GPU + IB/以太</td><td>全光长距优势利于多超节点扩展</td></tr>
+    <tr><td>软件生态</td><td>CANN（建设中）</td><td>CUDA（成熟）</td><td>生态是最大差距，须投入迁移与调优</td></tr>
+  </table>
+  <div class="box tip">
+    <div class="t">✅ 核心判断</div>
+    昇腾950超节点的差异化竞争力在于 <b>8,192 卡的超大 scale-up 域</b>——这是英伟达 72 卡 NVLink 域的百倍量级，对超大模型的张量并行/专家并行极为友好。短板是<b>单卡算力、显存、软件生态</b>，需用"规模 + 互联 + 工程调优"补齐。
+  </div>
+
+  <h3>13.2 集群级对标：十万卡集群的工程经验</h3>
+  <p>头部集群（xAI Colossus 55.5 万卡、Meta/微软等十万卡级）沉淀出几条可直接借鉴的硬经验：</p>
+  <ul>
+    <li><b>速度即护城河：</b>Colossus 首期 10 万卡 122 天建成、92 天翻倍。印证本方案"既有厂房改造 + 预制模块 + 倒排"的提速策略是业界主流打法。</li>
+    <li><b>故障是常态而非异常：</b>万卡以上规模下，单卡/光模块/网络抖动导致的中断按"小时级"发生，必须把<b>自动健康巡检、故障自动隔离、分钟级 checkpoint、热备节点</b>设为一等公民。</li>
+    <li><b>网络决定线性度：</b>头部集群普遍采用 rail-optimized 胖树 + RoCE/IB 或 Spectrum-X 以太，并把网络与并行策略协同设计。本方案超节点内全光是强项，跨超节点 spine 须同等重视。</li>
+    <li><b>电力是真正的天花板：</b>竞争已从"买多少卡"转向"接多少电"。Colossus 直奔 2 GW。本方案 15 MW 仅为单超节点起步，<b>选址必须按多超节点（百 MW 级）预留电力与土地</b>。</li>
+    <li><b>MFU 才是真实产出：</b>头部团队把 30%–50% 的 MFU（模型算力利用率）作为核心 KPI，而非峰值算力。本方案应把 MFU 写入验收与运维 KPI。</li>
+  </ul>
+
+  <div class="box note">
+    <div class="t">📌 对标结论</div>
+    本方案单超节点（8,192 卡 / 15 MW）相当于头部集群的<b>一个基本积木</b>。架构方向正确，但若目标是前沿大模型预训练，需从规划之初就按"<b>积木可拼成 SuperCluster</b>"来设计电力、网络脊柱、存储与运维体系（详见第15、16章）。
+  </div>
+</section>
+
+<!-- 14 跨平台异构 -->
+<section id="hybrid">
+  <h2 class="sec"><span class="n">14</span>英伟达跨平台异构训练</h2>
+  <p class="sec-tag">进阶与前瞻：昇腾 + 英伟达双栈并存的现实架构与工程路径</p>
+
+  <p>多数追求前沿的团队不会单押一种芯片，而是<b>昇腾（国产、成本、供应安全）+ 英伟达（生态成熟、灵活、前沿对齐）双栈并存</b>。但异构训练有硬约束：不同加速器的数值精度、吞吐、集合通信库（HCCL vs NCCL）不同，<b>同一个同步数据并行作业很难真正混跑两种芯片</b>。务实之道是"分工"而非"混合"。</p>
+
+  <h3>14.1 双资源池分工模型（推荐）</h3>
+  <table class="tbl">
+    <tr><th>资源池</th><th>主要承载</th><th>理由</th></tr>
+    <tr><td>英伟达池（H100/H200/GB200）</td><td>前沿研究、快速试验、CUDA 强依赖的模型与算子、对外对齐的 baseline 复现</td><td>生态成熟、工具链全、社区模型即插即用，迭代最快</td></tr>
+    <tr><td>昇腾池（Atlas 950 超节点）</td><td>规模化预训练/继续训练、生产级推理、国产化合规与降本主力</td><td>超大 scale-up 域、绿电低成本、供应自主可控</td></tr>
+  </table>
+  <p>同一模型在两池间<b>串行流转</b>而非并行混跑：英伟达池快速跑通架构与小规模验证 → 昇腾池承接大规模训练 → 两池均可承担推理。这样既享受英伟达生态的迭代速度，又用昇腾的规模与成本打主力战。</p>
+
+  <h3>14.2 跨平台互操作的五个工程支点</h3>
+  <ul>
+    <li><b>框架抽象层：</b>统一以 <b>PyTorch</b> 为前端，后端可切 CUDA / CANN（torch_npu）。模型代码尽量框架中立，避免硬编码 CUDA 算子。</li>
+    <li><b>Checkpoint 互通：</b>统一采用 <b>safetensors</b> 等中立权重格式，建立 CUDA↔昇腾 的 checkpoint 转换与校验流水线，做到"一处训练、两处可续"。</li>
+    <li><b>数据与存储共享层：</b>两池共用同一并行文件系统 / 对象存储与数据版本，避免数据搬运成为瓶颈。</li>
+    <li><b>统一调度：</b>用 Kubernetes + Volcano（或同类）纳管两池资源，按作业特征自动路由到合适芯片，统一配额与多租户。</li>
+    <li><b>算子与精度对齐：</b>建立跨平台数值一致性测试集（同输入比对 loss/梯度），管控 FP8/BF16 在两栈下的精度漂移。</li>
+  </ul>
+
+  <h3>14.3 推理侧跨平台</h3>
+  <p>推理对生态依赖低、最易跨平台：同一模型用 <b>vLLM / vLLM-Ascend</b> 等在两栈并行服务，按成本/时延/合规把流量在英伟达与昇腾间动态调度，是双栈最快见效、风险最低的落地点，建议作为跨平台第一步。</p>
+
+  <div class="box risk">
+    <div class="t">⚠️ 跨平台关键风险</div>
+    <b>① 真异构混跑不成熟：</b>不要期望一个训练作业同时吃两种卡——慢卡拖累快卡、集合通信不兼容。坚持"分池串行"。<b>② 英伟达供应/合规不确定：</b>高端 GPU 对华供应受出口管制波动，英伟达池规模与排期须做弹性预案，核心主力仍应押注可自主供应的昇腾。<b>③ 迁移工作量：</b>CUDA→CANN 的算子覆盖与调优是持续投入，须设专职适配团队与回归测试。
+  </div>
+</section>
+
+<!-- 15 容量规模运维进阶 -->
+<section id="scaleops">
+  <h2 class="sec"><span class="n">15</span>容量·规模·运维进阶建议</h2>
+  <p class="sec-tag">进阶与前瞻：从"建好一个超节点"到"运营一个可持续扩展的算力工厂"</p>
+
+  <h3>15.1 容量规划：按 SuperCluster 预留，不止单超节点</h3>
+  <p>单超节点是<b>起点而非终点</b>。一切长周期、难变更的基础设施（电力、土地、网络脊柱、冷源主管路、存储骨干）都应按<b>多超节点（建议预留 4–8 个超节点 / 60–120 MW）</b>一次规划、分期建设，避免二期"拆楼重来"。</p>
+  <div class="metrics">
+    <div class="metric"><div class="v">≥120 MW</div><div class="l">园区供电预留</div><div class="s">单超节点仅~15MW</div></div>
+    <div class="metric"><div class="v">4–8×</div><div class="l">超节点扩展位</div><div class="s">土建/管路预留</div></div>
+    <div class="metric"><div class="v">N+1~2N</div><div class="l">关键设施冗余</div><div class="s">电/冷/网</div></div>
+    <div class="metric"><div class="v">5–10%</div><div class="l">热备节点比例</div><div class="s">故障快速顶替</div></div>
+  </div>
+
+  <h3>15.2 规模化网络脊柱</h3>
+  <ul>
+    <li><b>三层定位：</b>超节点内（全光 UnifiedBus，免运维）→ 超节点间（高带宽 spine，承载跨 pod 数据/流水并行）→ 园区南北向（存储/管理/外联）。</li>
+    <li><b>rail-optimized 拓扑：</b>跨超节点参数面采用轨道优化胖树，无阻塞或低收敛比，保障大规模 all-reduce 线性度。</li>
+    <li><b>存储网络独立：</b>训练 IO（checkpoint/数据集）与计算参数面物理隔离，避免互相挤兑。</li>
+  </ul>
+
+  <h3>15.3 存储容量与吞吐</h3>
+  <p>大模型训练的隐形瓶颈是 <b>checkpoint 吞吐</b>：万亿模型单次 checkpoint 可达数十 TB，分钟级保存要求存储具备 <b>TB/s 级聚合带宽</b>。</p>
+  <table class="tbl">
+    <tr><th>层级</th><th>选型</th><th>容量/性能建议</th></tr>
+    <tr><td>高性能层</td><td>并行文件系统（NVMe 全闪）</td><td>聚合带宽按"单次 checkpoint ≤1–2 分钟"反推，通常需 TB/s 级</td></tr>
+    <tr><td>数据集层</td><td>大容量并行存储 / 分布式缓存</td><td>训练数据集 PB 级，近计算缓存命中优先</td></tr>
+    <tr><td>温冷层</td><td>对象存储</td><td>多版本 checkpoint、数据湖，成本优先</td></tr>
+  </table>
+
+  <h3>15.4 运维进阶：面向万卡的可靠性工程</h3>
+  <ul>
+    <li><b>分钟级 checkpoint + 异步保存：</b>把训练中断的代价从"小时"降到"分钟"，配合断点续训自动恢复。</li>
+    <li><b>自动健康巡检与故障自愈：</b>开训前全集群体检（算力/显存/光链路/温度），训练中实时检测并<b>自动隔离坏卡、热备顶替、重组拓扑</b>。</li>
+    <li><b>静默数据损坏（SDC）防护：</b>大规模下个别卡会算错却不报错，需周期性数值校验与冗余计算抽检。</li>
+    <li><b>MFU 驱动运营：</b>把模型算力利用率（目标 35%–50%）作为第一 KPI，建立"利用率—通信开销—故障损失"的归因看板。</li>
+    <li><b>能耗精细化：</b>按超节点/机柜级电能与 PUE 实时计量，季节性调冷，单位算力成本（¥/PFLOPS·年）月度复盘。</li>
+    <li><b>容量与多租户：</b>资源池化 + 配额 + 抢占式调度，训练/推理混部削峰填谷，提升整体利用率。</li>
+  </ul>
+
+  <div class="box tip">
+    <div class="t">✅ 一句话原则</div>
+    <b>基础设施按集群规划、设备按需分期、运维按"故障常态化"设计。</b>把可靠性工程（checkpoint、自愈、热备、SDC 防护）和 MFU KPI 前置到上线之前，而非出问题后补课。
+  </div>
+</section>
+
+<!-- 16 面向未来 -->
+<section id="future">
+  <h2 class="sec"><span class="n">16</span>面向未来：万亿→十万亿参数算力规划</h2>
+  <p class="sec-tag">前瞻专章：训练 2T、并拓展至 5T~10T 参数模型，本方案够不够用？</p>
+
+  <p>这是决定项目"建成即过时还是面向未来"的核心问题。结论先行：<b>单个 8,192 卡超节点足以承载 2T 级 MoE 模型的训练与几乎任意规模模型的推理，但要在有竞争力的周期内预训练前沿 2T+（尤其稠密或 5T~10T）模型，必须扩展为多超节点 SuperCluster。</b>下面用工程测算说明边界。</p>
+
+  <h3>16.1 显存够不够？——结论：显存不是瓶颈</h3>
+  <p>训练显存主要由模型状态决定。混合精度 + Adam 约需 <b>16 字节/参数</b>（权重2 + 梯度2 + FP32主权重4 + 一二阶动量8）：</p>
+  <table class="tbl">
+    <tr><th>参数量</th><th>模型状态显存（16B/param）</th><th>占单超节点 HBM（~1,024–1,152 TB）</th></tr>
+    <tr><td>2T</td><td>~32 TB</td><td>约 3%</td></tr>
+    <tr><td>5T</td><td>~80 TB</td><td>约 7%–8%</td></tr>
+    <tr><td>10T</td><td>~160 TB</td><td>约 14%–16%</td></tr>
+  </table>
+  <p>即便 10T 模型，状态显存（160 TB）也远小于单超节点 HBM 池。叠加激活、碎片、数据并行复制后仍有充裕余量，且 UnifiedBus 统一内存池便于 ZeRO/张量/专家并行切分。<b>真正的天花板是算力规模与训练时长，不是显存。</b></p>
+
+  <h3>16.2 算力够不够？——训练算力与集群规模测算</h3>
+  <p>训练计算量约 <b>FLOPs ≈ 6 × N参数 × D训练token</b>。下表按 Chinchilla 经验（D≈20×N）与 FP8、35% MFU、目标 <b>90 天</b>完成一次预训练估算所需超节点数：</p>
+  <table class="tbl">
+    <tr><th>规模</th><th>训练 FLOPs（稠密）</th><th>单超节点耗时</th><th>90天所需超节点</th><th>≈ 卡数</th></tr>
+    <tr><td>2T 稠密</td><td>4.8×10²⁶</td><td>~5 年</td><td><b>~22 个</b></td><td>~18 万</td></tr>
+    <tr><td>5T 稠密</td><td>3.0×10²⁷</td><td>~33 年</td><td><b>~135 个</b></td><td>~110 万</td></tr>
+    <tr><td>10T 稠密</td><td>1.2×10²⁸</td><td>~133 年</td><td><b>~540 个</b></td><td>~440 万</td></tr>
+  </table>
+  <div class="box risk">
+    <div class="t">⚠️ 关键事实</div>
+    单个超节点训练一个 <b>2T 稠密</b>模型（Chinchilla 最优）约需 <b>5 年</b>——对前沿竞争而言远不可行。要 3 个月跑完，2T 需 ~22 个超节点，5T 需上百个，10T 需数百个超节点。<b>稠密路线下，单超节点不足以支撑前沿万亿模型的从头预训练。</b>
+  </div>
+
+  <h3>16.3 现实路线：MoE 稀疏化大幅降低门槛</h3>
+  <p>业界的万亿模型几乎都是 <b>MoE（混合专家）</b>：总参数巨大但<b>每 token 只激活一小部分</b>（约 12%–15%）。训练算力随<b>激活参数</b>而非总参数增长，门槛骤降：</p>
+  <table class="tbl">
+    <tr><th>规模（MoE）</th><th>激活参数</th><th>训练 FLOPs</th><th>90天所需超节点</th><th>≈ 卡数</th></tr>
+    <tr><td>2T / 250B 激活</td><td>~12.5%</td><td>6.0×10²⁵</td><td><b>~3 个</b></td><td>~2.2 万</td></tr>
+    <tr><td>5T / 600B 激活</td><td>~12%</td><td>3.6×10²⁶</td><td><b>~16 个</b></td><td>~13 万</td></tr>
+    <tr><td>10T / 1T 激活</td><td>~10%</td><td>1.2×10²⁷</td><td><b>~54 个</b></td><td>~44 万</td></tr>
+  </table>
+  <p>MoE 路线下，<b>2T 模型 3 个超节点即可 90 天训成</b>（或单超节点约 6–9 个月）；5T 约需十余个超节点；10T 约需五十余个超节点。这也是为什么 MoE 是万亿时代的主流架构——它把"买得起多少卡"和"模型多大"解耦。</p>
+
+  <h3>16.4 够不够用？——分场景结论</h3>
+  <table class="tbl">
+    <tr><th>使用场景</th><th>单超节点（8,192卡）是否够用</th><th>说明</th></tr>
+    <tr><td>2T 模型推理/服务</td><td><span class="sev s-l">充分</span></td><td>显存与算力均绰绰有余，可服务超大模型</td></tr>
+    <tr><td>≤500B 模型预训练</td><td><span class="sev s-l">充分</span></td><td>数周到数月可完成</td></tr>
+    <tr><td>2T MoE 预训练</td><td><span class="sev s-m">基本够（周期偏长）</span></td><td>单超节点约 6–9 个月；想 3 个月需 ~3 个超节点</td></tr>
+    <tr><td>2T 稠密预训练（前沿周期）</td><td><span class="sev s-h">不够</span></td><td>需 ~22 个超节点（~18 万卡）</td></tr>
+    <tr><td>5T~10T 预训练</td><td><span class="sev s-h">不够</span></td><td>需数十至数百个超节点的 SuperCluster</td></tr>
+  </table>
+
+  <h3>16.5 面向未来的规划建议</h3>
+  <ul>
+    <li><b>分期扩展路线图：</b>一期 1 超节点（验证架构、跑通 2T MoE 与全量推理）→ 二期 3–8 超节点（支撑 2T 快训与 5T 起步）→ 三期 数十超节点 SuperCluster（面向 5T~10T）。</li>
+    <li><b>基础设施一次到位：</b>电力（≥120 MW 预留）、网络脊柱（跨超节点 rail-optimized spine）、冷源主管路、存储骨干按终局规模设计，设备分期采购。</li>
+    <li><b>押注 MoE + 长序列优化：</b>架构上优先 MoE 以解耦参数规模与算力成本；显存富余可用于更长上下文与更大专家数。</li>
+    <li><b>FP8/FP4 全程化：</b>950 系列首发 FP4，低精度训练/推理可成倍提升有效算力与能效，是面向 10T 的关键杠杆。</li>
+    <li><b>跨超节点线性度是胜负手：</b>万亿模型成败取决于跨 pod 通信效率——脊柱网络、并行策略（TP/PP/EP/DP）协同、通信-计算重叠须从一期就开始打磨。</li>
+    <li><b>用单位算力成本驱动决策：</b>以 ¥/有效PFLOPS·年 衡量每一期扩展的经济性，结合内蒙古绿电优势，把成本曲线压在行业前列。</li>
+  </ul>
+
+  <div class="box tip">
+    <div class="t">✅ 面向未来的总判断</div>
+    本方案<b>架构方向面向未来、单体规模面向当下</b>。单超节点是正确的"第一块积木"：足以训练 2T MoE 与服务任意大模型；但 5T~10T 前沿预训练属于<b>数十至数百超节点的 SuperCluster 范畴</b>。只要在选址、电力、网络脊柱与运维体系上<b>按 SuperCluster 终局预留</b>，本项目就能从单超节点平滑成长为面向万亿—十万亿参数时代的算力底座。
+  </div>
+  <p class="src">测算口径：FLOPs≈6·N·D；Chinchilla D≈20·N；FP8 峰值 8 EFLOPS/超节点，MFU 35%，目标 90 天/次。均为工程量级估算，用于规划判断，实际随架构（MoE 稀疏比、序列长度）、并行效率与精度方案显著变化。</p>
+</section>
+
+<div class="chapnav" id="chapnav">
+  <button class="cn-btn" id="prevBtn">‹ 上一章</button>
+  <span class="cn-pos" id="chapPos"></span>
+  <button class="cn-btn" id="nextBtn">下一章 ›</button>
+</div>
+
+</div><!-- inner -->
+
+<footer>
+  <p><b>内蒙古昇腾950超节点智算中心 · 端到端规划与执行方案</b>　|　项目策划书 · 决策与工程双层视角</p>
+  <p class="src">规格来源（联网核实，2025-09 华为官宣及后续路线图）：
+    <a href="https://www.huawei.com/cn/news/2025/9/hc-superpod-innovation">华为超节点架构创新</a> ·
+    <a href="https://www.huawei.com/en/news/2025/9/hc-xu-keynote-speech">Huawei SuperPoD Interconnect</a> ·
+    <a href="https://www.eetrend.com/content/2025/100594934.html">昇腾950/960/970 发布解析</a> ·
+    <a href="https://news.mydrivers.com/1/1075/1075358.htm">自研HBM 144GB/4TB·s</a> ·
+    <a href="https://m.bjx.com.cn/mnews/20250625/1447869.shtml">和林格尔绿电使用率超80%</a> ·
+    <a href="http://www.news.cn/20250530/f78302756af34aafbd2664d413f8d96e/c.html">内蒙古绿色算力基地</a>
+  </p>
+  <p class="src">对标资料（联网核实，2026-06）：
+    <a href="https://www.nvidia.com/en-us/data-center/gb200-nvl72/">NVIDIA GB200 NVL72 规格</a> ·
+    <a href="https://developer.nvidia.com/blog/nvidia-gb200-nvl72-delivers-trillion-parameter-llm-training-and-real-time-inference/">GB200 NVL72 万亿参数训练</a> ·
+    <a href="https://x.ai/colossus">xAI Colossus 超级集群</a> ·
+    <a href="https://introl.com/blog/xai-colossus-2-gigawatt-expansion-555k-gpus-january-2026">Colossus 55.5万卡 / 2GW（2026-01）</a>
+  </p>
+  <p class="src">声明：标"估"数字为基于公开规格的工程推算，非厂商承诺；签约/施工前须以华为正式技术建议书、设计院概算与电力/用水协议复核。</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a[data-target]'));
+  var ids = links.map(function(a){return a.getAttribute('data-target');});
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var chapPos = document.getElementById('chapPos');
+
+  function show(id, push){
+    var idx = ids.indexOf(id);
+    if(idx === -1) idx = 0, id = ids[0];
+
+    document.querySelectorAll('main section').forEach(function(s){
+      s.classList.toggle('active', s.id === id);
+    });
+    links.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('data-target') === id);
+    });
+
+    // prev/next state
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === ids.length - 1;
+    var label = links[idx].textContent.trim();
+    chapPos.textContent = label + '　·　' + (idx+1) + ' / ' + ids.length;
+
+    if(push){ history.replaceState(null, '', '#' + id); }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      show(a.getAttribute('data-target'), true);
+    });
+  });
+  prevBtn.addEventListener('click', function(){
+    var idx = ids.indexOf(currentId());
+    if(idx > 0) show(ids[idx-1], true);
+  });
+  nextBtn.addEventListener('click', function(){
+    var idx = ids.indexOf(currentId());
+    if(idx < ids.length-1) show(ids[idx+1], true);
+  });
+  function currentId(){
+    var act = document.querySelector('main section.active');
+    return act ? act.id : ids[0];
+  }
+
+  // initial chapter from hash, else first
+  var start = (location.hash || '').replace('#','');
+  show(ids.indexOf(start) !== -1 ? start : ids[0], false);
+})();
+</script>
+</body>
+</html>
