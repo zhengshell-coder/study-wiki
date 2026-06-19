@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 源码泄露深度解读 —— 理念 · 架构 · 思想 · 演进</title>
+<style>
+  :root{
+    --bg:#171310; --bg2:#1e1813; --card:#221b15; --card2:#2a2119;
+    --border:#372c22; --text:#ece5dc; --muted:#a89a8c; --dim:#7d7164;
+    --accent:#e8835a; --accent2:#f0a87f; --accent-dim:#5c3826;
+    --green:#8fc98f; --yellow:#e3c878; --red:#e08080; --blue:#8ab4d8;
+    --code-bg:#120e0b; --mono:"SF Mono","JetBrains Mono",Consolas,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.85; font-size:15.5px;
+  }
+  /* ===== 布局 ===== */
+  .layout{display:flex; min-height:100vh}
+  aside{
+    width:272px; flex-shrink:0; background:var(--bg2);
+    border-right:1px solid var(--border);
+    position:fixed; top:0; bottom:0; left:0; overflow-y:auto; z-index:50;
+    padding:22px 14px 30px;
+  }
+  aside::-webkit-scrollbar{width:5px}
+  aside::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  .brand{padding:0 10px 16px; border-bottom:1px solid var(--border); margin-bottom:14px}
+  .brand .logo{font-size:21px; font-weight:700; letter-spacing:.5px}
+  .brand .logo em{color:var(--accent); font-style:normal}
+  .brand .sub{font-size:12px; color:var(--dim); margin-top:4px}
+  .navgroup{font-size:11px; color:var(--dim); letter-spacing:2px; padding:14px 10px 6px; text-transform:uppercase}
+  .navitem{
+    display:flex; align-items:baseline; gap:9px; padding:8px 10px; border-radius:8px;
+    color:var(--muted); cursor:pointer; font-size:13.5px; transition:all .15s; border:1px solid transparent;
+    margin-bottom:2px; user-select:none;
+  }
+  .navitem .num{font-family:var(--mono); font-size:11px; color:var(--dim); min-width:20px}
+  .navitem:hover{background:var(--card); color:var(--text)}
+  .navitem.active{background:var(--accent-dim); color:var(--accent2); border-color:#6e452e}
+  .navitem.active .num{color:var(--accent)}
+  main{margin-left:272px; flex:1; min-width:0}
+  .page{max-width:880px; margin:0 auto; padding:46px 44px 80px}
+  section.chapter{display:none}
+  section.chapter.active{display:block; animation:fadein .25s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* ===== 排版 ===== */
+  .kicker{font-family:var(--mono); font-size:12px; color:var(--accent); letter-spacing:3px; margin-bottom:10px}
+  h1{font-size:30px; line-height:1.35; margin-bottom:18px; font-weight:700}
+  h2{font-size:21px; margin:42px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border); color:var(--accent2)}
+  h3{font-size:16.5px; margin:28px 0 10px; color:var(--text)}
+  p{margin:0 0 14px; color:#d8d0c5}
+  strong{color:var(--text)}
+  .lead{font-size:16.5px; color:var(--muted); margin-bottom:26px}
+  a{color:var(--accent2); text-decoration:none; border-bottom:1px dotted #6e452e}
+  a:hover{color:var(--accent)}
+  blockquote{
+    border-left:3px solid var(--accent); background:var(--card);
+    padding:14px 18px; border-radius:0 10px 10px 0; margin:18px 0; color:var(--muted); font-size:14.5px;
+  }
+  code{font-family:var(--mono); font-size:13px; background:var(--code-bg); border:1px solid var(--border); padding:1.5px 6px; border-radius:5px; color:var(--accent2)}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; overflow-x:auto; margin:16px 0; line-height:1.65;
+  }
+  pre code{background:none; border:none; padding:0; color:#cfc6b8; font-size:12.8px}
+  pre .c{color:#6f6354} pre .k{color:var(--accent)} pre .s{color:var(--green)} pre .f{color:var(--blue)}
+  /* ===== 组件 ===== */
+  .statgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:20px 0}
+  .stat{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 14px; text-align:center}
+  .stat .v{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--accent)}
+  .stat .l{font-size:12px; color:var(--muted); margin-top:5px}
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:13.8px}
+  th{background:var(--card2); color:var(--accent2); text-align:left; padding:9px 12px; border:1px solid var(--border); font-weight:600; white-space:nowrap}
+  td{padding:9px 12px; border:1px solid var(--border); color:#d8d0c5; vertical-align:top}
+  tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+  .cardlist{display:grid; gap:12px; margin:18px 0}
+  .cardlist.cols2{grid-template-columns:1fr 1fr}
+  .pcard{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px}
+  .pcard h4{font-size:14.5px; color:var(--accent2); margin-bottom:6px}
+  .pcard h4 .tag{font-family:var(--mono); font-size:10.5px; color:var(--dim); margin-left:6px; font-weight:400}
+  .pcard p{font-size:13.5px; color:var(--muted); margin:0}
+  .flow{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px; margin:18px 0; font-family:var(--mono); font-size:13px; line-height:2.1; color:#cfc6b8;
+    overflow-x:auto; white-space:pre;
+  }
+  .flow b{color:var(--accent); font-weight:600}
+  .note{
+    background:rgba(232,131,90,.07); border:1px solid #57402f; border-radius:10px;
+    padding:12px 16px; margin:16px 0; font-size:13.5px; color:var(--muted);
+  }
+  .note b{color:var(--accent2)}
+  .warn{background:rgba(224,128,128,.06); border-color:#5c3434}
+  .warn b{color:var(--red)}
+  .pager{display:flex; justify-content:space-between; gap:14px; margin-top:54px; padding-top:22px; border-top:1px solid var(--border)}
+  .pager button{
+    background:var(--card); color:var(--muted); border:1px solid var(--border); border-radius:10px;
+    padding:12px 18px; cursor:pointer; font-size:13.5px; max-width:48%; text-align:left; transition:all .15s;
+    font-family:inherit;
+  }
+  .pager button:hover{border-color:var(--accent); color:var(--accent2)}
+  .pager button .dir{font-size:11px; color:var(--dim); display:block; margin-bottom:2px}
+  .pager button.next{text-align:right; margin-left:auto}
+  .pager button:disabled{visibility:hidden}
+  .progress{font-family:var(--mono); font-size:11.5px; color:var(--dim); margin-bottom:6px}
+  /* ===== 移动端 ===== */
+  .menubtn{display:none; position:fixed; top:14px; left:14px; z-index:60;
+    background:var(--card2); border:1px solid var(--border); color:var(--accent2);
+    border-radius:9px; padding:8px 13px; cursor:pointer; font-size:14px}
+  .mask{display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:45}
+  @media (max-width:900px){
+    aside{transform:translateX(-100%); transition:transform .22s}
+    aside.open{transform:none}
+    main{margin-left:0}
+    .page{padding:64px 22px 60px}
+    .menubtn{display:block}
+    .mask.show{display:block}
+    .cardlist.cols2{grid-template-columns:1fr}
+    h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+<button class="menubtn" id="menubtn">☰ 目录</button>
+<div class="mask" id="mask"></div>
+<div class="layout">
+
+<aside id="sidebar">
+  <div class="brand">
+    <div class="logo">Claude <em>Code</em></div>
+    <div class="sub">源码泄露深度解读 · 2026.06</div>
+  </div>
+  <div class="navgroup">背景</div>
+  <div class="navitem" data-ch="0"><span class="num">01</span>事件回顾：一个 .map 文件</div>
+  <div class="navitem" data-ch="1"><span class="num">02</span>设计理念总览</div>
+  <div class="navgroup">代码结构</div>
+  <div class="navitem" data-ch="2"><span class="num">03</span>技术栈与代码组织</div>
+  <div class="navitem" data-ch="3"><span class="num">04</span>Agent 主循环</div>
+  <div class="navgroup">核心机制</div>
+  <div class="navitem" data-ch="4"><span class="num">05</span>上下文工程与记忆</div>
+  <div class="navitem" data-ch="5"><span class="num">06</span>工具系统与权限安全</div>
+  <div class="navitem" data-ch="6"><span class="num">07</span>多 Agent 编排</div>
+  <div class="navitem" data-ch="7"><span class="num">08</span>成本工程与 Prompt Cache</div>
+  <div class="navgroup">前瞻</div>
+  <div class="navitem" data-ch="8"><span class="num">09</span>隐藏功能与争议</div>
+  <div class="navitem" data-ch="9"><span class="num">10</span>演进方向与启示</div>
+  <div class="navitem" data-ch="10"><span class="num">附</span>参考资料与声明</div>
+</aside>
+
+<main>
+<div class="page" id="page">
+
+<!-- ======================= 第 1 章 ======================= -->
+<section class="chapter" id="ch0">
+  <div class="kicker">CHAPTER 01 · 事件回顾</div>
+  <h1>一个 .map 文件引发的"被迫开源"</h1>
+  <p class="lead">2026 年 3 月 31 日，npm 包 <code>@anthropic-ai/claude-code@2.1.88</code> 中被误留了一个 59.8 MB 的 <code>cli.js.map</code> 文件。Source Map 的 <code>sourcesContent</code> 字段直接包含全部原始源码——拿到 .map，就等于拿到全部源码。Claude Code 的完整 TypeScript 代码库就此公之于众。</p>
+
+  <div class="statgrid">
+    <div class="stat"><div class="v">512,000+</div><div class="l">TypeScript 代码行数</div></div>
+    <div class="stat"><div class="v">~1,906</div><div class="l">源文件数</div></div>
+    <div class="stat"><div class="v">59.8 MB</div><div class="l">泄露的 cli.js.map</div></div>
+    <div class="stat"><div class="v">44</div><div class="l">隐藏功能标志</div></div>
+    <div class="stat"><div class="v">40+</div><div class="l">内置工具</div></div>
+    <div class="stat"><div class="v">50+</div><div class="l">斜杠命令</div></div>
+  </div>
+
+  <h2>事件时间线</h2>
+  <table>
+    <tr><th>时间</th><th>事件</th></tr>
+    <tr><td>2025-02-24</td><td>第一次泄露：v0.2.8 因 inline-source-map 暴露源码（.mjs 文件高达 22MB），Anthropic 次日紧急撤包修复</td></tr>
+    <tr><td>2026-03-26</td><td>CMS 配置失误，泄露未发布的 "Mythos" 模型规格草稿（约 3,000 个内部文件）</td></tr>
+    <tr><td>2026-03-31</td><td>第二次泄露：v2.1.88 的 npm 包中误留 cli.js.map；安全研究员 Chaofan Shou 在 X 上公开，帖子获约 1,600~2,100 万浏览</td></tr>
+    <tr><td>2026-03-31</td><td>代码数小时内被归档至多个 GitHub 仓库，镜像仓库 Fork 超 41,500 次；Anthropic 撤包并发出 DMCA（最终下架 8,100+ 仓库）</td></tr>
+    <tr><td>2026-04-01</td><td>韩国开发者 Sigrid Jin 发布"净室重写"的 Python 版 <code>instructkr/claw-code</code>，2 小时获 5 万+ Star，被称为 GitHub 史上增长最快的仓库</td></tr>
+  </table>
+
+  <h2>为什么会泄露</h2>
+  <p>根本原因极其朴素：Claude Code 使用 <strong>Bun</strong> 构建（Anthropic 于 2025 年底收购 Bun 团队），Bun 默认生成 Source Map，而 <code>.npmignore</code> 中没有 <code>*.map</code> 排除规则，<code>package.json</code> 的 <code>files</code> 白名单也未正确配置。这已是 13 个月内第二次在同一个坑里翻车。</p>
+  <blockquote>Claude Code 负责人 Boris Cherny 确认这是"plain developer error"（单纯的开发失误），并留下一句颇能代表其开发文化的话：<strong>"我对 Claude Code 的贡献，100% 是由 Claude Code 写的。"</strong>——这意味着泄露出来的，某种程度上也是 Claude 自己写的代码，AI 的编码风格第一次大规模成为公共记录。</blockquote>
+  <p>Anthropic 官方回应称"这是人为错误导致的发布打包问题，而非安全漏洞，没有敏感客户数据或凭据泄露"。但对一家以 AI Safety 为招牌、Claude Code 年化收入约 25 亿美元的公司来说，5 天内连续两起泄露事故，工程发布流程的严谨度难免遭到质疑。</p>
+
+  <div class="note"><b>一个值得玩味的讽刺：</b>源码中有一个专门防止内部信息泄露的"卧底模式"（Undercover Mode），用于在员工向开源仓库提交代码时抹去内部痕迹。这套防泄露系统本身，随着整个代码库一起泄露了。防住了 commit message，没防住 .npmignore。</div>
+
+  <h2>为什么值得研究</h2>
+  <p>抛开事件的戏剧性，这次泄露的真正价值在于：这是业界第一次能以 51.2 万行的细节，完整审视一个<strong>商业上最成功的生产级 Agentic CLI</strong> 是如何构建的。它不是 Demo、不是论文复现，而是每天承载海量真实请求、支撑 25 亿美元 ARR 的实战系统。后续章节将聚焦其中沉淀的设计理念与工程模式——这些才是对每个 AI 应用开发者真正可迁移的财富。</p>
+</section>
+
+<!-- ======================= 第 2 章 ======================= -->
+<section class="chapter" id="ch1">
+  <div class="kicker">CHAPTER 02 · 设计理念总览</div>
+  <h1>Harness Engineering：为模型造一副"挽具"</h1>
+  <p class="lead">读完各路对源码的分析，最核心的发现可以浓缩为一句话：<strong>Claude Code 的代码库中，只有约 1.6% 是"AI 决策逻辑"，其余 98.4% 全是确定性工程</strong>——权限门控、上下文管理、工具路由、错误恢复。Agent 循环本身只是一个 while 循环；真正的工程，全在循环之外。</p>
+
+  <h2>理念一：模型是灵魂，工程是挽具</h2>
+  <p>社区把这种思路称为 <strong>Harness Engineering（挽具工程）</strong>：模型如同一匹能力强大的马，工具的职责不是替马思考，而是打造一副足够好的挽具——让模型的能力被安全、低成本、可恢复地释放出来。这解释了 Claude Code 几乎所有的架构选择：</p>
+  <div class="cardlist">
+    <div class="pcard"><h4>不替模型做决定，但为决定设关卡</h4><p>系统不用规则引擎预判模型该做什么，而是让模型自由提议、再用四层权限链（配置规则 → 工具自检 → 小模型分类器 → 用户确认）逐层把关。智能交给模型，安全交给工程。</p></div>
+    <div class="pcard"><h4>用 Prompt 编排，不用框架编排</h4><p>多 Agent 协作、技能加载、任务规划全部通过提示词与工具调用实现，没有引入任何重型 Agent 框架。社区评价："这让 LangChain 看起来像是一个在寻找问题的解决方案。"</p></div>
+    <div class="pcard"><h4>为失败设计，而非为成功设计</h4><p>压缩失败 3 次自动熔断、API 返回 413 时紧急压缩、用户连续拒绝 3 次自动降级回逐步确认……这些不是乐观的设计，而是"看过太多事故之后"的设计。优雅地管理失败，是整个代码库最一致的气质。</p></div>
+    <div class="pcard"><h4>成本是一等公民</h4><p>从字母序排列工具描述以稳定缓存哈希，到把 Agent 列表外置到消息附件省下 10.2% 的缓存创建 Token，成本优化深入到字节级。在 Anthropic 的请求规模下，10% 的缓存优化就是真金白银。</p></div>
+  </div>
+
+  <h2>理念二：简单的东西优先</h2>
+  <p>一个 51 万行的系统，底层选择却出奇地"土"：</p>
+  <p>记忆系统<strong>没有向量数据库、没有 Embedding</strong>，就是一个限制在 200 行 / 25KB 以内的 <code>MEMORY.md</code> 加上结构化摘要；主循环就是 <code>while(true)</code> 套异步生成器；多 Agent 通信靠文件与消息传递。复杂度被刻意压在"机制"层面，而不是堆在"技术选型"层面。这与 Anthropic 官方一贯主张的 "build simple, composable agents" 一脉相承——能用文件系统解决的，绝不引入数据库；能用 Prompt 解决的，绝不写状态机框架。</p>
+
+  <h2>理念三：渐进式自治（Trust Gradient）</h2>
+  <p>整个产品的演进可以看作一条"信任坡道"：从你说一步它做一步（会话式），到 Auto Mode 下由小模型分类器代为审批，到 Coordinator 托管一组 Worker 并行干活，再到未发布的 KAIROS 模式——7×24 小时在线、自主决定何时行动的守护进程。每一级自治的解锁，都伴随对应等级的工程约束（审计日志、预算上限、降级机制）。<strong>自治不是开关，是坡道</strong>，这是 Claude Code 在产品哲学上最重要的判断。</p>
+
+  <h2>理念四：透明的可扩展边界</h2>
+  <p>工具（Tools）、技能（Skills）、插件（Plugins）、Hooks、MCP——五套扩展机制各司其职，但共享同一套权限与调度底座。子 Agent 不是特殊机制，而是注册表里的普通一员（<code>AgentTool</code>），"派生一个 Agent"与"读一个文件"在架构上是同一类事件。这种<strong>扁平、统一的抽象</strong>让系统在膨胀到 40+ 工具、上百个被门控模块后依然可控。</p>
+
+  <blockquote>一句话总结这套理念：<strong>把不确定性关进确定性的笼子里。</strong>模型负责所有不确定的智能，工程负责让每一次不确定的输出都落在可审计、可恢复、可付得起的轨道上。</blockquote>
+</section>
+
+<!-- ======================= 第 3 章 ======================= -->
+<section class="chapter" id="ch2">
+  <div class="kicker">CHAPTER 03 · 代码结构</div>
+  <h1>技术栈与代码组织：用 React 画终端</h1>
+  <p class="lead">技术选型大胆而自洽：Bun 运行时、React + Ink 渲染终端 UI、Zod v4 全面接管校验。一个 CLI 工具，用的却是 Web 前端级别的工程化。</p>
+
+  <h2>技术栈一览</h2>
+  <table>
+    <tr><th>组件</th><th>选型</th><th>意图</th></tr>
+    <tr><td>语言</td><td>TypeScript（strict）</td><td>全栈类型安全，51 万行的可维护性底线</td></tr>
+    <tr><td>运行时</td><td>Bun（非 Node.js）</td><td>更快的启动；编译期死代码消除（DCE）支撑功能标志体系</td></tr>
+    <tr><td>终端 UI</td><td>React + Ink</td><td>组件化 + Flexbox + Hooks 渲染终端，带游戏引擎式渲染优化</td></tr>
+    <tr><td>CLI 解析</td><td>Commander.js</td><td>成熟方案，不重复造轮子</td></tr>
+    <tr><td>Schema 校验</td><td>Zod v4</td><td>每个工具的输入输出都有运行时校验</td></tr>
+  </table>
+  <p>"用 React 画终端"初看离谱，细想合理：流式输出、工具调用状态、进度条、并行任务面板……这种实时复杂 UI 用组件化 + 状态管理来做，比手写 ncurses 高效得多。<strong>本质是把 Web 前端二十年的工程沉淀搬进了终端。</strong></p>
+
+  <h2>目录结构（据泄露源码整理）</h2>
+  <pre><code><span class="c">claude-code/</span>
+├── query-engine/    <span class="c"># 查询引擎：LLM 调用/流式/缓存/编排，~46,000 行，最大模块</span>
+├── tools/           <span class="c"># 40+ 工具实现，基础工具定义约 29,000 行</span>
+├── coordinator/     <span class="c"># 多 Agent 协调编排（Agent Teams 核心）</span>
+├── assistant/       <span class="c"># 内部代号 KAIROS 的自主守护模式</span>
+├── services/        <span class="c"># 30+ 服务模块：compact、autoDream、mcp、voice、lsp、analytics…</span>
+├── memory/          <span class="c"># 持久化记忆系统（MEMORY.md）</span>
+├── plugins/  skills/<span class="c"># 插件与技能按需加载体系</span>
+├── ide-bridge/      <span class="c"># VS Code / JetBrains 桥接层</span>
+├── security/        <span class="c"># 安全检查：~2,500 行 bash 命令安全校验</span>
+├── system-prompt/   <span class="c"># 完整系统提示词与模块化提示架构</span>
+└── buddy/           <span class="c"># 终端电子宠物彩蛋（详见第 09 章）</span></code></pre>
+
+  <h2>三个值得细看的工程细节</h2>
+  <h3>1. 启动预热：抢出来的 65ms</h3>
+  <p>入口文件 <code>main.tsx</code> 在任何 import 之前，先用副作用触发 MDM 配置读取和 macOS 钥匙串预取，利用后续模块加载的约 135ms 窗口做并行预热，实测节省 65ms 启动时间。一个 CLI 工具对启动延迟抠到这个程度，体现的是"终端工具必须像原生命令一样快"的产品执念。</p>
+  <h3>2. 功能标志即架构：100+ 个"不存在"的模块</h3>
+  <p>泄露源码中有大量被功能标志门控的模块（一项分析统计为 108 个，另有研究者提取出 44 个编译期特性标志、上百个环境变量与远程开关）。KAIROS、VOICE_MODE、DAEMON 等代码在源码里完整存在，但通过 Bun 的<strong>编译期死代码消除</strong>，在外部发行版中物理上不存在。这是"发布"与"就绪"的彻底解耦：新能力在主干上持续迭代，用户手里的产物却始终干净。</p>
+  <h3>3. 大文件哲学：集中胜过分散</h3>
+  <p>查询引擎模块约 4.6 万行，核心 API 调用文件 <code>services/api/claude.ts</code> 一个文件 3,419 行。这在传统代码审美里是红灯，但其逻辑自洽：<strong>所有触碰模型 API 的东西放在一处</strong>——重试、限流、上下文预算、流式错误，必须被放在一起推理，拆散反而制造分布式心智负担。</p>
+
+  <h2>另一面：精密与"草台"并存</h2>
+  <p>源码也暴露了不少槽点：<code>print.ts</code> 全文 5,594 行，其中单个函数长达 3,167 行；大量嵌套的 <code>.then()</code> 回调链被社区戏称为"vibes 时代的代表作"；用<strong>正则表达式</strong>检测用户输入中的脏话和挫败情绪（"一家 LLM 公司用正则做情感分析，就像卡车公司用马运零件"）；以及 187 个加载动画动词——社区逐个排查后确认里面有 SimCity 的传世彩蛋 "reticulating"。</p>
+  <div class="note"><b>解读：</b>这恰恰是这份源码最真实的地方。安全攸关处（客户端证明甚至下沉到 Bun 的 Zig 层 HTTP 栈）极尽精密，体验非关键路径上则速度优先、能跑就行。资源向刀刃倾斜，本身就是一种成熟的工程权衡——尽管 .npmignore 这把刀刃显然被漏掉了。</div>
+</section>
+
+<!-- ======================= 第 4 章 ======================= -->
+<section class="chapter" id="ch3">
+  <div class="kicker">CHAPTER 04 · Agent 主循环</div>
+  <h1>主循环：是状态机，不是聊天循环</h1>
+  <p class="lead">Agent 循环位于 <code>query.ts</code>，整整 1,729 行：一个名为 <code>queryLoop</code> 的异步生成器包裹着 <code>while(true)</code>。代码内部注释提到 "7 continue sites"——循环中有七个明确让出控制权、决定下一步去向的状态转移点。</p>
+
+  <pre><code><span class="k">async function*</span> <span class="f">queryLoop</span>(
+  params: QueryParams,
+  consumedCommandUuids: <span class="k">string</span>[],
+): AsyncGenerator&lt;
+  StreamEvent | RequestStartEvent | Message
+  | TombstoneMessage | ToolUseSummaryMessage,
+  Terminal
+&gt;</code></pre>
+
+  <h2>为什么这个设计重要</h2>
+  <p>大多数 Agent 框架把 LLM 调用当作引力中心：发 Prompt、拿响应、跑工具、重复。Demo 够用，但一旦需要<strong>暂停会话、稍后恢复、序列化状态、turn 中途处理错误、组合多个 Agent</strong>，就会立刻散架。</p>
+  <p>生成器模式把每一次循环迭代变成<strong>显式的状态转移</strong>：可以在七个点位中的任何一处 yield 出去而不丢状态；压缩、权限检查、预算跟踪都能作为"阶段"插入，而不是挂在回调链上的副作用；每个阶段可以独立测试。</p>
+  <blockquote><strong>模型调用只是主循环七个阶段中的一个。</strong>其余六个——状态管理、上下文压缩、工具加载、权限检查、成本优化、流式分发——才是工程真正存在的地方。如果你的 Agent 核心就是一个 while 里夹着 <code>await model.chat()</code>，这是最值得研究的模式。</blockquote>
+
+  <h2>流式工具执行：并发与串行的自动分区</h2>
+  <p>主循环之下还有一个 <code>StreamingToolExecutor</code>：模型在一个回合里请求多个工具时，调度器根据每个工具的 <code>isConcurrencySafe()</code> 声明，自动把调用分区为<strong>并发批次</strong>（读文件、搜索等只读操作并行跑）和<strong>串行批次</strong>（写文件、执行命令依次跑）。并行与安全的取舍，被下放为每个工具自己声明的属性，调度层只做机械分区——又一次"声明式安全"的体现。</p>
+
+  <h2>投机执行：来自 CPU 的灵感</h2>
+  <p>源码里还有一个 Speculation 机制：在用户输入的同时，系统预生成响应，如果用户真的发送了该内容，直接返回已生成的结果。这与 CPU 分支预测是同一类思路——<strong>用算力换延迟</strong>，把"等待模型"的体感时间压到最低。</p>
+
+  <div class="flow">用户输入 ─→ <b>① 状态装配</b>（恢复会话/附件/记忆）
+        ─→ <b>② 上下文检查</b>（必要时触发压缩，见第 05 章）
+        ─→ <b>③ 工具池装配</b>（核心工具 + 按需加载，见第 06 章）
+        ─→ <b>④ 模型调用</b>（流式，缓存感知，见第 08 章）
+        ─→ <b>⑤ 工具执行</b>（权限链 → 并发/串行分区）
+        ─→ <b>⑥ 结果回填</b>（大输出落盘，only 摘要进上下文）
+        ─→ <b>⑦ 终止判定</b>（继续循环 / yield 控制权 / 结束）</div>
+  <p style="font-size:13px;color:var(--dim)">▲ 主循环七阶段示意（依据公开分析整理，非源码原图）</p>
+</section>
+
+<!-- ======================= 第 5 章 ======================= -->
+<section class="chapter" id="ch4">
+  <div class="kicker">CHAPTER 05 · 上下文工程</div>
+  <h1>上下文工程：五种压缩策略与文件即记忆</h1>
+  <p class="lead">每个长时运行的 Agent 终将填满上下文窗口。多数框架的答案是截断旧消息；Claude Code 的答案是<strong>五种各司其职的压缩策略</strong>，外加一套完全建立在文件系统上的长期记忆。</p>
+
+  <h2>五种压缩策略</h2>
+  <div class="cardlist">
+    <div class="pcard"><h4>Snip<span class="tag">快速裁剪</span></h4><p>修剪较旧的消息以快速腾出余量。快速、有损，适合应急争取空间。</p></div>
+    <div class="pcard"><h4>Microcompact<span class="tag">microCompact.ts / apiMicrocompact.ts</span></h4><p>专门针对工具输出：一次 5,000 行的文件读取结果会被存到磁盘，模型只看到摘要加引用。单个未压缩的工具输出就可能吃掉半个上下文窗口，这一层是性价比最高的防线。本地编辑缓存内容，零 API 调用。</p></div>
+    <div class="pcard"><h4>Context Collapse<span class="tag">CONTEXT_COLLAPSE 标志门控</span></h4><p>渐进式压缩较早的对话片段，保持近期上下文清晰。带专属持久化类型（CommitEntry / SnapshotEntry）以跨会话存活。尚未完全发布。</p></div>
+    <div class="pcard"><h4>Autocompact<span class="tag">阈值触发的全量摘要</span></h4><p>接近上下文上限时触发：预留 13,000 Token 缓冲，生成最多 20,000 Token 的结构化摘要替换旧历史。内置熔断器——连续 3 次压缩失败即停止重试，绝不死循环。</p></div>
+    <div class="pcard"><h4>Reactive Compact<span class="tag">REACTIVE_COMPACT 标志门控</span></h4><p>紧急刹车：当 API 返回 413（载荷过大）时激进压缩一切，保住会话不死。没有它，一次糟糕的工具输出就能让整个会话变砖。</p></div>
+  </div>
+  <div class="note"><b>注意：</b>这五种并非整齐的"五层栈"，而是在不同条件下组合触发的策略集。其中两种仍在功能标志后迭代——即便对 Anthropic，上下文管理也远不是已解决的问题。Full Compact 完成后还会回注最近访问的文件（每文件上限 5,000 Token）、活跃计划与相关技能 Schema，工作预算重置为 50,000 Token。</div>
+
+  <h2>九段式摘要：压缩的格式纪律</h2>
+  <p>Compact 生成的摘要不是自由发挥，而是严格的九段结构：<strong>会话目标、已完成任务、未完成任务、关键决策与理由、代码变更摘要、发现的问题、待验证假设、用户偏好、上下文关键信息</strong>。格式纪律保证了压缩后模型能快速"回魂"——摘要不是日志，是可执行的状态快照。</p>
+
+  <h2>文件系统即记忆库</h2>
+  <p>长期记忆完全基于本地文件系统：核心是限制在 <strong>200 行 / 约 25KB</strong> 以内的 <code>MEMORY.md</code>，记忆划分为 User、Feedback、Project、Reference 四大类，以 Frontmatter 格式存储。没有向量数据库，没有 Embedding——纯靠 Markdown 文件加 LLM 的总结能力。</p>
+  <h3>autoDream：Claude 会"做梦"</h3>
+  <p><code>services/autoDream/</code> 实现了一个在空闲时运行的记忆整合系统，社区称之为"Claude 在做梦"。触发需过三道门：距上次整合超过 <strong>24 小时</strong>、累计 <strong>5 次会话</strong>、获得防并发的<strong>文件锁</strong>。随后执行四阶段流程：</p>
+  <div class="flow"><b>Orient</b> 评估记忆现状 ─→ <b>Gather</b> 收集近期会话信号
+─→ <b>Consolidate</b> 合并去重、消解矛盾 ─→ <b>Prune &amp; Index</b> 修剪并保持 MEMORY.md ≤ 200 行</div>
+  <blockquote>这套"白天记录、夜里整理"的机制，几乎是对生物记忆巩固（睡眠期间的海马体回放）的工程致敬。它再次印证了核心理念：<strong>在工程复杂度与效果之间，选最朴素的方案</strong>——记忆的难点从来不是存储技术，而是"记什么"与"何时整理"。</blockquote>
+</section>
+
+<!-- ======================= 第 6 章 ======================= -->
+<section class="chapter" id="ch5">
+  <div class="kicker">CHAPTER 06 · 工具系统</div>
+  <h1>工具系统：按需加载与默认拒绝</h1>
+  <p class="lead">40+ 个工具、50+ 条斜杠命令，每个工具自带 Schema、权限声明与执行逻辑，彼此之间没有共享可变状态。<code>BashTool</code> 和 <code>FileReadTool</code> 在同一个注册表里，却被按各自的风险画像区别对待——这是生产级 Agent 与"函数调用列表"的本质区别。</p>
+
+  <h2>Tool 抽象：声明式的风险画像</h2>
+  <pre><code><span class="c">// Tool 类型核心定义（简化自 Tool.ts，792 行，20+ 生命周期方法）</span>
+<span class="k">type</span> Tool = {
+  name: <span class="k">string</span>;
+  call: (input) =&gt; Promise&lt;ToolResult&gt;;
+  inputSchema: ZodSchema;            <span class="c">// 输入参数运行时校验</span>
+  checkPermissions: () =&gt; PermissionCheck;
+  isReadOnly: <span class="k">boolean</span>;       <span class="c">// 默认 false —— 假定工具会写</span>
+  isDestructive: <span class="k">boolean</span>;    <span class="c">// 默认 false，须显式声明</span>
+  isConcurrencySafe: <span class="k">boolean</span>;<span class="c">// 决定能否进入并发批次</span>
+  maxResultSizeChars: <span class="k">number</span>;
+  <span class="c">// ……</span>
+};</code></pre>
+  <p>关键在于两个默认值：<code>isReadOnly</code> 与 <code>isDestructive</code> 都默认按"危险"处理，工具必须<strong>显式声明</strong>自己无害——这就是默认拒绝（default-deny）。子 Agent 也只是注册表里的普通工具（<code>AgentTool</code>），无需特殊编排层，架构保持扁平。</p>
+
+  <h2>ToolSearch：工具定义的 Code Splitting</h2>
+  <p>接上 MCP 服务器后工具可能多达 200+，把所有 Schema 塞进每次请求要烧掉数千 Token。解法是给非核心工具打上 <code>defer_loading: true</code>：模型看不到它们的定义，只知道有一个元工具 <code>ToolSearch</code> 可用。</p>
+  <div class="flow">用户: "把这个部署到我的 Kubernetes 集群"
+  模型 ─→ <b>ToolSearch("kubernetes deploy")</b>
+       ─→ 系统对延迟加载工具的描述做模糊匹配
+       ─→ 把命中的 Schema 注入后续对话
+  模型 ─→ 获得所需工具，照常调用</div>
+  <p>模型从约 20 个核心工具，扩展到对数百个工具的"按需可达"，而无需预付 Token 成本。另有极简模式 <code>CLAUDE_CODE_SIMPLE</code> 只保留 3 个基础工具；<code>assembleToolPool()</code> 负责合并内置与 MCP 工具，并按缓存友好的顺序排列。这个模式正在成为行业标配：OpenAI Agents SDK、CrewAI 等已实现几乎相同的机制。</p>
+
+  <h2>四层递进权限链</h2>
+  <table>
+    <tr><th>层级</th><th>检查内容</th><th>示例</th></tr>
+    <tr><td>① Config Rules</td><td>用户/组织配置的静态规则</td><td><code>.claude/settings.json</code> 中的 allow / deny</td></tr>
+    <tr><td>② Tool 自检</td><td>工具自身的 <code>checkPermissions</code> 逻辑</td><td>BashTool 校验命令是否在白名单</td></tr>
+    <tr><td>③ Classifier</td><td>侧路小模型实时研判</td><td>把对话转录+待执行命令交给更小更便宜的 LLM 输出 Allow/Deny</td></tr>
+    <tr><td>④ Interactive UI</td><td>用户手动确认</td><td>弹出 Allow / Deny 提示</td></tr>
+  </table>
+  <p>第三层最有意思：<strong>用小 AI 监管大 AI</strong>。Auto Mode 下，一个廉价的侧路模型在后台静默审计每条 Bash 命令——比静态规则灵活，比每次都问用户便宜。此外 <code>bashSecurity.ts</code> 还有 23 项编号的安全检查（约 2,500 行），防输入注入与命令拼接攻击。</p>
+
+  <h2>46 行代码里的大原则：拒绝跟踪</h2>
+  <pre><code><span class="c">// denialTracking.ts —— 全文仅 46 行</span>
+连续 3 次拒绝            ─→ shouldFallbackToPrompting() = <span class="k">true</span>
+单会话累计 20 次拒绝      ─→ 同上</code></pre>
+  <p>用户不断说"不"时，多数框架要么硬着头皮重试、要么直接罢工。Claude Code 的选择是<strong>优雅降级</strong>：自动退出 Auto Mode，回到每步征求许可——"你对我正在做的事感到不安，那我每一步都先问你"。文件很小，原则很大：<strong>当用户失去信任时，系统应主动收缩自治权。</strong></p>
+</section>
+
+<!-- ======================= 第 7 章 ======================= -->
+<section class="chapter" id="ch6">
+  <div class="kicker">CHAPTER 07 · 多 Agent 编排</div>
+  <h1>Coordinator 模式：上下文污染的解药</h1>
+  <p class="lead">长任务中，探索方案 A 产生的海量中间输出会挤占上下文、污染后续判断——这是所有长程 Agent 的共同痛点。Claude Code 的解法是 Coordinator + Fork Subagent：<strong>用完即毁，只留结论。</strong></p>
+
+  <h2>两层架构</h2>
+  <div class="cardlist cols2">
+    <div class="pcard"><h4>Coordinator（协调者）</h4><p>被剥夺直接操作文件的权限，只保留 <code>Agent</code>（派生子代理）、<code>SendMessage</code>、<code>TaskStop</code> 三个工具。它的全部职责就是规划与调度——不让"指挥官"亲自下场搬砖，也是一种权限设计。</p></div>
+    <div class="pcard"><h4>Worker（执行者）</h4><p>携带具体工具被派生出来执行实际任务，在独立上下文窗口中运行，结束后销毁。</p></div>
+  </div>
+
+  <h3>三个关键机制</h3>
+  <div class="cardlist">
+    <div class="pcard"><h4>① Fork 继承缓存</h4><p>子 Agent 不复制新上下文，而是共享父对话的 Prompt Cache 前缀——创建子 Agent 的边际 Token 成本极低。多 Agent 的可行性，本质上是被缓存经济学解锁的。</p></div>
+    <div class="pcard"><h4>② 隔离探索</h4><p>子 Agent 的所有中间输出、工具调用、报错都被关在自己的上下文里，绝不回流污染主对话。</p></div>
+    <div class="pcard"><h4>③ 结论回传</h4><p>任务完成后不回传对话历史，只通过 XML 格式的 <code>&lt;task-notification&gt;</code> 把提炼后的结论交还 Coordinator。</p></div>
+  </div>
+
+  <h2>Mailbox 模式：并行而不混乱</h2>
+  <p>危险操作采用<strong>信箱模式</strong>：Worker 无权自行批准高风险操作，必须向 Coordinator 的信箱投递请求并等待裁决。<strong>原子认领机制</strong>保证两个 Worker 不会同时处理同一个审批；共享内存空间让团队无需重复抓取就能维持一致上下文。这与"每个 Agent 全自治"的天真多 Agent 设计形成鲜明对比——<strong>层级化审批 + 并行执行</strong>，才能并行而不混乱。所有 Teammate 子进程的权限请求都通过内部通道（<code>permissionSync.ts</code>）桥接给主进程的 Leader 统一处理。</p>
+
+  <h2>三种子 Agent 执行模型与六种任务类型</h2>
+  <table>
+    <tr><th>执行模型</th><th>形态</th><th>适用</th></tr>
+    <tr><td>Fork</td><td>同进程派生，继承缓存</td><td>隔离探索、即用即毁的子任务</td></tr>
+    <tr><td>Teammate</td><td>独立进程的平行队友，可自动在 iTerm2 / Terminal.app 中切分窗格</td><td>多任务并行推进</td></tr>
+    <tr><td>Worktree</td><td>独立 git worktree 中工作</td><td>需要隔离代码变更的实验</td></tr>
+  </table>
+  <p>任务类型则有六种：<code>local_bash</code>、<code>local_agent</code>、<code>remote_agent</code>、<code>in_process_teammate</code>、<code>local_workflow</code>、<code>dream</code>——注意最后一个：连"做梦"（记忆整合）都被建模为一种任务类型，统一进调度体系。</p>
+  <blockquote>从<strong>单体思考</strong>到<strong>集群协作</strong>：当源码里出现 Agent Swarm、为队友自动开终端窗格、给守护进程排梦这种代码时，你看到的不是一个聊天工具的未来，而是一个<strong>操作系统级调度器</strong>的雏形。</blockquote>
+</section>
+
+<!-- ======================= 第 8 章 ======================= -->
+<section class="chapter" id="ch7">
+  <div class="kicker">CHAPTER 08 · 成本工程</div>
+  <h1>Prompt Cache：字节级的精打细算</h1>
+  <p class="lead">这是整份源码技术含量最高、也最能拉开"套壳应用"与生产系统差距的部分。现阶段优秀的 AI 应用工程，本质上就是在精细压榨 API 缓存系统的每一分价值。</p>
+
+  <h2>分段缓存：静态与动态的楚河汉界</h2>
+  <p>提示词被一个硬编码标记 <code>SYSTEM_PROMPT_DYNAMIC_BOUNDARY</code> 切成两段：</p>
+  <table>
+    <tr><th>段</th><th>内容</th><th>缓存特性</th></tr>
+    <tr><td>静态段</td><td>模型身份、安全规则、代码风格约束、工具使用基础指南</td><td>整个会话几乎不变，命中率极高</td></tr>
+    <tr><td>动态段</td><td>当前工作目录、Git 状态、MCP 指令、用户配置</td><td>每次可能变化，按需计算</td></tr>
+  </table>
+  <p>System Prompt 还有一条优先级链：<code>Override &gt; Coordinator &gt; Agent &gt; Custom &gt; Default</code>，不同模式注入不同层级的指令而不破坏缓存结构。</p>
+
+  <h2>三个细节，省出真金白银</h2>
+  <div class="cardlist">
+    <div class="pcard"><h4>① 确定性排序</h4><p>传给模型的工具描述严格按字母表排序（内置工具在前、MCP 工具在后）。顺序一变，整个 Prompt 哈希就变，缓存直接失效。配置文件路径同样用基于内容的哈希映射，避免路径字符串抖动击穿缓存。</p></div>
+    <div class="pcard"><h4>② 状态外置</h4><p>可用 Agent 列表原本写在工具描述里，列表一变缓存全毁。源码把它剥离到消息附件（Attachments）中——仅此一项，减少约 <strong>10.2%</strong> 的 Cache Creation Token。在 Claude Code 占 Anthropic 总收入约 18% 的体量下，这是一笔巨款。</p></div>
+    <div class="pcard"><h4>③ 黏性开关（Sticky-on Latches）</h4><p>功能标志一旦在会话中激活就保持开启直到会话结束——因为来回翻转会改变系统提示、击穿缓存。<code>promptCacheBreakDetection.ts</code> 专门跟踪 <strong>14 个</strong>可能使缓存失效的状态字段：系统提示哈希、工具 Schema 哈希、模型切换、beta 头、effort 值……</p></div>
+  </div>
+
+  <h2>配套纪律</h2>
+  <p><strong>工具结果落盘</strong>：大输出写入磁盘、模型只看预览，既是上下文管理，更是为了保持缓存前缀稳定。<strong>Schema 稳定性</strong>:工具 Schema 在会话开始时装配一次、全程不动，MCP 工具来去自由，但核心 Schema 块岿然不动。</p>
+  <blockquote>把这一章与第 7 章连起来看会发现一个深层逻辑：<strong>缓存不是优化，而是架构约束。</strong>Fork 子 Agent 之所以便宜，是因为继承缓存前缀；功能开关之所以黏性，是因为缓存；工具之所以按字母排序，还是因为缓存。当 Token 是水电费时，整栋大楼都要围着电表设计。</blockquote>
+</section>
+
+<!-- ======================= 第 9 章 ======================= -->
+<section class="chapter" id="ch8">
+  <div class="kicker">CHAPTER 09 · 隐藏功能与争议</div>
+  <h1>藏在标志后面的未来（与麻烦）</h1>
+  <p class="lead">源码中大量被功能标志门控的模块，提前剧透了 Anthropic 的产品野心——也暴露了几处争议性决策。</p>
+
+  <h2>KAIROS：从 Copilot 到 Autopilot</h2>
+  <p>源码中被引用 150+ 次的 <strong>KAIROS</strong>（希腊语"恰当的时机"），是一个已完整建成、尚未发布的自主守护进程模式：Claude 作为 7×24 后台 Agent 常驻，接收周期性的 <code>&lt;tick&gt;</code> 提示并<strong>自主决定是否行动</strong>；支持 cron 定时、GitHub Webhook 订阅、社交软件远程指挥；合上笔记本也持续运行。配套的工程约束同样完整：单次决策 15 秒阻塞预算、Agent 自己无法抹除的 append-only 审计日志、三个专属工具（推送通知、文件投递、PR 订阅）。命名很讲究：不按时钟（chronos）跑任务，而是<strong>判断时机（kairos）再出手</strong>。</p>
+  <h2>ULTRAPLAN：把"想"外包给云端</h2>
+  <p>复杂规划卸载到远程云容器运行时，用 Opus 级模型享受最长 <strong>30 分钟</strong>的专注思考窗口；本地终端每 3 秒轮询进度，浏览器 UI 可实时围观并批准/否决方案。本地负责执行，云端负责深思——算力分层的雏形。</p>
+
+  <h2>两项争议机制</h2>
+  <div class="cardlist">
+    <div class="pcard"><h4>Undercover Mode（卧底模式）<span class="tag">undercover.ts · 约 90 行</span></h4><p>当 Anthropic 员工（<code>USER_TYPE === 'ant'</code>）在非内部仓库使用时自动激活：剥离所有 Co-Authored-By 署名、禁止提及内部代号与未发布模型、注入"不要暴露身份"的系统提示，且<strong>没有强制关闭开关</strong>。外部发行版中该函数被死代码消除。社区争论焦点：这是负责任的信息安全，还是让 AI 生成的代码无署名地进入开源世界？</p></div>
+    <div class="pcard"><h4>Anti-Distillation（反蒸馏）</h4><p>两层防御对手用 API 流量蒸馏模型：① 注入<strong>伪造工具定义</strong>毒化对手训练数据（标志 <code>tengu_anti_distill_fake_tool_injection</code>）；② 工具调用之间的推理只返回加密签名的摘要而非完整思维链。攻防意识已写进客户端架构。</p></div>
+  </div>
+
+  <h2>内部代号与遥测彩蛋</h2>
+  <table>
+    <tr><th>代号</th><th>指向</th></tr>
+    <tr><td>Tengu</td><td>Claude Code 项目本身的内部代号（功能标志多以 tengu_ 为前缀）</td></tr>
+    <tr><td>Capybara</td><td>新模型家族（多方分析认为与泄露的 "Mythos" 层级相关，存在口径分歧）</td></tr>
+    <tr><td>Fennec</td><td>Opus 4.6（源码中存在 <code>migrateFennecToOpus</code> 迁移函数）</td></tr>
+    <tr><td>Numbat</td><td>未发布模型（"Remove this section when we launch numbat"）</td></tr>
+    <tr><td>Penguin Mode</td><td>Fast Mode 的内部名，端点 <code>/api/claude_code_penguin_mode</code>，kill switch 为 <code>tengu_penguins_off</code></td></tr>
+  </table>
+  <p>遥测设计也很见功力：一个<strong>挫败指标</strong>统计用户骂脏话的频率（领先性 UX 信号——用户在骂，说明哪里断了）；一个 <strong>"continue" 计数器</strong>统计用户中途输入 continue 的次数（Agent 失速的代理指标）。两者都不是虚荣指标，都直指标准分析工具看不见的失败模式。</p>
+
+  <h2>Buddy：被泄露剧透的愚人节彩蛋</h2>
+  <p>源码里还有一个完整的终端电子宠物系统：18 个物种、5 级稀有度（传说级 1%）、五维属性（DEBUGGING / PATIENCE / CHAOS / WISDOM / SNARK）、1% 闪光变体，用 Mulberry32 PRNG 基于用户 ID 确定性生成——你的宠物是命中注定的。最妙的细节：物种之一 capybara 恰好撞上内部模型代号，工程师把全部 18 个物种名统一做了编码混淆来绕过自家的代号扫描器——为了藏一个词，把整片森林都藏了。原计划 4 月 1 日愚人节发布，结果 3 月 31 日被泄露剧透。</p>
+</section>
+
+<!-- ======================= 第 10 章 ======================= -->
+<section class="chapter" id="ch9">
+  <div class="kicker">CHAPTER 10 · 演进方向与启示</div>
+  <h1>往哪去：四条清晰的演进曲线</h1>
+  <p class="lead">把 44 个功能标志、上百个门控模块连成线，Claude Code 的路线图已经写在代码里。</p>
+
+  <h2>四条演进曲线</h2>
+  <div class="cardlist">
+    <div class="pcard"><h4>① 会话式 → 常驻式</h4><p>从"打开终端开始对话"到 KAIROS 式 7×24 守护进程：订阅事件、自判时机、主动行动。产品形态从工具走向<strong>同事</strong>。</p></div>
+    <div class="pcard"><h4>② 单体 → 集群</h4><p>Fork / Teammate / Worktree 三种执行模型 + Coordinator 调度 + Mailbox 审批，多 Agent 协作从实验功能演变为一等公民。终极形态是 Agent Swarm。</p></div>
+    <div class="pcard"><h4>③ 本地 → 云端分层</h4><p>ULTRAPLAN 把深度规划卸载到云容器，本地执行、云端深思。算力开始按"思考深度"分层定价与调度。</p></div>
+    <div class="pcard"><h4>④ 通用对话 → 领域技能</h4><p>Skills / Plugins / Hooks / MCP 的按需加载体系，让一个通用 Agent 在运行时动态获得领域专业性，而不是预先塞满上下文。</p></div>
+  </div>
+
+  <h2>已经外溢的行业影响</h2>
+  <p>泄露前后，这些模式已可见地扩散：<strong>延迟工具加载</strong>出现在 OpenAI Agents SDK（<code>deferLoading: true</code>）与 CrewAI；<strong>多策略上下文压缩</strong>出现在 Microsoft Agent Framework、LangChain Deep Agents 与 Google ADK；2025 年的第一次泄露更被认为直接催化了整个 Coding Agent 赛道的爆发。第一次泄露教大家"该怎么做"，第二次泄露展示"现在进化到了什么程度"。</p>
+
+  <h2>对开发者：可带走的模式清单</h2>
+  <table>
+    <tr><th>模式</th><th>一句话内核</th><th>适用门槛</th></tr>
+    <tr><td>异步生成器主循环</td><td>每次迭代是显式状态转移，可暂停/恢复/组合</td><td>任何 Agent 项目</td></tr>
+    <tr><td>分层上下文压缩</td><td>工具输出落盘 + 阈值摘要 + 紧急熔断</td><td>会话超过几十轮就需要</td></tr>
+    <tr><td>延迟工具加载</td><td>工具定义的 Code Splitting</td><td>工具数 &gt; 20 个</td></tr>
+    <tr><td>默认拒绝 + 拒绝跟踪</td><td>用户失去信任时主动收缩自治权</td><td>所有需要执行写操作的 Agent</td></tr>
+    <tr><td>Fork 子代理 + 结论回传</td><td>隔离探索、用完即毁、只留结论</td><td>长程多步任务</td></tr>
+    <tr><td>缓存导向设计</td><td>静态/动态分段、确定性排序、状态外置</td><td>有真实流量的产品</td></tr>
+    <tr><td>文件系统记忆</td><td>MEMORY.md + 定期"做梦"整合，不上向量库</td><td>个人/团队级记忆需求</td></tr>
+  </table>
+  <p>正如一篇分析所说：你不需要 51.2 万行代码来实现这些核心思想——<strong>模式可以拿走，复杂度需要敬畏。</strong></p>
+
+  <h2>三点冷思考</h2>
+  <p><strong>护城河不在代码里。</strong>客户端可以重写（claw-code 两小时五万星就是证明），但 Claude Code 的体验优势主要来自模型本身。工程架构是骨架，模型才是灵魂——这也是 Anthropic 敢于在事后淡定表态的底气。</p>
+  <p><strong>安全是全栈的。</strong>一家把对齐研究做到极致的公司，栽在了 <code>.npmignore</code> 上。再先进的 AI 能力，也需要扎实的工程基本功守护：Source Map 即源码，发布管线需要纵深防御（构建禁用 → 忽略规则 → CI 自检 → 发布前 dry-run → 发布后扫描）。</p>
+  <p><strong>自治需要配套的克制。</strong>KAIROS 每一分自主权都配有审计日志、阻塞预算与降级机制。行业冲向 Autopilot 的路上，Claude Code 源码给出的最大启示或许是：<strong>先建好刹车，再踩油门。</strong></p>
+</section>
+
+<!-- ======================= 附录 ======================= -->
+<section class="chapter" id="ch10">
+  <div class="kicker">APPENDIX · 参考资料</div>
+  <h1>参考资料与声明</h1>
+  <p class="lead">本文综合泄露事件后的多方公开技术分析整理而成。不同分析在个别数字（如文件行数、标志数量）上存在口径差异，文中已尽量标注；如需精确细节请交叉核对原始来源。</p>
+
+  <h2>主要参考来源</h2>
+  <table>
+    <tr><th>来源</th><th>侧重</th></tr>
+    <tr><td><a href="https://claudefa.st/blog/guide/mechanics/claude-code-source-leak" target="_blank">Claude Fast — Source Code Leak: Everything Found</a></td><td>事件全貌、KAIROS、Undercover Mode、模型代号、社区反应</td></tr>
+    <tr><td><a href="https://blog.kubesimplify.com/claude-code-leak-what-the-source-actually-teaches" target="_blank">Kubesimplify — What the Source Actually Teaches</a></td><td>主循环状态机、五种压缩策略、延迟加载、拒绝跟踪（经源码核验）</td></tr>
+    <tr><td><a href="https://wavespeed.ai/blog/posts/claude-code-architecture-leaked-source-deep-dive/" target="_blank">WaveSpeed — Architecture Deep Dive</a></td><td>工具系统、查询引擎、Mailbox 模式、三层压缩、遥测</td></tr>
+    <tr><td><a href="https://cloud.tencent.com/developer/article/2649112" target="_blank">运维有术 — 5 个 Agent 设计模式拆解</a></td><td>Prompt Cache 分段、四层权限、Coordinator、记忆系统、Buddy</td></tr>
+    <tr><td><a href="https://www.cnblogs.com/informatics/p/19808410" target="_blank">博客园 warm3snow — 泄露全复盘</a></td><td>时间线、泄露机理、目录结构、发布安全教训</td></tr>
+    <tr><td><a href="https://www.infoq.com/news/2026/04/claude-code-source-leak/" target="_blank">InfoQ — Anthropic Accidentally Exposes Claude Code Source</a></td><td>事件新闻报道</td></tr>
+    <tr><td><a href="https://github.com/VILA-Lab/Dive-into-Claude-Code" target="_blank">VILA-Lab / Dive-into-Claude-Code</a></td><td>系统性学术化分析仓库</td></tr>
+    <tr><td><a href="https://zhuanlan.zhihu.com/p/2022678678245504145" target="_blank">知乎 — 泄露事件全拆解与 Harness Engineering 革命</a></td><td>挽具工程理念阐述</td></tr>
+    <tr><td><a href="https://zhuanlan.zhihu.com/p/2022389695955346888" target="_blank">知乎 — 花了一天读完全部源码的发现</a> / <a href="https://www.ifanr.com/1660485" target="_blank">爱范儿报道</a></td><td>中文社区解读</td></tr>
+    <tr><td><a href="https://www.varonis.com/blog/claude-code-leak" target="_blank">Varonis</a> · <a href="https://www.sabrina.dev/p/claude-code-source-leak-analysis" target="_blank">sabrina.dev</a> · <a href="https://bits-bytes-nn.github.io/insights/agentic-ai/2026/03/31/claude-code-architecture-analysis.html" target="_blank">bits-bytes-nn</a></td><td>安全视角与架构补充分析</td></tr>
+  </table>
+
+  <h2>声明</h2>
+  <div class="note warn"><b>法律与使用提示：</b>泄露的源代码仍是 Anthropic 的知识产权，其许可证不允许再分发或修改（Anthropic 已对镜像仓库发起 DMCA）。本文仅基于公开发表的第三方分析文章做<strong>架构思想层面</strong>的归纳总结，用于学习研究，不包含、不引用、不建议直接使用泄露代码本身。文中行数、数量等指标来自各分析口径，可能存在出入。</div>
+  <p style="color:var(--dim);font-size:13px">本报告由 Claude 整理生成 · 2026 年 6 月 · 单文件 HTML，可离线浏览，支持 ← / → 键翻章</p>
+</section>
+
+</div>
+</main>
+</div>
+
+<script>
+(function(){
+  var chapters = document.querySelectorAll('section.chapter');
+  var navitems = document.querySelectorAll('.navitem');
+  var total = chapters.length;
+  var titles = [];
+  navitems.forEach(function(n){
+    var num = n.querySelector('.num');
+    var t = num ? n.textContent.replace(num.textContent,'') : n.textContent;
+    titles.push(t.trim());
+  });
+  var current = 0;
+
+  function show(i, pushHash){
+    if(i<0||i>=total) return;
+    current = i;
+    chapters.forEach(function(s,idx){ s.classList.toggle('active', idx===i); });
+    navitems.forEach(function(n,idx){ n.classList.toggle('active', idx===i); });
+    if(pushHash!==false){ try{ history.replaceState(null,'','#ch'+i);}catch(e){} }
+    window.scrollTo({top:0,behavior:'auto'});
+    closeSidebar();
+  }
+
+  navitems.forEach(function(n){
+    n.addEventListener('click', function(){ show(parseInt(n.dataset.ch,10)); });
+  });
+
+  // 为每章追加 pager
+  chapters.forEach(function(s, i){
+    var pager = document.createElement('div');
+    pager.className = 'pager';
+    var prog = document.createElement('div');
+    prog.className='progress';
+    prog.textContent = '第 ' + (i+1) + ' / ' + total + ' 章';
+    s.insertBefore(prog, s.firstChild);
+    var prev = document.createElement('button');
+    var next = document.createElement('button');
+    if(i>0){
+      prev.innerHTML = '<span class="dir">← 上一章</span>' + titles[i-1];
+      prev.onclick = function(){ show(i-1); };
+    } else { prev.disabled = true; }
+    if(i<total-1){
+      next.className='next';
+      next.innerHTML = '<span class="dir">下一章 →</span>' + titles[i+1];
+      next.onclick = function(){ show(i+1); };
+    } else { next.disabled = true; next.className='next'; }
+    pager.appendChild(prev); pager.appendChild(next);
+    s.appendChild(pager);
+  });
+
+  // 键盘左右切换
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight') show(Math.min(current+1,total-1));
+    if(e.key==='ArrowLeft') show(Math.max(current-1,0));
+  });
+
+  // 移动端侧栏
+  var sb = document.getElementById('sidebar'), mask = document.getElementById('mask');
+  document.getElementById('menubtn').onclick = function(){ sb.classList.add('open'); mask.classList.add('show'); };
+  function closeSidebar(){ sb.classList.remove('open'); mask.classList.remove('show'); }
+  mask.onclick = closeSidebar;
+
+  // 初始章节（支持 #chN 直达）
+  var m = (location.hash||'').match(/^#ch(\d+)$/);
+  show(m ? Math.min(parseInt(m[1],10), total-1) : 0, false);
+})();
+</script>
+</body>
+</html>
