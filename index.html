@@ -274,6 +274,7 @@ let modalMode = "add";
 
 function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function safeName(s){ return (s||"").replace(/[#?%&\\:*<>"|]/g,"").replace(/\s+/g," ").trim(); }
 function moduleById(id){ return data.modules.find(m=>m.id===id); }
 function esc(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
@@ -284,16 +285,17 @@ function errMsg(e){ const m=(e&&e.message)||String(e);
   if(/Failed to fetch|NetworkError|load failed/i.test(m))
     return "无法连接 GitHub。请在已上线的网址版（不要双击本地文件）下操作，并确认：已联网、仓库与令牌已正确填写。";
   return m; }
+async function retry(fn, tries){ tries=tries||3; let last; for(let i=0;i<tries;i++){ try{ return await fn(); }catch(e){ last=e; if(i<tries-1) await new Promise(r=>setTimeout(r,800*(i+1))); } } throw last; }
 
 /* ---------- boot ---------- */
 async function boot(){
   let loaded=false;
   try{
     const res=await fetch("./catalog.json",{cache:"no-store"});
-    if(res.ok){ const j=await res.json(); if(j&&j.modules&&j.pages){ data=j; sourceMode="file"; loaded=true; } }
+    if(res.ok){ const j=await res.json(); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="file"; loaded=true; } }
   }catch(e){}
   if(!loaded){ let l=null; try{ l=localStorage.getItem(LS_KEY); }catch(e){}
-    if(l){ try{ data=JSON.parse(l); sourceMode="local"; }catch(e){} } else sourceMode="seed"; }
+    if(l){ try{ const j=JSON.parse(l); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="local"; } }catch(e){} } else sourceMode="seed"; }
   render();
   if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
   document.getElementById("footer").textContent =
@@ -414,7 +416,7 @@ function openEdit(id){
   const p=data.pages.find(x=>x.id===id); if(!p) return;
   modalMode="edit";
   document.getElementById("pmTitle").textContent="编辑页面信息";
-  document.getElementById("pmSub").textContent="只改标题/模块/标签，不更换文件";
+  document.getElementById("pmSub").textContent="改标题/标签；改分类会自动把文件搬到新分类";
   document.getElementById("pm_filewrap").style.display="none";
   document.getElementById("pm_save").textContent= ghOn()? "保存并同步":"保存";
   fillModuleSelect(document.getElementById("pm_module"));
@@ -431,7 +433,7 @@ function closeModal(){ document.getElementById("pageModal").classList.remove("sh
 function curFileName(){
   if(modalMode==="edit"){ const p=data.pages.find(x=>x.id===document.getElementById("pm_id").value); return p?p.file:""; }
   const f=document.getElementById("pm_file").files[0]; if(!f) return "";
-  let n=f.name; if(!/\.html?$/i.test(n)) n+=".html"; return n;
+  let n=safeName(f.name); if(!/\.html?$/i.test(n)) n+=".html"; return n;
 }
 function pmPick(){
   const f=document.getElementById("pm_file").files[0]; if(!f) return;
@@ -449,33 +451,54 @@ async function savePage(){
   if(!title){ toast("请填写标题"); return; }
   const moduleId=document.getElementById("pm_module").value;
   const mod=moduleById(moduleId);
+  if(!mod){ toast("请选择模块"); return; }
   const tags=document.getElementById("pm_tags").value.split(",").map(s=>s.trim()).filter(Boolean);
   const desc=document.getElementById("pm_desc").value.trim();
   const st=document.getElementById("pm_status");
 
   if(modalMode==="edit"){
     const p=data.pages.find(x=>x.id===document.getElementById("pm_id").value);
-    Object.assign(p,{title,moduleId,tags,desc});
-    saveLocal(); render(); renderSettings();
-    if(ghOn()){ try{ st.textContent="同步中…"; await pushCatalog("编辑："+title); toast("已保存并同步"); }catch(e){ st.textContent="同步出错："+errMsg(e); return; } }
-    else toast("已保存（本地）");
-    closeModal(); return;
+    if(!p){ toast("找不到该页面"); return; }
+    const oldMod=moduleById(p.moduleId);
+    const needMove = ghOn() && oldMod && mod && oldMod.folder!==mod.folder;
+    try{
+      if(needMove){
+        st.textContent="把文件搬到新分类…";
+        const oldPath=oldMod.folder+"/"+p.file, newPath=mod.folder+"/"+p.file;
+        const got=await ghGet(oldPath);
+        if(got){
+          const exists=await ghGet(newPath);
+          await ghPut(newPath, (got.content||"").replace(/\s/g,""), "改分类搬移："+title, exists&&exists.sha);
+          await ghDelete(oldPath, got.sha, "移除旧位置："+p.file);
+        }
+      }
+      Object.assign(p,{title,moduleId,tags,desc});
+      saveLocal(); render(); renderSettings();
+      if(ghOn()){ st.textContent="同步中…"; await pushCatalog("编辑："+title); toast("已保存并同步"); }
+      else toast("已保存（本地）");
+      closeModal();
+    }catch(e){ st.textContent="同步出错："+errMsg(e); }
+    return;
   }
 
   // add
   const f=document.getElementById("pm_file").files[0];
   if(!f){ toast("请选择一个 HTML 文件"); return; }
-  let fname=f.name; if(!/\.html?$/i.test(fname)) fname+=".html";
+  let fname=safeName(f.name); if(!/\.html?$/i.test(fname)) fname+=".html";
+  if(!fname || fname===".html"){ toast("文件名无效"); return; }
   if(!confirm(`确认把《${title}》放入「${mod.name}」文件夹` + (ghOn()?"，并同步到线上和手机吗？":"吗？（当前未配置 GitHub，仅暂存本地）"))) return;
 
   if(ghOn()){
     try{
       st.textContent="读取文件…";
       const text=await f.text();
-      const path=mod.folder+"/"+fname;
+      let path=mod.folder+"/"+fname;
+      st.textContent="检查重名…";
+      let ex=await ghGet(path);
+      if(ex){ const baseN=fname.replace(/\.html?$/i,""); let i=2;
+        while(ex){ fname=baseN+"-"+i+".html"; path=mod.folder+"/"+fname; ex=await ghGet(path); i++; if(i>50) break; } }
       st.innerHTML="上传 <b>"+esc(path)+"</b> …";
-      const ex=await ghGet(path);
-      await ghPut(path, utf8b64(text), "上传页面："+title, ex&&ex.sha);
+      await ghPut(path, utf8b64(text), "上传页面："+title, null);
       data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10)});
       st.textContent="更新目录…";
       await pushCatalog("上传页面："+title);
@@ -538,10 +561,13 @@ function iconPicked(){
 }
 function addModule(){
   const name=document.getElementById("m_name").value.trim();
+  const folder=safeName(name);
   const icon=document.getElementById("m_icon").value.trim()||"📁";
   const color=document.getElementById("m_color").value;
   if(!name){ toast("请填写模块名称"); return; }
-  data.modules.push({id:uid(), name, folder:name, icon, color}); saveLocal(); render(); renderSettings();
+  if(!folder){ toast("名称含特殊字符，请换一个"); return; }
+  if(data.modules.some(m=>m.folder===folder)){ toast("已有同名分类"); return; }
+  data.modules.push({id:uid(), name, folder, icon, color}); saveLocal(); render(); renderSettings();
   document.getElementById("m_name").value=""; document.getElementById("m_icon").selectedIndex=0;
   if(ghOn()){ pushCatalog("新增模块："+name).then(()=>toast("已新建并同步")).catch(e=>toast("本地已建，同步失败")); }
   else toast("已新建模块（本地）");
@@ -559,7 +585,7 @@ async function delModule(id){
 function ghHeaders(){ const c=ghCfg(); return {Authorization:"Bearer "+(c.token||""), Accept:"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"}; }
 function ghEncPath(p){ return p.split("/").map(encodeURIComponent).join("/"); }
 function utf8b64(s){ return btoa(unescape(encodeURIComponent(s))); }
-function b64utf8(b){ return decodeURIComponent(escape(atob((b||"").replace(/\n/g,"")))); }
+function b64utf8(b){ return decodeURIComponent(escape(atob((b||"").replace(/\s/g,"")))); }
 function ghLoadInputs(){ const c=ghCfg(); const r=document.getElementById("gh_repo");
   if(r){ r.value=c.repo||""; document.getElementById("gh_branch").value=c.branch||"main"; document.getElementById("gh_token").value=c.token||""; } }
 function ghStore(){ const cfg={repo:document.getElementById("gh_repo").value.trim(), branch:document.getElementById("gh_branch").value.trim()||"main", token:document.getElementById("gh_token").value.trim()};
@@ -572,17 +598,35 @@ async function ghTest(){ const c=ghCfg(); const st=document.getElementById("gh_s
   }catch(e){ st.textContent="连接失败："+e.message; } }
 async function ghGet(path){ const c=ghCfg();
   const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path)+"?ref="+encodeURIComponent(c.branch||"main");
-  const res=await fetch(url,{headers:ghHeaders(),cache:"no-store"});
-  if(res.status===404) return null; if(!res.ok) throw new Error("读取 "+path+" 失败 "+res.status);
-  return await res.json(); }
+  return retry(async()=>{
+    const res=await fetch(url,{headers:ghHeaders(),cache:"no-store"});
+    if(res.status===404) return null;
+    if(!res.ok) throw new Error("读取 "+path+" 失败 "+res.status);
+    return await res.json();
+  });
+}
 async function ghPut(path, contentB64, message, sha){ const c=ghCfg();
   const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path);
-  const body={message, content:contentB64, branch:c.branch||"main"}; if(sha) body.sha=sha;
-  const res=await fetch(url,{method:"PUT",headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:JSON.stringify(body)});
-  if(!res.ok){ let t=""; try{t=(await res.json()).message||"";}catch(e){} throw new Error("写入失败 "+res.status+" "+t); }
-  return await res.json(); }
-async function pushCatalog(message){ const cat=await ghGet("catalog.json");
-  await ghPut("catalog.json", utf8b64(JSON.stringify(data,null,2)), message||"更新目录", cat&&cat.sha); }
+  return retry(async()=>{
+    const body={message, content:contentB64, branch:c.branch||"main"}; if(sha) body.sha=sha;
+    const res=await fetch(url,{method:"PUT",headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:JSON.stringify(body)});
+    if(!res.ok){ let t=""; try{t=(await res.json()).message||"";}catch(e){} throw new Error("写入失败 "+res.status+" "+t); }
+    return await res.json();
+  });
+}
+async function ghDelete(path, sha, message){ const c=ghCfg();
+  const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path);
+  return retry(async()=>{
+    const res=await fetch(url,{method:"DELETE",headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:JSON.stringify({message:message||"删除",sha,branch:c.branch||"main"})});
+    if(!res.ok) throw new Error("删除失败 "+res.status);
+    return await res.json();
+  });
+}
+async function pushCatalog(message){
+  if(!data||!Array.isArray(data.modules)||!Array.isArray(data.pages)) throw new Error("目录数据异常，已取消同步以防损坏");
+  const cat=await ghGet("catalog.json");
+  await ghPut("catalog.json", utf8b64(JSON.stringify(data,null,2)), message||"更新目录", cat&&cat.sha);
+}
 
 /* ---------- offline + backup ---------- */
 async function cacheAllOffline(){
@@ -599,7 +643,7 @@ async function cacheAllOffline(){
 function exportData(){ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="catalog.json"; a.click(); toast("已导出备份"); }
 function importData(e){ const file=e.target.files[0]; if(!file) return; const r=new FileReader();
-  r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(!obj.modules||!obj.pages) throw 0;
+  r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(!obj||!Array.isArray(obj.modules)||!Array.isArray(obj.pages)) throw 0;
     if(!confirm("导入将覆盖当前目录，确定？")) return; data=obj; saveLocal(); render(); renderSettings(); switchTab("browse"); toast("已导入"); }
     catch(err){ alert("文件格式不对，导入失败。"); } }; r.readAsText(file); e.target.value=""; }
 
