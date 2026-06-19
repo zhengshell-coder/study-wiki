@@ -358,7 +358,7 @@ function renderStacks(grid){
     const open=expanded.has(m.id);
     const cards=open?`<div class="grid substack">${ps.map(cardHTML).join("")}</div>`:"";
     return `<div class="stack-sec">
-      <div class="stack ${open?'open':''}" onclick="toggleStack('${m.id}')">
+      <div class="stack ${open?'open':''}" onclick="setModule('${m.id}')">
         <div class="stack-ic" style="background:${m.color}22;color:${m.color}">${m.icon}</div>
         <div class="stack-info"><div class="stack-name">${esc(m.name)} <span class="cnt" style="background:${m.color}1a;color:${m.color}">${ps.length}</span></div>
           <div class="stack-sub">${open?"点击收起":("最新："+esc(ps[0].title))}</div></div>
@@ -523,7 +523,7 @@ const CATS=[
   {icon:"🧠",name:"哲学",color:"#7b5cb8"},{icon:"📿",name:"宗教",color:"#8a6f9c"},
   {icon:"🤖",name:"AI-技术",color:"#2f8f9e"},{icon:"🔌",name:"AI-芯片硬件",color:"#3a6db5"},{icon:"📊",name:"AI-商业趋势",color:"#d98a3d"},
   {icon:"➗",name:"数学",color:"#3a6db5"},{icon:"🔬",name:"科学",color:"#3aa6b9"},
-  {icon:"🌿",name:"中医医学",color:"#4a9d6f"}
+  {icon:"🌿",name:"中医医学",color:"#4a9d6f"},{icon:"📝",name:"工作总结",color:"#5b7088"}
 ];
 function fillIconSelect(){
   const s=document.getElementById("m_icon"); if(!s||s.dataset.filled) return;
