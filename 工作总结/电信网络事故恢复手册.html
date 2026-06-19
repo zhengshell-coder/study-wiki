@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电信网络事故恢复手册 · Incident Recovery Handbook</title>
+<style>
+  :root{
+    --bg:#070b14; --bg-2:#0a1120; --bg-3:#0e1828; --card:#0f1a2c;
+    --line:#1b2840; --line-2:#26375a;
+    --cyan:#22d3ee; --blue:#3b82f6; --indigo:#818cf8; --teal:#2dd4bf;
+    --green:#34d399; --amber:#fbbf24; --orange:#fb923c; --red:#f87171; --pink:#f472b6;
+    --text:#cdd8ec; --dim:#7e8db0; --bright:#f3f7ff;
+    --glow:0 0 0 1px rgba(34,211,238,.15), 0 0 24px -4px rgba(34,211,238,.25);
+    --mono:"SF Mono","JetBrains Mono","Cascadia Code",ui-monospace,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans); color:var(--text); background:var(--bg);
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(34,211,238,.08), transparent 55%),
+      linear-gradient(rgba(28,40,64,.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28,40,64,.35) 1px, transparent 1px);
+    background-size:auto,auto,42px 42px,42px 42px;
+    line-height:1.7; font-size:15px; overflow:hidden;
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    height:60px; display:flex; align-items:center; gap:16px; padding:0 22px;
+    border-bottom:1px solid var(--line); background:linear-gradient(180deg,rgba(14,24,40,.95),rgba(10,17,32,.85));
+    backdrop-filter:blur(8px); position:relative; z-index:30;
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{
+    width:34px;height:34px;border-radius:8px;flex:none;position:relative;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));
+    box-shadow:0 0 18px -2px rgba(34,211,238,.6);
+    display:grid;place-items:center;font-weight:800;color:#04111c;font-size:17px;
+  }
+  .brand-txt h1{font-size:15px;font-weight:700;color:var(--bright);letter-spacing:.5px;white-space:nowrap}
+  .brand-txt .eyebrow{font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:2.5px;text-transform:uppercase}
+  .status{margin-left:auto;display:flex;align-items:center;gap:18px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .status .live{display:flex;align-items:center;gap:7px;color:var(--green)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .menu-btn{display:none;background:var(--bg-3);border:1px solid var(--line-2);color:var(--cyan);
+    width:38px;height:34px;border-radius:8px;font-size:18px;cursor:pointer}
+  /* ---------- layout ---------- */
+  .layout{display:flex;height:calc(100% - 60px)}
+  .sidebar{
+    width:296px;flex:none;border-right:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(10,17,32,.6),rgba(7,11,20,.4));
+    overflow-y:auto;padding:18px 14px 60px;z-index:20;
+  }
+  .sidebar::-webkit-scrollbar,.content::-webkit-scrollbar{width:9px}
+  .sidebar::-webkit-scrollbar-thumb,.content::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px}
+  .nav-group{margin:18px 8px 8px;font-family:var(--mono);font-size:10px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:8px}
+  .nav-group::after{content:"";flex:1;height:1px;background:var(--line)}
+  .nav-group:first-child{margin-top:4px}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;
+    cursor:pointer;color:var(--dim);text-decoration:none;position:relative;
+    border:1px solid transparent;transition:.16s;margin-bottom:2px;
+  }
+  .nav-item:hover{background:var(--bg-3);color:var(--text)}
+  .nav-num{font-family:var(--mono);font-size:11px;color:var(--dim);
+    border:1px solid var(--line-2);border-radius:6px;padding:2px 6px;flex:none;min-width:26px;text-align:center}
+  .nav-text{font-size:13.5px;font-weight:500}
+  .nav-item.active{background:linear-gradient(90deg,rgba(34,211,238,.14),rgba(34,211,238,.02));
+    color:var(--bright);border-color:rgba(34,211,238,.3)}
+  .nav-item.active::before{content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:3px;
+    border-radius:3px;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+  .nav-item.active .nav-num{color:#04111c;background:var(--cyan);border-color:var(--cyan);font-weight:700}
+  /* ---------- content ---------- */
+  .content{flex:1;overflow-y:auto;padding:38px 46px 90px;scroll-behavior:smooth}
+  .chapter{display:none;max-width:920px;margin:0 auto;animation:fade .4s ease}
+  .chapter.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .ch-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase}
+  .ch-title{font-size:30px;font-weight:800;color:var(--bright);margin:8px 0 6px;letter-spacing:.5px;line-height:1.25}
+  .ch-lead{font-size:16px;color:var(--dim);margin-bottom:8px;max-width:760px}
+  .ch-num-big{position:absolute}
+  h2.sec{font-size:20px;color:var(--bright);margin:38px 0 14px;display:flex;align-items:center;gap:11px;font-weight:700}
+  h2.sec .bar{width:4px;height:20px;background:linear-gradient(var(--cyan),var(--blue));border-radius:3px;box-shadow:0 0 10px rgba(34,211,238,.5)}
+  h3.sub{font-size:16px;color:var(--bright);margin:24px 0 10px;font-weight:650}
+  p{margin:10px 0;color:var(--text)}
+  strong{color:var(--bright);font-weight:650}
+  em{color:var(--cyan);font-style:normal;font-weight:600}
+  a.inline{color:var(--cyan);cursor:pointer;border-bottom:1px dashed rgba(34,211,238,.5)}
+  ul,ol{margin:10px 0 10px 4px;padding-left:22px}
+  li{margin:7px 0}
+  li::marker{color:var(--cyan)}
+  hr.div{border:none;border-top:1px solid var(--line);margin:30px 0}
+  /* quick ref card */
+  .quick{
+    border:1px solid rgba(34,211,238,.32);border-radius:14px;padding:20px 22px;margin:22px 0;
+    background:linear-gradient(180deg,rgba(34,211,238,.07),rgba(34,211,238,.015));
+    box-shadow:var(--glow);position:relative;
+  }
+  .quick .tag-q{position:absolute;top:-11px;left:18px;background:var(--cyan);color:#04111c;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:3px 11px;border-radius:6px}
+  .quick h4{color:var(--cyan);font-size:14px;margin:4px 0 12px;font-family:var(--mono);letter-spacing:1px}
+  .quick ul{margin:0;padding-left:20px}
+  .quick li{margin:8px 0}
+  .deep-label{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;
+    letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin:30px 0 4px}
+  .deep-label::before{content:"▸";color:var(--blue)}
+  /* callouts */
+  .callout{border-radius:12px;padding:14px 18px;margin:18px 0;border-left:4px solid;position:relative;
+    background:var(--bg-3)}
+  .callout .ct{font-weight:700;display:block;margin-bottom:5px;font-size:13.5px;letter-spacing:.5px}
+  .callout p{margin:5px 0}
+  .callout.key{border-color:var(--cyan);background:linear-gradient(90deg,rgba(34,211,238,.08),transparent)}
+  .callout.key .ct{color:var(--cyan)}
+  .callout.best{border-color:var(--green);background:linear-gradient(90deg,rgba(52,211,153,.08),transparent)}
+  .callout.best .ct{color:var(--green)}
+  .callout.anti{border-color:var(--red);background:linear-gradient(90deg,rgba(248,113,113,.09),transparent)}
+  .callout.anti .ct{color:var(--red)}
+  .callout.warn{border-color:var(--amber);background:linear-gradient(90deg,rgba(251,191,36,.08),transparent)}
+  .callout.warn .ct{color:var(--amber)}
+  /* badges */
+  .badge{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;
+    padding:2px 9px;border-radius:5px;letter-spacing:.5px;vertical-align:middle}
+  .b-p0{background:rgba(248,113,113,.16);color:var(--red);border:1px solid rgba(248,113,113,.4)}
+  .b-p1{background:rgba(251,146,60,.16);color:var(--orange);border:1px solid rgba(251,146,60,.4)}
+  .b-p2{background:rgba(251,191,36,.16);color:var(--amber);border:1px solid rgba(251,191,36,.4)}
+  .b-p3{background:rgba(59,130,246,.16);color:var(--blue);border:1px solid rgba(59,130,246,.4)}
+  .b-p4{background:rgba(126,141,176,.16);color:var(--dim);border:1px solid var(--line-2)}
+  .b-cyan{background:rgba(34,211,238,.14);color:var(--cyan);border:1px solid rgba(34,211,238,.4)}
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .tbl th{background:var(--bg-3);color:var(--cyan);text-align:left;padding:11px 13px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;border-bottom:1px solid var(--line-2)}
+  .tbl td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--text)}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl tr:hover td{background:rgba(34,211,238,.03)}
+  .tbl td strong{color:var(--bright)}
+  /* command / template block */
+  .cmd{font-family:var(--mono);font-size:12.5px;background:#060a12;border:1px solid var(--line-2);
+    border-left:3px solid var(--cyan);border-radius:9px;padding:14px 16px;margin:16px 0;
+    color:#aeeaf5;white-space:pre-wrap;line-height:1.65;overflow-x:auto}
+  .cmd .c{color:#5d6f8f}
+  .cmd .k{color:var(--cyan)}
+  .cmd .v{color:var(--amber)}
+  /* step flow */
+  .steps{counter-reset:s;margin:18px 0}
+  .step{position:relative;padding:4px 0 16px 44px;border-left:2px solid var(--line);margin-left:14px}
+  .step:last-child{border-left-color:transparent}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;left:-15px;top:0;
+    width:30px;height:30px;border-radius:50%;background:var(--bg-3);border:1px solid var(--cyan);
+    color:var(--cyan);display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;
+    box-shadow:0 0 12px -3px var(--cyan)}
+  .step h4{color:var(--bright);font-size:14.5px;margin:2px 0 4px}
+  .step p{margin:4px 0;font-size:14px;color:var(--text)}
+  /* pillar / grid cards */
+  .grid{display:grid;gap:14px;margin:18px 0}
+  .grid.g3{grid-template-columns:repeat(3,1fr)}
+  .grid.g2{grid-template-columns:repeat(2,1fr)}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 17px;transition:.18s}
+  .pcard:hover{border-color:rgba(34,211,238,.35);transform:translateY(-2px);box-shadow:0 8px 24px -12px rgba(0,0,0,.6)}
+  .pcard .pic{font-size:20px;margin-bottom:6px}
+  .pcard h4{color:var(--bright);font-size:15px;margin-bottom:6px}
+  .pcard p{font-size:13px;color:var(--dim);margin:0}
+  .pcard .pn{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:1px}
+  /* decision tree */
+  .tree{margin:18px 0;font-size:13.5px}
+  .tnode{background:var(--bg-3);border:1px solid var(--line-2);border-radius:9px;padding:10px 14px;margin:8px 0;position:relative}
+  .tnode.q{border-color:rgba(34,211,238,.4);color:var(--bright)}
+  .tnode .lbl{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-right:8px}
+  .tbranch{margin-left:26px;padding-left:18px;border-left:2px dashed var(--line-2)}
+  .yn{font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;margin-right:6px}
+  .yn.y{background:rgba(52,211,153,.16);color:var(--green)}
+  .yn.n{background:rgba(248,113,113,.16);color:var(--red)}
+  /* pager */
+  .pager{max-width:920px;margin:46px auto 0;display:flex;justify-content:space-between;gap:14px;
+    border-top:1px solid var(--line);padding-top:22px}
+  .pager button{background:var(--bg-3);border:1px solid var(--line-2);color:var(--text);
+    padding:11px 18px;border-radius:9px;cursor:pointer;font-family:var(--sans);font-size:13.5px;transition:.16s;max-width:48%;text-align:left}
+  .pager button:hover:not(:disabled){border-color:var(--cyan);color:var(--bright);box-shadow:var(--glow)}
+  .pager button:disabled{opacity:.3;cursor:not-allowed}
+  .pager .pg-next{text-align:right}
+  .pager small{display:block;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px}
+  .kbd{font-family:var(--mono);font-size:12px;background:var(--bg-3);border:1px solid var(--line-2);
+    border-radius:5px;padding:1px 7px;color:var(--cyan)}
+  .lead-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:5px 11px;border-radius:20px;
+    border:1px solid var(--line-2);color:var(--dim);background:var(--bg-3)}
+  .chip b{color:var(--cyan);font-weight:700}
+  @media(max-width:880px){
+    body{overflow:auto}
+    .menu-btn{display:block}
+    .layout{display:block;height:auto}
+    .sidebar{position:fixed;top:60px;left:0;bottom:0;transform:translateX(-100%);transition:.25s;width:280px;
+      background:var(--bg-2)}
+    .sidebar.open{transform:none;box-shadow:20px 0 60px rgba(0,0,0,.6)}
+    .content{padding:24px 18px 80px;height:auto}
+    .grid.g3,.grid.g2{grid-template-columns:1fr}
+    .status{display:none}
+    .ch-title{font-size:24px}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <button class="menu-btn" aria-label="menu">☰</button>
+    <div class="brand">
+      <div class="logo">⬡</div>
+      <div class="brand-txt">
+        <h1>电信网络事故恢复手册</h1>
+        <div class="eyebrow">Incident Recovery Handbook</div>
+      </div>
+    </div>
+    <div class="status">
+      <span class="live"><span class="dot"></span>OPERATIONAL</span>
+      <span>v1.0 · 2026</span>
+      <span>10 CHAPTERS</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="nav-group">思维基石</div>
+      <a class="nav-item" data-target="ch1"><span class="nav-num">01</span><span class="nav-text">系统性思维与全局视角</span></a>
+      <div class="nav-group">响应与组织</div>
+      <a class="nav-item" data-target="ch2"><span class="nav-num">02</span><span class="nav-text">事故响应机制 · 黄金时间</span></a>
+      <a class="nav-item" data-target="ch3"><span class="nav-num">03</span><span class="nav-text">应急指挥与团队组队</span></a>
+      <div class="nav-group">定位与沟通</div>
+      <a class="nav-item" data-target="ch4"><span class="nav-num">04</span><span class="nav-text">结构化定位 · 反自证清白</span></a>
+      <a class="nav-item" data-target="ch5"><span class="nav-num">05</span><span class="nav-text">内部协同与信息对齐</span></a>
+      <a class="nav-item" data-target="ch6"><span class="nav-num">06</span><span class="nav-text">外部客户沟通与透明度</span></a>
+      <div class="nav-group">恢复与改进</div>
+      <a class="nav-item" data-target="ch7"><span class="nav-num">07</span><span class="nav-text">恢复执行与验证</span></a>
+      <a class="nav-item" data-target="ch8"><span class="nav-num">08</span><span class="nav-text">无指责复盘与根因分析</span></a>
+      <div class="nav-group">案例与工具</div>
+      <a class="nav-item" data-target="ch9"><span class="nav-num">09</span><span class="nav-text">实战推演案例库</span></a>
+      <a class="nav-item" data-target="ch10"><span class="nav-num">10</span><span class="nav-text">工具箱 · 模板速查</span></a>
+    </nav>
+
+    <main class="content">
+
+      <!-- ============ CH1 ============ -->
+      <section class="chapter" id="ch1">
+        <div class="ch-eyebrow">Chapter 01 · Foundation</div>
+        <h1 class="ch-title">系统性思维：从「救火」到「掌局」</h1>
+        <p class="ch-lead">事故恢复不是一场技术冲刺，而是技术、协同、沟通三条战线的并行作战。本章建立贯穿全书的思维底座。</p>
+        <div class="lead-row">
+          <span class="chip">目标 · <b>最短恢复业务</b></span>
+          <span class="chip">三主线 · <b>定位 / 协同 / 沟通</b></span>
+          <span class="chip">心法 · <b>掌局而非自证</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 任何事故，先记住这 5 条</h4>
+          <ul>
+            <li><strong>唯一目标</strong>：用最短时间恢复业务，而不是证明「不是我的问题」。止血永远优先于定责。</li>
+            <li><strong>三线并行</strong>：技术定位、内部协同、外部沟通必须同时推进，任何一条断了都算事故没处理好。</li>
+            <li><strong>四个全局问题</strong>，任何时刻都要能回答：<em>影响了谁？多大范围？现在在做什么？预计多久恢复？</em></li>
+            <li><strong>设一个不动手的掌局人</strong>（总指挥），专门守住全局视角，不陷进任何一个技术细节。</li>
+            <li><strong>宁可高估</strong>：先按大事拉响响应，确认是小事再降级，远好过反过来。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>为什么团队会「忙而无效」</h2>
+        <p>大多数恢复不力，并非个人能力不足，而是缺少一套<strong>共享的系统性框架</strong>。当框架缺失时，团队会反复落入五种典型失败模式：</p>
+        <div class="grid g2">
+          <div class="pcard"><div class="pic">🧯</div><h4>各自为战</h4><p>每个专业组只盯自己那一段，没人对端到端的业务影响负责。</p></div>
+          <div class="pcard"><div class="pic">🕳️</div><h4>陷入细节</h4><p>资深工程师一头扎进某个日志，1 小时后抬头发现方向错了。</p></div>
+          <div class="pcard"><div class="pic">🔇</div><h4>信息孤岛</h4><p>技术侧已有判断，管理层和客户却一无所知，靠追问获取进展。</p></div>
+          <div class="pcard"><div class="pic">📦</div><h4>对外黑盒</h4><p>对客户「没定位完就不说话」，沉默被解读为失控，信任快速流失。</p></div>
+        </div>
+        <p>这五种模式的共同根源，是把事故当成一个<strong>纯技术问题</strong>来处理。事实上，一次重大事故是一个需要被「指挥」的<strong>临时性组织行为</strong>。</p>
+
+        <h2 class="sec"><span class="bar"></span>全局视角 vs 隧道视野</h2>
+        <p>压力之下，人的注意力会本能收窄成「隧道视野」——死盯一个可疑点，忘了还有别的可能、忘了业务还在流血、忘了客户在等消息。系统性思维就是用<strong>固定的结构</strong>对抗这种本能收窄。</p>
+        <div class="callout key">
+          <span class="ct">◆ 核心心法</span>
+          <p>恢复现场永远有两个层次在同时运行：<em>「手上的活」</em>（查某个网元、看某条链路）和<em>「全局的局」</em>（影响面、优先级、资源、对外口径）。一线工程师可以聚焦前者，但<strong>必须有人专职守后者</strong>——这就是总指挥存在的意义（见 <a class="inline" data-target="ch3">第 3 章</a>）。</p>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>自证清白陷阱：本书要破解的头号顽疾</h2>
+        <p>这是你们团队最需要突破的一点，本书会反复回到它。所谓<strong>自证清白陷阱</strong>，是指事故中各团队把精力优先用于<em>证明「问题不在我这一侧」</em>，而非协同定位「问题到底在哪」。</p>
+        <div class="callout anti">
+          <span class="ct">✗ 它长这样</span>
+          <p>传输组拉出一堆图表证明「我的链路全绿」；核心网组贴监控证明「我的网元 KPI 正常」；无线组说「我这边没变更」。一小时过去，每个团队都「清白」了，可故障还在，而且谁都没有对端到端负责。</p>
+        </div>
+        <div class="callout best">
+          <span class="ct">✓ 应该这样</span>
+          <p>把目标从「证明不是我」换成「<strong>用我的视角缩小问题范围</strong>」。同样是看自己的指标，区别在于：清白思维问「这能不能甩锅」，协同思维问「这能帮全局排除哪一段、指向哪一段」。第 4 章给出完整的反陷阱方法论。</p>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>三支柱模型：本手册的骨架</h2>
+        <p>全书围绕一次事故的三条并行战线展开，缺一不可：</p>
+        <div class="grid g3">
+          <div class="pcard"><div class="pn">PILLAR 01</div><div class="pic">🔬</div><h4>技术定位</h4><p>结构化、假设驱动地缩小故障域，止血优先。对应第 4、7 章。</p></div>
+          <div class="pcard"><div class="pn">PILLAR 02</div><div class="pic">🤝</div><h4>内部协同</h4><p>指挥体系、角色分工、向上对齐。对应第 3、5 章。</p></div>
+          <div class="pcard"><div class="pn">PILLAR 03</div><div class="pic">📡</div><h4>外部沟通</h4><p>对客户分层、透明、有节奏地同步。对应第 6 章。</p></div>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>如何使用本手册</h2>
+        <p>本手册每一章都采用<strong>「速查行动 + 深度展开」</strong>双层结构：</p>
+        <ul>
+          <li><strong>事故进行时</strong>：直接看每章顶部高亮的「速查行动」卡和第 10 章工具箱，拿了就用。</li>
+          <li><strong>平时培训</strong>：通读「深度展开」理解原理，再用第 9 章案例做桌面推演（tabletop drill）。</li>
+          <li><strong>角色导向</strong>：技术骨干重点读 4/7/8 章；值班指挥重点读 2/3/5 章；管理与客户接口重点读 5/6 章。</li>
+        </ul>
+        <div class="callout key"><span class="ct">◆ 方法论基础</span><p>本手册融合了 <strong>ITIL 事件管理</strong>（分级与流程）、<strong>Google SRE</strong>（事故指挥、无指责复盘、止血优先）、应急管理 <strong>ICS 指挥体系</strong>（角色与升级），并针对电信网络场景与你们团队的实际短板做了定制。</p></div>
+      </section>
+
+      <!-- ============ CH2 ============ -->
+      <section class="chapter" id="ch2">
+        <div class="ch-eyebrow">Chapter 02 · Response</div>
+        <h1 class="ch-title">事故响应机制：抢回黄金时间</h1>
+        <p class="ch-lead">恢复时长的差距，往往不在排障阶段，而在「从发现到真正动起来」这几分钟。本章解决响应不及时的问题。</p>
+        <div class="lead-row">
+          <span class="chip">MTTA · <b>应答时间</b></span>
+          <span class="chip">分级 · <b>P0–P4</b></span>
+          <span class="chip">升级 · <b>超时自动</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 收到告警后的前 15 分钟</h4>
+          <ul>
+            <li><strong>先应答，再判断</strong>：<span class="badge b-p0">P0</span> 5 分钟内必须有人应答（ACK），15 分钟内成立指挥。</li>
+            <li><strong>先定级，再行动</strong>：用「影响范围 × 业务影响 × 有无规避」三要素快速定级，定级决定调多少人、惊动谁。</li>
+            <li><strong>宁高勿低</strong>：拿不准是 P1 还是 P2，先按 P1 拉响（over-escalate），确认后再降级。</li>
+            <li><strong>升级不是认输</strong>：升级 = 调动更多资源/决策权，超时未应答或未止血就<em>自动</em>升级。</li>
+            <li><strong>开三件事</strong>：建作战室（频道）、指定临时指挥、开始记录时间线。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>事故生命周期：九个阶段</h2>
+        <p>一次完整的事故处理是一条可度量的流水线。把它显式化，团队才知道自己当前在哪一步、下一步是什么。</p>
+        <div class="cmd"><span class="c"># 事故时间轴（每一步都对应一个责任人和一个时间戳）</span>
+<span class="k">检测</span> Detect  →  <span class="k">应答</span> Ack  →  <span class="k">定级</span> Triage  →  <span class="k">指挥</span> Command
+   →  <span class="k">定位</span> Diagnose  →  <span class="k">止血</span> Mitigate  →  <span class="k">恢复</span> Recover
+      →  <span class="k">验证</span> Verify  →  <span class="k">复盘</span> Review</div>
+        <div class="callout key"><span class="ct">◆ 关键认知</span><p><strong>止血（Mitigate）排在恢复和根因之前。</strong>先让业务回来（切换/回滚/降级），再慢慢找根因。把「定位完才能动手」的顺序倒过来，是缩短影响时长最有效的一招。详见 <a class="inline" data-target="ch7">第 7 章</a>。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>四个核心指标</h2>
+        <table class="tbl">
+          <tr><th>指标</th><th>含义</th><th>优化方向</th></tr>
+          <tr><td><strong>MTTD</strong> 平均检测时间</td><td>故障发生 → 被发现</td><td>靠监控告警覆盖度，别让客户先发现</td></tr>
+          <tr><td><strong>MTTA</strong> 平均应答时间</td><td>告警 → 有人接手</td><td>靠值班 on-call 与升级机制，本章重点</td></tr>
+          <tr><td><strong>MTTR</strong> 平均恢复时间</td><td>接手 → 业务恢复</td><td>靠结构化定位与止血手段（第 4/7 章）</td></tr>
+          <tr><td><strong>MTBF</strong> 平均无故障间隔</td><td>两次故障之间</td><td>靠复盘改进项闭环（第 8 章）</td></tr>
+        </table>
+        <p>响应不及时，本质是 <strong>MTTA 过长</strong>。它往往不是技术问题，而是机制问题：没人知道该自己上、不确定要不要惊动领导、找不到对的人。下面三节逐一解决。</p>
+
+        <h2 class="sec"><span class="bar"></span>分级标准：P0–P4</h2>
+        <p>分级是响应的「总开关」。标准必须事先写死、全员共识，事故中不临场争论。</p>
+        <table class="tbl">
+          <tr><th>级别</th><th>典型场景</th><th>影响</th><th>应答 / 指挥</th><th>通报对象</th></tr>
+          <tr><td><span class="badge b-p0">P0</span></td><td>核心网瘫痪、大面积断网、紧急呼叫受影响</td><td>全网/大区，无规避</td><td>5min 应答 / 15min 成立</td><td>高管 + 客户高层</td></tr>
+          <tr><td><span class="badge b-p1">P1</span></td><td>重要业务中断、单局所退服、大客户专线断</td><td>大量用户或 VIP</td><td>15min / 30min</td><td>部门负责人 + 客户对口</td></tr>
+          <tr><td><span class="badge b-p2">P2</span></td><td>性能劣化、部分功能受损、有规避手段</td><td>局部、可绕行</td><td>30min / 按需</td><td>值班主管</td></tr>
+          <tr><td><span class="badge b-p3">P3</span></td><td>冗余部件单点失效、无业务感知</td><td>无感知</td><td>工作时间处理</td><td>组内</td></tr>
+          <tr><td><span class="badge b-p4">P4</span></td><td>轻微告警、待观察</td><td>无</td><td>计划内</td><td>记录即可</td></tr>
+        </table>
+        <div class="callout warn"><span class="ct">⚠ 定级三要素</span><p>拿不准时，按 <strong>影响范围</strong>（多少用户/区域）× <strong>业务影响</strong>（核心业务还是边缘功能、有无收入/安全/合规影响）× <strong>有无规避</strong>（能不能临时绕过）三个维度判断。<strong>「紧急呼叫/安全类」业务无条件升一级。</strong></p></div>
+
+        <h2 class="sec"><span class="bar"></span>触发与升级机制</h2>
+        <p>好的响应机制让「动起来」成为默认，而不是需要勇气的决定。两类升级缺一不可：</p>
+        <div class="grid g2">
+          <div class="pcard"><div class="pic">⏱️</div><h4>时间触发（自动）</h4><p>到点没应答、到点没止血，系统/值班长<strong>自动</strong>向上一级升级，不需要谁开口请求。</p></div>
+          <div class="pcard"><div class="pic">📈</div><h4>影响触发（人工）</h4><p>影响面扩大、出现客户投诉、媒体关注，立即提级并扩大通报范围。</p></div>
+        </div>
+        <div class="cmd"><span class="c"># 升级阶梯示例（P1）</span>
+T+0    告警触发 → 一线值班 ACK
+T+15   未应答 → <span class="k">自动升级</span> 值班长 + 备份工程师
+T+30   未止血 → <span class="k">自动升级</span> 专业线负责人，成立正式指挥
+T+60   未止血 → <span class="k">自动升级</span> 部门总监 + 启动客户沟通预案</div>
+
+        <div class="callout anti"><span class="ct">✗ 反模式：等「确认是大事」才响应</span><p>「再观察十分钟看看会不会自己好」是黄金时间最大的杀手。正确做法是<strong>先按高级别拉响、并行排查，确认无事再降级关闭</strong>。降级的成本远低于延误。</p></div>
+      </section>
+
+      <!-- ============ CH3 ============ -->
+      <section class="chapter" id="ch3">
+        <div class="ch-eyebrow">Chapter 03 · Command</div>
+        <h1 class="ch-title">应急指挥体系：组队与协同</h1>
+        <p class="ch-lead">同样的人，有指挥和没指挥，恢复效率差几倍。本章把「一群专家」变成「一支能打的队伍」。</p>
+        <div class="lead-row">
+          <span class="chip">ICS · <b>事故指挥体系</b></span>
+          <span class="chip">一事 · <b>一指挥</b></span>
+          <span class="chip">角色 · <b>与人解耦</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 成立指挥的标准动作</h4>
+          <ul>
+            <li><strong>一次事故，一个总指挥（IC）</strong>，且 IC <em>不亲自动手</em>排障——他的工作是掌局、决策、协调。</li>
+            <li><strong>四个核心角色到位</strong>：总指挥 IC、技术指挥、沟通官、记录员。小事故可一人兼，但角色不能缺。</li>
+            <li><strong>按故障域拉人，不是全员围观</strong>：只拉当前假设涉及的专业组，其余待命。</li>
+            <li><strong>建立单一信息源</strong>（一个作战频道 + 一份事故文档），所有结论只认这里。</li>
+            <li><strong>谁值班谁先当 IC</strong>，与职级无关；更高级别到场可平稳交接（明确喊「指挥权移交给 X」）。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>为什么需要指挥体系</h2>
+        <p>ICS（Incident Command System）源自应急救援，被 Google SRE 等引入技术事故管理。它的核心洞见是：<strong>混乱不是因为人不够强，而是因为没有明确的「谁定方向、谁干活、谁说话、谁记录」。</strong>没有它，团队会同时出现「群龙无首」和「多头指挥」两个看似矛盾却常常并存的问题。</p>
+
+        <h2 class="sec"><span class="bar"></span>标准角色与职责</h2>
+        <table class="tbl">
+          <tr><th>角色</th><th>职责</th><th>关键纪律</th></tr>
+          <tr><td><strong>总指挥 IC</strong><br><span class="badge b-cyan">掌局</span></td><td>掌握全局、做决策、管节奏、定优先级、决定升级与对外口径</td><td><strong>绝不亲自动手排障</strong>；手一旦伸进键盘，全局就没人看了</td></tr>
+          <tr><td><strong>技术指挥</strong><br><span class="badge b-cyan">定位</span></td><td>带领技术排查、维护假设清单、分派调查任务、向 IC 汇报技术进展</td><td>对「技术方向」负责，把零散发现收敛成假设</td></tr>
+          <tr><td><strong>沟通官</strong><br><span class="badge b-cyan">沟通</span></td><td>对内同步管理层、对外同步客户，按节奏发布 SITREP</td><td>让 IC 和技术指挥<strong>专注作战</strong>，不被「现在怎么样了」打断</td></tr>
+          <tr><td><strong>记录员</strong><br><span class="badge b-cyan">记录</span></td><td>实时记录时间线：关键发现、决策、动作、时间戳</td><td>为复盘留证据，也防止「刚才谁说了什么」反复扯皮</td></tr>
+          <tr><td><strong>领域专家 SME</strong></td><td>核心网/传输/无线/IT 等具体执行调查与操作</td><td>只在被拉入时进场，完成后释放</td></tr>
+        </table>
+        <div class="callout key"><span class="ct">◆ 角色与人解耦</span><p>角色是「帽子」不是「头衔」。同一个人不同事故可能戴不同帽子；一个人也可在小事故里同时戴几顶。关键是<strong>每顶帽子任何时刻都有人戴</strong>，且大家都知道谁戴着哪顶。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>技术团队怎么「组队」</h2>
+        <p>你们提到的「技术团队组队」问题，核心是<strong>避免两个极端</strong>：要么没人来，要么全来了挤在一起互相干扰、重复劳动、还都在忙着自证清白。</p>
+        <div class="steps">
+          <div class="step"><h4>按当前假设拉人，而非按部门拉人</h4><p>技术指挥维护一个「假设清单」，每条假设指向某个故障域，就拉对应域的 1 名 SME。假设被排除，该 SME 即可释放。</p></div>
+          <div class="step"><h4>设「主调查人」，其余为支援</h4><p>同一条假设只设一个主调查人，避免三个人查同一条日志得出三个口径。</p></div>
+          <div class="step"><h4>并行假设，串行结论</h4><p>多条假设可并行调查，但结论必须汇总到技术指挥处统一收敛，写进同一份文档。</p></div>
+          <div class="step"><h4>明确「在岗 / 待命 / 释放」三态</h4><p>每个 SME 状态对 IC 透明，避免「以为他在查其实他走了」或「一堆人围观空耗」。</p></div>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>作战室机制</h2>
+        <p>作战室（war room，线上频道或线下会议室）是事故的物理/逻辑中心。三条纪律：</p>
+        <ul>
+          <li><strong>单一信息源</strong>：一个主频道汇总结论，技术细节可在分支讨论，但<em>结论必须回填主频道与事故文档</em>。</li>
+          <li><strong>结构化播报</strong>：重要更新用固定格式（现状 / 影响 / 在做什么 / 下一步 / 需要的支持），而非刷屏式碎片消息。</li>
+          <li><strong>降噪</strong>：与排障无关的人在主频道只读不发言，提问走旁路，保护一线注意力。</li>
+        </ul>
+
+        <h2 class="sec"><span class="bar"></span>常见反模式</h2>
+        <div class="callout anti"><span class="ct">✗ 群龙无首</span><p>所有人都在查，但没人对「全局」和「对外」负责。→ 立即指定 IC。</p></div>
+        <div class="callout anti"><span class="ct">✗ 多头指挥</span><p>两个领导各发各的指令，一线无所适从。→ 明确唯一 IC，其他领导通过 IC 发声。</p></div>
+        <div class="callout anti"><span class="ct">✗ 专家各说各话</span><p>每个 SME 只报自己的片段，没人收敛。→ 技术指挥负责把碎片收敛成假设与结论。</p></div>
+      </section>
+
+      <!-- ============ CH4 ============ -->
+      <section class="chapter" id="ch4">
+        <div class="ch-eyebrow">Chapter 04 · Diagnosis</div>
+        <h1 class="ch-title">结构化定位：破解「自证清白」陷阱</h1>
+        <p class="ch-lead">本章是全书技术核心。它要解决的不是「会不会查」，而是「查得有没有结构、有没有全局」——把自证清白的内耗，转化为协同缩圈的合力。</p>
+        <div class="lead-row">
+          <span class="chip">心法 · <b>缩圈非清白</b></span>
+          <span class="chip">方法 · <b>假设驱动</b></span>
+          <span class="chip">铁律 · <b>变更优先</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 结构化定位五步法</h4>
+          <ul>
+            <li><strong>① 改口径</strong>：目标是「缩小故障范围」，不是「证明不是我」。每个动作都问：这能帮全局排除哪一段？</li>
+            <li><strong>② 变更优先</strong>：先问「最近改了什么」——升级、配置、割接、扩缩容。多数事故由变更触发。</li>
+            <li><strong>③ 假设驱动</strong>：写下假设 → 设计一个能<em>证伪</em>它的验证 → 执行 → 排除或确认 → 更新范围。</li>
+            <li><strong>④ 分层 + 二分</strong>：沿信号流（业务→核心→承载→传输→接入）逐层定位，或在路径中点二分。</li>
+            <li><strong>⑤ 时间盒</strong>：每条假设给 10–15 分钟时限，超时无果就换方向，结果上墙（假设看板）。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>先理解：自证清白为什么会发生</h2>
+        <p>这不是人品问题，而是<strong>组织结构与压力共同制造的理性行为</strong>。理解成因，才能对症下药：</p>
+        <div class="grid g2">
+          <div class="pcard"><div class="pic">🛡️</div><h4>问责文化</h4><p>过往复盘以「找谁的责任」收场，于是每个人第一反应是先保护自己那一摊。</p></div>
+          <div class="pcard"><div class="pic">🧩</div><h4>专业割裂</h4><p>各专业组只懂自己那段，自然只能、也只敢对自己那段下结论。</p></div>
+          <div class="pcard"><div class="pic">📊</div><h4>指标本位</h4><p>「我的 KPI 全绿」容易自证，「端到端为什么不通」却无人主责。</p></div>
+          <div class="pcard"><div class="pic">😰</div><h4>压力收窄</h4><p>高压下人退守确定性区域——查我熟悉的、能自证的，而非该查的。</p></div>
+        </div>
+        <div class="callout key"><span class="ct">◆ 转换公式</span><p>同样是「看自己的指标」，<strong>清白思维</strong>问「这能不能甩锅给别人」；<strong>缩圈思维</strong>问「这条结论能帮全局<em>排除哪一段、把怀疑指向哪一段</em>」。前者制造对立，后者贡献信息。一句话切换团队心态：<em>「我们不是在查谁错了，我们在一起把范围缩小。」</em></p></div>
+
+        <h2 class="sec"><span class="bar"></span>假设驱动排障法</h2>
+        <p>结构化的反面是「东查一下西看一下」。假设驱动（hypothesis-driven debugging）给排查装上一个可收敛的循环：</p>
+        <div class="steps">
+          <div class="step"><h4>列假设</h4><p>基于现象列出可能原因，覆盖各故障域，<em>哪怕是自己这一侧</em>。例：「核心网用户面拥塞 / 传输误码 / 无线参数变更 / 某次升级引入」。</p></div>
+          <div class="step"><h4>排优先级</h4><p>按「可能性 × 验证成本」排序。变更相关、影响范围吻合的假设优先。</p></div>
+          <div class="step"><h4>设计证伪</h4><p>为每条假设设计一个能<strong>快速排除</strong>它的检验。证伪比证实更高效——排除一片比锁定一点更快缩圈。</p></div>
+          <div class="step"><h4>执行并记录</h4><p>主调查人执行，结果（确认/排除/存疑）回填假设看板，更新当前怀疑范围。</p></div>
+          <div class="step"><h4>收敛或迭代</h4><p>范围缩小后，基于新范围重列假设，循环直到锁定。始终保持「当前最可能 + 已排除」两张清单可见。</p></div>
+        </div>
+
+        <h3 class="sub">假设看板（贴在作战室，人人可见）</h3>
+        <div class="cmd"><span class="c"># HYPOTHESIS BOARD — 事故 #2026-0618-01</span>
+当前现象: 某大区 4G/5G 用户大面积注册失败，掉话率↑
+影响范围: 华东大区 ~120万用户 | 起始 14:32
+
+[假设]                        [负责人]  [状态]      [证据/下一步]
+H1 核心网AMF/MME过载          张·核心   <span class="k">调查中</span>     CPU 92%，待看是否变更引入
+H2 传输承载丢包              李·传输   <span class="v">已排除</span>     端到端时延/误码正常
+H3 14:10 的核心网补丁         王·核心   <span class="k">高度怀疑</span>   时间吻合，正在比对回滚
+H4 无线参数割接              赵·无线   <span class="v">已排除</span>     该区今日无割接</div>
+        <div class="callout best"><span class="ct">✓ 看板的威力</span><p>它把「各自为战 + 自证清白」变成「<strong>一张共享的全局地图</strong>」。每个人看到的不再只是自己那段，而是整体进度；排除自己也成了贡献（H2、H4 帮全局缩了圈），而不是甩锅。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>结构化方法工具箱</h2>
+        <table class="tbl">
+          <tr><th>方法</th><th>怎么用</th><th>适用</th></tr>
+          <tr><td><strong>变更优先</strong></td><td>先排查最近 24–72h 的变更：版本升级、配置/路由变更、割接、扩缩容、证书过期</td><td>第一手段，命中率最高</td></tr>
+          <tr><td><strong>分层定位</strong></td><td>沿电信分层自上而下或自下而上：业务/应用 → 核心网(控制面/用户面) → IP承载 → 传输(OTN/光) → 接入(无线/固网) → 动环(电源/温控)</td><td>不知从何下手时</td></tr>
+          <tr><td><strong>二分法</strong></td><td>在信号/呼叫路径中点取证，判断故障在前半段还是后半段，再对半段二分</td><td>长链路、路径清晰</td></tr>
+          <tr><td><strong>时间相关性</strong></td><td>把「故障起始时刻」与变更、流量、告警洪流对齐，找时间吻合的事件</td><td>有明确起始点</td></tr>
+          <tr><td><strong>故障域隔离</strong></td><td>对比「好的 vs 坏的」：哪个区域/机型/版本/时段不同？差异维度即嫌疑</td><td>部分受影响</td></tr>
+          <tr><td><strong>USE</strong></td><td>对资源看 利用率/饱和度/错误（Utilization/Saturation/Errors）</td><td>怀疑容量/性能</td></tr>
+          <tr><td><strong>RED</strong></td><td>对业务看 请求率/错误率/时延（Rate/Errors/Duration）</td><td>业务面劣化</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>信号流追踪：守住全局视角的抓手</h2>
+        <p>避免隧道视野的最实用工具，是始终对着一张<strong>端到端信号流图</strong>排查。例如一次语音呼叫或一次数据会话，从终端到对端要经过哪些网元与链路。把当前故障标在这张图上，「全局」就具象了。</p>
+        <div class="cmd"><span class="c"># 端到端路径示例（数据会话）—— 把故障点标在链路上</span>
+终端 ── 无线接入(gNB) ── 传输/承载 ── 核心网(UPF/SGW) ── 对端/互联网
+           │                │              │
+        覆盖/参数        误码/丢包       会话/容量/变更
+<span class="c"># 问：业务在哪一跳断的？逐跳取证，而不是各守一段自证清白。</span></div>
+
+        <h2 class="sec"><span class="bar"></span>定位决策树</h2>
+        <div class="tree">
+          <div class="tnode q"><span class="lbl">Q1</span>最近 72h 有无相关变更（升级/配置/割接）？</div>
+          <div class="tbranch">
+            <div class="tnode"><span class="yn y">是</span>优先按变更回滚验证（最快路径，见第 7 章），同时保留现场</div>
+            <div class="tnode"><span class="yn n">否</span>进入 Q2</div>
+          </div>
+          <div class="tnode q"><span class="lbl">Q2</span>影响范围是「全局」还是「部分」？</div>
+          <div class="tbranch">
+            <div class="tnode"><span class="yn y">部分</span>用<strong>故障域隔离</strong>：对比受影响 vs 未受影响的区域/机型/版本，锁定差异维度</div>
+            <div class="tnode"><span class="yn y">全局</span>怀疑公共节点（核心网/承载/DNS/认证/时钟），沿信号流自上而下分层</div>
+          </div>
+          <div class="tnode q"><span class="lbl">Q3</span>能否在路径上二分取证？</div>
+          <div class="tbranch">
+            <div class="tnode"><span class="yn y">能</span>路径中点取证 → 判断前/后半段 → 再二分，快速收敛</div>
+            <div class="tnode"><span class="yn n">不能</span>对每个故障域并行起假设，时间盒验证，结果上看板</div>
+          </div>
+        </div>
+
+        <div class="callout anti"><span class="ct">✗ 三个要警惕的信号</span><p>当你听到「我这边一切正常」「这不可能是我的问题」「先让别人查」时，<strong>陷阱正在发生</strong>。IC/技术指挥应立即把对话拉回：「很好，那这条结论帮我们排除了哪一段？下一步一起看哪里？」</p></div>
+      </section>
+
+      <!-- ============ CH5 ============ -->
+      <section class="chapter" id="ch5">
+        <div class="ch-eyebrow">Chapter 05 · Internal Sync</div>
+        <h1 class="ch-title">内部协同与信息对齐</h1>
+        <p class="ch-lead">技术组之间横向不同步、向管理层纵向报不清，是事故被「二次放大」的常见原因。本章给出节奏与模板。</p>
+        <div class="lead-row">
+          <span class="chip">横向 · <b>技术组之间</b></span>
+          <span class="chip">纵向 · <b>向管理层</b></span>
+          <span class="chip">结构 · <b>BLUF 先行</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 内部同步的黄金规则</h4>
+          <ul>
+            <li><strong>单一信息源</strong>：一个作战频道 + 一份实时事故文档，所有结论以此为准。</li>
+            <li><strong>固定节奏</strong>：技术组内部 15–30 分钟一次小同步；沟通官向管理层 30–60 分钟一份 SITREP。</li>
+            <li><strong>结论先行（BLUF）</strong>：向上汇报先说结论和需要的决策，再补背景，别让领导自己从技术流水里捞。</li>
+            <li><strong>管理层只要三件事</strong>：多严重、还要多久、需要我做什么（决策/资源/对外授权）。</li>
+            <li><strong>没进展也要报</strong>：「无新进展，下一步 X，下次 Y 点更新」本身就是关键信息。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>两个方向，两套语言</h2>
+        <p>内部协同失败，往往是因为把「横向技术同步」和「纵向管理汇报」混为一谈——用满屏技术细节淹没管理层，或用一句「还在查」打发同伴。两者需要不同的语言。</p>
+        <table class="tbl">
+          <tr><th>维度</th><th>横向（技术组之间）</th><th>纵向（向管理层）</th></tr>
+          <tr><td>目的</td><td>对齐事实、不重复劳动、协同缩圈</td><td>支撑决策、调动资源、授权对外</td></tr>
+          <tr><td>内容</td><td>假设/证据/已排除项/下一步</td><td>影响、ETA、风险、所需决策</td></tr>
+          <tr><td>语言</td><td>技术术语 OK</td><td><strong>结论先行，少术语</strong></td></tr>
+          <tr><td>节奏</td><td>15–30 分钟</td><td>30–60 分钟或有重大进展时</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>SITREP：标准态势报告</h2>
+        <p>SITREP（Situation Report）是事故沟通的通用单元。一个格式同时服务内部与（裁剪后）外部，避免每次现编。</p>
+        <div class="cmd"><span class="c"># SITREP — 内部版</span>
+<span class="k">事故</span>: #2026-0618-01  | <span class="k">级别</span>: P1 | <span class="k">时间</span>: 15:10 (T+38min)
+<span class="k">现状</span>: 华东大区注册失败，影响 ~120万用户；掉话率较基线 +采集中
+<span class="k">影响</span>: 4G/5G 语音&数据接入受损；紧急呼叫已确认可用
+<span class="k">进展</span>: 已排除传输与无线割接；高度怀疑 14:10 核心网补丁
+<span class="k">动作</span>: 正在灰度回滚补丁；备用 AMF 池扩容中
+<span class="k">下一步</span>: 15:25 前完成回滚验证
+<span class="k">需要</span>: 授权进入应急变更流程（请 X 决策）
+<span class="k">下次更新</span>: 15:30</div>
+
+        <h2 class="sec"><span class="bar"></span>向上沟通（Managing Up）</h2>
+        <p>这是技术骨干最容易忽视、却最影响「指挥层信任」的能力。管理层不是来听你查了多少日志的，他们要的是<strong>能不能决策</strong>。</p>
+        <div class="callout key"><span class="ct">◆ 管理层的三个问题</span><p>主动替领导回答好这三问，你就掌握了向上沟通：<br><strong>① 有多严重？</strong>（影响面/业务/客户/合规，一句话量化）<br><strong>② 还要多久？</strong>（给区间和不确定性，而非假装精确）<br><strong>③ 需要我做什么？</strong>（明确的决策点、资源、对外授权）</p></div>
+        <div class="grid g2">
+          <div class="pcard"><div class="pic">✅</div><h4>BLUF 结构</h4><p>Bottom Line Up Front：第一句话就是结论与诉求，背景放后面。领导可随时下钻，但不必下钻才懂。</p></div>
+          <div class="pcard"><div class="pic">🎚️</div><h4>给区间，不给假精确</h4><p>「预计 20–40 分钟恢复，取决于回滚是否生效」远好过拍一个会被反复追责的「20 分钟」。</p></div>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>信息节奏（Cadence）</h2>
+        <p>把同步变成「按闹钟发生的事」，而不是「想起来或被追问才做的事」。沟通官维护一个节奏时钟：</p>
+        <div class="cmd">T+0    成立指挥，首条 SITREP（内部）
+T+15   技术组内部同步 #1（假设看板过一遍）
+T+30   SITREP → 管理层 #1
+T+45   技术组内部同步 #2
+T+60   SITREP → 管理层 #2 + 评估是否需对客户升级沟通
+... 每逢重大进展（止血成功/影响扩大）随时插播</div>
+
+        <div class="callout anti"><span class="ct">✗ 内部协同反模式</span><p><strong>报喜不报忧</strong>：怕挨批而淡化影响，导致管理层决策失据。<br><strong>术语轰炸</strong>：用一堆网元缩写让领导「听不懂只能信」，看似专业实则失职。<br><strong>被动等问</strong>：不主动同步，等领导追问才挤牙膏，信任在一次次追问中流失。</p></div>
+      </section>
+
+      <!-- ============ CH6 ============ -->
+      <section class="chapter" id="ch6">
+        <div class="ch-eyebrow">Chapter 06 · Customer Comms</div>
+        <h1 class="ch-title">外部客户沟通：透明度与信任</h1>
+        <p class="ch-lead">客户记住的，往往不是你修得多快，而是<strong>过程中是否被蒙在鼓里</strong>。本章把对外沟通从技术团队的盲区变成可执行的动作。</p>
+        <div class="lead-row">
+          <span class="chip">高层 · <b>透明 + 心态</b></span>
+          <span class="chip">中基层 · <b>技术现状</b></span>
+          <span class="chip">原则 · <b>不黑盒</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 对客户沟通的铁律</h4>
+          <ul>
+            <li><strong>沉默是最差的选项</strong>：哪怕还没定位，也要让客户知道「我们已知晓、在全力处理、下次几点更新」。</li>
+            <li><strong>分层说话</strong>：对高层讲透明度、影响和我们的应对态度；对中基层讲技术现状、规避方案和 ETA。</li>
+            <li><strong>不黑盒</strong>：每次沟通都<em>承诺下次更新时间</em>并准时兑现，把不确定变成有节奏的确定。</li>
+            <li><strong>不过早承诺 ETA</strong>，不甩锅给上游/厂商，不堆技术黑话。</li>
+            <li><strong>四类通报随手可取</strong>：初次通报 / 进展更新 / 恢复通知 / 根因说明（模板见第 10 章）。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>为什么这是技术团队的盲区</h2>
+        <p>技术团队的本能是「修好了再说」，因为没修好之前「没什么可说」。但从客户视角，<strong>故障期间的沉默 = 失控</strong>。客户的焦虑不只来自故障本身，更来自「我不知道你们知不知道、在不在管、还要多久」。沟通填补的正是这块信息真空。</p>
+        <div class="callout key"><span class="ct">◆ 信任公式</span><p>客户信任 ≈ <strong>过程透明度 × 承诺兑现率</strong>。一次「我们暂时还没定位到根因，但已排除 A 和 B，正在验证 C，下午 4 点前再向您更新」的坦诚沟通，比一次「正在紧急处理」的空话更能维系信任——即便此刻你并没有更好的消息。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>分层沟通策略</h2>
+        <p>同一个事故，不同对象要的东西完全不同。一份通稿群发是失败的开始。</p>
+        <table class="tbl">
+          <tr><th>对象</th><th>他们最关心</th><th>沟通要点</th><th>避免</th></tr>
+          <tr><td><strong>客户高层</strong><br>(决策者)</td><td>影响、风险、你们是否可靠</td><td>透明、稳定的心态、定期节奏、明确的责任承诺；管理预期</td><td>技术细节、过度乐观、甩锅</td></tr>
+          <tr><td><strong>客户中基层</strong><br>(技术/运营对口)</td><td>技术现状、影响范围、怎么绕过、何时好</td><td>当前已知事实、已排除项、规避方案、ETA 区间</td><td>含糊其辞、只说「在处理」</td></tr>
+          <tr><td><strong>终端用户</strong><br>(如适用)</td><td>能不能用、要不要操作</td><td>简短、无术语、给替代方案与恢复预期</td><td>内部术语、推诿</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>对高层：透明度与心态</h2>
+        <p>你提到的关键——<em>「高层沟通讲究透明度和心态，即便没完全定位，沟通也很重要，不要黑盒子」</em>——正是此节核心。</p>
+        <div class="steps">
+          <div class="step"><h4>第一时间主动触达</h4><p>不要等客户先打电话。由对口的高层或客户经理主动通报，姿态本身就是信号：我们重视、我们在管。</p></div>
+          <div class="step"><h4>透明，但有结构</h4><p>透明 ≠ 把内部混乱倒给客户。讲「已知什么、在做什么、何时再同步」，不讲「我们也很乱、可能是 X 也可能是 Y」。</p></div>
+          <div class="step"><h4>稳定的心态会传染</h4><p>高层接口的情绪即公司的情绪。镇定、有条理、不回避，能极大安抚对方决策层。</p></div>
+          <div class="step"><h4>承诺节奏并兑现</h4><p>「我每小时向您更新一次，即使没有新进展」——把开放式的焦虑，转成有节奏的确定感。准时兑现比内容更重要。</p></div>
+        </div>
+
+        <h2 class="sec"><span class="bar"></span>对中基层：给技术现状</h2>
+        <p>客户的技术/运营对口需要的是能让<em>他们</em>也能向<em>他们的</em>上级交代、并指导一线规避的实质信息：</p>
+        <ul>
+          <li><strong>当前已知事实</strong>：影响哪些业务/区域/时段，量级多大。</li>
+          <li><strong>已排除什么</strong>：让对方看到我们在系统性推进，而非原地打转。</li>
+          <li><strong>规避/降级方案</strong>：是否有临时绕行、降级使用的办法，先恢复部分业务。</li>
+          <li><strong>ETA 区间与依赖</strong>：给区间并说明取决于什么，而非一个会被追责的精确点。</li>
+        </ul>
+
+        <h2 class="sec"><span class="bar"></span>「没有更新」也是一种更新</h2>
+        <div class="callout best"><span class="ct">✓ No update is an update</span><p>到了承诺的更新时间，即使没有实质进展，也必须按时发出：「<em>截至 16:00，仍在验证回滚方案，暂无新结论，已排除 A/B/C，下次更新 16:30。</em>」这一条小小的纪律，是维系长时间事故中客户信任的命脉。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>对外沟通禁忌</h2>
+        <div class="callout anti"><span class="ct">✗ 七个雷区</span><p>① 故障期间沉默；② 过早承诺一个精确 ETA；③ 公开甩锅给厂商/上游/客户；④ 堆砌技术黑话掩盖；⑤ 过度乐观（「马上就好」却一再跳票）；⑥ 不同对象口径不一致；⑦ 恢复后不做根因说明就当无事发生。</p></div>
+        <div class="callout warn"><span class="ct">⚠ 谁来对外说</span><p>对外口径必须由 IC/沟通官<strong>统一出口</strong>，一线工程师不直接对客户承诺时间或原因。技术事实由技术指挥提供，措辞与发布由沟通官把关。</p></div>
+      </section>
+
+      <!-- ============ CH7 ============ -->
+      <section class="chapter" id="ch7">
+        <div class="ch-eyebrow">Chapter 07 · Recovery</div>
+        <h1 class="ch-title">恢复执行与验证</h1>
+        <p class="ch-lead">定位之后，恢复动作本身也是高风险操作。本章解决「怎么安全地把业务拉回来，并确认它真的回来了」。</p>
+        <div class="lead-row">
+          <span class="chip">铁律 · <b>止血优先</b></span>
+          <span class="chip">操作 · <b>评估后再动</b></span>
+          <span class="chip">收尾 · <b>验证闭环</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 恢复操作前必过的关</h4>
+          <ul>
+            <li><strong>止血优先于根因</strong>：先恢复业务（切换/回滚/降级），根因可以恢复后再深挖。</li>
+            <li><strong>动手前评估三问</strong>：这个操作<em>最坏</em>会怎样？能否回退？影响哪些其它业务？</li>
+            <li><strong>单一变更原则</strong>：一次只做一个恢复动作并观察，避免多个动作齐下导致无法判断成效。</li>
+            <li><strong>留现场再操作</strong>：操作前抓取日志/状态快照，别为了恢复把根因证据毁了。</li>
+            <li><strong>验证三层</strong>：网元指标恢复 → 业务拨测通过 → 客户侧确认，缺一不可。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>止血优先：恢复的第一性原理</h2>
+        <div class="callout key"><span class="ct">◆ Mitigate before Root Cause</span><p>用户不关心你有没有找到根因，只关心业务通不通。只要能<strong>安全地</strong>恢复业务，就先恢复——哪怕还不完全知道为什么坏。把「定位完才能恢复」的执念去掉，是缩短影响时长最关键的一步。前提是「安全地」：见下方风险评估。</p></div>
+
+        <h2 class="sec"><span class="bar"></span>常用恢复手段</h2>
+        <table class="tbl">
+          <tr><th>手段</th><th>说明</th><th>适用 / 注意</th></tr>
+          <tr><td><strong>回滚 Rollback</strong></td><td>撤销最近的变更（版本/配置/割接）回到已知良好状态</td><td>变更触发类首选；确认回滚本身有验证过的预案</td></tr>
+          <tr><td><strong>切换 Failover</strong></td><td>切到备用网元/主备倒换/路由重路由</td><td>注意备用侧容量与数据一致性；防止「切换风暴」</td></tr>
+          <tr><td><strong>降级 Degrade</strong></td><td>关闭非核心功能、限流，保住核心业务</td><td>牺牲体验换可用性；事后需恢复</td></tr>
+          <tr><td><strong>隔离 Isolate</strong></td><td>把故障域从系统中摘除，阻止扩散</td><td>防止级联失效；如隔离故障单板/单局所</td></tr>
+          <tr><td><strong>扩容 Scale</strong></td><td>对过载资源紧急扩容/扩池</td><td>容量类止血；注意扩容生效时延</td></tr>
+          <tr><td><strong>限流 / 流控</strong></td><td>对信令/接入做准入控制，缓解拥塞</td><td>拥塞、信令风暴类必备（见第 9 章案例三）</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>操作前的风险评估</h2>
+        <p>恢复操作是「带着压力在生产网上动刀」，本身可能引入二次故障。动手前由 IC 拍板，过一遍：</p>
+        <div class="steps">
+          <div class="step"><h4>最坏情况</h4><p>这个动作如果失败，最坏会扩大到什么程度？是否会影响当前还正常的业务？</p></div>
+          <div class="step"><h4>可回退性</h4><p>做完能不能撤回？撤回要多久？没有回退路径的操作要格外谨慎、需更高授权。</p></div>
+          <div class="step"><h4>爆炸半径</h4><p>能否先在小范围（单局所/灰度）验证，再全量？尽量缩小首次操作的影响面。</p></div>
+          <div class="step"><h4>授权与记录</h4><p>高风险操作需 IC（必要时管理层）明确授权；记录员记下「谁、何时、做了什么、预期什么」。</p></div>
+        </div>
+        <div class="callout warn"><span class="ct">⚠ 单一变更原则</span><p>恢复阶段最忌「病急乱投医」——同时回滚、又切换、又改配置。一旦好转，你不知道是哪个起的作用；一旦恶化，你不知道是哪个闯的祸。<strong>一次一个动作，观察，再决定下一步。</strong></p></div>
+
+        <h2 class="sec"><span class="bar"></span>验证闭环：三层确认</h2>
+        <p>「指标绿了」不等于「业务好了」，「业务好了」不等于「客户认了」。三层逐级确认才算真正恢复：</p>
+        <div class="cmd"><span class="c"># 恢复验证清单</span>
+[ ] L1 网元/系统指标：告警清除，KPI（成功率/时延/掉话率）回到基线
+[ ] L2 业务拨测：主动发起呼叫/数据/专线测试，端到端跑通
+[ ] L3 客户确认：客户侧确认业务恢复（尤其大客户/专线）
+[ ] 监控观察期：维持加强监控 N 分钟，确认无反复
+[ ] 沟通收尾：向内部与客户发布「恢复通知」（暂定根因 + 后续复盘安排）
+[ ] 现场保全：归档日志/快照/时间线，供复盘使用</div>
+        <div class="callout best"><span class="ct">✓ 别急着宣布胜利</span><p>恢复后设一段<strong>观察期</strong>再正式关闭事故。很多事故会在「宣布恢复」后短时间内反复。观察期内维持指挥与加强监控，确认稳定后再降级关闭。</p></div>
+      </section>
+
+      <!-- ============ CH8 ============ -->
+      <section class="chapter" id="ch8">
+        <div class="ch-eyebrow">Chapter 08 · Review</div>
+        <h1 class="ch-title">无指责复盘与根因分析</h1>
+        <p class="ch-lead">复盘是把一次代价高昂的事故转化为团队能力的唯一机会。做对了，团队成长；做成批斗会，下次就没人敢说真话。</p>
+        <div class="lead-row">
+          <span class="chip">原则 · <b>对事不对人</b></span>
+          <span class="chip">产出 · <b>可跟踪改进项</b></span>
+          <span class="chip">方法 · <b>5 Why / 鱼骨</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">速查行动</span>
+          <h4>// 一次合格复盘的要件</h4>
+          <ul>
+            <li><strong>无指责（Blameless）</strong>：聚焦「系统/流程为什么允许这件事发生」，而非「谁犯了错」。</li>
+            <li><strong>48 小时内</strong>开复盘，趁记忆与日志新鲜；先重建<em>时间线</em>，再分析根因。</li>
+            <li><strong>挖到系统层</strong>：用 5 Why 穿透到流程/机制/工具层面，别停在「某人操作失误」。</li>
+            <li><strong>产出改进项</strong>：每条都有<em>负责人 + 截止日期 + 验收标准</em>，并纳入跟踪直到关闭。</li>
+            <li><strong>沉淀复用</strong>：更新本手册案例库（第 9 章）、监控告警、预案与值班知识。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">深度展开</div>
+
+        <h2 class="sec"><span class="bar"></span>为什么必须「无指责」</h2>
+        <div class="callout key"><span class="ct">◆ 安全感 = 真相</span><p>复盘的价值取决于信息的真实度。一旦复盘变成追责，当事人就会隐瞒、美化、自证清白——你将永远拿不到真正的根因。<strong>Blameless 不是不负责任，而是把矛头从「人」转向「让人犯错的系统」</strong>：好的系统应该让正确的事容易做、让错误难以发生或易于发现。</p></div>
+        <p>注意：这与<a class="inline" data-target="ch4">第 4 章</a>的反自证清白一脉相承——事故中不甩锅、复盘时不追责，团队才敢于贡献真实信息。这是同一种文化在两个阶段的体现。</p>
+
+        <h2 class="sec"><span class="bar"></span>复盘的标准结构</h2>
+        <table class="tbl">
+          <tr><th>部分</th><th>内容</th></tr>
+          <tr><td><strong>摘要</strong></td><td>一句话讲清：什么时间、什么业务、多大影响、多久恢复</td></tr>
+          <tr><td><strong>影响</strong></td><td>受影响用户/区域/时长，业务与客户影响，是否触及 SLA</td></tr>
+          <tr><td><strong>时间线</strong></td><td>从检测到恢复的关键时间戳：发现、应答、关键判断、止血、恢复、关闭</td></tr>
+          <tr><td><strong>根因</strong></td><td>触发原因 + 深层系统原因（用下方方法挖掘）</td></tr>
+          <tr><td><strong>做得好的</strong></td><td>哪些动作有效、值得固化（复盘不只挑毛病）</td></tr>
+          <tr><td><strong>改进项</strong></td><td>可执行、有主、有期限的行动清单</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>根因分析方法</h2>
+        <div class="grid g3">
+          <div class="pcard"><div class="pn">METHOD</div><h4>5 Why</h4><p>对「为什么」连问五层，从现象穿透到机制。注意每层都要有证据支撑，别变成猜测接龙。</p></div>
+          <div class="pcard"><div class="pn">METHOD</div><h4>鱼骨图</h4><p>Ishikawa：从人/机/料/法/环/测多维度列举可能因素，适合多因耦合的复杂事故。</p></div>
+          <div class="pcard"><div class="pn">METHOD</div><h4>故障树 FTA</h4><p>自顶向下分解失效的逻辑组合（与/或门），适合分析「多个条件同时满足才爆发」的事故。</p></div>
+        </div>
+        <h3 class="sub">5 Why 示例（穿透到系统层）</h3>
+        <div class="cmd">现象: 核心网补丁导致大区注册失败
+ ├─ Why1 为何注册失败? → 补丁引入了配置不兼容
+ ├─ Why2 为何不兼容上线了? → 灰度未覆盖该机型/该场景
+ ├─ Why3 为何灰度没覆盖? → 灰度环境与现网拓扑不一致
+ ├─ Why4 为何不一致? → 缺少现网拓扑的同步机制
+ └─ Why5 为何缺机制? → 变更管理流程未要求拓扑一致性校验
+      <span class="k">→ 根因在「流程」，改进项应作用于变更管理，而非责备打补丁的人</span></div>
+
+        <h2 class="sec"><span class="bar"></span>改进项：闭环才有价值</h2>
+        <p>复盘最大的浪费是「开完会、写完报告、改进项无人跟进」。每条改进项必须是一张可跟踪的票：</p>
+        <div class="cmd"><span class="c"># 改进项模板</span>
+[ID] AI-2026-0618-03
+[类型] 预防 / 检测 / 缓解 / 流程
+[描述] 变更管理增加"现网拓扑一致性校验"门禁
+[负责人] 王××      [截止] 2026-07-15
+[验收标准] 校验项纳入上线检查单，且对历史变更回归通过
+[状态] 待开始 / 进行中 / <span class="v">已关闭</span></div>
+        <div class="callout best"><span class="ct">✓ 好改进项的分类</span><p>均衡覆盖四类：<strong>预防</strong>（让它不再发生）、<strong>检测</strong>（更快发现，降 MTTD）、<strong>缓解</strong>（更快止血，降 MTTR）、<strong>流程</strong>（让响应/沟通更顺）。只盯「预防」会忽视「下次更快恢复」同样重要。</p></div>
+        <div class="callout anti"><span class="ct">✗ 复盘反模式</span><p>追责大会 / 只写报告不落改进 / 根因停在「人为失误」/ 改进项没有负责人和期限 / 同类事故重复发生却无人发现是重复。</p></div>
+      </section>
+
+      <!-- ============ CH9 ============ -->
+      <section class="chapter" id="ch9">
+        <div class="ch-eyebrow">Chapter 09 · Scenarios</div>
+        <h1 class="ch-title">实战推演案例库</h1>
+        <p class="ch-lead">三个典型电信事故，完整演练「响应 → 组队 → 结构化定位 → 内外沟通 → 恢复 → 复盘」。建议用于团队桌面推演（tabletop drill）。</p>
+        <div class="lead-row">
+          <span class="chip">案例一 · <b>核心网中断</b></span>
+          <span class="chip">案例二 · <b>传输光缆中断</b></span>
+          <span class="chip">案例三 · <b>信令风暴</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">演练速查</span>
+          <h4>// 如何用这些案例做桌面推演</h4>
+          <ul>
+            <li><strong>读完「背景」先暂停</strong>，让团队自己回答：此刻你会怎么定级、怎么组队、第一步查哪里？</li>
+            <li><strong>四个观察点</strong>，记录团队表现：是否有人落入<em>自证清白</em>？是否有人专职守<em>全局</em>？是否<em>止血优先</em>？对外是否<em>及时不黑盒</em>？</li>
+            <li><strong>角色轮换</strong>：每个案例换不同的人当 IC / 技术指挥 / 沟通官，让全员都练到。</li>
+            <li><strong>计时复盘</strong>：推演后对照「展开」讨论差距，把新教训回填到第 8 章复盘与本案例库。</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">案例展开</div>
+
+        <h2 class="sec"><span class="bar"></span>案例一：核心网补丁引发大区注册失败 <span class="badge b-p0">P0</span></h2>
+        <h3 class="sub">背景与现象</h3>
+        <p>14:32，监控告警：华东大区 4G/5G 用户注册成功率断崖式下跌，掉话率飙升，约 120 万用户受影响。客服热线开始涌入投诉。</p>
+        <h3 class="sub">响应与组队</h3>
+        <div class="cmd">14:32  告警触发，值班工程师 ACK（MTTA 达标）
+14:35  初判影响面大 → <span class="k">按 P0 拉响</span>，宁高勿低
+14:38  值班长成立指挥: IC=值班长 / 技术指挥=核心网主管 / 沟通官 / 记录员
+14:40  按假设拉人: 核心网、传输、无线各 1 名 SME 进作战室，其余待命</div>
+        <h3 class="sub">结构化定位（反自证清白）</h3>
+        <p>技术指挥立刻建假设看板，要求每个组的结论都用于「缩圈」而非「自证」：</p>
+        <div class="cmd">H1 核心网 AMF/MME 过载       核心 SME   <span class="k">调查中</span>  CPU 92%
+H2 传输承载丢包             传输 SME   <span class="v">已排除</span>  端到端误码/时延正常 → 排除传输段
+H3 <span class="k">14:10 核心网补丁</span>          核心 SME   <span class="k">高度怀疑</span> 故障起始与上线时间高度吻合
+H4 无线参数割接             无线 SME   <span class="v">已排除</span>  该区今日无割接 → 排除接入段</div>
+        <div class="callout best"><span class="ct">✓ 关键转折</span><p>传输和无线没有停留在「证明我没问题」，而是<strong>主动把自己排除，帮全局把怀疑收敛到核心网变更</strong>。这正是缩圈思维。变更优先原则直接命中 H3。</p></div>
+        <h3 class="sub">止血与恢复</h3>
+        <div class="cmd">14:52  IC 决策: 不等根因，先按变更回滚止血（止血优先）
+14:55  风险评估: 回滚有验证过预案、可回退 → 先单局所灰度
+15:05  灰度回滚生效，该局所成功率回升 → 全量回滚
+15:20  L1 指标恢复 → L2 拨测通过 → L3 大客户确认
+15:35  观察期结束，无反复，事故降级关闭</div>
+        <h3 class="sub">内外沟通（贯穿全程）</h3>
+        <div class="cmd">14:45  沟通官首条对外: 已知晓华东接入异常，全力处理，15:15 前更新
+14:45  对内 SITREP → 管理层: P0/影响120万/疑似变更/需应急变更授权
+15:00  对客户高层: 已定位疑似原因正在回滚，预计 30 分钟内逐步恢复
+15:25  恢复通知: 业务已恢复，暂定根因为变更，48h 内出复盘</div>
+        <div class="callout key"><span class="ct">◆ 复盘要点</span><p>根因不在「打补丁的人」，而在「灰度环境与现网拓扑不一致」的流程缺口（见<a class="inline" data-target="ch8">第 8 章</a> 5-Why 示例）。改进项作用于变更管理门禁。</p></div>
+
+        <hr class="div">
+
+        <h2 class="sec"><span class="bar"></span>案例二：传输光缆中断 <span class="badge b-p1">P1</span></h2>
+        <h3 class="sub">背景与现象</h3>
+        <p>03:14，传输网海量告警同时涌现，多个基站退服，某政企大客户专线中断。疑似市政施工挖断光缆。</p>
+        <h3 class="sub">定位：告警相关性 + 物理定位</h3>
+        <div class="steps">
+          <div class="step"><h4>告警收敛，别被洪流淹没</h4><p>海量告警中找<strong>根告警</strong>：用拓扑相关性把成百上千条下游告警收敛到「某段光路 LOS（信号丢失）」这一个根因告警。</p></div>
+          <div class="step"><h4>定段定点</h4><p>结合 OTDR（光时域反射）定位断点距离，锁定光缆物理段落，派抢修队到点。</p></div>
+          <div class="step"><h4>并行：先保护倒换，再修物理</h4><p>不等物理修复——立即检查是否有保护路由/环网可倒换，先把业务切到备用路径止血。</p></div>
+        </div>
+        <div class="callout warn"><span class="ct">⚠ 这里的「自证清白」变体</span><p>传输断纤时，无线侧会看到一堆基站退服告警，容易误判为无线故障而各查各的。<strong>根告警收敛</strong>能立刻指向传输物理层，避免无线团队白忙一场——这就是「沿信号流分层」的价值。</p></div>
+        <h3 class="sub">恢复与沟通</h3>
+        <div class="cmd">03:20  保护倒换: 有备用环网的业务切换成功，大部分基站恢复
+03:30  无保护的政企专线: 通知大客户，给出抢修 ETA 区间
+03:25  对客户高层(政企): 主动电话告知断纤、已派抢修、每小时更新
+05:40  现场熔接完成 → 业务恢复 → L1/L2/L3 验证 → 客户确认</div>
+        <div class="callout best"><span class="ct">✓ 沟通亮点</span><p>对无保护的政企专线，物理修复需数小时。此时<strong>主动、按小时、坦诚</strong>的沟通（哪怕只是「仍在熔接，预计还需 1 小时」）是维系大客户关系的关键——不黑盒。</p></div>
+
+        <hr class="div">
+
+        <h2 class="sec"><span class="bar"></span>案例三：信令风暴 / 网络拥塞 <span class="badge b-p1">P1</span></h2>
+        <h3 class="sub">背景与现象</h3>
+        <p>19:05，某区域核心网信令负荷骤增至平时数倍，注册/鉴权时延激增，部分用户接入失败。无明显硬件故障，无近期变更。</p>
+        <h3 class="sub">定位难点：区分「因」与「果」</h3>
+        <div class="callout anti"><span class="ct">✗ 典型互相甩锅现场</span><p>核心网组：「是无线侧海量重连把我打满了，问题在接入。」无线组：「是核心网响应慢导致终端反复重试，问题在核心。」——双方都在自证清白，而<strong>信令风暴恰恰是「因果循环」</strong>：某处抖动 → 终端重连 → 加重负荷 → 更多失败 → 更多重连。</p></div>
+        <div class="callout best"><span class="ct">✓ 破解：先止血断环，再溯因</h4><p>IC 拉双方进同一作战室，明确：<strong>现在不争因果，先一起把正反馈环打断</strong>。用时间线找<em>最初的触发抖动</em>（如某网元瞬断、一次配置抖动、外部大量终端同时上线），同时立即启动流控止血。</p></div>
+        <h3 class="sub">止血手段（拥塞类专属）</h3>
+        <div class="cmd">19:18  启动信令<span class="k">流控/准入限制</span>，削峰，阻断"失败→重连"正反馈
+19:25  对过载网元紧急扩容/扩池，提升处理能力
+19:30  负荷回落，时延恢复 → 逐步解除限流
+19:35  溯源: 定位到初始触发为某网元瞬时重启引发的重连洪峰</div>
+        <h3 class="sub">沟通要点</h3>
+        <p>对客户中基层说明「网络拥塞、正在流控削峰、预计 X 分钟缓解」，给规避建议（如错峰）。对高层强调已控制、在恢复，管理预期。</p>
+        <div class="callout key"><span class="ct">◆ 三案例的共同主线</span><p>① <strong>有人守全局</strong>（IC 不动手）；② <strong>结论用于缩圈而非自证</strong>；③ <strong>止血优先于根因</strong>；④ <strong>对外不黑盒</strong>。把这四条刻进团队肌肉记忆，就抓住了本手册的全部精髓。</p></div>
+      </section>
+
+      <!-- ============ CH10 ============ -->
+      <section class="chapter" id="ch10">
+        <div class="ch-eyebrow">Chapter 10 · Toolbox</div>
+        <h1 class="ch-title">工具箱 · 模板速查</h1>
+        <p class="ch-lead">事故进行时直接取用的清单、模板与卡片。建议打印贴墙，或做成内部知识库的置顶页。</p>
+        <div class="lead-row">
+          <span class="chip">拿了 · <b>就用</b></span>
+          <span class="chip">填空 · <b>即发</b></span>
+        </div>
+
+        <div class="quick">
+          <span class="tag-q">事故启动卡</span>
+          <h4>// 收到疑似事故，60 秒内</h4>
+          <ul>
+            <li>① <strong>定级</strong>：影响范围 × 业务影响 × 有无规避 → P? <span class="badge b-p0">P0</span><span class="badge b-p1">P1</span><span class="badge b-p2">P2</span>（拿不准就高）</li>
+            <li>② <strong>成立指挥</strong>：指定 IC（不动手）→ 技术指挥 / 沟通官 / 记录员</li>
+            <li>③ <strong>建单一信息源</strong>：作战频道 + 事故文档（开假设看板 + 时间线）</li>
+            <li>④ <strong>按假设拉人</strong>：只拉涉及的故障域 SME，其余待命</li>
+            <li>⑤ <strong>启动节奏</strong>：内部 15–30min / 对管理层 30–60min / 对客户首条尽快发出</li>
+          </ul>
+        </div>
+
+        <div class="deep-label">速查模板</div>
+
+        <h2 class="sec"><span class="bar"></span>① 分级速查</h2>
+        <table class="tbl">
+          <tr><th>级别</th><th>判据</th><th>应答/成立</th><th>通报</th></tr>
+          <tr><td><span class="badge b-p0">P0</span></td><td>全网/大区，无规避，含紧急呼叫</td><td>5 / 15 min</td><td>高管+客户高层</td></tr>
+          <tr><td><span class="badge b-p1">P1</span></td><td>重要业务中断 / VIP 专线断</td><td>15 / 30 min</td><td>负责人+客户对口</td></tr>
+          <tr><td><span class="badge b-p2">P2</span></td><td>劣化 / 部分受损 / 有规避</td><td>30 min</td><td>值班主管</td></tr>
+          <tr><td><span class="badge b-p3">P3</span></td><td>冗余单点失效，无感知</td><td>工作时间</td><td>组内</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>② 角色职责速查</h2>
+        <table class="tbl">
+          <tr><th>角色</th><th>一句话职责</th></tr>
+          <tr><td><strong>IC 总指挥</strong></td><td>掌全局、做决策、定节奏、定对外口径——<strong>不动手排障</strong></td></tr>
+          <tr><td><strong>技术指挥</strong></td><td>带定位、维护假设看板、收敛结论</td></tr>
+          <tr><td><strong>沟通官</strong></td><td>对内对外按节奏同步，保护一线注意力</td></tr>
+          <tr><td><strong>记录员</strong></td><td>实时记时间线：发现/决策/动作/时间戳</td></tr>
+        </table>
+
+        <h2 class="sec"><span class="bar"></span>③ SITREP 模板（内部 / 管理层）</h2>
+        <div class="cmd">事故#__ | 级别 P_ | T+__min
+现状: （一句话现象）
+影响: （范围/用户量/业务/客户/是否触 SLA）
+进展: （已确认 / 已排除 / 高度怀疑）
+动作: （正在做的止血/恢复动作）
+下一步 & 需要: （下一动作 + 需要的决策/资源/授权）
+下次更新: __:__</div>
+
+        <h2 class="sec"><span class="bar"></span>④ 客户沟通四模板（填空即发）</h2>
+        <h3 class="sub">初次通报</h3>
+        <div class="cmd">尊敬的客户，我们已监测到【业务/区域】出现【现象】，
+影响您的【具体业务】。我们已启动应急响应全力处理。
+我们将于【时间】前向您同步进展。给您带来的不便，深表歉意。</div>
+        <h3 class="sub">进展更新（含「无新进展」版）</h3>
+        <div class="cmd">截至【时间】，我们已【排除X / 定位到Y / 正在验证Z】。
+预计【ETA 区间，说明取决于什么】。
+【如无新进展: 目前仍在【动作】，暂无新结论。】
+下次更新时间：【时间】。</div>
+        <h3 class="sub">恢复通知</h3>
+        <div class="cmd">【业务】已于【时间】恢复正常，我们正在持续监控确认稳定。
+初步原因为【暂定根因】。我们将在【时限】内完成根因分析，
+并向您提交完整说明与改进措施。感谢您的理解与耐心。</div>
+        <h3 class="sub">根因说明（恢复后）</h3>
+        <div class="cmd">关于【日期】【事件】，经分析根因为【系统/流程层根因】。
+影响时段【__至__】，影响范围【__】。
+我们已采取改进：【预防/检测/缓解/流程 改进项】，
+确保同类问题不再发生。</div>
+
+        <h2 class="sec"><span class="bar"></span>⑤ 假设看板模板</h2>
+        <div class="cmd">现象: ____   影响范围: ____   起始: __:__
+[假设]            [负责人]   [状态]              [证据/下一步]
+H1 ____           ____       调查中/已排除/确认   ____
+H2 ____           ____       ____                ____
+当前怀疑收敛到: ____</div>
+
+        <h2 class="sec"><span class="bar"></span>⑥ 恢复验证清单</h2>
+        <div class="cmd">[ ] 操作前: 评估最坏情况/可回退性/爆炸半径，IC 授权，留现场快照
+[ ] 单一变更: 一次一个动作并观察
+[ ] L1 指标: 告警清除，KPI 回基线
+[ ] L2 拨测: 端到端业务跑通
+[ ] L3 客户: 客户侧确认（尤其大客户/专线）
+[ ] 观察期: 加强监控 N 分钟无反复
+[ ] 收尾: 恢复通知 + 归档证据 + 安排复盘</div>
+
+        <h2 class="sec"><span class="bar"></span>⑦ 复盘改进项模板</h2>
+        <div class="cmd">[ID] __  [类型] 预防/检测/缓解/流程
+[描述] __
+[负责人] __   [截止] __   [验收标准] __   [状态] __</div>
+
+        <div class="callout best"><span class="ct">✓ 落地建议</span><p>把本章做成团队 wiki 置顶页与打印卡；每季度用<a class="inline" data-target="ch9">第 9 章</a>案例做一次桌面推演；每次真实事故后用<a class="inline" data-target="ch8">第 8 章</a>复盘，把新案例回填进案例库。手册是活的，团队能力随它一起长。</p></div>
+        <hr class="div">
+        <p style="text-align:center;color:var(--dim);font-family:var(--mono);font-size:12px;letter-spacing:1px">— 端到端守局，协同缩圈，止血优先，对外不黑盒 —</p>
+      </section>
+
+      <div class="pager">
+        <button class="pg-prev" disabled><small>上一章</small><span></span></button>
+        <button class="pg-next"><small>下一章</small><span></span></button>
+      </div>
+    </main>
+  </div>
+
+<script>
+  var navItems=[].slice.call(document.querySelectorAll('.nav-item'));
+  var chapters=[].slice.call(document.querySelectorAll('.chapter'));
+  var order=navItems.map(function(n){return n.dataset.target});
+  var titles={};navItems.forEach(function(n){titles[n.dataset.target]=n.querySelector('.nav-text').textContent});
+  var content=document.querySelector('.content');
+  var prevBtn=document.querySelector('.pg-prev'),nextBtn=document.querySelector('.pg-next');
+  function show(id){
+    if(order.indexOf(id)<0)id=order[0];
+    chapters.forEach(function(c){c.classList.toggle('active',c.id===id)});
+    navItems.forEach(function(n){n.classList.toggle('active',n.dataset.target===id)});
+    var i=order.indexOf(id);
+    prevBtn.disabled=i<=0;nextBtn.disabled=i>=order.length-1;
+    prevBtn.dataset.t=order[i-1]||'';nextBtn.dataset.t=order[i+1]||'';
+    prevBtn.querySelector('span').textContent=i>0?('← '+titles[order[i-1]]):'';
+    nextBtn.querySelector('span').textContent=i<order.length-1?(titles[order[i+1]]+' →'):'';
+    if(window.innerWidth>880){content.scrollTo({top:0,behavior:'smooth'})}else{window.scrollTo({top:0,behavior:'smooth'})}
+    try{history.replaceState(null,'','#'+id)}catch(e){}
+    document.querySelector('.sidebar').classList.remove('open');
+  }
+  navItems.forEach(function(n){n.addEventListener('click',function(e){e.preventDefault();show(n.dataset.target)})});
+  prevBtn.addEventListener('click',function(){if(this.dataset.t)show(this.dataset.t)});
+  nextBtn.addEventListener('click',function(){if(this.dataset.t)show(this.dataset.t)});
+  document.addEventListener('click',function(e){var a=e.target.closest('a.inline[data-target]');if(a){e.preventDefault();show(a.dataset.target)}});
+  document.querySelector('.menu-btn').addEventListener('click',function(){document.querySelector('.sidebar').classList.toggle('open')});
+  show((location.hash||'#ch1').slice(1));
+</script>
+</body>
+</html>
