@@ -276,6 +276,15 @@
       "desc": "",
       "tags": [],
       "date": "2026-06-19"
+    },
+    {
+      "id": "mqkwfr9rub1t",
+      "moduleId": "mq6wzs4fqo5b",
+      "title": "claude-code-core-concepts",
+      "file": "claude-code-core-concepts.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-06-19"
     }
   ]
 }
