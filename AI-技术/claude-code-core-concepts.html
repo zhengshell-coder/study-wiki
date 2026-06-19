@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 核心概念手册</title>
+<style>
+:root{
+  --accent:#d97757; --accent-dark:#b85c3e; --accent-soft:#fdf0eb;
+  --sidebar-bg:#191b22; --sidebar-text:#9aa0ae; --sidebar-active:#ffffff;
+  --bg:#faf9f7; --panel:#ffffff; --text:#2b2b2b; --muted:#6b6f76;
+  --border:#e6e2dc; --code-bg:#f4f2ee; --code-border:#e8e4de;
+  --ok:#2e7d52; --warn:#b3261e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15.5px}
+a{color:var(--accent-dark);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ===== 布局 ===== */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:272px;flex-shrink:0;background:var(--sidebar-bg);color:var(--sidebar-text);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;padding:20px 0 40px;z-index:50}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:#3a3d47;border-radius:3px}
+.brand{padding:6px 22px 18px;border-bottom:1px solid #2a2d36;margin-bottom:14px}
+.brand h1{font-size:17px;color:#fff;font-weight:700;letter-spacing:.3px}
+.brand p{font-size:12px;color:#6e7380;margin-top:4px}
+.nav-group{margin:16px 0 4px;padding:0 22px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#5b606d;text-transform:uppercase}
+.nav-item{display:block;padding:7px 22px 7px 20px;font-size:13.5px;cursor:pointer;border-left:3px solid transparent;color:var(--sidebar-text);transition:all .15s;user-select:none}
+.nav-item:hover{color:#d8dbe2;background:#20232c;text-decoration:none}
+.nav-item.active{color:var(--sidebar-active);background:#23262f;border-left-color:var(--accent);font-weight:600}
+.nav-item .num{display:inline-block;width:24px;color:#5b606d;font-size:12px;font-family:ui-monospace,monospace}
+.nav-item.active .num{color:var(--accent)}
+
+.main{margin-left:272px;flex:1;display:flex;justify-content:center;padding:0 24px}
+.content{width:100%;max-width:880px;padding:44px 8px 80px}
+
+/* ===== 章节 ===== */
+.chapter{display:none;animation:fadein .25s ease}
+.chapter.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.crumb{font-size:12.5px;color:var(--muted);margin-bottom:10px;letter-spacing:.5px}
+.crumb b{color:var(--accent-dark)}
+h2.ch-title{font-size:30px;font-weight:800;letter-spacing:.2px;margin-bottom:6px;line-height:1.3}
+.ch-sub{color:var(--muted);font-size:15px;margin-bottom:30px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+h3{font-size:20px;font-weight:700;margin:38px 0 14px;padding-left:12px;border-left:4px solid var(--accent)}
+h4{font-size:16px;font-weight:700;margin:26px 0 10px;color:#3a3a3a}
+p{margin:0 0 14px}
+strong{font-weight:650}
+ul.plain{margin:0 0 16px 22px}
+ul.plain li{margin-bottom:8px}
+ol.steps{margin:0 0 16px 24px}
+ol.steps li{margin-bottom:10px;padding-left:4px}
+
+/* ===== 代码 ===== */
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--code-bg);border:1px solid var(--code-border);border-radius:4px;padding:1px 6px;color:#8a4b2f;white-space:nowrap}
+pre{background:#22252e;color:#dde1e8;border-radius:10px;padding:16px 20px;overflow-x:auto;margin:14px 0 20px;font-size:13px;line-height:1.65;border:1px solid #1a1c23}
+pre code{background:none;border:none;padding:0;color:inherit;white-space:pre;font-size:inherit}
+pre .cm{color:#7e8696}
+pre .k{color:#e8a87c}
+pre .s{color:#a8c98a}
+.fname{display:inline-block;background:#2e313c;color:#aeb4c0;font-size:11.5px;font-family:ui-monospace,monospace;border-radius:6px 6px 0 0;padding:4px 12px;margin-bottom:-14px;position:relative;top:0}
+
+/* ===== 表格 ===== */
+table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:13.8px;background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+th{background:#f1eee9;text-align:left;padding:9px 14px;font-weight:700;font-size:13px;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #efece7;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td code,th code{white-space:nowrap}
+
+/* ===== 流程图 ===== */
+.flow{display:flex;align-items:stretch;flex-wrap:wrap;gap:0;margin:18px 0 22px}
+.fbox{background:var(--panel);border:1.5px solid var(--border);border-radius:9px;padding:10px 14px;font-size:13px;line-height:1.5;min-width:90px;text-align:center;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fbox b{font-size:13.5px;color:#222}
+.fbox span{color:var(--muted);font-size:12px}
+.fbox.hot{border-color:var(--accent);background:var(--accent-soft)}
+.fbox.dark{background:#22252e;color:#e8e8e8;border-color:#22252e}
+.fbox.dark b{color:#fff}
+.fbox.dark span{color:#9aa0ae}
+.farr{display:flex;align-items:center;padding:0 8px;color:var(--accent);font-weight:700;font-size:17px}
+.fwrap{display:flex;flex-direction:column;gap:10px;margin:18px 0 22px}
+.loopnote{font-size:12.5px;color:var(--muted);text-align:center;margin:-12px 0 20px}
+
+/* ===== 卡片 ===== */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:14px;margin:16px 0 22px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card h5{font-size:14.5px;font-weight:700;margin-bottom:6px;color:#222}
+.card h5 code{font-size:.95em}
+.card p{font-size:13px;color:var(--muted);margin:0;line-height:1.6}
+
+/* ===== 提示框 ===== */
+.tip,.warn,.note{border-radius:10px;padding:13px 18px;margin:16px 0 20px;font-size:13.8px;line-height:1.7}
+.tip{background:#eef6ef;border:1px solid #cfe5d2}
+.tip::before{content:"💡 提示  ";font-weight:700;color:var(--ok)}
+.warn{background:#fdf1f0;border:1px solid #f2d4d1}
+.warn::before{content:"⚠ 注意  ";font-weight:700;color:var(--warn)}
+.note{background:var(--accent-soft);border:1px solid #f0d9cd}
+.note::before{content:"◆ 要点  ";font-weight:700;color:var(--accent-dark)}
+
+/* ===== 标签 ===== */
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:1px 10px;margin-left:8px;vertical-align:2px;letter-spacing:.5px}
+.tag.exp{background:#fdeee5;color:#b85c3e;border:1px solid #f0cdbb}
+.tag.new{background:#e9f2ec;color:#2e7d52;border:1px solid #c9e0d0}
+kbd{font-family:ui-monospace,monospace;font-size:.82em;background:#fff;border:1px solid #cfc9c0;border-bottom-width:2.5px;border-radius:5px;padding:1px 7px;color:#444}
+
+/* ===== 翻页 ===== */
+.pager{display:flex;justify-content:space-between;gap:14px;margin-top:56px;padding-top:24px;border-top:1px solid var(--border)}
+.pager a{flex:1;max-width:48%;border:1px solid var(--border);border-radius:10px;padding:12px 18px;background:var(--panel);transition:border-color .15s;text-decoration:none}
+.pager a:hover{border-color:var(--accent)}
+.pager .dir{font-size:11.5px;color:var(--muted);letter-spacing:1px}
+.pager .pt{font-size:14px;font-weight:650;color:#333;display:block;margin-top:2px}
+.pager a.next{text-align:right;margin-left:auto}
+
+/* ===== 移动端 ===== */
+.menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:60;background:var(--sidebar-bg);color:#fff;border:none;border-radius:8px;width:40px;height:40px;font-size:19px;cursor:pointer}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.4)}
+  .main{margin-left:0}
+  .menu-btn{display:block}
+  .content{padding-top:64px}
+}
+</style>
+</head>
+<body>
+<button class="menu-btn" id="menuBtn">☰</button>
+<div class="layout">
+
+<!-- ================= 侧边导航 ================= -->
+<nav class="sidebar" id="sidebar">
+  <div class="brand">
+    <h1>Claude Code 核心概念</h1>
+    <p>架构 · 机制 · 工作流 · 一册通</p>
+  </div>
+  <div class="nav-group">第一部分 · 基础架构</div>
+  <a class="nav-item" data-ch="c01"><span class="num">01</span>总览：全景地图</a>
+  <a class="nav-item" data-ch="c02"><span class="num">02</span>Agent 主循环</a>
+  <a class="nav-item" data-ch="c03"><span class="num">03</span>内置工具 Tools</a>
+  <a class="nav-item" data-ch="c04"><span class="num">04</span>记忆体系 CLAUDE.md</a>
+  <div class="nav-group">第二部分 · 扩展机制</div>
+  <a class="nav-item" data-ch="c05"><span class="num">05</span>Skills 与斜杠命令</a>
+  <a class="nav-item" data-ch="c06"><span class="num">06</span>Subagent 子代理</a>
+  <a class="nav-item" data-ch="c07"><span class="num">07</span>Agent Teams 代理团队</a>
+  <a class="nav-item" data-ch="c08"><span class="num">08</span>Hooks 钩子</a>
+  <a class="nav-item" data-ch="c09"><span class="num">09</span>MCP 协议</a>
+  <a class="nav-item" data-ch="c10"><span class="num">10</span>Plugins 与市场</a>
+  <div class="nav-group">第三部分 · 控制与工作流</div>
+  <a class="nav-item" data-ch="c11"><span class="num">11</span>权限与设置</a>
+  <a class="nav-item" data-ch="c12"><span class="num">12</span>Workflow 工作流</a>
+  <a class="nav-item" data-ch="c13"><span class="num">13</span>SDK 与运行形态</a>
+  <a class="nav-item" data-ch="c14"><span class="num">14</span>选型决策与全景图</a>
+</nav>
+
+<!-- ================= 内容区 ================= -->
+<div class="main"><div class="content" id="content">
+
+<!-- ============ 第 1 章 ============ -->
+<section class="chapter" id="c01">
+<div class="crumb">第一部分 · 基础架构 / <b>第 1 章</b></div>
+<h2 class="ch-title">总览：Claude Code 的全景地图</h2>
+<p class="ch-sub">先建立一张地图：Claude Code 是什么，由哪些层组成，各个概念分别"插"在系统的哪个位置。</p>
+
+<h3>Claude Code 是什么</h3>
+<p>Claude Code 是一个<strong>智能体编程工具（agentic coding tool）</strong>：它不是聊天框，而是一个能读你的代码库、编辑文件、执行命令、连接外部工具的"会自己干活"的程序。它运行在终端（CLI）、IDE（VS Code / JetBrains）、桌面应用和浏览器（claude.ai/code）中，内核相同。</p>
+<p>它的本质可以一句话概括：<strong>一个大语言模型 + 一组工具 + 一个循环</strong>。模型负责推理决策，工具负责与真实世界交互（读写文件、跑命令），循环负责让"思考 → 行动 → 观察结果 → 再思考"持续进行，直到任务完成。</p>
+
+<h3>三层架构：核心 / 扩展 / 控制</h3>
+<p>把所有概念放进一个框架里，Claude Code 由三层组成：</p>
+<div class="fwrap">
+  <div class="flow">
+    <div class="fbox dark" style="flex:1"><b>① 核心层（不可替换）</b><span>Agent 主循环 · 上下文窗口 · 内置工具（Read / Edit / Bash / Grep …）</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox hot" style="flex:1"><b>② 扩展层（按需添加）</b><span>CLAUDE.md（记忆）· Skills（技能）· Subagents（子代理）· Agent Teams · Hooks（钩子）· MCP（外部连接）· Plugins（打包分发）</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox" style="flex:1"><b>③ 控制层（约束行为）</b><span>权限规则（allow / ask / deny）· 权限模式（plan / auto …）· settings.json · 沙箱</span></div>
+  </div>
+</div>
+
+<h3>每个概念解决什么问题</h3>
+<p>扩展层的每个机制都对应一个明确的问题，这是理解它们的最快方式：</p>
+<table>
+<tr><th>概念</th><th>解决的问题</th><th>一句话定义</th></tr>
+<tr><td><strong>CLAUDE.md</strong></td><td>每次新会话 Claude 都"失忆"，重复解释项目规范</td><td>每个会话自动加载的持久化指令文件</td></tr>
+<tr><td><strong>Skill</strong></td><td>反复粘贴同一套操作步骤 / 参考资料</td><td>按需加载的知识与工作流，可用 <code>/名称</code> 触发</td></tr>
+<tr><td><strong>Subagent</strong></td><td>副任务（大量搜索、读文件）撑爆主对话上下文</td><td>独立上下文中干活、只交回摘要的隔离工作者</td></tr>
+<tr><td><strong>Agent Team</strong></td><td>多条工作线需要互相讨论、自主协作</td><td>多个独立 Claude Code 会话组成的协作团队</td></tr>
+<tr><td><strong>Hook</strong></td><td>"每次都必须发生"的事不能靠模型自觉</td><td>生命周期事件上确定性触发的自动化</td></tr>
+<tr><td><strong>MCP</strong></td><td>Claude 看不到你的数据库 / Slack / 监控系统</td><td>连接外部服务的开放协议（AI 界的 USB-C）</td></tr>
+<tr><td><strong>Plugin</strong></td><td>同一套配置要复制到多个仓库 / 分发给他人</td><td>把 skills + agents + hooks + MCP 打包成可安装单元</td></tr>
+<tr><td><strong>权限 / 模式</strong></td><td>自动化程度与安全性的平衡</td><td>控制"哪些操作要先问你"的规则系统</td></tr>
+</table>
+
+<h3>它们如何接入主循环</h3>
+<p>所有扩展机制都"挂"在主循环的不同位置上——这是贯穿全书的一张图：</p>
+<div class="flow">
+  <div class="fbox"><b>会话启动</b><span>加载 CLAUDE.md<br>Skill 描述 · MCP 工具名</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>模型推理</b><span>决定下一步动作<br>（可自动调用 Skill）</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>权限检查</b><span>规则 + 模式 + Hook<br>决定放行 / 询问 / 拒绝</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>工具执行</b><span>内置工具 · MCP 工具<br>· Subagent</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>结果回填</b><span>输出进入上下文<br>Hook 可注入信息</span></div>
+</div>
+<p class="loopnote">↻ "推理 → 检查 → 执行 → 回填" 不断循环，直到任务完成（Hooks 可在每个环节插入）</p>
+
+<div class="note">阅读路线建议：第 2–4 章理解核心运转方式；第 5–10 章逐个攻克扩展机制；第 11–13 章掌握控制与工作流；第 14 章给出"什么时候用什么"的决策框架。</div>
+</section>
+
+<!-- ============ 第 2 章 ============ -->
+<section class="chapter" id="c02">
+<div class="crumb">第一部分 · 基础架构 / <b>第 2 章</b></div>
+<h2 class="ch-title">Agent 主循环：一切的引擎</h2>
+<p class="ch-sub">理解了主循环，其它所有概念都是它的"插件位"。本章讲：上下文窗口、系统提示、工具调用循环、以及一次完整请求的生命周期。</p>
+
+<h3>什么是 Agentic Loop（智能体循环）</h3>
+<p>传统聊天是"一问一答"。Claude Code 的不同之处在于：模型每次回复可以选择<strong>调用工具</strong>而不是直接回答；工具执行的结果再喂回给模型，模型据此决定下一步。如此往复，模型就能完成"读 10 个文件 → 改 3 处代码 → 跑测试 → 修复失败 → 提交"这样的长链任务。</p>
+<div class="flow">
+  <div class="fbox"><b>你的指令</b><span>"修复登录的 bug"</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>模型思考</b><span>我需要先看代码</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>调用工具</b><span>Grep("login")</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>结果返回</b><span>找到 auth.ts:42</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>继续思考</b><span>读文件 → 改代码 → 跑测试</span></div>
+</div>
+<p class="loopnote">↻ 循环持续，直到模型判断任务完成，输出最终回复（Stop 事件触发）</p>
+
+<h3>上下文窗口（Context Window）</h3>
+<p>上下文窗口是模型一次能"看见"的全部内容，是 Claude Code 中<strong>最重要的稀缺资源</strong>。一个会话的上下文由以下部分组成，按加载时机分为启动加载和运行时累积：</p>
+<table>
+<tr><th>内容</th><th>加载时机</th><th>占用特点</th></tr>
+<tr><td>系统提示（System Prompt）</td><td>会话启动</td><td>固定开销，定义 Claude Code 的行为方式</td></tr>
+<tr><td>CLAUDE.md 全文 + 规则文件</td><td>会话启动</td><td>每次请求都在场，所以要精简（建议 &lt; 200 行）</td></tr>
+<tr><td>Skill 的名称与描述</td><td>会话启动</td><td>很小；技能正文只在被调用时才加载</td></tr>
+<tr><td>MCP 工具名</td><td>会话启动</td><td>很小；完整 schema 延迟到使用时加载</td></tr>
+<tr><td>对话消息 + 工具调用结果</td><td>运行时累积</td><td>主要消耗来源：读的每个文件、每条命令输出都进来</td></tr>
+<tr><td>Hook 的输出（如有）</td><td>事件触发时</td><td>默认为零，仅当 hook 返回内容时注入</td></tr>
+</table>
+<div class="note">几乎所有架构设计都围绕"省上下文"：Skill 的渐进式披露、Subagent 的上下文隔离、MCP 的工具延迟加载、<code>.claude/rules/</code> 的路径触发加载——记住这条主线，很多设计就不难理解了。</div>
+
+<h4>上下文满了怎么办：压缩（Compaction）</h4>
+<p>当上下文接近上限时，Claude Code 会进行<strong>压缩</strong>：把早期对话总结成摘要，释放空间。可手动 <code>/compact</code> 触发。压缩前后分别触发 <code>PreCompact</code> / <code>PostCompact</code> 钩子。项目根目录的 CLAUDE.md 在压缩后会自动重新注入，但仅存在于对话中的临时指令可能丢失——重要规则应写进 CLAUDE.md。</p>
+
+<h3>一次工具调用的完整生命周期</h3>
+<p>模型说"我要执行 <code>npm test</code>"之后，到命令真正运行之间，有一整条检查链：</p>
+<ol class="steps">
+<li><strong>模型发起工具调用</strong> —— 输出结构化的调用请求（工具名 + 参数）。</li>
+<li><strong><code>PreToolUse</code> 钩子</strong> —— 如果配置了，可以直接拦截（比如禁止 <code>rm -rf</code>）。</li>
+<li><strong>权限判定</strong> —— 依次匹配 deny 规则 → ask 规则 → allow 规则 → 当前权限模式的默认行为（详见第 11 章）。需要时弹出确认框（触发 <code>PermissionRequest</code> 钩子）。</li>
+<li><strong>执行</strong> —— 工具真正运行（Bash 命令可在沙箱中执行）。</li>
+<li><strong><code>PostToolUse</code> / <code>PostToolUseFailure</code> 钩子</strong> —— 成功或失败后触发，可注入额外信息（如 lint 结果）。</li>
+<li><strong>结果回填上下文</strong> —— 模型读到结果，进入下一轮推理。</li>
+</ol>
+
+<h3>系统提示 vs CLAUDE.md</h3>
+<p>一个常见误解：CLAUDE.md 并不在系统提示里。它是以<strong>用户消息</strong>的形式在系统提示之后注入的。这意味着它是"强烈的建议"而非"硬性约束"——模型会尽力遵守，但不保证 100%。需要硬保证的规则，用 Hook 或权限 deny 规则实现（这是贯穿全书的一条重要原则）。如确需追加系统提示级指令，可用 CLI 参数 <code>--append-system-prompt</code>。</p>
+
+<h3>模型选择</h3>
+<p>用 <code>/model</code> 切换模型。常用别名：<code>opus</code>（最强推理）、<code>sonnet</code>（均衡）、<code>haiku</code>（快而省）、<code>opusplan</code>（规划用 Opus、执行用 Sonnet 的混合策略）。子代理可独立指定自己的模型（见第 6 章），这是控制成本的重要手段。</p>
+</section>
+
+<!-- ============ 第 3 章 ============ -->
+<section class="chapter" id="c03">
+<div class="crumb">第一部分 · 基础架构 / <b>第 3 章</b></div>
+<h2 class="ch-title">内置工具：Claude 的"手和眼睛"</h2>
+<p class="ch-sub">工具是模型与真实世界交互的唯一通道。本章按用途分类讲解内置工具，以及它们的权限特征。</p>
+
+<h3>工具全景</h3>
+<div class="cards">
+  <div class="card"><h5>📖 读取与搜索（只读，免审批）</h5><p><code>Read</code> 读文件（含图片/PDF/笔记本）· <code>Glob</code> 按文件名模式找文件 · <code>Grep</code> 按内容正则搜索（基于 ripgrep）</p></div>
+  <div class="card"><h5>✏️ 写入与编辑（需审批）</h5><p><code>Write</code> 新建/覆盖文件 · <code>Edit</code> 精确字符串替换 · <code>NotebookEdit</code> 编辑 Jupyter 单元格</p></div>
+  <div class="card"><h5>⚡ 执行（需审批）</h5><p><code>Bash</code> 执行 shell 命令，支持后台运行与沙箱隔离；危险命令受权限规则约束</p></div>
+  <div class="card"><h5>🌐 网络</h5><p><code>WebSearch</code> 搜索网页 · <code>WebFetch</code> 抓取指定 URL 内容供模型分析</p></div>
+  <div class="card"><h5>🤖 委派</h5><p><code>Agent</code> 工具：派生子代理执行任务（v2.1.63 起由 <code>Task</code> 更名而来，旧名仍兼容）</p></div>
+  <div class="card"><h5>📋 流程管理</h5><p><code>TaskCreate / TaskUpdate</code> 任务清单 · <code>AskUserQuestion</code> 向你提问 · <code>EnterPlanMode / ExitPlanMode</code> 进出规划模式 · <code>Skill</code> 调用技能</p></div>
+  <div class="card"><h5>🧠 代码智能（LSP）</h5><p>安装语言的 code intelligence 插件后，可做符号级跳转定义/找引用，并在编辑后返回类型错误诊断——比 grep 更精准省上下文</p></div>
+  <div class="card"><h5>🔌 MCP 工具</h5><p>所有连接的 MCP 服务器工具，命名格式 <code>mcp__服务器__工具</code>，与内置工具在同一循环中被调用（见第 9 章）</p></div>
+</div>
+
+<h3>权限视角下的工具分类</h3>
+<p>工具的核心分界线是<strong>"是否会改变世界"</strong>：</p>
+<table>
+<tr><th>类别</th><th>工具</th><th>默认行为</th></tr>
+<tr><td>只读</td><td>Read · Glob · Grep · 只读 Bash 命令（如 <code>ls</code>、<code>git status</code>）</td><td>不需要审批，任何模式下都可自由执行</td></tr>
+<tr><td>写入</td><td>Write · Edit · NotebookEdit</td><td>default 模式逐次询问；acceptEdits 模式自动放行（限工作目录内）</td></tr>
+<tr><td>执行</td><td>Bash · PowerShell</td><td>询问；可用规则按命令模式精确放行，如 <code>Bash(npm test)</code></td></tr>
+<tr><td>网络</td><td>WebSearch · WebFetch · MCP 工具</td><td>询问或按规则放行</td></tr>
+</table>
+
+<h3>Bash 工具的两个重要机制</h3>
+<h4>后台运行</h4>
+<p>长时间运行的命令（如 dev server、watch 模式）可转入后台执行，Claude 继续干别的活，随时回头查看输出。交互式会话中可用 <kbd>Ctrl+B</kbd> 把正在运行的命令切到后台。</p>
+<h4>沙箱（Sandboxing）</h4>
+<p>开启沙箱后（settings 中 <code>sandbox.enabled</code>），Bash 命令在受限环境中运行：<strong>文件系统隔离</strong>（只能写工作目录）+ <strong>网络隔离</strong>（仅允许放行的域名）。沙箱内的命令可以更放心地自动批准，从而实现"更自主但仍安全"的执行。这也是 auto 模式（见第 11 章）的配套设施。</p>
+
+<h3>工具与扩展机制的关系</h3>
+<p>理解一个关键点：<strong>Subagent、Skill、MCP 最终都表现为"工具调用"</strong>。派生子代理 = 调用 <code>Agent</code> 工具；模型自动使用技能 = 调用 <code>Skill</code> 工具；查询数据库 = 调用 <code>mcp__postgres__query</code> 工具。主循环只认识"工具"这一种动作，这让整个系统保持了统一的权限、钩子与审计模型——所有扩展机制都自动获得同一套控制能力。</p>
+</section>
+
+<!-- ============ 第 4 章 ============ -->
+<section class="chapter" id="c04">
+<div class="crumb">第一部分 · 基础架构 / <b>第 4 章</b></div>
+<h2 class="ch-title">记忆体系：CLAUDE.md、规则与自动记忆</h2>
+<p class="ch-sub">每个会话从空白上下文开始。两套机制让知识跨会话延续：你写的 CLAUDE.md，和 Claude 自己记的 Auto Memory。</p>
+
+<h3>两套记忆系统对比</h3>
+<table>
+<tr><th></th><th>CLAUDE.md 文件</th><th>Auto Memory 自动记忆</th></tr>
+<tr><td><strong>谁来写</strong></td><td>你（人工维护）</td><td>Claude（自动积累）</td></tr>
+<tr><td><strong>内容</strong></td><td>指令与规范："永远用 pnpm"</td><td>经验与发现：构建命令、调试心得</td></tr>
+<tr><td><strong>作用域</strong></td><td>项目 / 用户 / 组织</td><td>按 git 仓库，同仓库的 worktree 共享</td></tr>
+<tr><td><strong>加载方式</strong></td><td>每会话全文加载</td><td>每会话加载 MEMORY.md 前 200 行 / 25KB</td></tr>
+<tr><td><strong>存储位置</strong></td><td>项目内 / <code>~/.claude/</code></td><td><code>~/.claude/projects/&lt;项目&gt;/memory/</code></td></tr>
+</table>
+
+<h3>CLAUDE.md 的层级与加载顺序</h3>
+<p>CLAUDE.md 可以放在四个层级，按"作用域从宽到窄"的顺序依次进入上下文（后加载的更靠近对话，影响力更直接）：</p>
+<div class="flow">
+  <div class="fbox"><b>① 管理策略</b><span>组织级，IT 部署<br><code style="white-space:normal">/Library/Application Support/ClaudeCode/</code></span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>② 用户级</b><span>个人偏好，所有项目<br><code>~/.claude/CLAUDE.md</code></span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>③ 项目级</b><span>团队共享，进版本库<br><code>./CLAUDE.md</code></span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>④ 本地级</b><span>个人项目偏好，gitignore<br><code>./CLAUDE.local.md</code></span></div>
+</div>
+<p>加载机制的三个细节：</p>
+<ul class="plain">
+<li><strong>向上爬目录</strong>：从工作目录向上走到文件系统根，沿途所有 CLAUDE.md 在启动时全部加载（根目录的在前，离你最近的在后）。所有层级是<strong>叠加</strong>关系而非覆盖。</li>
+<li><strong>子目录懒加载</strong>：工作目录之下子目录里的 CLAUDE.md 不在启动时加载，而是当 Claude 读取该目录下的文件时才进入上下文——monorepo 里给每个包放局部说明就靠这个。</li>
+<li><strong><code>@</code> 导入</strong>：CLAUDE.md 中可写 <code>@README.md</code>、<code>@docs/git-instructions.md</code> 导入其他文件，最多递归 4 层；导入的文件同样在启动时全文加载（只是便于组织，不省上下文）。</li>
+</ul>
+<pre><code><span class="cm"># CLAUDE.md 示例</span>
+项目概况见 @README.md，可用命令见 @package.json
+
+<span class="k">## 构建与测试</span>
+- 包管理器用 pnpm，不要用 npm
+- 提交前必须运行 `pnpm test`
+- API 处理器放在 `src/api/handlers/`
+
+<span class="k">## 个人偏好（从家目录导入，跨 worktree 共享）</span>
+@~/.claude/my-project-instructions.md</code></pre>
+
+<h3>.claude/rules/：模块化与路径触发</h3>
+<p>当 CLAUDE.md 变大时，把指令拆成 <code>.claude/rules/*.md</code> 主题文件（如 <code>testing.md</code>、<code>security.md</code>，支持子目录递归发现与符号链接共享）。其杀手锏是 <strong><code>paths</code> frontmatter</strong>——规则只在 Claude 操作匹配文件时才加载，按需占用上下文：</p>
+<pre><code><span class="cm">&lt;!-- .claude/rules/api-design.md --&gt;</span>
+<span class="k">---
+paths:
+  - "src/api/**/*.ts"
+---</span>
+<span class="s"># API 开发规则
+- 所有端点必须做输入校验
+- 使用统一错误响应格式</span></code></pre>
+<p>不带 <code>paths</code> 的规则启动即加载，优先级等同 <code>.claude/CLAUDE.md</code>。用户级规则放 <code>~/.claude/rules/</code>，先于项目规则加载。</p>
+
+<h3>Auto Memory：Claude 的自动笔记</h3>
+<p>Claude 在工作中会自己判断"哪些信息将来有用"并记下来（构建命令、调试结论、你的偏好），默认开启。结构是一个索引 + 多个主题文件：</p>
+<pre><code>~/.claude/projects/&lt;项目&gt;/memory/
+├── MEMORY.md          <span class="cm"># 索引，每会话加载前 200 行 / 25KB</span>
+├── debugging.md       <span class="cm"># 主题文件，按需用 Read 工具读取</span>
+└── api-conventions.md</code></pre>
+<p>对话中说"记住：API 测试需要本地 Redis"，Claude 会写入 auto memory；说"把这条加进 CLAUDE.md"，则写入指令文件。所有记忆都是纯 markdown，可随时用 <code>/memory</code> 查看、编辑、删除。</p>
+
+<h3>实用命令与原则</h3>
+<table>
+<tr><th>命令 / 设置</th><th>作用</th></tr>
+<tr><td><code>/init</code></td><td>分析代码库自动生成 CLAUDE.md 初稿；已有则提出改进建议；会读取已存在的 AGENTS.md、.cursorrules 等</td></tr>
+<tr><td><code>/memory</code></td><td>列出当前会话加载的全部记忆文件，可打开编辑、开关 auto memory</td></tr>
+<tr><td><code>claudeMdExcludes</code></td><td>settings 中按 glob 排除不相关的 CLAUDE.md（大 monorepo 中跳过其他团队的文件）</td></tr>
+<tr><td><code>autoMemoryEnabled: false</code></td><td>关闭自动记忆（或环境变量 <code>CLAUDE_CODE_DISABLE_AUTO_MEMORY=1</code>）</td></tr>
+</table>
+<div class="note">写好 CLAUDE.md 的三原则：<strong>短</strong>（单文件 &lt; 200 行，长了拆 rules 或 skill）、<strong>具体</strong>（"用 2 空格缩进" 优于 "格式规范"）、<strong>无冲突</strong>（两条矛盾指令会让模型随机选一条）。记住：CLAUDE.md 是上下文不是配置——必须硬执行的规则用 Hook（第 8 章）或 deny 权限规则（第 11 章）。</div>
+</section>
+
+<!-- ============ 第 5 章 ============ -->
+<section class="chapter" id="c05">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 5 章</b></div>
+<h2 class="ch-title">Skills（技能）与斜杠命令</h2>
+<p class="ch-sub">Skill 是最灵活的扩展机制：一个 markdown 文件就能给 Claude 增加知识、流程或可触发的工作流。自定义斜杠命令现已并入 Skills 体系。</p>
+
+<h3>什么是 Skill</h3>
+<p>Skill 是一个包含指令的 <code>SKILL.md</code> 文件（可附带脚本与参考资料）。创建后有两种触发方式：<strong>你手动输入 <code>/技能名</code></strong>，或 <strong>Claude 在判断相关时自动加载</strong>。什么时候该建技能？当你第三次往聊天里粘贴同一套操作步骤，或者 CLAUDE.md 里某段内容已经长成"流程"而非"事实"时。</p>
+<div class="warn">概念合并：早期版本中"自定义斜杠命令"（<code>.claude/commands/deploy.md</code>）与 Skill 是两个东西，<strong>现已合并</strong>——两种写法都生成 <code>/deploy</code> 命令且行为一致，旧的 commands 文件继续有效。Skill 额外提供：支撑文件目录、调用控制 frontmatter、自动触发能力。Claude Code 的 Skill 遵循 Agent Skills 开放标准，可跨 AI 工具复用。</div>
+
+<h3>核心机制：渐进式披露（Progressive Disclosure）</h3>
+<p>这是 Skill 省上下文的关键设计，分三层加载：</p>
+<div class="flow">
+  <div class="fbox"><b>第 1 层：启动时</b><span>只加载 name + description<br>（每条上限 1536 字符）</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>第 2 层：触发时</b><span>SKILL.md 正文全文<br>进入上下文</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>第 3 层：按需</b><span>正文引用的脚本/文档<br>由 Claude 用工具读取执行</span></div>
+</div>
+<p>所以长篇参考资料放进技能几乎零成本——不用时只有一行描述在场。Claude 依靠 description 与你的任务匹配来决定是否自动加载，<strong>描述写得准，触发才可靠</strong>。</p>
+
+<h3>文件结构与存放位置</h3>
+<pre><code>.claude/skills/
+└── deploy/
+    ├── SKILL.md          <span class="cm"># 必需：指令正文 + frontmatter</span>
+    ├── checklist.md      <span class="cm"># 可选：支撑文档</span>
+    └── scripts/
+        └── verify.sh     <span class="cm"># 可选：可执行脚本</span></code></pre>
+<table>
+<tr><th>位置</th><th>作用域</th></tr>
+<tr><td><code>.claude/skills/</code>（项目）</td><td>团队共享，随版本库分发</td></tr>
+<tr><td><code>~/.claude/skills/</code>（用户）</td><td>个人所有项目可用</td></tr>
+<tr><td>插件内置</td><td>带命名空间，如 <code>/my-plugin:review</code></td></tr>
+</table>
+<p>同名冲突时按优先级取一个：<strong>managed &gt; 用户 &gt; 项目</strong>。</p>
+
+<h3>Frontmatter 字段详解</h3>
+<table>
+<tr><th>字段</th><th>作用</th></tr>
+<tr><td><code>name</code></td><td>显示名称（命令名一般取自目录名）</td></tr>
+<tr><td><code>description</code></td><td>Claude 判断"何时自动使用"的依据，建议把关键场景写在最前</td></tr>
+<tr><td><code>argument-hint</code></td><td>输入 <code>/命令</code> 时给你的参数提示</td></tr>
+<tr><td><code>disable-model-invocation: true</code></td><td>禁止 Claude 自动调用，只能你手动触发——有副作用的操作（部署、发消息）务必加上；同时描述不再占上下文</td></tr>
+<tr><td><code>user-invocable: false</code></td><td>从 <code>/</code> 菜单隐藏（纯背景知识类技能用）</td></tr>
+<tr><td><code>allowed-tools</code></td><td>技能运行期间免审批可用的工具列表</td></tr>
+<tr><td><code>model</code></td><td>执行该技能时切换的模型</td></tr>
+<tr><td><code>context: fork</code></td><td>在隔离的子代理上下文中运行该技能，结果以摘要返回（不污染主对话）</td></tr>
+<tr><td><code>agent</code></td><td>配合 fork 指定执行环境：<code>Explore</code>、<code>Plan</code>、<code>general-purpose</code> 或自定义子代理</td></tr>
+</table>
+
+<h3>参数替换</h3>
+<p>技能正文中可使用占位符接收命令参数：<code>$ARGUMENTS</code> 展开为全部参数字符串，<code>$0</code>、<code>$1</code> 取第一、第二个参数。若正文没写 <code>$ARGUMENTS</code>，参数会以 <code>ARGUMENTS: &lt;值&gt;</code> 形式自动附加在末尾。</p>
+<pre><code><span class="cm">&lt;!-- .claude/skills/fix-issue/SKILL.md --&gt;</span>
+<span class="k">---
+name: fix-issue
+description: 按编号修复 GitHub issue。当用户要求修复某个 issue 时使用
+argument-hint: "[issue 编号]"
+allowed-tools: Bash(gh issue view:*), Bash(gh issue list:*)
+---</span>
+<span class="s">用 `gh issue view $ARGUMENTS` 查看 issue 详情，
+理解问题后定位相关代码，修复并编写回归测试，
+最后用约定格式提交：`fix: #$ARGUMENTS 描述`</span></code></pre>
+<p>使用：输入 <code>/fix-issue 1234</code>，或直接说"修复 issue 1234"让 Claude 自动匹配到该技能。</p>
+
+<h3>内置命令 vs 自定义技能</h3>
+<p>注意区分两类以 <code>/</code> 开头的东西：<strong>内置命令</strong>是 Claude Code 自带的控制指令，<strong>技能</strong>是你定义的提示词扩展。常用内置命令速查：</p>
+<table>
+<tr><th>命令</th><th>作用</th><th>命令</th><th>作用</th></tr>
+<tr><td><code>/init</code></td><td>生成 CLAUDE.md</td><td><code>/compact</code></td><td>压缩上下文</td></tr>
+<tr><td><code>/memory</code></td><td>查看/编辑记忆</td><td><code>/clear</code></td><td>清空对话</td></tr>
+<tr><td><code>/model</code></td><td>切换模型</td><td><code>/rewind</code></td><td>回退到检查点</td></tr>
+<tr><td><code>/permissions</code></td><td>管理权限规则</td><td><code>/mcp</code></td><td>管理 MCP 连接</td></tr>
+<tr><td><code>/agents</code></td><td>管理子代理</td><td><code>/plugin</code></td><td>管理插件</td></tr>
+<tr><td><code>/plan</code></td><td>单条消息进入规划模式</td><td><code>/context</code></td><td>查看上下文占用</td></tr>
+</table>
+<div class="tip">另有官方捆绑技能开箱即用，如 <code>/code-review</code>（代码评审）、<code>/debug</code>（调试）、<code>/batch</code>（批量任务）。</div>
+</section>
+
+<!-- ============ 第 6 章 ============ -->
+<section class="chapter" id="c06">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 6 章</b></div>
+<h2 class="ch-title">Subagent（子代理）：上下文隔离的工作者</h2>
+<p class="ch-sub">子代理是在独立上下文窗口中运行的"专职 Claude"：它在自己的窗口里翻几十个文件、跑大量搜索，最后只把结论交回主对话。</p>
+
+<h3>为什么需要子代理</h3>
+<p>核心问题是<strong>上下文污染</strong>：让主对话直接去"调研整个代码库的认证逻辑"，会塞进几十个文件的内容，而你之后根本不会再看它们。子代理把这些"过程性消耗"隔离在自己的窗口里，主对话只收到摘要。三大收益：<strong>省上下文</strong>、<strong>可并行</strong>（多个子代理同时跑）、<strong>可约束</strong>（限定工具、模型与权限）。</p>
+
+<h3>运行机制</h3>
+<div class="flow">
+  <div class="fbox"><b>主代理</b><span>遇到匹配某个子代理<br>description 的任务</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>调用 Agent 工具</b><span>传入任务描述<br>（即派生 spawn）</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>子代理独立运行</b><span>全新上下文 + 自己的系统提示<br>+ 受限工具集，跑自己的循环</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>返回摘要</b><span>只有最终结果<br>回到主对话</span></div>
+</div>
+<p>子代理启动时的上下文包括：自己的系统提示（即定义文件的正文，<strong>不是</strong>完整的 Claude Code 系统提示）、<code>skills</code> 字段预载的技能全文、CLAUDE.md 与 git 状态（内置的 Explore/Plan 例外，二者不加载这些）、以及主代理在派生时传入的任务说明。它<strong>不继承</strong>主对话历史。</p>
+
+<h3>定义一个子代理</h3>
+<p>子代理是带 frontmatter 的 markdown 文件，放在 <code>.claude/agents/</code>（项目级）或 <code>~/.claude/agents/</code>（用户级），也可用 <code>/agents</code> 命令交互式创建管理：</p>
+<pre><code><span class="cm">&lt;!-- .claude/agents/code-reviewer.md --&gt;</span>
+<span class="k">---
+name: code-reviewer
+description: 代码评审专家。写完或修改代码后主动使用（use proactively）
+tools: Read, Grep, Glob, Bash
+model: sonnet
+---</span>
+<span class="s">你是资深代码评审员。检查：可读性、命名、重复代码、
+错误处理、密钥泄露、测试覆盖。按 严重/警告/建议 三级输出。</span></code></pre>
+<div class="tip">description 是主代理决定"何时委派"的唯一线索。想让它被主动使用，就在描述里写明"use proactively"或"写完代码后立即使用"。</div>
+
+<h3>Frontmatter 字段全表</h3>
+<table>
+<tr><th>字段</th><th>作用</th></tr>
+<tr><td><code>name</code> / <code>description</code></td><td>必填。标识与委派依据（name 在同一作用域内须唯一）</td></tr>
+<tr><td><code>tools</code> / <code>disallowedTools</code></td><td>白名单 / 黑名单。先应用黑名单再解析白名单；不写则继承主对话全部工具</td></tr>
+<tr><td><code>model</code></td><td><code>sonnet</code> / <code>opus</code> / <code>haiku</code> / <code>inherit</code>。解析顺序：环境变量 <code>CLAUDE_CODE_SUBAGENT_MODEL</code> → 调用时指定 → 定义文件 → 主对话模型</td></tr>
+<tr><td><code>permissionMode</code></td><td>子代理自己的权限模式（auto 模式下会被忽略）</td></tr>
+<tr><td><code>maxTurns</code></td><td>最大循环轮数，防失控</td></tr>
+<tr><td><code>skills</code></td><td>启动时<strong>全文预载</strong>的技能列表（与主对话的按需加载不同）</td></tr>
+<tr><td><code>mcpServers</code></td><td>给子代理单独配置 MCP 服务器（主对话可以没有）</td></tr>
+<tr><td><code>memory</code></td><td>给子代理一个跨会话持久目录，可积累领域知识</td></tr>
+<tr><td><code>background</code></td><td>后台运行，不阻塞主对话</td></tr>
+<tr><td><code>isolation: worktree</code></td><td>在独立 git worktree 中工作，文件改动互不干扰</td></tr>
+<tr><td><code>hooks</code> / <code>color</code></td><td>子代理内的钩子 / 界面显示颜色</td></tr>
+</table>
+
+<h3>内置子代理</h3>
+<table>
+<tr><th>名称</th><th>用途</th><th>特点</th></tr>
+<tr><td><code>Explore</code></td><td>只读搜索调研</td><td>不加载 CLAUDE.md，轻量快速，适合"找到 X 在哪"</td></tr>
+<tr><td><code>Plan</code></td><td>设计实现方案</td><td>只读，返回步骤化计划</td></tr>
+<tr><td><code>general-purpose</code></td><td>通用多步任务</td><td>全工具，兜底选择</td></tr>
+</table>
+
+<h3>使用方式与典型模式</h3>
+<ul class="plain">
+<li><strong>自动委派</strong>：Claude 根据任务与 description 匹配自动派生。</li>
+<li><strong>显式指定</strong>："用 code-reviewer 子代理检查我刚才的改动"，或 <code>@</code> 提及。</li>
+<li><strong>并行扇出</strong>："分别用三个子代理调研认证、支付、通知模块的实现"——互不依赖的调研并行跑，时间减半以上。</li>
+<li><strong>读写分离</strong>：调研用只读的 Explore（haiku 便宜跑量），实现留给主对话（opus 保质量）——这也是控制成本的常用手法。</li>
+</ul>
+<div class="warn">子代理与主对话之间只有"任务下发 + 结果返回"两次通信，<strong>中途不能对话</strong>。需要多方持续讨论协作的场景，用下一章的 Agent Teams。</div>
+</section>
+
+<!-- ============ 第 7 章 ============ -->
+<section class="chapter" id="c07">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 7 章</b></div>
+<h2 class="ch-title">Agent Teams：多会话协作<span class="tag exp">实验性</span></h2>
+<p class="ch-sub">子代理是"主从结构"，Agent Team 是"对等团队"：多个完全独立的 Claude Code 会话共享任务列表、互发消息、自主协调。</p>
+
+<h3>与 Subagent 的本质区别</h3>
+<table>
+<tr><th>维度</th><th>Subagent 子代理</th><th>Agent Team 代理团队</th></tr>
+<tr><td><strong>架构</strong></td><td>运行在你的会话<strong>之内</strong></td><td>每个队员是<strong>独立的</strong> Claude Code 会话</td></tr>
+<tr><td><strong>通信</strong></td><td>只向主代理汇报结果</td><td>队员之间直接互发消息</td></tr>
+<tr><td><strong>协调</strong></td><td>主代理统一调度</td><td>共享任务列表 + 自主认领</td></tr>
+<tr><td><strong>成本</strong></td><td>较低（结果摘要回传）</td><td>较高（每个队员都是完整实例）</td></tr>
+<tr><td><strong>适合</strong></td><td>"只要结果"的聚焦任务</td><td>需要讨论、互相挑战、分工开发的复杂工作</td></tr>
+</table>
+
+<h3>工作机制</h3>
+<div class="flow">
+  <div class="fbox hot"><b>Lead 会话</b><span>拆解任务<br>创建共享任务列表</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>队员 A</b><span>认领任务 1<br>独立上下文</span></div>
+  <div class="farr">⇄</div>
+  <div class="fbox"><b>队员 B</b><span>认领任务 2<br>可向 A 发消息质疑</span></div>
+  <div class="farr">⇄</div>
+  <div class="fbox"><b>队员 C</b><span>认领任务 3<br>空闲时触发 TeammateIdle</span></div>
+</div>
+<p>三个机制支撑协作：<strong>共享任务列表</strong>（带依赖关系，队员自主认领）、<strong>点对点消息</strong>（发现冲突直接沟通）、<strong>集中视图</strong>（你从一处监控所有队员）。相关钩子：<code>TeammateIdle</code>（队员即将空闲）、<code>TaskCreated</code> / <code>TaskCompleted</code>。</p>
+
+<h3>典型场景</h3>
+<ul class="plain">
+<li><strong>竞争性假设调试</strong>：三个队员各持一种 bug 假设并行排查，互相用证据反驳——避免单线程"先入为主"。</li>
+<li><strong>多视角并行评审</strong>：安全、性能、测试覆盖三个评审员同时审一个 PR。</li>
+<li><strong>分模块开发</strong>：每人独立负责一个模块，依赖处通过消息对齐接口。</li>
+</ul>
+<div class="warn">实验性功能，默认关闭。经验法则：先用子代理，当你发现"并行的子代理需要互相通信"或上下文频繁见顶时，再升级到 Agent Teams。背景代理（多个独立会话集中监控）与 git worktree 并行（第 12 章）是两种更轻的替代方案。</div>
+</section>
+
+<!-- ============ 第 8 章 ============ -->
+<section class="chapter" id="c08">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 8 章</b></div>
+<h2 class="ch-title">Hooks（钩子）：确定性的自动化</h2>
+<p class="ch-sub">CLAUDE.md 里写"每次编辑后跑 lint"是请求，模型可能忘；Hook 是保证——在生命周期事件上必然执行。这是"软引导"与"硬约束"的分界线。</p>
+
+<h3>三个组成部分</h3>
+<p>一条钩子配置由三层构成：<strong>事件（event）</strong>决定何时触发 → <strong>匹配器（matcher）</strong>过滤触发条件 → <strong>处理器（handler）</strong>执行实际动作。</p>
+<div class="flow">
+  <div class="fbox"><b>事件</b><span>如 PreToolUse<br>（生命周期节点）</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>匹配器</b><span>如 "Bash" 或 "Edit|Write"<br>（过滤工具名等）</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>处理器</b><span>shell 命令 / HTTP / MCP 工具<br>/ 模型提示 / 子代理</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>决策</b><span>放行 / 拦截 / 注入信息<br>（通过退出码或 JSON）</span></div>
+</div>
+
+<h3>生命周期事件总表</h3>
+<p>事件覆盖会话全程，常用的标粗：</p>
+<table>
+<tr><th>阶段</th><th>事件</th><th>触发时机</th></tr>
+<tr><td rowspan="3">会话</td><td><strong><code>SessionStart</code></strong> / <code>SessionEnd</code></td><td>会话开始（含恢复）/ 结束</td></tr>
+<tr><td><code>Setup</code></td><td>以 <code>--init-only</code> 等启动时，用于 CI 一次性准备</td></tr>
+<tr><td><code>InstructionsLoaded</code> / <code>ConfigChange</code></td><td>CLAUDE.md / 规则加载时；配置文件变化时</td></tr>
+<tr><td rowspan="2">输入</td><td><strong><code>UserPromptSubmit</code></strong></td><td>你提交提示词后、模型处理前（可注入或拦截）</td></tr>
+<tr><td><code>UserPromptExpansion</code></td><td>命令展开为提示词前（可拦截展开）</td></tr>
+<tr><td rowspan="4">工具</td><td><strong><code>PreToolUse</code></strong></td><td>工具执行前——<strong>可拦截</strong>，最常用的安全闸门</td></tr>
+<tr><td><strong><code>PostToolUse</code></strong> / <code>PostToolUseFailure</code></td><td>工具成功 / 失败后（跑 lint、格式化的主场）</td></tr>
+<tr><td><code>PostToolBatch</code></td><td>一批并行工具调用全部完成后</td></tr>
+<tr><td><code>PermissionRequest</code> / <code>PermissionDenied</code></td><td>权限弹窗出现时 / 被 auto 模式拒绝时（可返回 retry）</td></tr>
+<tr><td rowspan="2">子代理</td><td><code>SubagentStart</code> / <code>SubagentStop</code></td><td>子代理派生 / 结束时</td></tr>
+<tr><td><code>TeammateIdle</code> · <code>TaskCreated</code> · <code>TaskCompleted</code></td><td>Agent Team 队员空闲 / 任务创建 / 完成</td></tr>
+<tr><td rowspan="2">输出</td><td><strong><code>Stop</code></strong> / <code>StopFailure</code></td><td>Claude 完成回复时（验收检查的好位置）/ API 错误终止</td></tr>
+<tr><td><code>Notification</code> / <code>MessageDisplay</code></td><td>发送通知时 / 显示消息文本时</td></tr>
+<tr><td rowspan="3">环境</td><td><code>PreCompact</code> / <code>PostCompact</code></td><td>上下文压缩前 / 后</td></tr>
+<tr><td><code>FileChanged</code> / <code>CwdChanged</code></td><td>被监视文件变化 / 工作目录变化</td></tr>
+<tr><td><code>WorktreeCreate</code> / <code>WorktreeRemove</code> · <code>Elicitation</code>(Result)</td><td>worktree 创建/移除；MCP 请求用户输入时</td></tr>
+</table>
+
+<h3>配置与示例</h3>
+<p>钩子配置在 settings.json 的 <code>hooks</code> 键下（用户级 / 项目级 / 本地级均可，多处配置全部生效、按事件合并）。经典示例——拦截危险删除命令：</p>
+<pre><code><span class="cm">// .claude/settings.json</span>
+{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [{
+      <span class="k">"matcher"</span>: <span class="s">"Bash"</span>,
+      <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"./block-rm.sh"</span> }]
+    }],
+    <span class="k">"PostToolUse"</span>: [{
+      <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+      <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"npx prettier --write \"$file\""</span> }]
+    }]
+  }
+}</code></pre>
+<p>匹配器规则：精确字符串（<code>"Bash"</code>）、正则（<code>"Edit|Write"</code>、<code>"mcp__.*__write.*"</code>）、<code>"*"</code> 或省略表示全部匹配。匹配对象是输入 JSON 中的字段（工具事件为 <code>tool_name</code>）。部分事件（如 <code>UserPromptSubmit</code>、<code>Stop</code>）不支持匹配器，每次都触发。</p>
+
+<h3>五种处理器类型</h3>
+<table>
+<tr><th>类型</th><th>机制</th><th>适用</th></tr>
+<tr><td><code>command</code></td><td>运行 shell 命令；stdin 收到事件 JSON，用退出码和 stdout 表态</td><td>最常用：lint、格式化、拦截、通知</td></tr>
+<tr><td><code>http</code></td><td>向 HTTP 端点 POST 事件数据</td><td>对接团队中央服务、审计日志</td></tr>
+<tr><td><code>mcp_tool</code></td><td>调用已连接 MCP 服务器上的工具</td><td>复用现有集成（如发 Slack）</td></tr>
+<tr><td><code>prompt</code></td><td>把问题交给一个 Claude 模型做单轮"是/否"判断</td><td>规则难以正则化的智能审查</td></tr>
+<tr><td><code>agent</code> <span class="tag exp">实验</span></td><td>派生子代理，可用 Read/Grep 等工具核实后再返回决策</td><td>需要查证据的复杂判定</td></tr>
+</table>
+
+<h3>钩子如何表态：退出码与 JSON</h3>
+<p>command 钩子通过两种方式影响主循环：</p>
+<ul class="plain">
+<li><strong>退出码 0 + 无输出</strong>：不表态，走正常权限流程（沉默 ≠ 批准）。</li>
+<li><strong>退出码 2</strong>：阻断该操作，stderr 内容作为原因反馈给 Claude，让它换条路。</li>
+<li><strong>stdout 输出 JSON</strong>：精细控制——<code>{"decision":"block","reason":"…"}</code> 拦截并说明原因；PreToolUse 还可返回允许决策直接放行；部分事件支持注入 <code>systemMessage</code> 等附加上下文。</li>
+</ul>
+<div class="note">设计原则："<strong>必须每次发生、不需要思考</strong>"的事用 Hook（格式化、拦截、记录）；"<strong>需要模型理解和判断</strong>"的事用 Skill。Hook 的输出会进入上下文：PostToolUse 钩子把 lint 错误喂回去，Claude 看到就会自己修。</div>
+</section>
+
+<!-- ============ 第 9 章 ============ -->
+<section class="chapter" id="c09">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 9 章</b></div>
+<h2 class="ch-title">MCP：连接外部世界的协议</h2>
+<p class="ch-sub">Model Context Protocol 是一个开放标准，让 Claude 用统一方式接入数据库、Slack、GitHub、Figma 等任意外部系统——常被比作"AI 应用的 USB-C 接口"。</p>
+
+<h3>架构：客户端 / 服务器</h3>
+<div class="flow">
+  <div class="fbox dark"><b>Claude Code</b><span>MCP 客户端（Host）</span></div>
+  <div class="farr">⇄</div>
+  <div class="fbox hot"><b>MCP 服务器</b><span>GitHub · Postgres · Slack…<br>把外部系统包装成标准接口</span></div>
+  <div class="farr">⇄</div>
+  <div class="fbox"><b>外部系统</b><span>API · 数据库 · SaaS</span></div>
+</div>
+<p>服务器向客户端暴露三类原语（primitive）：</p>
+<table>
+<tr><th>原语</th><th>是什么</th><th>例子</th></tr>
+<tr><td><strong>Tools 工具</strong></td><td>可调用的操作（最核心）</td><td><code>create_issue</code>、<code>query_database</code></td></tr>
+<tr><td><strong>Resources 资源</strong></td><td>可读取的数据，可用 <code>@服务器:资源</code> 引用</td><td>文件、schema、文档</td></tr>
+<tr><td><strong>Prompts 提示</strong></td><td>服务器预定义的提示模板，以斜杠命令形式出现</td><td><code>/mcp__github__pr_review</code></td></tr>
+</table>
+<p>MCP 工具进入主循环后与内置工具完全同等：统一命名为 <code>mcp__服务器名__工具名</code>（如 <code>mcp__github__create_issue</code>），同样受权限规则与钩子约束。默认开启 <strong>tool search</strong>：启动时只加载工具名，完整 schema 用到才取，闲置集成几乎不占上下文。</p>
+
+<h3>三种传输方式（Transport）</h3>
+<table>
+<tr><th>传输</th><th>运行位置</th><th>添加命令</th></tr>
+<tr><td><code>stdio</code></td><td>本地子进程（最常见）</td><td><code>claude mcp add --transport stdio 名称 -- npx 服务器包名</code></td></tr>
+<tr><td><code>http</code></td><td>远程服务（流式 HTTP，推荐）</td><td><code>claude mcp add --transport http notion https://mcp.notion.com/mcp</code></td></tr>
+<tr><td><code>sse</code></td><td>远程服务（Server-Sent Events，旧式）</td><td><code>claude mcp add --transport sse asana https://mcp.asana.com/sse</code></td></tr>
+</table>
+<p>远程服务器普遍用 <strong>OAuth</strong> 认证：运行 <code>/mcp</code> 在浏览器中完成授权，令牌安全存储并自动刷新。本地服务器用 <code>--env KEY=值</code> 传 API 密钥。断线的远程服务器会自动重连。</p>
+
+<h3>三个作用域（Scope）与优先级</h3>
+<table>
+<tr><th>作用域</th><th>存储位置</th><th>适用</th></tr>
+<tr><td><code>local</code>（默认）</td><td><code>~/.claude.json</code> 中按项目记录，仅本机本项目</td><td>个人实验、含密钥的配置</td></tr>
+<tr><td><code>project</code></td><td>项目根 <code>.mcp.json</code>，进版本库团队共享</td><td>团队统一的集成（首次使用需确认安全提示）</td></tr>
+<tr><td><code>user</code></td><td><code>~/.claude.json</code>，本机所有项目可用</td><td>个人通用工具</td></tr>
+</table>
+<p>同名服务器优先级：<strong>local &gt; project &gt; user</strong>。添加时用 <code>--scope project</code> 指定作用域；<code>claude mcp list</code> 查看全部，<code>/mcp</code> 会话内管理连接状态与令牌成本。</p>
+<pre><code><span class="cm"># .mcp.json（项目作用域，团队共享）</span>
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"github"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://api.githubcopilot.com/mcp/"</span>
+    },
+    <span class="k">"postgres"</span>: {
+      <span class="k">"type"</span>: <span class="s">"stdio"</span>,
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@bytebase/dbhub"</span>, <span class="s">"--dsn"</span>, <span class="s">"${DB_URL}"</span>]
+    }
+  }
+}</code></pre>
+
+<h3>MCP 能做什么：一个串联示例</h3>
+<p>连接 Jira、Sentry、Postgres、Slack 后，一句话即可触发跨系统工作流："实现 Jira 单 ENG-4521 描述的功能 → 查 Sentry 确认相关报错 → 从数据库找 10 个受影响用户 → 在 GitHub 开 PR → 给团队 Slack 发摘要"。每一步都是一次 MCP 工具调用，由主循环自动串联。</p>
+<div class="warn">MCP 服务器能读你的数据、以你的身份操作外部系统。只连可信来源，警惕"提示注入"风险——外部内容（如网页、issue 正文）可能包含诱导指令。敏感操作配合 ask 权限规则二次确认。</div>
+<div class="tip">MCP 与 Skill 是黄金搭档（见第 14 章）：MCP 提供"连接"，Skill 提供"用法知识"——比如 MCP 连上数据库，再用一个 Skill 教 Claude 你的表结构和查询惯例。另外 Claude Code 自身也可作为 MCP 服务器供其他应用调用（<code>claude mcp serve</code>）。</div>
+</section>
+
+<!-- ============ 第 10 章 ============ -->
+<section class="chapter" id="c10">
+<div class="crumb">第二部分 · 扩展机制 / <b>第 10 章</b></div>
+<h2 class="ch-title">Plugins 与 Marketplace：打包与分发</h2>
+<p class="ch-sub">前面各章的扩展机制都是"散件"。Plugin 把它们装进一个盒子，一条命令安装；Marketplace 是分发这些盒子的货架。</p>
+
+<h3>Plugin 能打包什么</h3>
+<div class="cards">
+  <div class="card"><h5>Skills 技能</h5><p>带命名空间的命令与知识，如 <code>/my-plugin:deploy</code>，避免与其他插件冲突</p></div>
+  <div class="card"><h5>Agents 子代理</h5><p>预配置的专职代理（注：插件中的 agent 不支持 hooks / mcpServers / permissionMode 字段，需要时复制出来自行维护）</p></div>
+  <div class="card"><h5>Hooks 钩子</h5><p>随插件安装即生效的自动化规则</p></div>
+  <div class="card"><h5>MCP 服务器</h5><p>插件启用时自动连接的外部集成</p></div>
+</div>
+
+<h3>插件目录结构</h3>
+<pre><code>my-plugin/
+├── .claude-plugin/
+│   └── plugin.json        <span class="cm"># 元数据清单：name、description、version、author</span>
+├── skills/
+│   └── deploy/SKILL.md    <span class="cm"># → /my-plugin:deploy</span>
+├── agents/
+│   └── reviewer.md
+├── hooks/
+│   └── hooks.json
+└── .mcp.json              <span class="cm"># 随插件连接的 MCP 服务器</span></code></pre>
+
+<h3>Marketplace：分发机制</h3>
+<p>市场本质是一个包含 <code>.claude-plugin/marketplace.json</code> 清单的 git 仓库（或 URL），列出可安装的插件。任何人都可以建市场——公司内部市场、社区市场皆可：</p>
+<pre><code><span class="cm"># 添加市场（git 仓库即市场）</span>
+/plugin marketplace add 组织名/插件市场仓库
+
+<span class="cm"># 浏览与安装</span>
+/plugin install 插件名@市场名</code></pre>
+<p>安装后可在 <code>/plugin</code> 菜单中启用/禁用。团队协作时，可在项目 settings 中声明依赖的市场与插件，成员打开项目即自动提示安装——实现"新人零配置上手"。</p>
+
+<h3>何时用 Plugin</h3>
+<ul class="plain">
+<li><strong>第二个仓库需要同一套配置时</strong>——这是官方给出的明确触发信号。</li>
+<li><strong>团队标准化</strong>：统一的评审流程、部署技能、安全钩子，一次安装全员一致。</li>
+<li><strong>能力分发</strong>：把你打磨好的工作流分享给社区。</li>
+</ul>
+<div class="note">理解定位：Plugin 本身不提供新能力，它是<strong>打包层</strong>——内容物仍是 skills / agents / hooks / MCP。先把散件调通，再考虑打包。</div>
+</section>
+
+<!-- ============ 第 11 章 ============ -->
+<section class="chapter" id="c11">
+<div class="crumb">第三部分 · 控制与工作流 / <b>第 11 章</b></div>
+<h2 class="ch-title">权限与设置：安全与自主的平衡</h2>
+<p class="ch-sub">权限系统回答一个问题：哪些操作可以直接做，哪些要先问你？答案由"模式"定基线、"规则"做微调、"设置文件"分层管理。</p>
+
+<h3>settings.json 的层级</h3>
+<p>设置文件从高到低分五层，高层覆盖低层（managed 不可被下层推翻）：</p>
+<table>
+<tr><th>层级</th><th>位置</th><th>用途</th></tr>
+<tr><td>① 管理策略 managed</td><td>系统级 <code>managed-settings.json</code>（IT 部署，macOS 在 <code>/Library/Application Support/ClaudeCode/</code>）</td><td>企业强制规则，个人无法覆盖</td></tr>
+<tr><td>② 命令行参数</td><td><code>--permission-mode</code> 等 CLI flag</td><td>单次会话覆盖</td></tr>
+<tr><td>③ 本地项目</td><td><code>.claude/settings.local.json</code>（gitignore）</td><td>个人在本项目的私有配置</td></tr>
+<tr><td>④ 共享项目</td><td><code>.claude/settings.json</code>（进版本库）</td><td>团队共享配置</td></tr>
+<tr><td>⑤ 用户级</td><td><code>~/.claude/settings.json</code></td><td>个人全局默认</td></tr>
+</table>
+
+<h3>权限规则：allow / ask / deny</h3>
+<p>规则语法为 <code>工具名(匹配模式)</code>，三种规则按 <strong>deny → ask → allow</strong> 的顺序判定，deny 一票否决（任何模式下都生效）：</p>
+<pre><code><span class="cm">// .claude/settings.json</span>
+{
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [
+      <span class="s">"Bash(npm run test:*)"</span>,      <span class="cm">// 放行所有 test 子命令</span>
+      <span class="s">"Read(~/.zshrc)"</span>
+    ],
+    <span class="k">"ask"</span>: [ <span class="s">"Bash(git push:*)"</span> ],  <span class="cm">// 推送必须人工确认</span>
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(./.env)"</span>,               <span class="cm">// 密钥文件禁止读取</span>
+      <span class="s">"Bash(curl:*)"</span>,
+      <span class="s">"WebFetch"</span>
+    ],
+    <span class="k">"additionalDirectories"</span>: [ <span class="s">"../docs/"</span> ],
+    <span class="k">"defaultMode"</span>: <span class="s">"acceptEdits"</span>
+  }
+}</code></pre>
+<p>会话内用 <code>/permissions</code> 查看与编辑规则；批准弹窗时选"始终允许"也会写入规则。</p>
+
+<h3>六种权限模式</h3>
+<p>模式定基线，<kbd>Shift+Tab</kbd> 在 CLI 中循环切换 default → acceptEdits → plan：</p>
+<table>
+<tr><th>模式</th><th>免审批范围</th><th>适用</th></tr>
+<tr><td><code>default</code></td><td>仅只读操作</td><td>入门、敏感工作</td></tr>
+<tr><td><code>acceptEdits</code></td><td>读取 + 文件编辑 + 常见文件系统命令（mkdir/mv/cp…，限工作目录内）</td><td>边写边在编辑器里看 diff 的迭代</td></tr>
+<tr><td><code>plan</code></td><td>仅只读（产出计划，不动代码）</td><td>动手前的调研与方案设计</td></tr>
+<tr><td><code>auto</code> <span class="tag new">研究预览</span></td><td>几乎全部，由后台分类器审查每个动作</td><td>长任务、减少打断（详见下文）</td></tr>
+<tr><td><code>dontAsk</code></td><td>仅预批准规则内的操作，其余直接拒绝</td><td>CI、锁死环境的脚本</td></tr>
+<tr><td><code>bypassPermissions</code></td><td>全部（跳过所有检查）</td><td><strong>仅限隔离容器/VM</strong>，root 下拒绝启动</td></tr>
+</table>
+
+<h4>auto 模式：分类器代替弹窗</h4>
+<p>auto 模式用一个独立的<strong>分类器模型</strong>在后台审查每个动作，替代人工弹窗。它默认信任你的工作目录与 git remote，拦截越界行为：<code>curl | bash</code>、向外部端点发送敏感数据、生产部署、强推 main、删除会话前已存在的文件等。你在对话中说的边界（"先别 push"）也会被当作拦截信号。连续拦 3 次或累计 20 次会回退到人工弹窗模式。</p>
+
+<h4>受保护路径</h4>
+<p>无论什么模式（bypass 除外），写入 <code>.git</code>、<code>.claude</code>、<code>.vscode</code>、<code>.bashrc</code>、<code>.mcp.json</code> 等关键路径永不自动批准——防止仓库状态和 Claude 自身配置被意外破坏，allow 规则也无法预批准这些路径。</p>
+
+<h3>沙箱：第四道防线</h3>
+<p>权限系统之外，可开启 OS 级沙箱让 Bash 命令在文件系统与网络双重隔离中运行。四道防线叠加：<strong>权限规则</strong>（哪些操作可做）→ <strong>权限模式</strong>（询问频率基线）→ <strong>Hooks</strong>（自定义拦截逻辑）→ <strong>沙箱</strong>（OS 级硬隔离）。</p>
+</section>
+
+<!-- ============ 第 12 章 ============ -->
+<section class="chapter" id="c12">
+<div class="crumb">第三部分 · 控制与工作流 / <b>第 12 章</b></div>
+<h2 class="ch-title">Workflow：高效工作流模式</h2>
+<p class="ch-sub">"Workflow"不是一个功能开关，而是把前面所有机制组合起来的使用模式。本章是实践层：怎么把活干好、干快、干safe。</p>
+
+<h3>规范流程：探索 → 计划 → 编码 → 提交</h3>
+<p>对非平凡任务，最重要的工作流是不让 Claude"上来就写代码"：</p>
+<div class="flow">
+  <div class="fbox"><b>① 探索</b><span>读相关文件、理解现状<br>明确说"先不要写代码"</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>② 计划</b><span>Plan Mode 下产出方案<br>你审阅、修改、批准</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>③ 编码</b><span>按计划实现<br>边做边自我验证</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>④ 提交</b><span>跑测试、写 commit<br>开 PR、更新文档</span></div>
+</div>
+
+<h4>Plan Mode 的角色</h4>
+<p>Plan Mode（<kbd>Shift+Tab</kbd> 切换，或单条消息前缀 <code>/plan</code>，或 <code>claude --permission-mode plan</code> 启动）是这个流程的制度保障：Claude 只能读和分析，不能改任何文件。计划就绪后它会呈现方案，你可以选择：批准并进入 auto / acceptEdits / 逐项审批模式开始执行，或继续给反馈打磨计划，还可按 <kbd>Ctrl+G</kbd> 在编辑器中直接修改计划文本。<strong>事前花在计划上的一分钟，胜过事后返工的十分钟</strong>——方向错误在计划阶段纠正成本最低。</p>
+
+<h3>测试驱动（TDD）工作流</h3>
+<p>智能体编程中威力最大的模式之一——给 Claude 一个<strong>可自动验证的目标</strong>：</p>
+<ol class="steps">
+<li>让 Claude 先根据预期输入输出写测试（明说"现在是 TDD，不要写实现"）。</li>
+<li>运行测试确认全部失败，提交测试。</li>
+<li>让 Claude 写实现使测试通过，<strong>不许改测试</strong>。它会自动进入"写码 → 跑测试 → 修复"的循环，直到全绿。</li>
+</ol>
+<p>同理可用于其他可验证目标：视觉稿（截图对比）、lint 零报错、类型检查通过。<strong>有明确判据，循环就能自我收敛。</strong></p>
+
+<h3>上下文管理工作流</h3>
+<table>
+<tr><th>手段</th><th>时机</th></tr>
+<tr><td><code>/clear</code></td><td>切换到无关新任务时，清空重来（最便宜的选择）</td></tr>
+<tr><td><code>/compact</code></td><td>任务连续但上下文吃紧时压缩；可附指示如 <code>/compact 保留代码改动细节</code></td></tr>
+<tr><td><code>/context</code></td><td>随时查看各部分占用，定位"吃上下文的大户"</td></tr>
+<tr><td>子代理扇出</td><td>大调研拆给 Subagent，主对话只收结论（第 6 章）</td></tr>
+<tr><td><code>/rewind</code> 检查点</td><td>每次编辑前自动存档；走偏时回退代码 / 对话到任意检查点，比 git 更细粒度</td></tr>
+<tr><td><code>--continue</code> / <code>--resume</code></td><td>恢复上次 / 任选历史会话，跨天接续工作</td></tr>
+</table>
+
+<h3>并行工作流：git worktree</h3>
+<p>多个 Claude 会话同时改一个目录会互相踩踏。git worktree 给每个会话一份独立的工作副本（共享 git 历史）：</p>
+<pre><code>git worktree add ../proj-feature-a feature-a
+cd ../proj-feature-a && claude   <span class="cm"># 会话 A 做功能</span>
+<span class="cm"># 另一个终端：会话 B 同时修 bug，互不干扰</span></code></pre>
+<p>子代理的 <code>isolation: "worktree"</code>、Agent Teams 也是建立在同一思想上。桌面端则内置了"并行会话 + Git 隔离"的图形化支持。</p>
+
+<h3>自动化工作流：headless 模式</h3>
+<p>加 <code>-p</code> 即可把 Claude Code 当命令行工具嵌进脚本与 CI（详见第 13 章）：</p>
+<pre><code><span class="cm"># 单次执行，输出到 stdout</span>
+claude -p <span class="s">"解释这个函数做了什么"</span> &lt; func.ts
+
+<span class="cm"># 管道接龙 + 结构化输出</span>
+tail -100 app.log | claude -p <span class="s">"找出异常原因"</span> --output-format json
+
+<span class="cm"># CI 中带预批准工具的自动修复</span>
+claude -p <span class="s">"修复所有 lint 错误"</span> --allowedTools <span class="s">"Edit,Bash(npm run lint:*)"</span></code></pre>
+
+<h3>日常小习惯</h3>
+<ul class="plain">
+<li><kbd>Esc</kbd> 随时打断并纠偏；双击 <kbd>Esc</kbd> 回溯历史重新编辑提示词。</li>
+<li>具体指令一次到位："修复 #issue，先写失败测试" 优于 "看看这个 bug"。</li>
+<li>让 Claude 自己验证：跑测试、截图、diff——闭环比盲写质量高一个量级。</li>
+<li>重复的纠正 → 写进 CLAUDE.md；重复的流程 → 做成 Skill；必须发生的 → Hook。让系统随使用进化。</li>
+</ul>
+</section>
+
+<!-- ============ 第 13 章 ============ -->
+<section class="chapter" id="c13">
+<div class="crumb">第三部分 · 控制与工作流 / <b>第 13 章</b></div>
+<h2 class="ch-title">Agent SDK 与运行形态</h2>
+<p class="ch-sub">Claude Code 的内核可以被编程调用（Agent SDK），也可以运行在终端之外的多种形态中。本章把"它还能在哪跑、怎么被集成"讲清楚。</p>
+
+<h3>Claude Agent SDK</h3>
+<p>Agent SDK（前称 Claude Code SDK，已更名）把驱动 Claude Code 的同一套引擎——主循环、工具、权限、MCP 支持——开放为 TypeScript / Python 库，用于构建你自己的智能体应用：</p>
+<pre><code><span class="cm"># Python</span>
+<span class="k">from</span> claude_agent_sdk <span class="k">import</span> query
+
+<span class="k">async for</span> message <span class="k">in</span> query(prompt=<span class="s">"分析这个仓库的架构"</span>):
+    print(message)</code></pre>
+<pre><code><span class="cm">// TypeScript</span>
+<span class="k">import</span> { query } <span class="k">from</span> <span class="s">"@anthropic-ai/claude-agent-sdk"</span>;
+
+<span class="k">for await</span> (<span class="k">const</span> msg <span class="k">of</span> query({ prompt: <span class="s">"修复所有类型错误"</span> })) {
+  console.log(msg);
+}</code></pre>
+<p>三个层次理解它与 CLI 的关系：</p>
+<div class="flow">
+  <div class="fbox"><b>交互式 CLI</b><span>人在环中<br>日常开发</span></div>
+  <div class="farr">→</div>
+  <div class="fbox"><b>headless（claude -p）</b><span>无界面单次执行<br>脚本与 CI 的胶水</span></div>
+  <div class="farr">→</div>
+  <div class="fbox hot"><b>Agent SDK</b><span>编程级控制：自定义工具、<br>权限回调、会话管理、子代理编排</span></div>
+</div>
+<p>headless 模式的关键参数：<code>--output-format json|stream-json</code>（结构化输出供程序解析）、<code>--allowedTools</code>（预批准工具）、<code>--permission-mode</code>、<code>--max-turns</code>（轮数上限）、<code>--append-system-prompt</code>。</p>
+
+<h3>运行形态全景</h3>
+<table>
+<tr><th>形态</th><th>说明</th></tr>
+<tr><td><strong>终端 CLI</strong></td><td>本体。<code>npm install -g @anthropic-ai/claude-code</code> 或原生安装</td></tr>
+<tr><td><strong>VS Code / JetBrains</strong></td><td>IDE 扩展：内联 diff、@ 引用文件、计划审阅、快捷键</td></tr>
+<tr><td><strong>桌面应用</strong></td><td>图形界面：并行会话 + Git 隔离、可视化 diff、应用预览、PR 监控</td></tr>
+<tr><td><strong>Web（claude.ai/code）</strong></td><td>云端沙箱中异步跑任务；Remote Control 可从手机接管本地会话</td></tr>
+<tr><td><strong>GitHub Actions</strong></td><td>在 issue / PR 里 <code>@claude</code> 指派任务，CI 中自动评审、修复</td></tr>
+<tr><td><strong>Slack</strong></td><td>在 Slack 中直接委派编码任务</td></tr>
+</table>
+
+<h3>配套机制</h3>
+<ul class="plain">
+<li><strong>Channels</strong>：让 MCP 服务器把外部事件（CI 结果、告警、聊天消息）<strong>推送进</strong>正在运行的会话，Claude 可在你离开时自行响应——从"拉取"走向"事件驱动"。</li>
+<li><strong>计划任务</strong>：会话内 <code>/loop</code> 与 cron 工具可定时/轮询执行提示词；Web 端支持云端定时任务。</li>
+<li><strong>企业部署</strong>：可经 Amazon Bedrock / Google Vertex AI / Microsoft Foundry 接入，配合 managed settings、OTel 监控做组织级管控。</li>
+<li><strong>状态栏与键位</strong>：<code>/statusline</code> 自定义底栏（上下文用量、成本、git 状态）；keybindings 文件自定义快捷键。</li>
+</ul>
+<div class="note">心智模型：<strong>一个内核，多种外壳</strong>。CLAUDE.md、Skills、MCP、权限等概念在所有形态中通用——学一次，处处适用。</div>
+</section>
+
+<!-- ============ 第 14 章 ============ -->
+<section class="chapter" id="c14">
+<div class="crumb">第三部分 · 控制与工作流 / <b>第 14 章</b></div>
+<h2 class="ch-title">选型决策与全景回顾</h2>
+<p class="ch-sub">最后一章回答实践中最常见的问题："这件事，我该用哪个机制？"——以及一张把全书串起来的总图。</p>
+
+<h3>触发信号 → 该加什么</h3>
+<p>官方建议的渐进式构建路径——不要一开始配齐所有东西，等信号出现再加：</p>
+<table>
+<tr><th>当你发现……</th><th>就该加</th></tr>
+<tr><td>Claude 第二次搞错同一个约定或命令</td><td><strong>CLAUDE.md</strong> 加一条</td></tr>
+<tr><td>你反复输入同一段开场提示词 / 粘贴同一套流程</td><td>做成 <strong>Skill</strong></td></tr>
+<tr><td>你不断从浏览器复制数据给 Claude 看</td><td>连 <strong>MCP</strong> 服务器</td></tr>
+<tr><td>Claude 靠 grep 大海捞针找符号定义</td><td>装 <strong>code intelligence</strong> 插件</td></tr>
+<tr><td>某个副任务的输出淹没了主对话</td><td>路由给 <strong>Subagent</strong></td></tr>
+<tr><td>有件事必须每次发生、不容模型"忘记"</td><td>写 <strong>Hook</strong></td></tr>
+<tr><td>并行的工作线需要互相讨论</td><td>升级 <strong>Agent Teams</strong></td></tr>
+<tr><td>第二个仓库需要同一套配置</td><td>打包成 <strong>Plugin</strong></td></tr>
+</table>
+
+<h3>易混概念三组对照</h3>
+<table>
+<tr><th>对照</th><th>关键区别</th><th>判断口诀</th></tr>
+<tr><td><strong>CLAUDE.md vs Skill</strong></td><td>前者每会话必加载，后者按需加载</td><td>"永远要知道的"进 CLAUDE.md；"有时才需要的"做 Skill</td></tr>
+<tr><td><strong>Skill vs Subagent</strong></td><td>Skill 是可复用的<strong>内容</strong>，Subagent 是隔离的<strong>执行者</strong></td><td>要复用知识 → Skill；要隔离上下文 → Subagent（二者可组合：<code>context: fork</code> / <code>skills:</code> 预载）</td></tr>
+<tr><td><strong>Hook vs Skill</strong></td><td>Hook 确定性触发不经思考，Skill 由模型理解执行</td><td>"必须发生"用 Hook；"需要判断"用 Skill。守门规则一律 Hook</td></tr>
+</table>
+
+<h3>同名/同类配置的叠加与覆盖</h3>
+<table>
+<tr><th>机制</th><th>多层共存时</th></tr>
+<tr><td>CLAUDE.md</td><td><strong>叠加</strong>：所有层级同时进入上下文，冲突时模型自行权衡（越具体越优先）</td></tr>
+<tr><td>Skills / Subagents</td><td><strong>按名覆盖</strong>：skill 为 managed &gt; 用户 &gt; 项目；subagent 为 managed &gt; CLI &gt; 项目 &gt; 用户 &gt; 插件</td></tr>
+<tr><td>MCP 服务器</td><td><strong>按名覆盖</strong>：local &gt; project &gt; user</td></tr>
+<tr><td>Hooks</td><td><strong>合并</strong>：所有来源的钩子都触发</td></tr>
+<tr><td>Settings</td><td><strong>分层覆盖</strong>：managed &gt; CLI &gt; 本地项目 &gt; 共享项目 &gt; 用户</td></tr>
+</table>
+
+<h3>全景总图</h3>
+<p>把全书 14 章放回一张图——一次用户请求穿过整个系统的旅程：</p>
+<div class="fwrap">
+  <div class="flow">
+    <div class="fbox" style="flex:1"><b>启动装载</b><span>系统提示 + CLAUDE.md/rules（第4章） + Skill 描述（第5章） + MCP 工具名（第9章） + Auto Memory 索引</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox" style="flex:2"><b>你的提示词</b><span>UserPromptSubmit 钩子可注入/拦截（第8章）</span></div>
+    <div class="farr">→</div>
+    <div class="fbox hot" style="flex:3"><b>主循环：模型推理（第2章）</b><span>直接回答 ｜ 调内置工具（第3章） ｜ 调 MCP 工具（第9章） ｜ 自动用 Skill（第5章） ｜ 派 Subagent（第6章）/ Team（第7章）</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox" style="flex:1"><b>每次工具调用前后</b><span>PreToolUse 钩子 → 权限规则与模式判定（第11章） → 沙箱执行 → PostToolUse 钩子 → 结果回填上下文</span></div>
+  </div>
+  <div class="flow">
+    <div class="fbox" style="flex:1"><b>收尾</b><span>Stop 钩子 → 检查点存档 → Auto Memory 记笔记 → 上下文吃紧时 compact（第12章）</span></div>
+  </div>
+</div>
+<p class="loopnote">以上整体可被打包为 Plugin 分发（第10章），可被 SDK 编程调用、跑在 CLI/IDE/桌面/Web/CI 任意形态中（第13章）</p>
+
+<h3>给上手者的建议路径</h3>
+<ol class="steps">
+<li><strong>第 1 周</strong>：裸用 + <code>/init</code> 生成 CLAUDE.md，养成 Plan Mode 先行的习惯。</li>
+<li><strong>第 2–3 周</strong>：把重复纠正沉淀进 CLAUDE.md；第一个反复粘贴的流程做成 Skill；连 1–2 个最常用的 MCP（如 GitHub）。</li>
+<li><strong>第 2 个月</strong>：加 PostToolUse lint 钩子和 PreToolUse 安全闸；大调研习惯性交给 Explore 子代理；试 acceptEdits / auto 模式提速。</li>
+<li><strong>之后</strong>：worktree 并行、headless 进 CI、好配置打包成 Plugin 分发团队。</li>
+</ol>
+<div class="tip">官方文档持续更新于 <a href="https://code.claude.com/docs" target="_blank">code.claude.com/docs</a>，本手册基于 2026 年 6 月的文档整理。</div>
+</section>
+
+<!--CHAPTERS_END-->
+
+</div></div>
+</div>
+
+<script>
+(function(){
+  var chapters=["c01","c02","c03","c04","c05","c06","c07","c08","c09","c10","c11","c12","c13","c14"];
+  var titles={c01:"总览：全景地图",c02:"Agent 主循环",c03:"内置工具 Tools",c04:"记忆体系 CLAUDE.md",c05:"Skills 与斜杠命令",c06:"Subagent 子代理",c07:"Agent Teams 代理团队",c08:"Hooks 钩子",c09:"MCP 协议",c10:"Plugins 与市场",c11:"权限与设置",c12:"Workflow 工作流",c13:"SDK 与运行形态",c14:"选型决策与全景图"};
+  var sidebar=document.getElementById('sidebar');
+
+  function buildPagers(){
+    chapters.forEach(function(id,i){
+      var sec=document.getElementById(id);
+      if(!sec) return;
+      var pager=document.createElement('div');
+      pager.className='pager';
+      var html='';
+      if(i>0) html+='<a href="#'+chapters[i-1]+'"><span class="dir">‹ 上一章</span><span class="pt">'+titles[chapters[i-1]]+'</span></a>';
+      if(i<chapters.length-1) html+='<a class="next" href="#'+chapters[i+1]+'"><span class="dir">下一章 ›</span><span class="pt">'+titles[chapters[i+1]]+'</span></a>';
+      pager.innerHTML=html;
+      sec.appendChild(pager);
+    });
+  }
+
+  function show(id){
+    if(chapters.indexOf(id)<0) id=chapters[0];
+    document.querySelectorAll('.chapter').forEach(function(s){s.classList.remove('active');});
+    var sec=document.getElementById(id);
+    if(sec) sec.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(function(n){
+      n.classList.toggle('active', n.getAttribute('data-ch')===id);
+    });
+    window.scrollTo({top:0});
+    sidebar.classList.remove('open');
+  }
+
+  document.querySelectorAll('.nav-item').forEach(function(n){
+    n.addEventListener('click',function(){
+      var id=n.getAttribute('data-ch');
+      if(location.hash!=='#'+id) location.hash=id; else show(id);
+    });
+  });
+  window.addEventListener('hashchange',function(){show(location.hash.slice(1));});
+  document.getElementById('menuBtn').addEventListener('click',function(){sidebar.classList.toggle('open');});
+
+  buildPagers();
+  show(location.hash? location.hash.slice(1) : chapters[0]);
+})();
+</script>
+</body>
+</html>
