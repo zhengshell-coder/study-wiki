@@ -69,6 +69,13 @@
       "folder": "AI-商业趋势",
       "icon": "📊",
       "color": "#d98a3d"
+    },
+    {
+      "id": "mmqkvw9m4",
+      "name": "工作总结",
+      "folder": "工作总结",
+      "icon": "📝",
+      "color": "#5b7088"
     }
   ],
   "pages": [
