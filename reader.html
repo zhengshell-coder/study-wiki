@@ -9,9 +9,9 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
   #bar{position:fixed;top:0;left:0;right:0;height:46px;background:rgba(255,255,255,.94);
-    border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 10px;z-index:10}
+    border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 10px;z-index:10}
   #bar a,#bar button{border:0;background:transparent;font:inherit;color:var(--ink);cursor:pointer;font-size:14px;
-    padding:7px 10px;border-radius:8px;white-space:nowrap}
+    padding:7px 9px;border-radius:8px;white-space:nowrap}
   #bar a:hover,#bar button:hover{background:#f0f1f4}
   #title{flex:1;min-width:0;font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #pct{font-size:12.5px;color:#6b7280;min-width:40px;text-align:right}
@@ -21,63 +21,145 @@
   #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa1ad;font-size:14px}
   #resume{position:fixed;right:16px;bottom:max(20px,env(safe-area-inset-bottom));background:var(--bar);color:#fff;border:0;
     border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;box-shadow:0 8px 22px rgba(79,124,255,.45);
-    cursor:pointer;z-index:12;display:none}
+    cursor:pointer;z-index:12;display:none;max-width:70vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #resume.show{display:inline-block}
+  #bmpanel{position:fixed;top:50px;right:10px;width:300px;max-width:92vw;max-height:70vh;overflow:auto;background:#fff;
+    border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.18);z-index:20;display:none;padding:10px}
+  #bmpanel.show{display:block}
+  #bmpanel .addb{width:100%;border:0;background:var(--bar);color:#fff;font:inherit;font-weight:600;font-size:13.5px;
+    padding:10px;border-radius:10px;cursor:pointer;margin-bottom:8px}
+  #bmpanel .auto{width:100%;border:1px solid var(--line);background:#fff;font:inherit;font-size:13px;color:var(--ink);
+    padding:9px;border-radius:10px;cursor:pointer;margin-bottom:8px}
+  .bmrow{display:flex;align-items:center;gap:8px;padding:9px 6px;border-top:1px solid var(--line)}
+  .bmrow .bi{flex:1;min-width:0;cursor:pointer}
+  .bmrow .bi .bl{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bmrow .bi .bp{font-size:12px;color:#8a93a3}
+  .bmrow .del{border:0;background:transparent;color:#d64545;cursor:pointer;font-size:13px;padding:4px 6px;border-radius:6px}
+  .bmrow .del:hover{background:#fdeaea}
+  .bmempty{color:#9aa1ad;font-size:13px;text-align:center;padding:14px 0}
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:12px;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <div id="bar">
-  <a href="./index.html">← 图书馆</a>
+  <a href="#" id="backbtn">← 图书馆</a>
   <div id="title">阅读器</div>
   <span id="pct">0%</span>
+  <button id="bmbtn" title="书签">🔖 书签</button>
   <button id="topbtn" title="回到顶部">↑ 顶部</button>
 </div>
 <div id="progline"></div>
+<div id="bmpanel"></div>
 <div id="wrap"><div id="loading">加载中…</div><iframe id="frame"></iframe></div>
-<button id="resume">↩ 继续上次 <span id="rpct"></span></button>
+<button id="resume"></button>
+<div id="toast"></div>
 <script>
-const KEY="wikiReadPos.v1";
+const KEY_POS="wikiReadPos.v1";
+const KEY_BM="wikiBookmarks.v1";
+const GH_KEY="learningWiki.github.v1";
 const params=new URLSearchParams(location.hash.slice(1));
 const doc=params.get("doc")||"";
 const title=params.get("title")|| (doc?doc.split("/").pop().replace(/\.html?$/i,""):"阅读器");
 document.getElementById("title").textContent=title; document.title=title;
 
-function allPos(){ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } }
-function savePos(pct){ if(!doc) return; try{ const a=allPos(); a[doc]={pct:pct, ts:Date.now()}; localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
+function lget(k){ try{ return JSON.parse(localStorage.getItem(k)||"{}"); }catch(e){ return {}; } }
+function lset(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function ghCfg(){ try{ return JSON.parse(localStorage.getItem(GH_KEY)||"{}"); }catch(e){ return {}; } }
+function branch(){ return ghCfg().branch||"main"; }
+function deriveRepo(){ const c=ghCfg(); if(c.repo) return c.repo;
+  const h=location.hostname, o=(h.indexOf(".github.io")>0)?h.split(".")[0]:"";
+  const seg=location.pathname.split("/").filter(Boolean)[0];
+  return (o&&seg)?(o+"/"+seg):""; }
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2200); }
 
-const frame=document.getElementById("frame");
-const progline=document.getElementById("progline");
-const pctEl=document.getElementById("pct");
-const resume=document.getElementById("resume");
-let win=null, saved=((allPos()[doc]||{}).pct)||0, lastSave=0, scrolledByUser=false;
+/* ---- sync (reading.json on GitHub) ---- */
+async function apiGetReading(){ const repo=deriveRepo(); if(!repo) return null;
+  try{ const r=await fetch("https://api.github.com/repos/"+repo+"/contents/reading.json?ref="+encodeURIComponent(branch())+"&t="+Date.now(),
+      {headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok) return null; const j=await r.json();
+    return {data:JSON.parse(decodeURIComponent(escape(atob((j.content||"").replace(/\s/g,""))))), sha:j.sha};
+  }catch(e){ return null; } }
+async function apiPutReading(obj, sha, msg){ const c=ghCfg(), repo=c.repo||deriveRepo(); if(!repo||!c.token) return false;
+  try{ const body={message:msg||"更新阅读进度", content:btoa(unescape(encodeURIComponent(JSON.stringify(obj)))), branch:branch()}; if(sha) body.sha=sha;
+    const r=await fetch("https://api.github.com/repos/"+repo+"/contents/reading.json",
+      {method:"PUT",headers:{Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    return r.ok;
+  }catch(e){ return false; } }
+function mergeByTs(a,b){ const out=Object.assign({},a||{}); const o=b||{}; for(const k in o){ if(!out[k]||((o[k].ts||0)>(out[k].ts||0))) out[k]=o[k]; } return out; }
+async function pullReading(){ const r=await apiGetReading(); if(!r||!r.data) return;
+  lset(KEY_POS, mergeByTs(lget(KEY_POS), r.data.positions||{}));
+  lset(KEY_BM,  mergeByTs(lget(KEY_BM),  r.data.bookmarks||{})); }
+let pushing=false;
+async function pushReading(msg){ const c=ghCfg(); if(!c.token) return;
+  if(pushing) return; pushing=true;
+  try{ const r=await apiGetReading(); const remote=(r&&r.data)||{positions:{},bookmarks:{}};
+    const merged={ positions: mergeByTs(remote.positions||{}, lget(KEY_POS)), bookmarks: mergeByTs(remote.bookmarks||{}, lget(KEY_BM)) };
+    await apiPutReading(merged, r&&r.sha, msg);
+  }catch(e){} finally{ pushing=false; } }
 
-function metrics(){ try{ const s=win.document.scrollingElement||win.document.documentElement;
-  const max=s.scrollHeight - win.innerHeight; return {top:s.scrollTop, max:max>0?max:0}; }catch(e){ return null; } }
+/* ---- position ---- */
+const frame=document.getElementById("frame"), progline=document.getElementById("progline"), pctEl=document.getElementById("pct"), resume=document.getElementById("resume");
+let win=null, lastSave=0, dirty=false;
+function savedPct(){ const p=lget(KEY_POS)[doc]; return (p&&p.pct)||0; }
+function bmList(){ const b=lget(KEY_BM)[doc]; return (b&&b.items)?b.items.slice():[]; }
+function metrics(){ try{ const s=win.document.scrollingElement||win.document.documentElement; const max=s.scrollHeight-win.innerHeight; return {top:s.scrollTop, max:max>0?max:0}; }catch(e){ return null; } }
 function updateBar(pct){ progline.style.width=(pct*100).toFixed(1)+"%"; pctEl.textContent=Math.round(pct*100)+"%"; }
-function onScroll(){ const m=metrics(); if(!m) return; const pct=m.max>0? m.top/m.max : 0;
-  updateBar(pct); scrolledByUser=true;
+function savePosLocal(pct){ const a=lget(KEY_POS); a[doc]={pct:pct, ts:Date.now()}; lset(KEY_POS,a); dirty=true; }
+function onScroll(){ const m=metrics(); if(!m) return; const pct=m.max>0?m.top/m.max:0; updateBar(pct);
   if(pct>0.02) resume.classList.remove("show");
-  const now=Date.now(); if(now-lastSave>500){ lastSave=now; if(pct>0.005) savePos(pct); }
+  const now=Date.now(); if(now-lastSave>500){ lastSave=now; if(pct>0.005) savePosLocal(pct); } }
+function jumpTo(pct){ const m=metrics(); if(m&&m.max>0) win.scrollTo({top:pct*m.max, behavior:"smooth"}); }
+
+/* resume pill — 书签优先 */
+function setupResume(){ const m=metrics(); if(!m||m.max<=0) return;
+  const bms=bmList(); const sp=savedPct();
+  if(bms.length){ const last=bms.slice().sort((a,b)=>(b.ts||0)-(a.ts||0))[0];
+    resume.textContent="↩ 书签 "+(last.label?last.label+" ":"")+Math.round(last.pct*100)+"%";
+    resume.onclick=()=>{ jumpTo(last.pct); resume.classList.remove("show"); }; resume.classList.add("show");
+  } else if(sp>0.02 && sp<0.985){ resume.textContent="↩ 继续上次 "+Math.round(sp*100)+"%";
+    resume.onclick=()=>{ jumpTo(sp); resume.classList.remove("show"); }; resume.classList.add("show"); }
 }
-resume.onclick=()=>{ const m=metrics(); if(m&&m.max>0) win.scrollTo({top:saved*m.max, behavior:"smooth"}); resume.classList.remove("show"); };
+
+/* bookmarks panel */
+const bmpanel=document.getElementById("bmpanel");
+function renderBmPanel(){ const bms=bmList().sort((a,b)=>(a.pct||0)-(b.pct||0)); const sp=savedPct();
+  let h=`<button class="addb" onclick="addBookmark()">➕ 收藏当前位置为书签</button>`;
+  if(sp>0.005) h+=`<button class="auto" onclick="jumpTo(${sp});toggleBm(false)">↩ 上次自动位置 ${Math.round(sp*100)}%</button>`;
+  if(!bms.length) h+=`<div class="bmempty">还没有书签</div>`;
+  else h+=bms.map(b=>`<div class="bmrow"><div class="bi" onclick="jumpTo(${b.pct});toggleBm(false)">
+      <div class="bl">${b.label?escapeHtml(b.label):"书签"}</div><div class="bp">${Math.round(b.pct*100)}%</div></div>
+      <button class="del" onclick="delBookmark('${b.id}')">删除</button></div>`).join("");
+  bmpanel.innerHTML=h;
+}
+function escapeHtml(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function toggleBm(force){ const show=(force===undefined)?!bmpanel.classList.contains("show"):force; if(show) renderBmPanel(); bmpanel.classList.toggle("show",show); }
+function addBookmark(){ const m=metrics(); if(!m||m.max<=0){ toast("文档太短，无需书签"); return; } const pct=m.top/m.max;
+  let label=""; try{ label=prompt("给这个书签起个名（可留空）:","")||""; }catch(e){}
+  const lb=lget(KEY_BM); const cur=lb[doc]||{items:[]};
+  cur.items=cur.items||[]; cur.items.push({id:"b"+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pct:pct, label:label.trim(), ts:Date.now()});
+  cur.ts=Date.now(); lb[doc]=cur; lset(KEY_BM,lb); renderBmPanel(); toast("已添加书签"); pushReading("添加书签："+title);
+}
+function delBookmark(id){ const lb=lget(KEY_BM); const cur=lb[doc]; if(!cur) return;
+  cur.items=(cur.items||[]).filter(x=>x.id!==id); cur.ts=Date.now(); lb[doc]=cur; lset(KEY_BM,lb); renderBmPanel(); toast("已删除书签"); pushReading("删除书签"); }
+document.getElementById("bmbtn").onclick=()=>toggleBm();
 document.getElementById("topbtn").onclick=()=>{ if(win) win.scrollTo({top:0,behavior:"smooth"}); };
+document.addEventListener("click",(e)=>{ if(bmpanel.classList.contains("show") && !bmpanel.contains(e.target) && e.target.id!=="bmbtn") toggleBm(false); });
 
-frame.addEventListener("load", ()=>{
-  document.getElementById("loading").style.display="none";
-  try{
-    win=frame.contentWindow;
-    win.addEventListener("scroll", onScroll, {passive:true});
-    setTimeout(()=>{ const m=metrics();
-      if(m){ updateBar(m.max>0? m.top/m.max : 0);
-        if(saved>0.02 && saved<0.985 && m.max>0){ document.getElementById("rpct").textContent=Math.round(saved*100)+"%"; resume.classList.add("show"); } }
-    }, 350);
-  }catch(e){ /* 跨域或受限，无法记录位置 */ }
+/* leave -> push */
+function flushAndPush(){ const m=metrics(); if(m&&m.max>0){ const pct=m.top/m.max; if(pct>0.005) savePosLocal(pct); } if(dirty){ dirty=false; pushReading("同步阅读进度："+title); } }
+document.getElementById("backbtn").addEventListener("click",(e)=>{ e.preventDefault(); flushAndPush(); setTimeout(()=>{ location.href="./index.html"; }, 250); });
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden) flushAndPush(); });
+window.addEventListener("pagehide", flushAndPush);
+
+/* load */
+frame.addEventListener("load", ()=>{ document.getElementById("loading").style.display="none";
+  try{ win=frame.contentWindow; win.addEventListener("scroll", onScroll, {passive:true});
+    setTimeout(()=>{ const m=metrics(); if(m){ updateBar(m.max>0?m.top/m.max:0); setupResume(); } }, 350);
+  }catch(e){}
 });
-frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")) : "about:blank";
-
-function flush(){ const m=metrics(); if(m&&m.max>0){ const pct=m.top/m.max; if(pct>0.005) savePos(pct); } }
-document.addEventListener("visibilitychange", ()=>{ if(document.hidden) flush(); });
-window.addEventListener("pagehide", flush);
+(async ()=>{ await pullReading(); })().finally(()=>{ frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")) : "about:blank"; });
 </script>
 </body>
 </html>

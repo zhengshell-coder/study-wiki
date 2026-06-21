@@ -273,7 +273,7 @@ let data = JSON.parse(JSON.stringify(SEED));
 let activeModule = "all";
 let sourceMode = "seed";
 let modalMode = "add";
-let RP={};
+let RP={}, RB={};
 
 function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
@@ -307,6 +307,7 @@ async function boot(){
   document.getElementById("footer").textContent =
     sourceMode==="file" ? "已加到主屏即可像 App 打开 · 内容可离线缓存"
                         : "本地预览 · 上线后在网址里用，手机也能同步";
+  pullReading().then(()=>render()).catch(()=>{});
 }
 
 /* ---------- tabs ---------- */
@@ -320,7 +321,7 @@ function switchTab(w){
 
 /* ---------- browse ---------- */
 function render(){
-  RP=readPos();
+  RP=readPos(); RB=readBm();
   const chips=document.getElementById("chips");
   let h=`<div class="chip ${activeModule==='all'?'active':''}" onclick="setModule('all')">全部 <span style="opacity:.6">${data.pages.length}</span></div>`;
   data.modules.forEach(m=>{ const n=data.pages.filter(p=>p.moduleId===m.id).length;
@@ -348,10 +349,11 @@ function cardHTML(p){
   const m=moduleById(p.moduleId)||{name:"未分类",color:"#888",icon:"📄"};
   const tags=(p.tags||[]).slice(0,3).map(t=>`<span class="t">${esc(t)}</span>`).join("");
   const rp=RP[relPath(p)]; const pct=rp&&rp.pct?Math.round(rp.pct*100):0;
+  const bm=RB[relPath(p)]; const nbm=(bm&&bm.items)?bm.items.length:0;
   return `<div class="card" onclick="openPage('${p.id}')"><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button>
     <span class="tag" style="background:${m.color}1a;color:${m.color}">${m.icon} ${esc(m.name)}</span>
     <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="opacity:.5">—</p>`}
-    <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}${pct>0?`<span>· 读 ${pct}%</span>`:""}</div>
+    <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}${pct>0?`<span>· 读 ${pct}%</span>`:""}${nbm?`<span>· 🔖 ${nbm}</span>`:""}</div>
     ${pct>0?`<div class="prog"><div class="pf" style="width:${pct}%;background:${m.color}"></div></div>`:""}</div>`;
 }
 let expanded = new Set();
@@ -406,6 +408,15 @@ async function markCachedStates(){
 function pathFor(p){ const m=moduleById(p.moduleId); return "./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file); }
 function relPath(p){ const m=moduleById(p.moduleId); return (m?m.folder:"")+"/"+p.file; }
 function readPos(){ try{ return JSON.parse(localStorage.getItem("wikiReadPos.v1")||"{}"); }catch(e){ return {}; } }
+function readBm(){ try{ return JSON.parse(localStorage.getItem("wikiBookmarks.v1")||"{}"); }catch(e){ return {}; } }
+function rDeriveRepo(){ const c=ghCfg(); if(c.repo) return c.repo; const h=location.hostname, o=(h.indexOf(".github.io")>0)?h.split(".")[0]:""; const seg=location.pathname.split("/").filter(Boolean)[0]; return (o&&seg)?(o+"/"+seg):""; }
+function rMerge(a,b){ const out=Object.assign({},a||{}); const o=b||{}; for(const k in o){ if(!out[k]||((o[k].ts||0)>(out[k].ts||0))) out[k]=o[k]; } return out; }
+async function pullReading(){ const repo=rDeriveRepo(); if(!repo) return;
+  try{ const r=await fetch("https://api.github.com/repos/"+repo+"/contents/reading.json?ref="+encodeURIComponent(ghCfg().branch||"main")+"&t="+Date.now(),{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok) return; const j=await r.json(); const d=JSON.parse(decodeURIComponent(escape(atob((j.content||"").replace(/\s/g,"")))));
+    localStorage.setItem("wikiReadPos.v1", JSON.stringify(rMerge(readPos(), d.positions||{})));
+    localStorage.setItem("wikiBookmarks.v1", JSON.stringify(rMerge(readBm(), d.bookmarks||{})));
+  }catch(e){} }
 function openPage(id){ const p=data.pages.find(x=>x.id===id); if(!p) return;
   window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title),"_blank"); }
 
