@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLM 业务领先模型 · 系统讲解（单文件版）</title>
+<style>
+:root{
+  --bg:#f5f6fa;--panel:#fff;--ink:#1d2330;--ink-soft:#4a5568;--muted:#7a869a;--line:#e6e9f0;
+  --primary:#1f3a8a;--primary-soft:#eaf0ff;--accent:#d97706;--accent-soft:#fff3e2;
+  --green:#0f8f6b;--green-soft:#e4f6ef;--purple:#6d4aff;--purple-soft:#efeaff;--red:#c0392b;--red-soft:#fdecea;
+  --radius:16px;--shadow:0 6px 24px rgba(28,42,80,.08);--shadow-sm:0 2px 10px rgba(28,42,80,.06);--maxw:1080px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:radial-gradient(1200px 600px at 80% -10%,#e9efff 0%,rgba(233,239,255,0) 55%),radial-gradient(900px 500px at -10% 0%,#fdf0e0 0%,rgba(253,240,224,0) 50%),var(--bg);
+  color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:saturate(150%) blur(10px);background:rgba(255,255,255,.85);border-bottom:1px solid var(--line)}
+.topbar .row{display:flex;align-items:center;gap:14px;min-height:60px;max-width:var(--maxw);margin:0 auto;padding:8px 22px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--primary);text-decoration:none;cursor:pointer}
+.brand .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#3f6bd6);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800}
+.topnav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.topnav button{font-size:13px;color:var(--ink-soft);background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:8px;font-family:inherit}
+.topnav button:hover{background:var(--primary-soft);color:var(--primary)}
+.topnav button.active{background:var(--primary);color:#fff}
+.eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+h1{font-size:34px;line-height:1.28;margin:0 0 14px;letter-spacing:-.5px}
+.lede{font-size:17px;color:var(--ink-soft);max-width:780px;margin:0}
+.chapter-tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--primary);background:var(--primary-soft);padding:6px 14px;border-radius:999px;margin-bottom:16px}
+header.hero{padding:44px 0 18px}
+section.block{margin:30px 0}
+h2{font-size:24px;margin:42px 0 14px;letter-spacing:-.3px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+h3{font-size:18px;margin:26px 0 10px}h4{font-size:15.5px;margin:16px 0 6px;color:var(--primary)}
+p{margin:12px 0}strong{color:var(--ink)}.small{font-size:14px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow-sm)}
+.grid{display:grid;gap:16px}.grid.cols-2{grid-template-columns:repeat(2,1fr)}.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.card .ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px;margin-bottom:10px;background:var(--primary-soft)}
+.card h3,.card h4{margin-top:0}.card.k .ic{background:var(--primary-soft)}.card.x .ic{background:var(--accent-soft)}.card.g .ic{background:var(--green-soft)}.card.p .ic{background:var(--purple-soft)}
+.tagline{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:6px;text-transform:uppercase}
+.t-strategy{background:var(--primary-soft);color:var(--primary)}.t-exec{background:var(--accent-soft);color:var(--accent)}.t-lead{background:var(--purple-soft);color:var(--purple)}.t-value{background:var(--green-soft);color:var(--green)}.t-gap{background:var(--red-soft);color:var(--red)}
+.callout{border-left:4px solid var(--primary);background:var(--primary-soft);border-radius:0 12px 12px 0;padding:14px 18px;margin:18px 0}
+.callout.warn{border-color:var(--accent);background:var(--accent-soft)}.callout.case{border-color:var(--green);background:var(--green-soft)}.callout.key{border-color:var(--purple);background:var(--purple-soft)}
+.callout .lab{font-weight:800;font-size:13px;letter-spacing:.5px;display:block;margin-bottom:4px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:18px 0}
+.steps li{position:relative;padding:14px 16px 14px 56px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14.5px;background:var(--panel);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--primary);color:#fff;font-weight:700;font-size:13.5px}tr:last-child td{border-bottom:none}tr:nth-child(even) td{background:#fafbff}
+.figure{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);margin:22px 0;text-align:center}
+.figure svg{max-width:100%;height:auto}.figure figcaption{font-size:13px;color:var(--muted);margin-top:12px}
+.why{background:linear-gradient(180deg,#fff,#fbfcff);border:1px dashed #c9d3ee;border-radius:12px;padding:16px 18px;margin:16px 0}
+.why .lab{font-weight:800;color:var(--primary);font-size:13px;letter-spacing:.5px}
+.chap-nav{display:flex;gap:14px;margin:46px 0 10px;flex-wrap:wrap}
+.chap-nav button{flex:1;min-width:240px;text-align:left;cursor:pointer;font-family:inherit;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
+.chap-nav button:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.chap-nav .dir{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:1px}.chap-nav .ttl{font-size:16px;color:var(--ink);font-weight:700;margin-top:4px}
+.chap-nav button.next{text-align:right}
+footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:13px;text-align:center;margin-top:30px}
+.toc{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin:28px 0}
+@media(max-width:820px){.toc{grid-template-columns:1fr}}
+.toc button{display:flex;gap:16px;text-align:left;cursor:pointer;font-family:inherit;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);transition:transform .15s,box-shadow .15s}
+.toc button:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.toc .num{flex:none;width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#3f6bd6);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px}
+.toc .t{font-size:16px;font-weight:800;color:var(--ink)}.toc .d{font-size:13.5px;color:var(--ink-soft);margin-top:3px}
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+.chap{display:none}.chap.show{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="row">
+  <a class="brand" data-go="cover"><span class="logo">BLM</span> 业务领先模型</a>
+  <nav class="topnav">
+    <button data-go="cover" class="active">目录</button>
+    <button data-go="c1">导论</button>
+    <button data-go="c2">领导力·价值观</button>
+    <button data-go="c3">差距</button>
+    <button data-go="c4">市场洞察</button>
+    <button data-go="c5">战略意图</button>
+    <button data-go="c6">创新焦点</button>
+    <button data-go="c7">业务设计</button>
+    <button data-go="c8">执行</button>
+    <button data-go="c9">闭环·案例</button>
+  </nav>
+</div></div>
+
+<div class="wrap">
+
+<!-- ===================== 封面 / 目录 ===================== -->
+<div class="chap show" id="cover">
+<header class="hero">
+  <span class="eyebrow">Business Leadership Model</span>
+  <h1>BLM 业务领先模型 · 系统讲解</h1>
+  <p class="lede">从“它是什么、从哪来”，到战略与执行的每一个模块，再到一家顶级科技公司的完整贯穿案例——由浅入深，讲清各模块之间的关系与缘由。共 9 章，单文件，点击上方或下方卡片切换章节。</p>
+  <div class="pill-row" style="margin-top:18px">
+    <span class="tagline t-lead">领导力统领</span><span class="tagline t-gap">差距驱动</span>
+    <span class="tagline t-strategy">战略</span><span class="tagline t-exec">执行</span><span class="tagline t-value">价值观为基</span>
+  </div>
+</header>
+
+<section class="block"><div class="figure">
+  <svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BLM 整体框架与模块关系图">
+    <defs>
+      <linearGradient id="gp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f3a8a"/><stop offset="1" stop-color="#3f6bd6"/></linearGradient>
+      <linearGradient id="gx" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d97706"/><stop offset="1" stop-color="#f0a93b"/></linearGradient>
+      <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5a6b86"/></marker>
+      <marker id="arG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0f8f6b"/></marker>
+      <marker id="arO" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#d97706"/></marker>
+    </defs>
+    <rect x="40" y="18" width="880" height="50" rx="14" fill="url(#gp)"/>
+    <text x="480" y="50" text-anchor="middle" fill="#fff" font-size="19" font-weight="800">领导力 Leadership（统领全局，贯穿始终）</text>
+    <rect x="350" y="86" width="260" height="44" rx="12" fill="#fdecea" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="480" y="114" text-anchor="middle" fill="#c0392b" font-size="15" font-weight="800">差距 Gap：业绩差距 · 机会差距</text>
+
+    <rect x="40" y="150" width="410" height="406" rx="16" fill="#f3f6ff" stroke="#c9d6f5"/>
+    <text x="245" y="178" text-anchor="middle" fill="#1f3a8a" font-size="16" font-weight="800">战略 Strategy</text>
+    <g font-size="14" font-weight="700" fill="#1d2330" text-anchor="middle">
+      <rect x="85" y="192" width="320" height="48" rx="10" fill="#fff" stroke="#c9d6f5"/><text x="245" y="221">市场洞察（五看）</text>
+      <rect x="85" y="287" width="320" height="48" rx="10" fill="#fff" stroke="#c9d6f5"/><text x="245" y="316">战略意图</text>
+      <rect x="85" y="382" width="320" height="48" rx="10" fill="#fff" stroke="#c9d6f5"/><text x="245" y="411">创新焦点</text>
+      <rect x="85" y="477" width="320" height="48" rx="10" fill="#fff" stroke="#c9d6f5"/><text x="245" y="506">业务设计（六要素）</text>
+    </g>
+    <g>
+      <line x1="245" y1="240" x2="245" y2="287" stroke="#5a6b86" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="178" y="252" width="134" height="20" rx="6" fill="#f3f6ff"/><text x="245" y="266" text-anchor="middle" font-size="11" fill="#1f3a8a" font-weight="700">看清机会 → 定方向</text>
+      <line x1="245" y1="335" x2="245" y2="382" stroke="#5a6b86" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="176" y="347" width="138" height="20" rx="6" fill="#f3f6ff"/><text x="245" y="361" text-anchor="middle" font-size="11" fill="#1f3a8a" font-weight="700">方向内选赌注·取舍</text>
+      <line x1="245" y1="430" x2="245" y2="477" stroke="#5a6b86" stroke-width="2" marker-end="url(#ar)"/>
+      <rect x="176" y="442" width="138" height="20" rx="6" fill="#f3f6ff"/><text x="245" y="456" text-anchor="middle" font-size="11" fill="#1f3a8a" font-weight="700">落成可执行商业模式</text>
+    </g>
+
+    <rect x="510" y="150" width="410" height="406" rx="16" fill="#fff7ec" stroke="#f3d09a"/>
+    <text x="715" y="178" text-anchor="middle" fill="#d97706" font-size="16" font-weight="800">执行 Execution</text>
+    <g font-size="14" font-weight="700" fill="#1d2330" text-anchor="middle">
+      <rect x="545" y="192" width="340" height="50" rx="10" fill="#fff7ec" stroke="#d97706" stroke-width="1.6"/><text x="715" y="222">关键任务及依赖关系</text>
+      <rect x="545" y="320" width="340" height="46" rx="10" fill="#fff" stroke="#f3d09a"/><text x="715" y="348">正式组织</text>
+      <rect x="545" y="392" width="340" height="46" rx="10" fill="#fff" stroke="#f3d09a"/><text x="715" y="420">人才</text>
+      <rect x="545" y="464" width="340" height="46" rx="10" fill="#fff" stroke="#f3d09a"/><text x="715" y="492">氛围与文化</text>
+    </g>
+    <line x1="715" y1="242" x2="715" y2="320" stroke="#d97706" stroke-width="2" marker-end="url(#arO)"/>
+    <rect x="598" y="270" width="234" height="20" rx="6" fill="#fff7ec"/><text x="715" y="284" text-anchor="middle" font-size="11" fill="#d97706" font-weight="700">决定需要什么组织 / 人 / 氛围</text>
+    <path d="M898,326 q12,0 12,12 v118 q0,12 -12,12" fill="none" stroke="#d9a45e" stroke-width="1.6"/>
+    <text x="934" y="404" text-anchor="middle" font-size="11" fill="#b5701a" font-weight="700" transform="rotate(90 934 404)">三者相互匹配</text>
+
+    <line x1="405" y1="501" x2="545" y2="226" stroke="#0f8f6b" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#arG)"/>
+    <rect x="388" y="349" width="184" height="22" rx="7" fill="#e4f6ef" stroke="#9fd9c5"/><text x="480" y="364" text-anchor="middle" font-size="11.5" fill="#0f8f6b" font-weight="800">业务设计 倒推 关键任务（对齐）</text>
+
+    <line x1="430" y1="130" x2="272" y2="190" stroke="#5a6b86" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="320" y="150" text-anchor="middle" font-size="11" fill="#7a869a" font-weight="700">点火</text>
+
+    <rect x="40" y="574" width="880" height="46" rx="14" fill="url(#gx)" opacity="0.18"/>
+    <rect x="40" y="574" width="880" height="46" rx="14" fill="none" stroke="#0f8f6b" stroke-width="1.5"/>
+    <text x="480" y="603" text-anchor="middle" fill="#0f8f6b" font-size="17" font-weight="800">价值观 Values（一切的基石）</text>
+  </svg>
+  <figcaption>图 0｜BLM 整体框架与模块关系：差距点火后，战略列自上而下层层推导——<strong>市场洞察 → 战略意图 → 创新焦点 → 业务设计</strong>；业务设计再倒推出执行列的<strong>关键任务</strong>，由它决定所需的组织、人才与氛围（三者须相互匹配）。领导力在上贯穿、价值观在下托底。</figcaption>
+</div></section>
+
+<section class="block"><h2>章节目录</h2>
+<div class="toc">
+  <button data-go="c1"><div class="num">1</div><div><div class="t">导论与整体框架</div><div class="d">BLM 是什么、IBM 起源、华为发扬、底层逻辑与阅读地图</div></div></button>
+  <button data-go="c2"><div class="num">2</div><div><div class="t">领导力与价值观</div><div class="d">为何它们“一上一下”包裹整个模型，是发动机与地基</div></div></button>
+  <button data-go="c3"><div class="num">3</div><div><div class="t">差距：一切的起点</div><div class="d">业绩差距 vs 机会差距，如何点燃整套模型</div></div></button>
+  <button data-go="c4"><div class="num">4</div><div><div class="t">战略·市场洞察（五看）</div><div class="d">看趋势 / 看市场客户 / 看竞争 / 看自己 / 看机会</div></div></button>
+  <button data-go="c5"><div class="num">5</div><div><div class="t">战略·战略意图</div><div class="d">愿景 / 战略目标 / 近期目标，三层如何相互锚定</div></div></button>
+  <button data-go="c6"><div class="num">6</div><div><div class="t">战略·创新焦点</div><div class="d">业务组合 / 创新模式 / 资源利用，下注与取舍</div></div></button>
+  <button data-go="c7"><div class="num">7</div><div><div class="t">战略·业务设计（六要素）</div><div class="d">从洞察到可落地的商业模式蓝图</div></div></button>
+  <button data-go="c8"><div class="num">8</div><div><div class="t">执行四要素</div><div class="d">关键任务、正式组织、人才、氛围与文化</div></div></button>
+  <button data-go="c9"><div class="num">9</div><div><div class="t">闭环、贯穿案例与落地</div><div class="d">模块关系总图 + 顶级科技公司完整案例 + 常见误区</div></div></button>
+</div></section>
+<div class="callout case"><span class="lab">📌 怎么读</span>第 1–3 章建立“地图与起点”，第 4–7 章拆解战略，第 8 章拆解执行，第 9 章把所有模块串成闭环并用完整案例演示。只有 10 分钟，先读第 1 章和第 9 章。</div>
+</div>
+
+<!-- ===================== 第1章 ===================== -->
+<div class="chap" id="c1">
+<header class="hero"><span class="chapter-tag">第 1 章 · 导论</span><h1>BLM 是什么，从哪来，为什么这样设计</h1>
+<p class="lede">在拆解任何模块之前，先建立一张“地图”：BLM 解决什么问题、来历、整体结构，以及贯穿全书的底层逻辑——<strong>战略与执行并重，由差距驱动，由领导力与价值观包裹</strong>。</p></header>
+
+<section class="block"><h2>一、一句话理解 BLM</h2>
+<p>BLM（Business Leadership Model，业务领先模型）是一套<strong>从战略制定到战略执行的闭环管理框架</strong>。它把“想清楚”和“做到位”放进同一张图，强迫管理者回答两个问题：</p>
+<div class="grid cols-2">
+  <div class="card k"><div class="ic">🎯</div><h3>我们要去哪里？</h3><p>市场机会在哪、打算如何取胜——这是<strong>战略</strong>部分要回答的。</p></div>
+  <div class="card x"><div class="ic">⚙️</div><h3>我们怎么到达？</h3><p>靠哪些关键动作、什么组织、什么人、什么氛围去落地——这是<strong>执行</strong>部分要回答的。</p></div>
+</div>
+<div class="callout key"><span class="lab">核心主张</span>BLM 最重要的一句话是<strong>“战略与执行不可分割”</strong>。再好的战略，组织/人才/氛围跟不上就只是 PPT；再强的执行，方向错了只会更快撞墙。BLM 的价值在于把两者钉在一张纸上，逼迫对齐。</div></section>
+
+<section class="block"><h2>二、它从哪里来</h2>
+<div class="grid cols-3">
+  <div class="card"><div class="ic">🏛️</div><h4>起源：IBM</h4><p>由 IBM 在 2000 年代提炼，最初用于内部各业务单元的战略规划与对齐，是其“战略到执行”方法论之一。</p></div>
+  <div class="card"><div class="ic">🚀</div><h4>发扬：华为</h4><p>华为约 2008 年系统引入，作为各级组织“战略规划/业务计划”的标准工具自上而下推行，使其在中国企业界广为人知。</p></div>
+  <div class="card"><div class="ic">🌐</div><h4>扩散：业界通用</h4><p>此后大量科技、制造、消费企业借鉴。它不依赖特定行业，本质是一套<strong>结构化的思考脚手架</strong>。</p></div>
+</div>
+<div class="why"><span class="lab">为什么值得了解它的来历</span><p style="margin:6px 0 0">BLM 不是凭空的“咨询话术”，而是大型科技公司在真实战略落地中反复打磨出来的。理解它脱胎于“如何让上万人朝一个方向使劲”，就能理解它为什么如此强调<strong>对齐</strong>与<strong>组织/人</strong>这些容易被忽视的执行要素。</p></div></section>
+
+<section class="block"><h2>三、整体框架：六大板块</h2>
+<p>记住它们的<strong>空间位置</strong>比记名字更有用——位置本身就在表达逻辑关系（见目录页“图 0”）。</p>
+<table>
+  <tr><th>板块</th><th>位置</th><th>回答的问题</th><th>对应章节</th></tr>
+  <tr><td><strong>领导力</strong></td><td>最顶部，包裹全局</td><td>谁来操盘、能否带队？</td><td>第 2 章</td></tr>
+  <tr><td><strong>价值观</strong></td><td>最底部，托底全局</td><td>什么事坚决不做？</td><td>第 2 章</td></tr>
+  <tr><td><strong>差距</strong></td><td>中上，承上启下</td><td>现状与目标差多少？为什么要变？</td><td>第 3 章</td></tr>
+  <tr><td><strong>战略</strong></td><td>左柱</td><td>去哪、怎么赢？</td><td>第 4–7 章</td></tr>
+  <tr><td><strong>执行</strong></td><td>右柱</td><td>靠什么落地？</td><td>第 8 章</td></tr>
+</table></section>
+
+<section class="block"><h2>四、贯穿全书的三条底层逻辑</h2>
+<ol class="steps">
+  <li><strong>差距驱动（由结果倒逼）。</strong>先看清差距，再由差距倒逼出战略和执行。没有差距，就没有变革动力。这是差距被放在最上方、紧挨领导力的原因。</li>
+  <li><strong>战略与执行对齐（左右平衡）。</strong>左柱每往下推一层，右柱就要相应回答“组织和人能不能撑住”。任何一边掉队，整张图就失衡。</li>
+  <li><strong>领导力与价值观包裹（上下托举）。</strong>所有模块都需要有人推动（领导力）、并在不越底线前提下进行（价值观）。它们不是某一步，而是<strong>始终在场</strong>。</li>
+</ol>
+<div class="callout warn"><span class="lab">⚠️ 常见误解</span>很多人把 BLM 当“填表工具”，从上到下填满格子就交差。真正用法是<strong>反复迭代</strong>：洞察会修正意图，执行会暴露设计缺陷，差距会随之重估。它是循环，不是一次性表单。</div></section>
+
+<div class="chap-nav">
+  <button data-go="cover"><div class="dir">← 返回</div><div class="ttl">目录</div></button>
+  <button class="next" data-go="c2"><div class="dir">下一章 →</div><div class="ttl">第2章 领导力与价值观</div></button>
+</div></div>
+
+<!-- ===================== 第2章 ===================== -->
+<div class="chap" id="c2">
+<header class="hero"><span class="chapter-tag">第 2 章 · 包裹层</span><h1>领导力与价值观：为什么它们“一上一下”</h1>
+<p class="lede">六大板块里，只有这两个不是“某一步”，而是<strong>始终在场</strong>。领导力在顶，是让模型转起来的发动机；价值观在底，是不可逾越的地基。</p></header>
+
+<section class="block"><h2>一、为什么把它们放在最外层</h2>
+<p>把 BLM 看作一台机器：差距是点火开关，战略与执行是两根传动轴。但机器需要<strong>有人操作</strong>，也需要<strong>安全边界</strong>不让它失控。前者是领导力，后者是价值观。</p>
+<div class="figure"><svg viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="领导力与价值观包裹模型">
+  <defs><linearGradient id="lp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6d4aff"/><stop offset="1" stop-color="#9a82ff"/></linearGradient></defs>
+  <rect x="40" y="24" width="740" height="48" rx="13" fill="url(#lp)"/><text x="410" y="54" text-anchor="middle" fill="#fff" font-size="18" font-weight="800">领导力 · 操盘 / 决策 / 担当 / 牵引</text>
+  <rect x="120" y="96" width="580" height="128" rx="14" fill="#f4f6fb" stroke="#d6def0"/>
+  <text x="410" y="138" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">差距 · 战略 · 执行</text>
+  <text x="410" y="168" text-anchor="middle" fill="#7a869a" font-size="13">（被领导力推动、被价值观托底的“工作内容”）</text>
+  <rect x="40" y="248" width="740" height="48" rx="13" fill="#e4f6ef" stroke="#0f8f6b" stroke-width="1.5"/><text x="410" y="278" text-anchor="middle" fill="#0f8f6b" font-size="18" font-weight="800">价值观 · 底线 / 取舍标准 / 长期主义</text>
+</svg><figcaption>图 2-1｜领导力自上向下牵引，价值观自下向上托底，中间的工作才稳。</figcaption></div></section>
+
+<section class="block"><h2>二、领导力：让模型“转起来”</h2>
+<p>在 BLM 里，领导力<strong>不是软素质口号</strong>，而是具体可观察的行为。核心问题是：当战略需要变革、执行需要打硬仗时，<strong>谁来扛、怎么扛</strong>。</p>
+<div class="grid cols-2">
+  <div class="card p"><div class="ic">🔭</div><h4>洞察与决断</h4><p>从模糊信息中看清方向，信息不全时敢拍板。</p></div>
+  <div class="card p"><div class="ic">🤝</div><h4>对齐与牵引</h4><p>把战略翻译成全员能懂的语言，让组织朝一个方向使劲——这正是 Leadership 而非 Management。</p></div>
+  <div class="card p"><div class="ic">🛡️</div><h4>担当与纠偏</h4><p>执行出问题时承担责任、及时纠偏，而非甩锅。</p></div>
+  <div class="card p"><div class="ic">🌱</div><h4>育人与授权</h4><p>战略落地最终靠人，要持续培养梯队、敢于授权。</p></div>
+</div>
+<div class="why"><span class="lab">它和其他模块的关系</span><p style="margin:6px 0 0">领导力<strong>触发</strong>差距讨论、<strong>主导</strong>战略选择、<strong>驱动</strong>执行落地。差距、战略、执行三个模块，每一个的主语都是“领导者”。</p></div></section>
+
+<section class="block"><h2>三、价值观：决定“坚决不做什么”</h2>
+<p>价值观回答一个常被忽略却极重要的问题：<strong>当机会和底线冲突时，怎么选？</strong>它在最底层，意思是任何战略和执行都不能踩穿这条线。</p>
+<div class="grid cols-3">
+  <div class="card g"><div class="ic">🧭</div><h4>取舍标准</h4><p>面对偏离主航道的诱人机会，提供“放弃的勇气”。</p></div>
+  <div class="card g"><div class="ic">⏳</div><h4>长期 vs 短期</h4><p>是否愿为长期正确承受短期难看，由价值观决定。</p></div>
+  <div class="card g"><div class="ic">⚖️</div><h4>底线红线</h4><p>合规、质量、诚信等绝不让步项，是执行的硬约束。</p></div>
+</div>
+<div class="callout case"><span class="lab">案例直觉</span>一家顶级科技公司常说“把鸡蛋放在主航道里”“宁可放弃机会，也不偏离核心”。价值观在做减法：它不告诉你做什么，而是<strong>圈定你不做什么</strong>，从而让战略聚焦。</div></section>
+
+<section class="block"><h2>四、两者协同：发动机 + 刹车</h2>
+<table>
+  <tr><th>维度</th><th>领导力（顶）</th><th>价值观（底）</th></tr>
+  <tr><td>作用</td><td>提供动力，推动变革</td><td>提供边界，防止跑偏</td></tr>
+  <tr><td>性质</td><td>主动牵引（做加法）</td><td>底线约束（做减法）</td></tr>
+  <tr><td>缺失后果</td><td>战略再好也无人推动，沦为 PPT</td><td>短期更快，但易触雷、不可持续</td></tr>
+  <tr><td>类比</td><td>发动机 / 油门</td><td>刹车 / 护栏</td></tr>
+</table>
+<div class="callout key"><span class="lab">本章要点</span>读后面每章时带着两个追问：<strong>“这一步谁来推动？”（领导力）</strong> 和 <strong>“有没有越过底线？”（价值观）</strong>。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c1"><div class="dir">← 上一章</div><div class="ttl">第1章 导论</div></button>
+  <button class="next" data-go="c3"><div class="dir">下一章 →</div><div class="ttl">第3章 差距</div></button>
+</div></div>
+
+<!-- ===================== 第3章 ===================== -->
+<div class="chap" id="c3">
+<header class="hero"><span class="chapter-tag">第 3 章 · 起点</span><h1>差距：点燃整套模型的“火花”</h1>
+<p class="lede">BLM 第一条底层逻辑是“差距驱动”。没有差距，模型不会启动。本章讲清两类差距——<strong>业绩差距</strong>与<strong>机会差距</strong>——以及它们如何分别牵引战略和执行。</p></header>
+
+<section class="block"><h2>一、为什么从“差距”开始</h2>
+<p>很多组织从“我们想做什么”开始。BLM 反过来：先逼自己看清<strong>“现状离应有的样子差多少”</strong>。差距越清晰、越被正视，变革动力越足。所以它紧贴领导力下方——<strong>敢不敢直面难看的差距，本身就是领导力</strong>。</p>
+<div class="callout key"><span class="lab">一句话</span>差距 = 「目标/应然」−「现状/实然」。BLM 要求把这个减法做实、做细，并诚实承认它。</div></section>
+
+<section class="block"><h2>二、两类差距：BLM 的关键区分</h2>
+<div class="grid cols-2">
+  <div class="card x"><div class="ic">📉</div><span class="tagline t-exec">指向执行</span><h3>业绩差距</h3>
+    <p>在<strong>现有业务、现有模式</strong>下，实际结果与既定目标之间的差距。</p>
+    <p class="small">例：目标 100 亿，预计 85 亿，差 15 亿。</p>
+    <p><strong>本质：</strong>方向没错，是“没做好”。<br><strong>解法：</strong>靠<strong>执行</strong>改进——运营、效率、组织、激励。通常不改战略。</p></div>
+  <div class="card k"><div class="ic">🚀</div><span class="tagline t-strategy">指向战略</span><h3>机会差距</h3>
+    <p>当前<strong>战略/业务设计</strong>能达到的最好结果，与<strong>市场真实机会</strong>之间的差距。</p>
+    <p class="small">例：100 亿全达成，但市场有 500 亿，模式够不着。</p>
+    <p><strong>本质：</strong>不是没做好，是“想小了”。<br><strong>解法：</strong>靠<strong>战略</strong>重构——重做洞察、调业务设计、找新曲线。</p></div>
+</div>
+<div class="why"><span class="lab">为什么必须分清</span><p style="margin:6px 0 0">把<strong>机会差距</strong>当业绩差距，会拼命压榨执行却摸不到天花板；把<strong>业绩差距</strong>当机会差距，会盲目转型其实只是执行没到位。<strong>诊断错了，整张 BLM 都会用错力。</strong></p></div></section>
+
+<section class="block"><h2>三、差距如何分流</h2>
+<div class="figure"><svg viewBox="0 0 860 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="差距驱动战略与执行">
+  <defs><marker id="a3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7a869a"/></marker></defs>
+  <rect x="330" y="20" width="200" height="56" rx="13" fill="#fdecea" stroke="#c0392b" stroke-width="1.5"/><text x="430" y="46" text-anchor="middle" fill="#c0392b" font-size="16" font-weight="800">差距</text><text x="430" y="66" text-anchor="middle" fill="#c0392b" font-size="12">业绩 / 机会</text>
+  <rect x="70" y="150" width="300" height="110" rx="14" fill="#f3f6ff" stroke="#c9d6f5"/><text x="220" y="182" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">机会差距 → 战略</text><text x="220" y="208" text-anchor="middle" fill="#4a5568" font-size="12.5">重新洞察、重做业务设计</text><text x="220" y="230" text-anchor="middle" fill="#4a5568" font-size="12.5">寻找新增长，提升天花板</text>
+  <rect x="490" y="150" width="300" height="110" rx="14" fill="#fff7ec" stroke="#f3d09a"/><text x="640" y="182" text-anchor="middle" fill="#d97706" font-size="15" font-weight="800">业绩差距 → 执行</text><text x="640" y="208" text-anchor="middle" fill="#4a5568" font-size="12.5">改进运营、组织、人才</text><text x="640" y="230" text-anchor="middle" fill="#4a5568" font-size="12.5">把既定目标真正做到</text>
+  <line x1="380" y1="76" x2="250" y2="146" stroke="#7a869a" stroke-width="2.5" marker-end="url(#a3)"/><line x1="480" y1="76" x2="610" y2="146" stroke="#7a869a" stroke-width="2.5" marker-end="url(#a3)"/>
+</svg><figcaption>图 3-1｜差距是“分流器”：机会差距流向战略，业绩差距流向执行。</figcaption></div></section>
+
+<section class="block"><h2>四、如何把差距量出来</h2>
+<ol class="steps">
+  <li><strong>定基准。</strong>用什么指标衡量，“应然目标”来自股东要求、行业标杆，还是市场天花板。</li>
+  <li><strong>测现状。</strong>诚实评估真实水平，别用乐观假设掩盖差距。</li>
+  <li><strong>做减法并归因。</strong>关键一问：<strong>“是没做好（业绩），还是想小了/方向不对（机会）？”</strong></li>
+  <li><strong>排优先级。</strong>按“影响×紧迫”排序，决定本轮聚焦哪几个。</li>
+</ol>
+<div class="callout warn"><span class="lab">⚠️ 易错点</span>差距分析最大的敌人是<strong>“自我安慰式归因”</strong>——把所有问题归为“执行不力”，因为承认“方向需要升级”更痛。这也是 BLM 强调由领导力主导差距讨论的原因。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c2"><div class="dir">← 上一章</div><div class="ttl">第2章 领导力与价值观</div></button>
+  <button class="next" data-go="c4"><div class="dir">下一章 →</div><div class="ttl">第4章 市场洞察</div></button>
+</div></div>
+
+<!-- ===================== 第4章 ===================== -->
+<div class="chap" id="c4">
+<header class="hero"><span class="chapter-tag">第 4 章 · 战略①</span><h1>市场洞察：战略的“地基勘探”</h1>
+<p class="lede">战略不能拍脑袋。市场洞察用“五看”框架，系统把外部环境和自身能力看清楚。它的产出，是“战略意图”和“业务设计”的事实依据。</p></header>
+
+<section class="block"><h2>一、它在 BLM 中的位置</h2>
+<p>当识别出<strong>机会差距</strong>，下一步必须回答“机会在哪、有多大、我能不能拿”。市场洞察就是为此服务，是从“我觉得”到“事实是”的转换器。</p>
+<div class="why"><span class="lab">关系链</span><p style="margin:6px 0 0">差距（为什么要变）→ <strong>市场洞察（外部真实是什么）</strong> → 战略意图（决定去哪）。洞察不扎实，意图就是空想。</p></div></section>
+
+<section class="block"><h2>二、“五看”框架</h2>
+<div class="figure"><svg viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="五看框架">
+  <g font-size="14" font-weight="800" fill="#fff">
+    <rect x="20" y="90" width="150" height="60" rx="12" fill="#1f3a8a"/><text x="95" y="118" text-anchor="middle">看趋势</text><text x="95" y="138" text-anchor="middle" font-size="11" font-weight="600">宏观/技术/政策</text>
+    <rect x="190" y="90" width="150" height="60" rx="12" fill="#2f56b5"/><text x="265" y="118" text-anchor="middle">看市场客户</text><text x="265" y="138" text-anchor="middle" font-size="11" font-weight="600">需求/细分</text>
+    <rect x="360" y="90" width="150" height="60" rx="12" fill="#3f6bd6"/><text x="435" y="118" text-anchor="middle">看竞争</text><text x="435" y="138" text-anchor="middle" font-size="11" font-weight="600">对手/替代</text>
+    <rect x="530" y="90" width="150" height="60" rx="12" fill="#5a82e0"/><text x="605" y="118" text-anchor="middle">看自己</text><text x="605" y="138" text-anchor="middle" font-size="11" font-weight="600">能力/短板</text>
+    <rect x="700" y="90" width="140" height="60" rx="12" fill="#d97706"/><text x="770" y="118" text-anchor="middle">看机会</text><text x="770" y="138" text-anchor="middle" font-size="11" font-weight="600">收敛/选择</text>
+  </g>
+  <text x="430" y="40" text-anchor="middle" font-size="13" fill="#7a869a">前四看“发散”地搜集事实 →　第五看“收敛”出机会</text>
+</svg><figcaption>图 4-1｜五看：前四看广泛勘探，最后“看机会”把信息收敛成可选择的机会点。</figcaption></div>
+
+<h3>① 看趋势（宏观与技术）</h3><p>看不受你控制却会重塑战场的大力量：宏观、政策、技术、社会人口、产业链。重点判断<strong>“风往哪吹”</strong>。</p>
+<div class="callout case"><span class="lab">科技公司示例</span>AI 成本快速下降、端侧算力提升、数据合规趋严——决定“做云端大模型”还是“做端侧小模型”。</div>
+<h3>② 看市场与客户</h3><p>市场多大、如何细分、不同客户群真实需求与付费意愿。把“市场”拆成<strong>一个个有名有姓的细分与需求</strong>。</p>
+<div class="callout case"><span class="lab">示例</span>把“企业客户”拆成大型集团、成长公司、开发者，发现开发者最在意“易用 API+低价”，集团客户更看重“私有化与合规”。</div>
+<h3>③ 看竞争</h3><p>不只看产品，更看对手的意图、优劣势、下一步，以及<strong>潜在替代者</strong>。判断<strong>“在哪打、能不能赢”</strong>。</p>
+<div class="callout case"><span class="lab">示例</span>头部对手死磕通用大模型难硬刚；但“垂直行业+私有化”因组织包袱反应慢——这就是缝隙。</div>
+<h3>④ 看自己</h3><p>诚实盘点技术、品牌、渠道、资金、组织、数据资产，哪些是真优势、哪些是短板。<strong>避免自我高估</strong>。</p>
+<div class="callout case"><span class="lab">示例</span>真优势是“工程化交付+行业客户关系”，而非“顶尖基础模型研究”。战略就该建在前者上。</div>
+<h3>⑤ 看机会</h3><p>把前四看<strong>交叉、收敛</strong>：哪里既有趋势顺风、有未满足需求、对手又薄弱、我又有能力？这些交集就是<strong>机会点</strong>。</p>
+<div class="callout key"><span class="lab">收敛公式（直觉版）</span>好机会 ≈ <strong>趋势顺风 ∩ 客户真需求 ∩ 对手薄弱 ∩ 我有能力</strong>。交集越多，越值得下注。</div></section>
+
+<section class="block"><h2>三、五看之间的关系</h2>
+<table>
+  <tr><th>看什么</th><th>方向</th><th>核心问题</th><th>对下一步作用</th></tr>
+  <tr><td>看趋势</td><td>向外·向远</td><td>风往哪吹？</td><td>圈定大战场</td></tr>
+  <tr><td>看市场客户</td><td>向外·向近</td><td>谁有未满足需求？</td><td>定位需求池</td></tr>
+  <tr><td>看竞争</td><td>向外·横向</td><td>能不能赢、在哪赢？</td><td>找薄弱缝隙</td></tr>
+  <tr><td>看自己</td><td>向内</td><td>我凭什么？</td><td>校准可行性</td></tr>
+  <tr><td>看机会</td><td>收敛</td><td>下注哪几个点？</td><td>输出机会清单</td></tr>
+</table>
+<div class="callout warn"><span class="lab">⚠️ 常见误区</span>把五看做成“资料堆砌”，却没有<strong>第五看的收敛</strong>。前四看是手段，<strong>看机会才是目的</strong>。没有收敛出机会点的洞察等于没做。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c3"><div class="dir">← 上一章</div><div class="ttl">第3章 差距</div></button>
+  <button class="next" data-go="c5"><div class="dir">下一章 →</div><div class="ttl">第5章 战略意图</div></button>
+</div></div>
+
+<!-- ===================== 第5章 战略意图 ===================== -->
+<div class="chap" id="c5">
+<header class="hero"><span class="chapter-tag">第 5 章 · 战略②</span><h1>战略意图：把“去哪里”说清楚</h1>
+<p class="lede">市场洞察看清了机会，下一步要做的第一个决定就是<strong>方向</strong>。战略意图不是一句口号，而是分层、可衡量、能被执行接住的方向声明。它向上承接差距与洞察，向下喂给创新焦点。</p></header>
+
+<section class="block"><h2>一、战略意图在 BLM 中的位置</h2>
+<p>战略意图夹在“看清机会”和“做出取舍”之间：洞察告诉你<strong>机会在哪</strong>，战略意图决定你<strong>要在这些机会里成为什么</strong>，然后创新焦点才谈得上往哪里下注。</p>
+<div class="why"><span class="lab">承上启下</span><p style="margin:6px 0 0">差距/市场洞察（机会是什么）→ <strong>战略意图（我们要成为什么）</strong> → 创新焦点（为此押注哪里）。没有清晰的意图，焦点就失去了判断取舍的标尺。</p></div></section>
+
+<section class="block"><h2>二、三层结构：从远到近，层层锚定</h2>
+<p>战略意图通常由三层组成，从长期到短期，逐层翻译得更具体、更可衡量：</p>
+<ol class="steps">
+  <li><strong>愿景（Vision）。</strong>较长期（如 5–10 年）希望成为的样子，提供方向感与感召力。<br><span class="small">例：成为企业级 AI 应用的首选基础设施。</span></li>
+  <li><strong>战略目标（Strategic Goals）。</strong>中期（如 3 年）要达成的、可量化的关键结果，把愿景翻译成数字。<br><span class="small">例：3 年内服务 1000 家行业客户，行业云 AI 市占率进入前三。</span></li>
+  <li><strong>近期目标（Near-term Goals）。</strong>本规划周期（如 1 年）必须拿下的里程碑，直接对接执行。<br><span class="small">例：今年签下 50 家标杆客户，跑通可复制的交付模式。</span></li>
+</ol>
+<div class="figure"><svg viewBox="0 0 820 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="战略意图三层结构">
+  <defs><marker id="a5b" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5a6b86"/></marker></defs>
+  <rect x="110" y="24" width="440" height="52" rx="12" fill="#eaf0ff" stroke="#c9d6f5"/><text x="330" y="55" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">愿景　成为什么（方向感）</text>
+  <rect x="150" y="124" width="360" height="52" rx="12" fill="#eaf0ff" stroke="#c9d6f5"/><text x="330" y="155" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">战略目标　可量化结果</text>
+  <rect x="190" y="224" width="280" height="52" rx="12" fill="#eaf0ff" stroke="#c9d6f5"/><text x="330" y="255" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">近期目标　本期里程碑</text>
+  <text x="70" y="55" text-anchor="middle" font-size="12" fill="#7a869a" font-weight="700">5–10年</text>
+  <text x="70" y="155" text-anchor="middle" font-size="12" fill="#7a869a" font-weight="700">约3年</text>
+  <text x="70" y="255" text-anchor="middle" font-size="12" fill="#7a869a" font-weight="700">1年</text>
+  <line x1="330" y1="76" x2="330" y2="124" stroke="#5a6b86" stroke-width="2" marker-end="url(#a5b)"/>
+  <rect x="345" y="90" width="150" height="18" rx="6" fill="#fff"/><text x="350" y="103" font-size="11" fill="#1f3a8a" font-weight="700">翻译成可量化目标</text>
+  <line x1="330" y1="176" x2="330" y2="224" stroke="#5a6b86" stroke-width="2" marker-end="url(#a5b)"/>
+  <rect x="345" y="190" width="150" height="18" rx="6" fill="#fff"/><text x="350" y="203" font-size="11" fill="#1f3a8a" font-weight="700">拆成本期里程碑</text>
+  <text x="690" y="50" text-anchor="middle" font-size="11.5" fill="#0f8f6b" font-weight="700">↑ 上承</text>
+  <text x="690" y="68" text-anchor="middle" font-size="11" fill="#7a869a">差距/洞察</text>
+  <text x="690" y="248" text-anchor="middle" font-size="11.5" fill="#d97706" font-weight="700">↓ 下启</text>
+  <text x="690" y="266" text-anchor="middle" font-size="11" fill="#7a869a">创新焦点/执行</text>
+</svg><figcaption>图 5-1｜战略意图三层：愿景定方向、战略目标变数字、近期目标接里程碑，从远到近层层锚定。</figcaption></div>
+<div class="why"><span class="lab">为什么要分三层</span><p style="margin:6px 0 0">只有愿景，会“仰望星空却落不了地”；只有近期目标，会“低头赶路却走偏方向”。三层结构让<strong>长期方向与短期行动相互锚定</strong>——这正是后面执行能对齐的前提。</p></div></section>
+
+<section class="block"><h2>三、好战略意图的检验</h2>
+<div class="grid cols-3">
+  <div class="card k"><div class="ic">📐</div><h4>可衡量</h4><p>战略目标与近期目标必须有数字，否则无法判断是否达成、无法驱动执行。</p></div>
+  <div class="card k"><div class="ic">🪜</div><h4>能拆解</h4><p>愿景能拆成战略目标，战略目标能拆成今年的关键任务。拆不动，就还停留在口号。</p></div>
+  <div class="card k"><div class="ic">🎯</div><h4>有取舍</h4><p>意图本身就在选择“成为什么、不成为什么”，而不是包罗万象、谁都想做。</p></div>
+</div>
+<div class="callout key"><span class="lab">一条硬标准</span>好战略意图的检验是：它能不能被下一层<strong>“接得住”</strong>？愿景→战略目标→近期目标→关键任务，这条链如果在任何一环断掉，意图就是空的。</div>
+<div class="callout warn"><span class="lab">⚠️ 常见误区</span>把战略意图写成一段华丽的愿景宣言，却没有可量化的战略目标和近期目标——结果全公司“热血沸腾却无从下手”。意图的价值不在好听，而在能驱动行动。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c4"><div class="dir">← 上一章</div><div class="ttl">第4章 市场洞察</div></button>
+  <button class="next" data-go="c6"><div class="dir">下一章 →</div><div class="ttl">第6章 创新焦点</div></button>
+</div></div>
+
+<!-- ===================== 第6章 创新焦点 ===================== -->
+<div class="chap" id="c6">
+<header class="hero"><span class="chapter-tag">第 6 章 · 战略③</span><h1>创新焦点：定赌注，把力气押在刀刃上</h1>
+<p class="lede">战略意图说清了“去哪”，但通往目标的路有很多条，资源却永远不够。创新焦点回答：为实现意图，<strong>我们重点在哪里创新、又坚决不在哪里创新</strong>。它的本质是一次下注与取舍。</p></header>
+
+<section class="block"><h2>一、为什么意图之后必须紧跟焦点</h2>
+<p>只有意图、没有焦点，就会出现“目标很宏大，资源撒胡椒面”：每个方向都投一点，每个方向都做不深，最终被专注的对手各个击破。创新焦点是把<strong>“战略=选择”</strong>真正落到资源分配上的一步。</p>
+<div class="why"><span class="lab">关系链</span><p style="margin:6px 0 0">战略意图（要成为什么）→ <strong>创新焦点（为此把资源押在哪）</strong> → 业务设计（把方向+取舍变成商业模式）。意图是焦点取舍的标尺，焦点是业务设计的边界。</p></div></section>
+
+<section class="block"><h2>二、三个取舍角度</h2>
+<div class="grid cols-3">
+  <div class="card k"><div class="ic">🧩</div><h4>① 未来业务组合</h4><p>用“三层业务”视角分配资源：<strong>现有核心</strong>（今天的现金牛，要守）、<strong>成长业务</strong>（明天的支柱，要加码）、<strong>新兴/种子业务</strong>（后天的机会，要下注探索）。明确哪些加码、维持、退出——“鸡蛋放在哪些篮子里、各放多少”。</p></div>
+  <div class="card k"><div class="ic">💡</div><h4>② 创新模式</h4><p>同一方向可以靠不同方式赢：<strong>产品创新</strong>（做出更好的东西）、<strong>技术创新</strong>（底层能力领先）、<strong>商业模式创新</strong>（改变赚钱与交付方式）、<strong>生态/合作创新</strong>（联合伙伴构建壁垒）。选错模式，等于用短板硬拼。</p></div>
+  <div class="card k"><div class="ic">🔋</div><h4>③ 资源利用</h4><p>关键资源（资金、人才、技术、数据、渠道）如何组合：哪些<strong>自建</strong>、哪些<strong>合作/外购/收购</strong>。它把前两项落到“拿什么去赢”，并直接约束第 7 章业务设计里的“活动范围”。</p></div>
+</div></section>
+
+<section class="block"><h2>三、三个角度如何相互锁定</h2>
+<table>
+  <tr><th>角度</th><th>回答的问题</th><th>取舍的关键</th></tr>
+  <tr><td>未来业务组合</td><td>把资源投向哪些业务？</td><td>敢不敢为新业务，从现有现金牛里抽血</td></tr>
+  <tr><td>创新模式</td><td>用什么方式在这些业务上赢？</td><td>选与自身能力匹配的模式，不盲目对标巨头</td></tr>
+  <tr><td>资源利用</td><td>用什么资源、自建还是合作？</td><td>把稀缺资源压在“最有 Know-how”的环节</td></tr>
+</table>
+<p>三者必须自洽：选定的<strong>业务组合</strong>决定了需要什么<strong>创新模式</strong>，创新模式又决定了<strong>资源</strong>该如何配置与是否需要外部合作。任何一项与另外两项打架，焦点就是虚的。</p>
+<div class="figure"><svg viewBox="0 0 820 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="意图、焦点、业务设计关系">
+  <defs><marker id="a6" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7a869a"/></marker></defs>
+  <rect x="60" y="40" width="220" height="80" rx="14" fill="#f3f6ff" stroke="#c9d6f5"/><text x="170" y="74" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">战略意图</text><text x="170" y="98" text-anchor="middle" fill="#4a5568" font-size="12">去哪里（方向）</text>
+  <rect x="540" y="40" width="220" height="80" rx="14" fill="#f3f6ff" stroke="#c9d6f5"/><text x="650" y="74" text-anchor="middle" fill="#1f3a8a" font-size="15" font-weight="800">创新焦点</text><text x="650" y="98" text-anchor="middle" fill="#4a5568" font-size="12">押在哪（取舍）</text>
+  <line x1="280" y1="80" x2="538" y2="80" stroke="#7a869a" stroke-width="2.5" marker-end="url(#a6)"/><text x="409" y="68" text-anchor="middle" font-size="12" fill="#7a869a">意图约束焦点</text>
+  <rect x="300" y="165" width="220" height="64" rx="14" fill="#fff7ec" stroke="#f3d09a"/><text x="410" y="193" text-anchor="middle" fill="#d97706" font-size="14" font-weight="800">业务设计（第7章）</text><text x="410" y="214" text-anchor="middle" fill="#4a5568" font-size="11.5">把方向+取舍变成商业模式</text>
+  <line x1="170" y1="120" x2="360" y2="163" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a6)"/><line x1="650" y1="120" x2="460" y2="163" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a6)"/>
+</svg><figcaption>图 6-1｜战略意图划定方向，创新焦点在该方向内下注；二者共同约束并喂给下一步的“业务设计”。</figcaption></div>
+<div class="callout case"><span class="lab">科技公司示例（贯穿案例·星核智能）</span>
+意图是“成为企业级 AI 基础设施”。三角度的取舍：<br>
+· <strong>未来业务组合：</strong>把约 70% 资源压在“行业大模型 + 私有化”这条成长业务上，通用平台维持运营、不再加码，C 端应用直接放弃。<br>
+· <strong>创新模式：</strong>选“工程化与场景落地创新”，而非和巨头拼基础模型参数——因为自身优势在交付而非研究。<br>
+· <strong>资源利用：</strong>基础模型层与开源/伙伴合作（不自建），把人和钱集中在行业微调、交付工具链与客户 Know-how 上。</div>
+<div class="callout warn"><span class="lab">⚠️ 创新焦点最容易犯的错</span>一是<strong>不敢取舍</strong>，所有业务都说“重要”，结果新业务永远抢不到资源；二是<strong>模式错配</strong>，用对手擅长、自己不擅长的方式硬拼（如交付型公司非要去拼基础研究）。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c5"><div class="dir">← 上一章</div><div class="ttl">第5章 战略意图</div></button>
+  <button class="next" data-go="c7"><div class="dir">下一章 →</div><div class="ttl">第7章 业务设计</div></button>
+</div></div>
+
+<!-- ===================== 第7章 业务设计 ===================== -->
+<div class="chap" id="c7">
+<header class="hero"><span class="chapter-tag">第 7 章 · 战略④</span><h1>业务设计：把方向变成可落地的商业模式</h1>
+<p class="lede">战略部分的“收口”。它回答最务实的问题：<strong>具体靠什么商业模式赚钱并持续领先？</strong>由六个相互咬合的要素构成。</p></header>
+
+<section class="block"><h2>一、它的角色：战略与执行的“接口”</h2>
+<p>业务设计<strong>左承战略意图与创新焦点，右启执行</strong>。它把“想去哪、押在哪”翻译成清晰的商业逻辑；这套逻辑一旦确定，就决定执行需要哪些关键任务、什么组织、什么人。</p>
+<div class="why"><span class="lab">承上启下</span><p style="margin:6px 0 0">意图/焦点（方向+取舍）→ <strong>业务设计（商业模式）</strong> → 关键任务（第8章）。业务设计是整张 BLM 的“腰”。</p></div></section>
+
+<section class="block"><h2>二、六大要素总览</h2>
+<div class="figure"><svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="业务设计六要素">
+  <g font-size="14" font-weight="800">
+    <rect x="30" y="40" width="180" height="90" rx="14" fill="#eaf0ff" stroke="#c9d6f5"/><text x="120" y="80" text-anchor="middle" fill="#1f3a8a">①客户选择</text><text x="120" y="104" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">为谁服务</text>
+    <rect x="240" y="40" width="180" height="90" rx="14" fill="#eaf0ff" stroke="#c9d6f5"/><text x="330" y="80" text-anchor="middle" fill="#1f3a8a">②价值主张</text><text x="330" y="104" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">给什么价值</text>
+    <rect x="450" y="40" width="180" height="90" rx="14" fill="#eaf0ff" stroke="#c9d6f5"/><text x="540" y="80" text-anchor="middle" fill="#1f3a8a">③价值获取</text><text x="540" y="104" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">怎么赚钱</text>
+    <rect x="660" y="40" width="190" height="90" rx="14" fill="#eaf0ff" stroke="#c9d6f5"/><text x="755" y="80" text-anchor="middle" fill="#1f3a8a">④活动范围</text><text x="755" y="104" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">自己做什么</text>
+    <rect x="160" y="165" width="240" height="90" rx="14" fill="#fff7ec" stroke="#f3d09a"/><text x="280" y="205" text-anchor="middle" fill="#d97706">⑤持续价值</text><text x="280" y="229" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">凭什么持续领先（控制点）</text>
+    <rect x="470" y="165" width="240" height="90" rx="14" fill="#fdecea" stroke="#e3b4ae"/><text x="590" y="205" text-anchor="middle" fill="#c0392b">⑥风险管理</text><text x="590" y="229" text-anchor="middle" fill="#4a5568" font-size="11.5" font-weight="600">哪里可能翻车</text>
+  </g>
+</svg><figcaption>图 7-1｜上排四要素回答“模式怎么转”，下排两要素回答“怎么守得住、不翻车”。</figcaption></div></section>
+
+<section class="block"><h2>三、逐个拆解</h2>
+<h3>① 客户选择（为谁服务）</h3><p>不是“服务所有人”，而是明确<strong>聚焦谁、放弃谁</strong>。客户选错，后面全错。源自第 4 章的客户细分。</p>
+<div class="callout case"><span class="lab">示例</span>聚焦“有合规与私有化需求的大型行业客户（金融、政务、制造）”，放弃价格敏感、需求零散的小微长尾。</div>
+<h3>② 价值主张（给客户什么独特价值）</h3><p>对选定客户，提供<strong>区别于对手</strong>的核心价值。回答“为什么选你不选别人”。</p>
+<div class="callout case"><span class="lab">示例</span>“开箱即用的行业大模型 + 数据不出域的私有化部署 + 6 周可上线”——命中大客户对合规与速度的痛点。</div>
+<h3>③ 价值获取 / 盈利模式</h3><p>如何变现：License、订阅、按量、平台抽成、增值服务……决定收入<strong>结构与质量</strong>。</p>
+<div class="callout case"><span class="lab">示例</span>“私有化授权 + 年度订阅维护 + 行业插件市场抽成”，一次性收入打底，订阅与生态带来持续现金流。</div>
+<h3>④ 活动范围（自己做什么、和谁合作）</h3><p>价值链上哪些自做、哪些合作。决定<strong>边界与轻重</strong>，呼应焦点中的“自建 vs 合作”。</p>
+<div class="callout case"><span class="lab">示例</span>基础模型层合作，自己聚焦“行业微调+交付+运维”这段最有 Know-how 的环节，组织轻、迭代快。</div>
+<h3>⑤ 持续价值 / 战略控制点</h3><p>业务设计的<strong>灵魂</strong>：什么让领先可持续、不被轻易复制？品牌、网络效应、数据飞轮、转换成本、生态锁定、专利等。</p>
+<div class="callout key"><span class="lab">为什么单列它</span>很多设计①—④很漂亮，⑤却是空的——能赚一时，守不住。BLM 特意单列，逼你回答<strong>“护城河在哪”</strong>。示例：行业私有数据与交付资产形成<strong>数据与信任飞轮</strong>，越做越深、越难替代。</div>
+<h3>⑥ 风险管理</h3><p>系统识别技术/合规/客户集中/供应链/政策等关键风险并预设应对，体现第 2 章价值观——<strong>对底线和长期负责</strong>。</p>
+<div class="callout case"><span class="lab">示例</span>识别“过度依赖少数大客户”和“合规政策突变”，对策是扩展客户行业分布、建立合规预审机制。</div></section>
+
+<section class="block"><h2>四、六要素如何咬合</h2>
+<table>
+  <tr><th>要素</th><th>核心问题</th><th>谁约束它 / 它约束谁</th></tr>
+  <tr><td>①客户选择</td><td>为谁？</td><td>源自市场洞察；决定②</td></tr>
+  <tr><td>②价值主张</td><td>给什么？</td><td>对准①痛点；决定③</td></tr>
+  <tr><td>③价值获取</td><td>怎么赚？</td><td>由②价值决定能收多少</td></tr>
+  <tr><td>④活动范围</td><td>自己做什么？</td><td>受焦点约束；支撑②③落地</td></tr>
+  <tr><td>⑤持续价值</td><td>凭什么持续？</td><td>贯穿①—④，是护城河</td></tr>
+  <tr><td>⑥风险管理</td><td>怎么不翻车？</td><td>为①—⑤兜底</td></tr>
+</table>
+<div class="callout warn"><span class="lab">⚠️ 整体性检验</span>业务设计是一个<strong>自洽闭环</strong>：客户与价值主张匹配，价值主张与盈利模式匹配，整套有控制点守得住、有风险预案兜得住。任何一环不咬合，模式就漏风。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c6"><div class="dir">← 上一章</div><div class="ttl">第6章 创新焦点</div></button>
+  <button class="next" data-go="c8"><div class="dir">下一章 →</div><div class="ttl">第8章 执行四要素</div></button>
+</div></div>
+
+<!-- ===================== 第8章 执行 ===================== -->
+<div class="chap" id="c8">
+<header class="hero"><span class="chapter-tag">第 8 章 · 执行</span><h1>执行四要素：让战略真正“落地”</h1>
+<p class="lede">右柱回答一个被无数公司低估的问题：战略凭什么落地？BLM 给出四个相互依存的要素——<strong>关键任务、正式组织、人才、氛围与文化</strong>，必须彼此匹配，也必须与战略对齐。</p></header>
+
+<section class="block"><h2>一、执行为什么单列一根柱子</h2>
+<p>BLM 与“纯战略框架”最大不同，是把执行放到与战略<strong>同等重要</strong>的位置。战略失败大多不是“想错了”，而是“做不到”。执行四要素就是把“做不到”拆开逐一解决。</p>
+<div class="callout key"><span class="lab">对齐原则</span>执行起点不是凭空规划，而是<strong>从业务设计倒推</strong>：这套模式要成立，<strong>必须做成哪几件事</strong>？这就是“关键任务”，连接左右柱的第一颗螺丝。</div></section>
+
+<section class="block"><h2>二、四要素总览与依存关系</h2>
+<div class="figure"><svg viewBox="0 0 860 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="执行四要素关系">
+  <defs><marker id="a8b" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#7a869a"/></marker></defs>
+  <rect x="320" y="20" width="220" height="64" rx="14" fill="#fff7ec" stroke="#f3d09a"/><text x="430" y="48" text-anchor="middle" fill="#d97706" font-size="15" font-weight="800">① 关键任务及依赖</text><text x="430" y="69" text-anchor="middle" fill="#4a5568" font-size="11.5">必须做成的少数几件事</text>
+  <rect x="60" y="150" width="220" height="64" rx="14" fill="#fff" stroke="#f3d09a"/><text x="170" y="178" text-anchor="middle" fill="#d97706" font-size="15" font-weight="800">② 正式组织</text><text x="170" y="199" text-anchor="middle" fill="#4a5568" font-size="11.5">架构/流程/考核/授权</text>
+  <rect x="320" y="150" width="220" height="64" rx="14" fill="#fff" stroke="#f3d09a"/><text x="430" y="178" text-anchor="middle" fill="#d97706" font-size="15" font-weight="800">③ 人才</text><text x="430" y="199" text-anchor="middle" fill="#4a5568" font-size="11.5">关键岗位的人与能力</text>
+  <rect x="580" y="150" width="220" height="64" rx="14" fill="#fff" stroke="#f3d09a"/><text x="690" y="178" text-anchor="middle" fill="#d97706" font-size="15" font-weight="800">④ 氛围与文化</text><text x="690" y="199" text-anchor="middle" fill="#4a5568" font-size="11.5">日常行为与软环境</text>
+  <line x1="430" y1="84" x2="430" y2="148" stroke="#7a869a" stroke-width="2.5" marker-end="url(#a8b)"/>
+  <line x1="370" y1="84" x2="200" y2="148" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a8b)"/>
+  <line x1="490" y1="84" x2="660" y2="148" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a8b)"/>
+  <text x="430" y="270" text-anchor="middle" font-size="12.5" fill="#7a869a">关键任务决定了：需要什么组织、什么人、什么氛围去完成</text>
+</svg><figcaption>图 8-1｜关键任务是“因”，组织、人才、氛围是为完成它而配套的“果”。四者必须相互匹配。</figcaption></div>
+
+<h3>① 关键任务及依赖关系（执行的“需求清单”）</h3>
+<p>关键任务不是把所有工作列一遍，而是从业务设计倒推出<strong>“做不成战略就崩、必须啃下的少数几件事”</strong>。它有两个动作：</p>
+<div class="grid cols-2">
+  <div class="card x"><h4>找出关键任务</h4><p>逐一追问业务设计的每个要素：要让它成立，<strong>必须做成什么</strong>？把答案收敛成 3–5 件（多了就不叫“关键”）。判据：做不成它，战略就失败。</p></div>
+  <div class="card x"><h4>理清依赖关系</h4><p>关键任务之间往往有<strong>先后与卡点</strong>：哪个是别的任务的前置？哪两件必须并行？识别“关键路径”，避免资源排错序、互相空等。</p></div>
+</div>
+<div class="callout case"><span class="lab">示例</span>业务设计要“6 周交付行业大模型私有化”，倒推三件关键任务：(a) 沉淀可复用行业模型底座；(b) 建标准化交付方法论与工具链；(c) 打造 3 个标杆案例。依赖关系：(a) 是 (b)(c) 的前置——底座不稳，方法论和标杆都无从谈起。</div>
+<div class="why"><span class="lab">为什么它排在四要素第一位</span><p style="margin:6px 0 0">只有先定义“要做成什么”，才谈得上“需要什么组织、人、氛围”。关键任务是执行的<strong>需求清单</strong>，后三要素都是为满足它而配套——这正是图 8-1 中三条箭头的含义。</p></div>
+
+<h3>② 正式组织（让任务有人负责、有流程跑）</h3>
+<p>为完成关键任务，重新设计<strong>组织结构、流程、权责、考核与激励</strong>。核心原则是<strong>结构跟着任务走</strong>，而不是让任务去迁就既有架构。它有四个着力点，且彼此牵连：</p>
+<table>
+  <tr><th>维度</th><th>要回答</th><th>常见动作</th><th>没做好会怎样</th></tr>
+  <tr><td>结构</td><td>谁端到端对关键任务负责？</td><td>设专责团队/军团，打破职能墙</td><td>责任分散，事情卡在部门缝里</td></tr>
+  <tr><td>流程</td><td>跨部门怎么协同、怎么决策？</td><td>拉通端到端流程、明确决策节点</td><td>层层审批，贻误战机</td></tr>
+  <tr><td>权责</td><td>谁有权调动资源？</td><td>给一线授权，缩短审批链</td><td>看得见的人管不了，管得了的人看不见</td></tr>
+  <tr><td>考核激励</td><td>考核指标指向关键任务吗？</td><td>把 KPI/奖金对准战略结果</td><td>嘴上要 A、考核奖 B，行为必然跟着考核走</td></tr>
+</table>
+<div class="why"><span class="lab">最容易被忽视的一环：考核激励</span><p style="margin:6px 0 0">组织调整里，画新组织架构图最容易，改考核与激励最难也最关键。<strong>人会朝着被考核、被奖励的方向走</strong>——如果战略要“客户成功”，考核却还在数“代码量/项目个数”，再好的架构也会跑偏。</p></div>
+<div class="callout case"><span class="lab">示例</span>成立独立“行业交付军团”，端到端对客户成功负责，绕开按职能切分、互相扯皮的结构；给一线交付负责人调用研发资源的权限；考核从“代码产量”改为“客户上线成功数与续约率”，激励直接指向关键任务 (c)。</div>
+<div class="callout warn"><span class="lab">⚠️ 误区：新瓶装旧酒</span>只改了组织架构图，权责、流程、考核却原封不动——表面重组，实则一切照旧，是组织变革最常见的失败。</div>
+
+<h3>③ 人才（关键岗位的人与能力）</h3>
+<p>关键任务需要什么样的<strong>关键人才与能力</strong>？现有的人够不够、缺口怎么补？BLM 强调抓<strong>关键岗位</strong>——少数岗位决定多数成败，资源应优先压在这些岗位上，而不是平均用力。盘点分四步：</p>
+<ol class="steps">
+  <li><strong>定能力要求。</strong>从关键任务倒推需要的核心能力组合（而非泛泛的“要能干的人”）。先讲清“要什么样的人”。</li>
+  <li><strong>识别关键岗位。</strong>找出那些“做好了能撬动全局、做砸了全盘皆输”的少数岗位，把注意力和资源向它们倾斜。</li>
+  <li><strong>盘点与补缺。</strong>诚实评估关键岗位现有人的匹配度，缺口用三条路补齐（见下）。</li>
+  <li><strong>建梯队。</strong>为关键岗位储备后备，避免“一个人走、整件事停”。</li>
+</ol>
+<div class="grid cols-3">
+  <div class="card x"><div class="ic">🌱</div><h4>培养（内部育成）</h4><p>对潜力人才设快速通道、配导师与实战项目。慢，但忠诚度与文化契合度高。</p></div>
+  <div class="card x"><div class="ic">🔄</div><h4>调配（内部流动）</h4><p>把对的人从非关键岗位调到关键岗位，常比外招更快、风险更低。</p></div>
+  <div class="card x"><div class="ic">🎯</div><h4>引进（外部招聘）</h4><p>能力缺口大、时间紧时外引，但要把好文化关，避免“水土不服”。</p></div>
+</div>
+<div class="callout case"><span class="lab">示例</span>关键岗位是“懂行业 + 懂模型 + 懂交付”的复合型解决方案专家。现有团队稀缺：先从行业线<strong>调配</strong>资深顾问与算法工程师组队（快），同步设<strong>培养</strong>通道育成新人（稳），少量从外部<strong>引进</strong>头部交付专家补尖端缺口，并为每个关键岗位指定 1 名后备。</div>
+<div class="callout warn"><span class="lab">⚠️ 误区</span>把不匹配的“老资格”继续放在关键岗位上（论资排辈），或关键岗位只靠一个“能人”而无梯队——前者拖累战略，后者一旦离职整条线瘫痪。</div>
+
+<h3>④ 氛围与文化（决定战略被真心执行还是表面应付）</h3>
+<p>最“软”却常最致命的一环：组织的<strong>日常行为方式、协作氛围、对待失败与创新的态度</strong>。它与第 2 章价值观一脉相承——<strong>价值观是信条，氛围是它在日常中的体现</strong>。可从三个维度观察当前氛围是否支撑战略：</p>
+<div class="grid cols-3">
+  <div class="card x"><div class="ic">🧪</div><h4>对失败的态度</h4><p>容忍合理试错、鼓励快速复盘，还是“一犯错就追责”？后者会让人不敢做难而正确的事。</p></div>
+  <div class="card x"><div class="ic">🔗</div><h4>协作的方式</h4><p>开放透明、跨部门主动补位，还是各扫门前雪、信息封锁、内部博弈？</p></div>
+  <div class="card x"><div class="ic">🧭</div><h4>对客户/结果的导向</h4><p>真正以客户与结果为中心，还是对上表演、对内甩锅、唯流程论？</p></div>
+</div>
+<h4>氛围由什么塑造（也即如何改变它）</h4>
+<p>氛围不是贴标语贴出来的，而是被以下四件事日复一日地塑造，想改氛围就从它们入手：</p>
+<table>
+  <tr><th>塑造氛围的杠杆</th><th>含义</th></tr>
+  <tr><td>领导者的言行</td><td>领导真正奖励什么、惩罚什么、容忍什么，员工看在眼里、学在手上</td></tr>
+  <tr><td>关键事件的处理</td><td>一次“说真话的人被保护还是被打压”，胜过一百条标语</td></tr>
+  <tr><td>激励与晋升导向</td><td>什么样的人被提拔，就定义了“在这里怎样才算成功”</td></tr>
+  <tr><td>仪式与日常机制</td><td>复盘会、表彰、沟通方式等，把期望的行为固化成习惯</td></tr>
+</table>
+<div class="callout case"><span class="lab">示例</span>要做难而正确的私有化交付，需要“直面客户、容忍试错、快速复盘”的氛围：领导带头在复盘会上先认自己的错、保护敢报坏消息的人、优先提拔“啃下硬客户”的一线骨干。若公司氛围是“多做多错、怕担责”，再漂亮的组织设计和再强的人才也推不动。</div>
+<div class="callout warn"><span class="lab">⚠️ 氛围最难也最慢</span>结构和考核可以一纸文件改动，氛围却要靠领导者长期的<strong>身体力行</strong>来塑造，且极易因一次“说一套做一套”而崩塌——这也是为什么领导力（第 2 章）必须贯穿执行始终。</div></section>
+
+<section class="block"><h2>三、“匹配”比“优秀”更重要</h2>
+<table>
+  <tr><th>错配场景</th><th>后果</th></tr>
+  <tr><td>关键任务要“快速试错”，组织却层层审批</td><td>流程拖死创新，战略空转</td></tr>
+  <tr><td>设了新军团，却没配关键人才</td><td>有架子没能力，徒有其表</td></tr>
+  <tr><td>人才到位，但氛围惩罚试错</td><td>能人不敢做，纷纷流失</td></tr>
+  <tr><td>四要素都好，但与战略方向不符</td><td>高效地做错的事，越努力越偏</td></tr>
+</table>
+<div class="callout key"><span class="lab">本章要点</span>执行的精髓是<strong>对齐与匹配</strong>：关键任务对齐战略，组织/人才/氛围对齐关键任务，且三者互相支撑。单点再优秀，错配也白搭。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c7"><div class="dir">← 上一章</div><div class="ttl">第7章 业务设计</div></button>
+  <button class="next" data-go="c9"><div class="dir">下一章 →</div><div class="ttl">第9章 闭环、案例与落地</div></button>
+</div></div>
+
+<!-- ===================== 第9章 闭环 ===================== -->
+<div class="chap" id="c9">
+<header class="hero"><span class="chapter-tag">第 9 章 · 闭环与实战</span><h1>把所有模块串成闭环，并走完一个完整案例</h1>
+<p class="lede">本章做三件事：① 用一张总图把所有模块连成<strong>闭环</strong>；② 用一家顶级科技公司的故事，从差距到执行<strong>完整贯穿</strong>；③ 给出常见误区与落地方法。</p></header>
+
+<section class="block"><h2>一、模块关系总图：BLM 是一个循环</h2>
+<p>BLM 是一个<strong>持续迭代的回路</strong>：差距点火 → 战略成形 → 执行落地 → 产生新结果 → 重新评估差距。领导力和价值观全程在场。</p>
+<div class="figure"><svg viewBox="0 0 880 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BLM 闭环关系总图">
+  <defs><marker id="a9" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f3a8a"/></marker></defs>
+  <rect x="40" y="16" width="800" height="44" rx="12" fill="#6d4aff"/><text x="440" y="44" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">领导力（贯穿全程：推动、决策、纠偏）</text>
+  <rect x="350" y="78" width="180" height="50" rx="12" fill="#fdecea" stroke="#c0392b" stroke-width="1.5"/><text x="440" y="108" text-anchor="middle" fill="#c0392b" font-size="14" font-weight="800">差距（点火）</text>
+  <text x="145" y="148" text-anchor="middle" fill="#1f3a8a" font-size="13" font-weight="800">战略（左柱）</text>
+  <rect x="60" y="160" width="170" height="46" rx="10" fill="#eaf0ff" stroke="#c9d6f5"/><text x="145" y="188" text-anchor="middle" fill="#1f3a8a" font-size="13" font-weight="800">市场洞察</text>
+  <rect x="60" y="218" width="170" height="46" rx="10" fill="#eaf0ff" stroke="#c9d6f5"/><text x="145" y="240" text-anchor="middle" fill="#1f3a8a" font-size="12" font-weight="800">战略意图</text><text x="145" y="256" text-anchor="middle" fill="#1f3a8a" font-size="12" font-weight="800">/ 创新焦点</text>
+  <rect x="60" y="276" width="170" height="46" rx="10" fill="#eaf0ff" stroke="#c9d6f5"/><text x="145" y="304" text-anchor="middle" fill="#1f3a8a" font-size="13" font-weight="800">业务设计</text>
+  <text x="735" y="148" text-anchor="middle" fill="#d97706" font-size="13" font-weight="800">执行（右柱）</text>
+  <rect x="650" y="160" width="170" height="46" rx="10" fill="#fff7ec" stroke="#f3d09a"/><text x="735" y="188" text-anchor="middle" fill="#d97706" font-size="13" font-weight="800">关键任务</text>
+  <rect x="650" y="218" width="170" height="46" rx="10" fill="#fff7ec" stroke="#f3d09a"/><text x="735" y="246" text-anchor="middle" fill="#d97706" font-size="13" font-weight="800">组织/人才</text>
+  <rect x="650" y="276" width="170" height="46" rx="10" fill="#fff7ec" stroke="#f3d09a"/><text x="735" y="304" text-anchor="middle" fill="#d97706" font-size="13" font-weight="800">氛围与文化</text>
+  <rect x="350" y="356" width="180" height="50" rx="12" fill="#e4f6ef" stroke="#0f8f6b" stroke-width="1.5"/><text x="440" y="386" text-anchor="middle" fill="#0f8f6b" font-size="14" font-weight="800">业务结果</text>
+  <rect x="40" y="420" width="800" height="40" rx="12" fill="#e4f6ef" stroke="#0f8f6b" stroke-width="1.2"/><text x="440" y="446" text-anchor="middle" fill="#0f8f6b" font-size="14" font-weight="800">价值观（贯穿全程：底线与取舍标准）</text>
+  <line x1="350" y1="103" x2="232" y2="170" stroke="#1f3a8a" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="145" y1="206" x2="145" y2="216" stroke="#1f3a8a" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="145" y1="264" x2="145" y2="274" stroke="#1f3a8a" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="230" y1="299" x2="648" y2="190" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a9)"/>
+  <text x="440" y="240" text-anchor="middle" font-size="11.5" fill="#7a869a">业务设计 → 倒推关键任务（对齐）</text>
+  <line x1="735" y1="206" x2="735" y2="216" stroke="#d97706" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="735" y1="264" x2="735" y2="274" stroke="#d97706" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="735" y1="322" x2="532" y2="378" stroke="#7a869a" stroke-width="2.2" marker-end="url(#a9)"/>
+  <line x1="350" y1="381" x2="150" y2="381" stroke="#0f8f6b" stroke-width="2.2" marker-end="url(#a9)"/>
+  <path d="M120,356 Q90,230 130,128" fill="none" stroke="#0f8f6b" stroke-width="2.2" stroke-dasharray="6 5" marker-end="url(#a9)"/>
+  <text x="80" y="240" text-anchor="middle" font-size="11" fill="#0f8f6b" transform="rotate(-90 80 240)">结果反馈，重估差距</text>
+</svg><figcaption>图 9-1｜BLM 闭环：差距→战略→执行→结果→重估差距，循环往复；领导力在顶、价值观在底，全程在场。</figcaption></div></section>
+
+<section class="block"><h2>二、完整贯穿案例：「星核智能」的一次 BLM 规划</h2>
+<p class="small">（星核智能为说明用途构造的顶级科技公司形象：做企业级 AI 基础设施。按 BLM 模块顺序演示各模块如何环环相扣。）</p>
+<h3>背景 · 差距</h3>
+<div class="panel"><p>现有“通用 AI 平台”今年目标 20 亿，预计 17 亿——<strong>业绩差距 3 亿</strong>。但进一步发现：即便做到 20 亿也只占企业 AI 市场不到 2%；大量行业大客户的“私有化+合规”需求几乎无人满足，<strong>机会差距高达数百亿</strong>。</p>
+<p><strong>诊断：</strong>主要矛盾是<strong>机会差距</strong>——不是没做好，是“想小了”。本轮 BLM 以战略重构为主。</p></div>
+<h3>战略 · 市场洞察（五看）</h3>
+<table>
+  <tr><th>看</th><th>关键结论</th></tr>
+  <tr><td>看趋势</td><td>大模型能力外溢、合规趋严、企业要求“数据不出域”</td></tr>
+  <tr><td>看市场客户</td><td>金融/政务/制造大客户付费力强、痛点是合规与落地</td></tr>
+  <tr><td>看竞争</td><td>巨头死磕通用大模型，行业私有化场景反应慢</td></tr>
+  <tr><td>看自己</td><td>真优势：工程化交付+行业关系；短板：基础模型不如巨头</td></tr>
+  <tr><td>看机会</td><td><strong>机会点：行业大模型 + 私有化交付</strong></td></tr>
+</table>
+<h3>战略 · 战略意图（第5章）</h3>
+<div class="panel"><p>愿景：成为企业级 AI 的首选基础设施。｜ 3 年：服务 1000 家行业客户、行业云 AI 前三。｜ 今年：签 50 家标杆、跑通可复制交付。三层从远到近、可衡量、能拆解。</p></div>
+<h3>战略 · 创新焦点（第6章）</h3>
+<div class="panel"><p>业务组合：70% 资源压向“行业大模型+私有化”，通用平台维持、C 端放弃。｜ 创新模式：工程化与场景落地，不拼参数。｜ 资源利用：基础模型层与开源/伙伴合作，自聚焦行业 Know-how。</p></div>
+<h3>战略 · 业务设计（六要素）</h3>
+<table>
+  <tr><th>要素</th><th>星核的设计</th></tr>
+  <tr><td>①客户选择</td><td>聚焦金融/政务/制造大客户，放弃价格敏感长尾</td></tr>
+  <tr><td>②价值主张</td><td>开箱即用行业模型 + 数据不出域 + 6 周上线</td></tr>
+  <tr><td>③价值获取</td><td>私有化授权 + 年度订阅 + 插件市场抽成</td></tr>
+  <tr><td>④活动范围</td><td>自做行业微调与交付运维，基础模型合作</td></tr>
+  <tr><td>⑤持续价值</td><td>行业私有数据与交付资产形成数据/信任飞轮</td></tr>
+  <tr><td>⑥风险管理</td><td>分散客户行业、建合规预审，防客户集中与政策风险</td></tr>
+</table>
+<h3>执行 · 四要素（第8章）</h3>
+<div class="grid cols-2">
+  <div class="card x"><h4>① 关键任务</h4><p>(a) 沉淀可复用行业模型底座；(b) 建标准化交付方法论；(c) 打造 3 个标杆。(a) 为前置。</p></div>
+  <div class="card x"><h4>② 正式组织</h4><p>成立端到端“行业交付军团”，一线授权，考核改为“客户上线成功数+续约率”。</p></div>
+  <div class="card x"><h4>③ 人才</h4><p>调配+培养+引进组建“懂行业+懂模型+懂交付”专家小队，每个关键岗位配后备。</p></div>
+  <div class="card x"><h4>④ 氛围与文化</h4><p>领导带头复盘认错、保护报坏消息者、优先提拔啃硬客户的人，养“直面客户、容忍试错”。</p></div>
+</div>
+<div class="callout case"><span class="lab">✅ 闭环如何咬合（回看图 9-1）</span>机会差距 → 五看锁定“行业私有化” → 战略意图定方向 → 创新焦点把资源压上去 → 业务设计变成可赚钱、有护城河的模式 → 执行从业务设计倒推关键任务并配齐组织/人/氛围 → 一年后用“标杆数、上线成功数、营收”衡量结果 → 重估差距，进入下一轮。<strong>每一步都为上一步服务，每个模块都能在前一个模块里找到“为什么这么做”。</strong></div></section>
+
+<section class="block"><h2>三、如何在团队里真正用起来</h2>
+<ol class="steps">
+  <li><strong>由一把手牵头。</strong>BLM 是“一把手工程”，不能甩给战略部门写报告。</li>
+  <li><strong>先对齐差距，再谈方案。</strong>第一件事是对“差距是什么、是业绩还是机会”达成共识。</li>
+  <li><strong>左右柱同步推进。</strong>每深入一层战略，就追问执行能否承接。</li>
+  <li><strong>收敛到“少数关键”。</strong>机会、关键任务都只取最重要的几个。聚焦是纪律。</li>
+  <li><strong>定期复盘迭代。</strong>作为滚动规划工具，用结果反馈持续修正。</li>
+</ol></section>
+
+<section class="block"><h2>四、常见误区清单</h2>
+<table>
+  <tr><th>误区</th><th>正确做法</th></tr>
+  <tr><td>把 BLM 当一次性填表</td><td>当成持续迭代的闭环</td></tr>
+  <tr><td>误把机会差距当业绩差距</td><td>先诊断差距类型再开方</td></tr>
+  <tr><td>五看堆资料、不收敛机会</td><td>前四看服务于“看机会”</td></tr>
+  <tr><td>意图宏大却不做焦点取舍</td><td>战略=选择不做什么</td></tr>
+  <tr><td>业务设计漏掉“持续价值”</td><td>必须回答护城河在哪</td></tr>
+  <tr><td>重战略、轻执行</td><td>左右柱同等重要、必须对齐</td></tr>
+  <tr><td>执行四要素各自优秀却不匹配</td><td>匹配比单点优秀更重要</td></tr>
+  <tr><td>战略部门单干，一把手缺席</td><td>领导力贯穿、一把手牵头</td></tr>
+</table>
+<div class="callout key"><span class="lab">🎯 全书一句话总结</span>BLM 让你诚实面对<strong>差距</strong>，由<strong>领导力</strong>推动、在<strong>价值观</strong>底线内，把<strong>战略</strong>（看清机会、定方向、选赌注、做商业设计）与<strong>执行</strong>（关键任务、组织、人才、氛围）钉在同一张图上并持续对齐迭代——这就是“想清楚”和“做到位”的统一。</div></section>
+
+<div class="chap-nav">
+  <button data-go="c8"><div class="dir">← 上一章</div><div class="ttl">第8章 执行四要素</div></button>
+  <button class="next" data-go="cover"><div class="dir">完 →</div><div class="ttl">返回目录</div></button>
+</div></div>
+
+</div>
+<footer>BLM 业务领先模型 · 系统讲解 · 单文件版 · 共 9 章</footer>
+
+<script>
+(function(){
+  var ids=["cover","c1","c2","c3","c4","c5","c6","c7","c8","c9"];
+  function go(id){
+    if(ids.indexOf(id)<0)id="cover";
+    document.querySelectorAll('.chap').forEach(function(s){s.classList.toggle('show',s.id===id);});
+    document.querySelectorAll('.topnav button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-go')===id);});
+    window.scrollTo({top:0,behavior:'instant' in window?'instant':'auto'});
+    if(history&&history.replaceState)history.replaceState(null,'','#'+id);
+  }
+  document.addEventListener('click',function(e){
+    var el=e.target.closest('[data-go]');
+    if(el){e.preventDefault();go(el.getAttribute('data-go'));}
+  });
+  var init=(location.hash||'').replace('#','')||'cover';
+  go(init);
+})();
+</script>
+</body>
+</html>
