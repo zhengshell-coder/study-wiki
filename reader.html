@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>阅读器</title>
+<style>
+  :root{--bar:#4f7cff;--ink:#1f2430;--line:#e7e9ee;}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+  #bar{position:fixed;top:0;left:0;right:0;height:46px;background:rgba(255,255,255,.94);
+    border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 10px;z-index:10}
+  #bar a,#bar button{border:0;background:transparent;font:inherit;color:var(--ink);cursor:pointer;font-size:14px;
+    padding:7px 10px;border-radius:8px;white-space:nowrap}
+  #bar a:hover,#bar button:hover{background:#f0f1f4}
+  #title{flex:1;min-width:0;font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #pct{font-size:12.5px;color:#6b7280;min-width:40px;text-align:right}
+  #progline{position:fixed;top:46px;left:0;height:3px;background:var(--bar);width:0;z-index:11;transition:width .12s}
+  #wrap{position:fixed;top:46px;left:0;right:0;bottom:0;background:#fff}
+  iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa1ad;font-size:14px}
+  #resume{position:fixed;right:16px;bottom:max(20px,env(safe-area-inset-bottom));background:var(--bar);color:#fff;border:0;
+    border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;box-shadow:0 8px 22px rgba(79,124,255,.45);
+    cursor:pointer;z-index:12;display:none}
+  #resume.show{display:inline-block}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a href="./index.html">← 图书馆</a>
+  <div id="title">阅读器</div>
+  <span id="pct">0%</span>
+  <button id="topbtn" title="回到顶部">↑ 顶部</button>
+</div>
+<div id="progline"></div>
+<div id="wrap"><div id="loading">加载中…</div><iframe id="frame"></iframe></div>
+<button id="resume">↩ 继续上次 <span id="rpct"></span></button>
+<script>
+const KEY="wikiReadPos.v1";
+const params=new URLSearchParams(location.hash.slice(1));
+const doc=params.get("doc")||"";
+const title=params.get("title")|| (doc?doc.split("/").pop().replace(/\.html?$/i,""):"阅读器");
+document.getElementById("title").textContent=title; document.title=title;
+
+function allPos(){ try{ return JSON.parse(localStorage.getItem(KEY)||"{}"); }catch(e){ return {}; } }
+function savePos(pct){ if(!doc) return; try{ const a=allPos(); a[doc]={pct:pct, ts:Date.now()}; localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
+
+const frame=document.getElementById("frame");
+const progline=document.getElementById("progline");
+const pctEl=document.getElementById("pct");
+const resume=document.getElementById("resume");
+let win=null, saved=((allPos()[doc]||{}).pct)||0, lastSave=0, scrolledByUser=false;
+
+function metrics(){ try{ const s=win.document.scrollingElement||win.document.documentElement;
+  const max=s.scrollHeight - win.innerHeight; return {top:s.scrollTop, max:max>0?max:0}; }catch(e){ return null; } }
+function updateBar(pct){ progline.style.width=(pct*100).toFixed(1)+"%"; pctEl.textContent=Math.round(pct*100)+"%"; }
+function onScroll(){ const m=metrics(); if(!m) return; const pct=m.max>0? m.top/m.max : 0;
+  updateBar(pct); scrolledByUser=true;
+  if(pct>0.02) resume.classList.remove("show");
+  const now=Date.now(); if(now-lastSave>500){ lastSave=now; if(pct>0.005) savePos(pct); }
+}
+resume.onclick=()=>{ const m=metrics(); if(m&&m.max>0) win.scrollTo({top:saved*m.max, behavior:"smooth"}); resume.classList.remove("show"); };
+document.getElementById("topbtn").onclick=()=>{ if(win) win.scrollTo({top:0,behavior:"smooth"}); };
+
+frame.addEventListener("load", ()=>{
+  document.getElementById("loading").style.display="none";
+  try{
+    win=frame.contentWindow;
+    win.addEventListener("scroll", onScroll, {passive:true});
+    setTimeout(()=>{ const m=metrics();
+      if(m){ updateBar(m.max>0? m.top/m.max : 0);
+        if(saved>0.02 && saved<0.985 && m.max>0){ document.getElementById("rpct").textContent=Math.round(saved*100)+"%"; resume.classList.add("show"); } }
+    }, 350);
+  }catch(e){ /* 跨域或受限，无法记录位置 */ }
+});
+frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")) : "about:blank";
+
+function flush(){ const m=metrics(); if(m&&m.max>0){ const pct=m.top/m.max; if(pct>0.005) savePos(pct); } }
+document.addEventListener("visibilitychange", ()=>{ if(document.hidden) flush(); });
+window.addEventListener("pagehide", flush);
+</script>
+</body>
+</html>
