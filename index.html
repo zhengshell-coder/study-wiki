@@ -159,7 +159,7 @@
   <div id="view-browse">
     <div class="toolbar">
       <div class="search"><span>🔍</span>
-        <input id="searchBox" placeholder="搜索标题、标签、描述…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="wiki-search-nofill" oninput="this.dataset.typed='1';render()"></div>
+        <input id="searchBox" placeholder="搜索标题、标签、描述…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="wiki-search-nofill" readonly onfocus="this.removeAttribute('readonly')" oninput="this.dataset.typed='1';render()"></div>
       <button class="btn primary big" onclick="openUpload()">＋ 上传新页面</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -326,7 +326,8 @@ function render(){
   data.modules.forEach(m=>{ const n=data.pages.filter(p=>p.moduleId===m.id).length;
     h+=`<div class="chip ${activeModule===m.id?'active':''}" onclick="setModule('${m.id}')"><span class="dot" style="background:${m.color}"></span>${m.icon} ${esc(m.name)} <span style="opacity:.6">${n}</span></div>`; });
   chips.innerHTML=h;
-  const q=(document.getElementById("searchBox").value||"").toLowerCase().trim();
+  const _sb0=document.getElementById("searchBox");
+  const q=(_sb0 && _sb0.dataset.typed)?(_sb0.value||"").toLowerCase().trim():"";
   const grid=document.getElementById("grid");
   if(activeModule==="all" && !q){ renderStacks(grid); return; }
   grid.style.display="grid";
