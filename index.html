@@ -157,7 +157,7 @@
   <div id="view-browse">
     <div class="toolbar">
       <div class="search"><span>🔍</span>
-        <input id="searchBox" placeholder="搜索标题、标签、描述…" oninput="render()"></div>
+        <input id="searchBox" placeholder="搜索标题、标签、描述…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="wiki-search-nofill" oninput="this.dataset.typed='1';render()"></div>
       <button class="btn primary big" onclick="openUpload()">＋ 上传新页面</button>
     </div>
     <div class="chips" id="chips"></div>
@@ -296,7 +296,10 @@ async function boot(){
   }catch(e){}
   if(!loaded){ let l=null; try{ l=localStorage.getItem(LS_KEY); }catch(e){}
     if(l){ try{ const j=JSON.parse(l); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="local"; } }catch(e){} } else sourceMode="seed"; }
+  const _sb=document.getElementById("searchBox"); if(_sb) _sb.value="";
   render();
+  // 自动填充防护：浏览器有时会把记住的值塞进搜索框，监测到非用户输入就清掉
+  setTimeout(()=>{ const s=document.getElementById("searchBox"); if(s && s.value && !s.dataset.typed){ s.value=""; render(); } }, 400);
   if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
   document.getElementById("footer").textContent =
     sourceMode==="file" ? "已加到主屏即可像 App 打开 · 内容可离线缓存"
