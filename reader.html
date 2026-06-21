@@ -135,8 +135,12 @@ function renderBmPanel(){ const bms=bmList().sort((a,b)=>(a.pct||0)-(b.pct||0));
 }
 function escapeHtml(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function toggleBm(force){ const show=(force===undefined)?!bmpanel.classList.contains("show"):force; if(show) renderBmPanel(); bmpanel.classList.toggle("show",show); }
+function nearestHeading(){ try{ const d=win.document; const top=(d.scrollingElement||d.documentElement).scrollTop;
+  const hs=d.querySelectorAll("h1,h2,h3,h4"); let lab="";
+  for(let i=0;i<hs.length;i++){ const y=hs[i].getBoundingClientRect().top+top; if(y<=top+90) lab=(hs[i].textContent||"").trim(); else break; }
+  return lab.replace(/\s+/g," ").slice(0,40); }catch(e){ return ""; } }
 function addBookmark(){ const m=metrics(); if(!m||m.max<=0){ toast("文档太短，无需书签"); return; } const pct=m.top/m.max;
-  let label=""; try{ label=prompt("给这个书签起个名（可留空）:","")||""; }catch(e){}
+  const label=nearestHeading()||("位置 "+Math.round(pct*100)+"%");
   const lb=lget(KEY_BM); const cur=lb[doc]||{items:[]};
   cur.items=cur.items||[]; cur.items.push({id:"b"+Date.now().toString(36)+Math.random().toString(36).slice(2,5), pct:pct, label:label.trim(), ts:Date.now()});
   cur.ts=Date.now(); lb[doc]=cur; lset(KEY_BM,lb); renderBmPanel(); toast("已添加书签"); pushReading("添加书签："+title);
