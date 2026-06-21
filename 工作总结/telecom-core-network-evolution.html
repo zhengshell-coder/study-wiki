@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电信核心网架构演进手册 · Core Network Evolution</title>
+<style>
+:root{
+  --bg:#060912;
+  --bg2:#0a1020;
+  --panel:rgba(16,24,46,0.72);
+  --panel-solid:#0d1428;
+  --line:rgba(60,90,150,0.28);
+  --cyan:#2de2e6;
+  --cyan-soft:#7af1f4;
+  --violet:#7b5cff;
+  --magenta:#ff3d9a;
+  --amber:#ffc24b;
+  --green:#37e6a4;
+  --txt:#c6d4ee;
+  --txt-dim:#8294b8;
+  --txt-bright:#eaf2ff;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  line-height:1.75;
+  font-size:15px;
+  overflow:hidden;
+}
+/* animated tech backdrop */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(800px 500px at 12% -8%,rgba(45,226,230,0.10),transparent 60%),
+    radial-gradient(900px 600px at 105% 8%,rgba(123,92,255,0.12),transparent 55%),
+    radial-gradient(700px 700px at 80% 110%,rgba(255,61,154,0.07),transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:
+    linear-gradient(rgba(70,110,180,0.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(70,110,180,0.06) 1px,transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,#000 30%,transparent 100%);
+}
+
+.app{display:flex;height:100vh;position:relative;z-index:1}
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  width:300px;flex-shrink:0;height:100vh;
+  background:linear-gradient(180deg,rgba(10,16,32,0.96),rgba(7,11,22,0.96));
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  backdrop-filter:blur(8px);
+}
+.brand{
+  padding:24px 22px 18px;border-bottom:1px solid var(--line);
+  position:relative;
+}
+.brand .kicker{
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--cyan);
+  text-transform:uppercase;opacity:.9;
+}
+.brand h1{
+  font-size:18px;font-weight:700;color:var(--txt-bright);margin-top:6px;line-height:1.35;
+  letter-spacing:.5px;
+}
+.brand .sub{font-size:11px;color:var(--txt-dim);margin-top:6px;font-family:var(--mono);letter-spacing:1px}
+.brand .pulse{
+  position:absolute;top:26px;right:22px;width:9px;height:9px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 0 0 rgba(55,230,164,.6);
+  animation:pulse 2.4s infinite;
+}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(55,230,164,.55)}70%{box-shadow:0 0 0 12px rgba(55,230,164,0)}100%{box-shadow:0 0 0 0 rgba(55,230,164,0)}}
+
+.nav{flex:1;overflow-y:auto;padding:14px 12px 30px}
+.nav::-webkit-scrollbar{width:6px}
+.nav::-webkit-scrollbar-thumb{background:rgba(80,120,200,.3);border-radius:3px}
+.nav-group-label{
+  font-size:10px;letter-spacing:2px;color:var(--txt-dim);text-transform:uppercase;
+  padding:14px 14px 7px;font-family:var(--mono);
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;margin:3px 4px;border-radius:9px;
+  cursor:pointer;color:var(--txt);font-size:13.5px;
+  border:1px solid transparent;transition:all .18s ease;position:relative;
+}
+.nav-item .idx{
+  font-family:var(--mono);font-size:11px;color:var(--txt-dim);
+  width:24px;text-align:center;flex-shrink:0;transition:color .18s;
+}
+.nav-item:hover{background:rgba(45,226,230,0.06);border-color:rgba(45,226,230,0.18);color:var(--txt-bright)}
+.nav-item:hover .idx{color:var(--cyan)}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(45,226,230,0.16),rgba(123,92,255,0.10));
+  border-color:rgba(45,226,230,0.45);color:#fff;
+  box-shadow:0 0 22px rgba(45,226,230,0.12) inset;
+}
+.nav-item.active .idx{color:var(--cyan)}
+.nav-item.active::before{
+  content:"";position:absolute;left:-4px;top:18%;height:64%;width:3px;border-radius:3px;
+  background:linear-gradient(var(--cyan),var(--violet));box-shadow:0 0 10px var(--cyan);
+}
+.sidebar-foot{
+  padding:12px 18px;border-top:1px solid var(--line);
+  font-size:10px;color:var(--txt-dim);font-family:var(--mono);letter-spacing:.5px;
+}
+
+/* ============ CONTENT ============ */
+.content{flex:1;height:100vh;overflow-y:auto;padding:0;position:relative}
+.content::-webkit-scrollbar{width:9px}
+.content::-webkit-scrollbar-thumb{background:rgba(80,120,200,.28);border-radius:5px}
+.content::-webkit-scrollbar-track{background:transparent}
+
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 40px;
+  background:linear-gradient(180deg,rgba(6,9,18,0.94),rgba(6,9,18,0.6));
+  border-bottom:1px solid var(--line);backdrop-filter:blur(10px);
+}
+.crumb{font-family:var(--mono);font-size:12px;color:var(--txt-dim);letter-spacing:1px}
+.crumb b{color:var(--cyan)}
+.topbar .meta{font-family:var(--mono);font-size:11px;color:var(--txt-dim)}
+
+.chapter{display:none;padding:38px 46px 90px;max-width:1080px;animation:fade .45s ease}
+.chapter.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.ch-head{margin-bottom:26px;padding-bottom:20px;border-bottom:1px solid var(--line);position:relative}
+.ch-head .era{
+  display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:2px;
+  color:var(--bg);background:linear-gradient(90deg,var(--cyan),var(--cyan-soft));
+  padding:3px 11px;border-radius:5px;font-weight:700;margin-bottom:14px;
+}
+.ch-head h2{font-size:29px;color:var(--txt-bright);font-weight:700;letter-spacing:.5px;line-height:1.25}
+.ch-head .en{font-family:var(--mono);font-size:13px;color:var(--cyan);margin-top:7px;letter-spacing:1px}
+.ch-head .lead{font-size:15px;color:var(--txt-dim);margin-top:14px;max-width:760px}
+
+h3.sec{
+  font-size:18px;color:var(--txt-bright);margin:34px 0 14px;font-weight:650;
+  display:flex;align-items:center;gap:11px;
+}
+h3.sec::before{
+  content:"";width:5px;height:18px;border-radius:3px;
+  background:linear-gradient(var(--cyan),var(--violet));box-shadow:0 0 9px rgba(45,226,230,.5);
+}
+h4.sub{font-size:15px;color:var(--cyan-soft);margin:22px 0 10px;font-weight:600}
+p{margin:11px 0;color:var(--txt)}
+.chapter ul{margin:12px 0 12px 6px;list-style:none}
+.chapter ul li{position:relative;padding:5px 0 5px 22px;color:var(--txt)}
+.chapter ul li::before{
+  content:"▸";position:absolute;left:2px;color:var(--cyan);font-size:12px;top:6px;
+}
+.chapter ul li b,.chapter p b{color:var(--txt-bright)}
+code{
+  font-family:var(--mono);font-size:12.5px;color:var(--cyan-soft);
+  background:rgba(45,226,230,0.09);padding:1px 7px;border-radius:5px;
+  border:1px solid rgba(45,226,230,0.16);
+}
+.tag{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:20px;letter-spacing:.5px;display:inline-block}
+.tag.cp{color:var(--cyan);background:rgba(45,226,230,.1);border:1px solid rgba(45,226,230,.3)}
+.tag.up{color:var(--magenta);background:rgba(255,61,154,.1);border:1px solid rgba(255,61,154,.3)}
+.tag.db{color:var(--amber);background:rgba(255,194,75,.1);border:1px solid rgba(255,194,75,.3)}
+
+/* callout boxes */
+.note{
+  border-left:3px solid var(--cyan);background:rgba(45,226,230,0.05);
+  padding:14px 18px;border-radius:0 9px 9px 0;margin:18px 0;font-size:14px;
+}
+.note.key{border-left-color:var(--violet);background:rgba(123,92,255,0.07)}
+.note.warn{border-left-color:var(--amber);background:rgba(255,194,75,0.06)}
+.note .lbl{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:5px}
+.note.key .lbl{color:var(--violet)}
+.note.warn .lbl{color:var(--amber)}
+
+/* cards grid for network elements */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px;margin:18px 0}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px 17px;transition:all .2s;position:relative;overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--cyan),transparent);opacity:.7;
+}
+.card:hover{transform:translateY(-3px);border-color:rgba(45,226,230,0.4);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.card .nf{font-family:var(--mono);font-size:15px;color:var(--cyan);font-weight:700;letter-spacing:.5px}
+.card .full{font-size:11px;color:var(--txt-dim);margin:3px 0 9px;font-style:italic}
+.card .desc{font-size:13px;color:var(--txt);line-height:1.6}
+.card.violet::before{background:linear-gradient(90deg,var(--violet),transparent)}
+.card.violet .nf{color:#a78bff}
+.card.magenta::before{background:linear-gradient(90deg,var(--magenta),transparent)}
+.card.magenta .nf{color:#ff6bb0}
+.card.amber::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.card.amber .nf{color:var(--amber)}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+th{
+  background:rgba(45,226,230,0.08);color:var(--cyan-soft);font-weight:600;
+  text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);
+  font-size:12px;letter-spacing:.5px;white-space:nowrap;
+}
+td{padding:11px 15px;border-bottom:1px solid rgba(60,90,150,0.14);color:var(--txt);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(45,226,230,0.04)}
+td .mono,th .mono{font-family:var(--mono)}
+.gen-2g{color:#ff8a5c}.gen-3g{color:var(--amber)}.gen-4g{color:var(--green)}.gen-5g{color:var(--cyan)}.gen-6g{color:#a78bff}
+
+/* architecture diagram */
+.arch{
+  background:linear-gradient(160deg,rgba(10,16,34,0.9),rgba(8,12,26,0.9));
+  border:1px solid var(--line);border-radius:14px;padding:26px 22px;margin:22px 0;
+  position:relative;overflow:hidden;
+}
+.arch .arch-title{
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--txt-dim);
+  text-transform:uppercase;margin-bottom:20px;text-align:center;
+}
+.layer{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:0 0 8px}
+.node{
+  min-width:92px;padding:12px 14px;border-radius:10px;text-align:center;
+  font-family:var(--mono);font-size:13px;font-weight:700;position:relative;
+  background:rgba(45,226,230,0.08);border:1px solid rgba(45,226,230,0.35);color:var(--cyan-soft);
+}
+.node small{display:block;font-size:9.5px;font-weight:400;color:var(--txt-dim);margin-top:3px;font-family:inherit}
+.node.cp{background:rgba(45,226,230,0.09);border-color:rgba(45,226,230,.4);color:var(--cyan)}
+.node.up{background:rgba(255,61,154,0.09);border-color:rgba(255,61,154,.4);color:#ff6bb0}
+.node.db{background:rgba(255,194,75,0.09);border-color:rgba(255,194,75,.4);color:var(--amber)}
+.node.vio{background:rgba(123,92,255,0.1);border-color:rgba(123,92,255,.45);color:#a78bff}
+.node.ran{background:rgba(55,230,164,0.09);border-color:rgba(55,230,164,.4);color:var(--green)}
+.node.ext{background:rgba(130,148,184,0.08);border-color:rgba(130,148,184,.35);color:var(--txt-dim)}
+.flow{text-align:center;color:var(--txt-dim);font-size:18px;margin:2px 0;line-height:1}
+.arch-rail{
+  display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:14px 0;
+}
+.arch-rail .node{margin:6px}
+.conn{width:34px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--violet));position:relative;opacity:.6}
+.conn::after{content:"";position:absolute;right:-1px;top:-3px;border-left:7px solid var(--violet);border-top:4px solid transparent;border-bottom:4px solid transparent}
+
+.bus{
+  margin:18px 0;padding:14px;border-radius:10px;text-align:center;
+  background:linear-gradient(90deg,rgba(45,226,230,0.12),rgba(123,92,255,0.12),rgba(255,61,154,0.12));
+  border:1px dashed rgba(45,226,230,0.4);font-family:var(--mono);font-size:12px;color:var(--cyan-soft);letter-spacing:1px;
+}
+
+/* timeline */
+.timeline{position:relative;margin:26px 0 10px;padding-left:8px}
+.timeline::before{content:"";position:absolute;left:14px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--cyan),var(--violet),var(--magenta))}
+.tl-item{position:relative;padding:0 0 26px 44px}
+.tl-item::before{
+  content:"";position:absolute;left:7px;top:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--bg);border:3px solid var(--cyan);box-shadow:0 0 12px rgba(45,226,230,.5);
+}
+.tl-item.v3::before{border-color:var(--amber);box-shadow:0 0 12px rgba(255,194,75,.5)}
+.tl-item.v4::before{border-color:var(--green);box-shadow:0 0 12px rgba(55,230,164,.5)}
+.tl-item.v5::before{border-color:var(--violet);box-shadow:0 0 12px rgba(123,92,255,.5)}
+.tl-item.v6::before{border-color:var(--magenta);box-shadow:0 0 12px rgba(255,61,154,.5)}
+.tl-item .yr{font-family:var(--mono);font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:1px}
+.tl-item .ttl{font-size:15px;color:var(--txt-bright);font-weight:600;margin:3px 0 4px}
+.tl-item .dsc{font-size:13px;color:var(--txt-dim)}
+
+/* stat row */
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:20px 0}
+.stat{
+  flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;
+}
+.stat .num{font-family:var(--mono);font-size:24px;font-weight:700;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .lab{font-size:12px;color:var(--txt-dim);margin-top:4px}
+
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.cmp .col{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.cmp .col h5{font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.cmp .col.old h5{color:#ff8a5c}.cmp .col.new h5{color:var(--cyan)}
+.cmp .col ul li{font-size:13px;padding:4px 0 4px 20px}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;font-size:11.5px;color:var(--txt-dim);font-family:var(--mono)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+@media(max-width:880px){
+  .sidebar{width:74px}
+  .brand h1,.brand .sub,.brand .kicker,.nav-item span.t,.nav-group-label,.sidebar-foot{display:none}
+  .nav-item{justify-content:center;padding:11px 0}
+  .cmp{grid-template-columns:1fr}
+  .chapter{padding:28px 20px 70px}
+  .topbar{padding:12px 20px}
+}
+
+/* ===== embedded interactive flow widget (cnf- namespace) ===== */
+.cnflow{margin:22px 0 8px}
+.cnf-phases{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+.cnf-phase{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:11px;cursor:pointer;background:var(--panel);border:1px solid var(--line);transition:all .2s;flex:1;min-width:176px}
+.cnf-phase .n{font-family:var(--mono);font-size:14px;font-weight:700;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(45,226,230,.1);color:var(--cyan);border:1px solid rgba(45,226,230,.3)}
+.cnf-phase .lbl .t{font-size:13px;color:var(--txt-bright);font-weight:600;line-height:1.25;display:block}
+.cnf-phase .lbl .e{font-family:var(--mono);font-size:9px;color:var(--txt-dim);letter-spacing:.5px}
+.cnf-phase:hover{border-color:rgba(45,226,230,.4);transform:translateY(-2px)}
+.cnf-phase.active{background:linear-gradient(135deg,rgba(45,226,230,.16),rgba(123,92,255,.12));border-color:rgba(45,226,230,.55);box-shadow:0 0 20px rgba(45,226,230,.1)}
+.cnf-phase.active .n{background:linear-gradient(135deg,var(--cyan),var(--violet));color:#06121a;border-color:transparent}
+.cnf-controls{display:flex;justify-content:flex-end;margin-bottom:10px}
+.cnf-play{font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:7px 14px;border-radius:8px;cursor:pointer;background:rgba(123,92,255,.12);border:1px solid rgba(123,92,255,.35);color:#a78bff;transition:all .18s}
+.cnf-play:hover{background:rgba(123,92,255,.22)}
+.cnf-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+.cnf-diagram,.cnf-steps{background:rgba(8,13,28,.5);border:1px solid var(--line);border-radius:14px;padding:16px}
+.cnf-cap{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--txt-dim);text-transform:uppercase;margin-bottom:10px}
+.cnf-diagram svg{width:100%;height:auto;display:block}
+.cnf-node rect{transition:all .35s ease}
+.cnf-node text{transition:opacity .35s}
+.cnf-node.dim{opacity:.26}
+.cnf-conn{stroke:rgba(110,130,170,.35);stroke-width:2;fill:none;transition:all .35s}
+.cnf-conn.dim{stroke:rgba(110,130,170,.1)}
+.cnf-bus{fill:rgba(45,226,230,.14);stroke:rgba(45,226,230,.4);stroke-width:1;transition:all .35s}
+.cnf-bus.dim{opacity:.25}
+.cnf-line{fill:none;stroke-width:3;opacity:0;transition:opacity .3s;stroke-linecap:round}
+.cnf-line.on{opacity:1;stroke-dasharray:9 11;animation:cnfdash 1s linear infinite}
+@keyframes cnfdash{to{stroke-dashoffset:-40}}
+.cnf-if{font-family:var(--mono);font-size:10px;fill:var(--txt-dim);letter-spacing:.5px;transition:opacity .35s}
+.cnf-if.dim{opacity:.16}
+.cnf-plane{font-family:var(--mono);font-size:10px;letter-spacing:1px}
+.cnf-phhead{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.cnf-phtitle{font-size:15px;color:var(--txt-bright);font-weight:650;margin:0}
+.cnf-phdesc{font-size:12px;color:var(--txt-dim);margin-top:4px}
+.cnf-datapath{margin:10px 0 14px;padding:10px 12px;border-radius:9px;background:rgba(255,61,154,.06);border:1px dashed rgba(255,61,154,.3);font-family:var(--mono);font-size:11px;color:#ff6bb0;line-height:1.85}
+.cnf-datapath.cp{background:rgba(45,226,230,.06);border-color:rgba(45,226,230,.3);color:var(--cyan-soft)}
+.cnf-datapath b{color:var(--txt-dim);font-weight:400;letter-spacing:1px}
+.cnf-steplist{list-style:none;margin:0;padding:0}
+.cnf-steplist li{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid rgba(60,90,150,.14);animation:cnfslide .4s ease both}
+.cnf-steplist li::before{content:none}
+.cnf-steplist li:last-child{border-bottom:none}
+@keyframes cnfslide{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+.cnf-steplist .sn{font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(45,226,230,.1);color:var(--cyan);border:1px solid rgba(45,226,230,.28)}
+.cnf-steplist .stext{font-size:12.5px;color:var(--txt);flex:1;line-height:1.6}
+.cnf-steplist .stext code{font-family:var(--mono);font-size:11px;color:var(--cyan-soft);background:rgba(45,226,230,.08);padding:1px 5px;border-radius:4px;border:none}
+.cnf-pill{font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:20px;margin-left:5px;letter-spacing:.5px;vertical-align:middle}
+.cnf-pill.cp{color:var(--cyan);background:rgba(45,226,230,.12);border:1px solid rgba(45,226,230,.3)}
+.cnf-pill.up{color:#ff6bb0;background:rgba(255,61,154,.12);border:1px solid rgba(255,61,154,.3)}
+.cnf-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--txt-dim)}
+.cnf-legend span{display:flex;align-items:center;gap:6px}
+.cnf-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+@media(max-width:760px){.cnf-grid{grid-template-columns:1fr}.cnf-phase{min-width:140px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="pulse"></span>
+      <div class="kicker">Core Network</div>
+      <h1>电信核心网<br>架构演进手册</h1>
+      <div class="sub">2G · 3G · 4G · 5G · 6G</div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav-group-label">总览</div>
+      <div class="nav-item active" data-ch="ch0"><span class="idx">00</span><span class="t">导言 · 核心网总览</span></div>
+      <div class="nav-item" data-ch="ch1"><span class="idx">01</span><span class="t">演进主线与时间轴</span></div>
+      <div class="nav-group-label">代际架构</div>
+      <div class="nav-item" data-ch="ch2"><span class="idx">02</span><span class="t">2G · GSM/GPRS 核心网</span></div>
+      <div class="nav-item" data-ch="ch3"><span class="idx">03</span><span class="t">3G · UMTS 与软交换</span></div>
+      <div class="nav-item" data-ch="ch4"><span class="idx">04</span><span class="t">4G · EPC 全IP扁平化</span></div>
+      <div class="nav-item" data-ch="ch5"><span class="idx">05</span><span class="t">5G · 5GC 服务化架构</span></div>
+      <div class="nav-group-label">理念与未来</div>
+      <div class="nav-item" data-ch="ch6"><span class="idx">06</span><span class="t">三大分离 · 架构理念</span></div>
+      <div class="nav-item" data-ch="ch7"><span class="idx">07</span><span class="t">云化 · NFV/SDN/云原生</span></div>
+      <div class="nav-item" data-ch="ch8"><span class="idx">08</span><span class="t">6G · 面向未来展望</span></div>
+      <div class="nav-group-label">速查</div>
+      <div class="nav-item" data-ch="ch9"><span class="idx">09</span><span class="t">网元演进对照表</span></div>
+      <div class="nav-item" data-ch="ch10"><span class="idx">10</span><span class="t">术语 · 缩略语速查</span></div>
+    </nav>
+    <div class="sidebar-foot">CN EVOLUTION HANDBOOK · v1.0</div>
+  </aside>
+
+  <!-- ================= CONTENT ================= -->
+  <main class="content" id="content">
+    <div class="topbar">
+      <div class="crumb">CORE&nbsp;NETWORK&nbsp;/&nbsp;<b id="crumb">导言 · 核心网总览</b></div>
+      <div class="meta" id="meta">SECTION 00 / 10</div>
+    </div>
+
+    <!-- ============ CH0 导言 ============ -->
+    <section class="chapter active" id="ch0">
+      <div class="ch-head">
+        <span class="era">OVERVIEW</span>
+        <h2>导言：什么是核心网，它为什么不断演进</h2>
+        <div class="en">Mobile Core Network · The Brain of the Telecom System</div>
+        <p class="lead">如果把移动通信网络比作人体，无线接入网（RAN）是触达世界的"四肢与感官"，承载网是"血管"，那么核心网（Core Network, CN）就是统筹调度的"大脑与中枢神经"。它决定了你是谁、能不能上网、连到哪、按什么策略和资费、以及通话与数据如何被路由。</p>
+      </div>
+
+      <h3 class="sec">核心网在网络中的位置</h3>
+      <div class="arch">
+        <div class="arch-title">End-to-End 移动网络分层</div>
+        <div class="arch-rail">
+          <div class="node ran">UE<small>终端</small></div>
+          <div class="conn"></div>
+          <div class="node ran">RAN<small>无线接入网</small></div>
+          <div class="conn"></div>
+          <div class="node cp">Core Network<small>核心网 · 本手册主角</small></div>
+          <div class="conn"></div>
+          <div class="node ext">DN / PSTN<small>数据网/外部网</small></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i>接入侧</span>
+          <span><i style="background:var(--cyan)"></i>核心网</span>
+          <span><i style="background:var(--txt-dim)"></i>外部网络</span>
+        </div>
+      </div>
+
+      <h3 class="sec">核心网的六大基本职责</h3>
+      <p>无论技术如何代际更迭，核心网始终围绕以下功能展开。理解这六点，就能看懂任何一代架构图里每个网元"在忙什么"。</p>
+      <div class="cards">
+        <div class="card"><div class="nf">移动性管理</div><div class="full">Mobility Management</div><div class="desc">跟踪用户位置、处理小区/区域切换与寻呼，保证用户移动中业务不中断。</div></div>
+        <div class="card violet"><div class="nf">会话管理</div><div class="full">Session Management</div><div class="desc">建立/维护/释放数据承载（PDP/EPS/PDU 会话），分配 IP 地址。</div></div>
+        <div class="card magenta"><div class="nf">认证与鉴权</div><div class="full">AAA & Security</div><div class="desc">确认用户合法身份、生成密钥、加密信令与数据，防止盗用与窃听。</div></div>
+        <div class="card amber"><div class="nf">用户数据管理</div><div class="full">Subscriber Data</div><div class="desc">存储签约信息、套餐、权限（HLR→HSS→UDM 一脉相承）。</div></div>
+        <div class="card"><div class="nf">策略与计费</div><div class="full">Policy & Charging</div><div class="desc">按 QoS、套餐、限速规则控制业务，并完成在线/离线计费。</div></div>
+        <div class="card violet"><div class="nf">路由与互通</div><div class="full">Routing & Interworking</div><div class="desc">转发用户数据、与 PSTN/互联网/其他运营商网络互联互通。</div></div>
+      </div>
+
+      <h3 class="sec">一条贯穿四十年的演进主线</h3>
+      <div class="note key">
+        <span class="lbl">Key Idea</span>
+        核心网演进的本质，是<b>"不断解耦"</b>：把原本捆在一台专用设备里的功能，一层层拆开、再灵活重组。
+        电路与分组解耦 → 控制与承载解耦 → 软件与硬件解耦 → 功能与功能之间服务化解耦。每一次解耦，都换来更高的弹性、更低的成本和更快的业务创新。
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">CS→PS</div><div class="lab">从电路交换到全分组（IP）</div></div>
+        <div class="stat"><div class="num">CUPS</div><div class="lab">控制面与用户面分离</div></div>
+        <div class="stat"><div class="num">SBA</div><div class="lab">网络功能服务化架构</div></div>
+        <div class="stat"><div class="num">Cloud&nbsp;Native</div><div class="lab">虚拟化走向容器/微服务</div></div>
+      </div>
+      <p>接下来的章节将沿着 <b>2G → 3G → 4G → 5G → 6G</b> 的时间线，逐代拆解核心架构的变化、关键网元的职责，以及"为什么要这样改"。建议先看第 01 章建立时间轴全局观，再逐代深入。</p>
+    </section>
+
+    <!-- ============ CH1 演进主线 ============ -->
+    <section class="chapter" id="ch1">
+      <div class="ch-head">
+        <span class="era">TIMELINE</span>
+        <h2>演进主线与关键里程碑</h2>
+        <div class="en">The Evolution Roadmap · 1990s → 2030s</div>
+        <p class="lead">核心网的每一次跃迁，都由"业务需求"和"使能技术"双轮驱动：从打电话，到上网，到万物互联，到智能内生。下面这条时间轴是理解全书的骨架。</p>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="yr">1991 · 2G</div>
+          <div class="ttl">GSM 数字电路交换核心网</div>
+          <div class="dsc">以 MSC 为中心的电路域（CS），数字化语音与短信。核心网=电话交换网的移动版。</div>
+        </div>
+        <div class="tl-item">
+          <div class="yr">1997-2000 · 2.5G</div>
+          <div class="ttl">GPRS 引入分组域（PS）</div>
+          <div class="dsc">新增 SGSN/GGSN，首次把"分组数据/上网"带入移动核心网。CS 与 PS 双域并存格局确立。</div>
+        </div>
+        <div class="tl-item v3">
+          <div class="yr">2001-2005 · 3G</div>
+          <div class="ttl">UMTS 与 R4 软交换</div>
+          <div class="dsc">R4 将 MSC 拆为 MSC Server（控制）+ MGW（承载）——控制与承载分离的首次工程实践。R5 引入 IMS。</div>
+        </div>
+        <div class="tl-item v4">
+          <div class="yr">2009-2012 · 4G</div>
+          <div class="ttl">EPC：全IP、扁平化、取消CS域</div>
+          <div class="dsc">MME/SGW/PGW/HSS/PCRF 登场，语音改由 VoLTE（IMS）承载。R14 引入 CUPS，为5G铺路。</div>
+        </div>
+        <div class="tl-item v5">
+          <div class="yr">2018-2020 · 5G</div>
+          <div class="ttl">5GC：服务化架构 SBA</div>
+          <div class="dsc">网络功能（NF）以微服务+HTTP/2 互调，UPF 用户面下沉边缘，网络切片、能力开放成为标配。</div>
+        </div>
+        <div class="tl-item v6">
+          <div class="yr">2030+ · 6G</div>
+          <div class="ttl">AI 原生 · 通感算一体 · 空天地一体</div>
+          <div class="dsc">网络内生智能与安全、确定性时延、算力与连接融合、卫星与地面网络统一架构（探索中）。</div>
+        </div>
+      </div>
+
+      <h3 class="sec">两条永恒的技术暗线</h3>
+      <div class="cmp">
+        <div class="col old"><h5>① 业务驱动：连接对象的变化</h5>
+          <ul>
+            <li><b>2G</b>：人与人通话（Voice First）</li>
+            <li><b>3G/4G</b>：人与内容（Mobile Internet）</li>
+            <li><b>5G</b>：人、物、行业（eMBB/URLLC/mMTC）</li>
+            <li><b>6G</b>：人、物、智能体与数字孪生世界</li>
+          </ul>
+        </div>
+        <div class="col new"><h5>② 技术驱动：架构形态的变化</h5>
+          <ul>
+            <li><b>专用电路交换机</b>（封闭一体机）</li>
+            <li><b>分组化 + 软交换</b>（控制承载分离）</li>
+            <li><b>全IP + NFV 虚拟化</b>（软硬解耦）</li>
+            <li><b>服务化 + 云原生</b>（微服务、容器）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><span class="lbl">读图提示</span>本手册统一用颜色区分网元角色：<span class="tag cp">控制面 CP</span> <span class="tag up">用户面 UP</span> <span class="tag db">数据库/签约</span>。在每一代架构图中留意这三类如何被逐步拆分。</div>
+    </section>
+
+    <!-- ============ CH2 2G ============ -->
+    <section class="chapter" id="ch2">
+      <div class="ch-head">
+        <span class="era">2G · 1991</span>
+        <h2>2G GSM/GPRS 核心网</h2>
+        <div class="en">Circuit-Switched Core + Packet-Switched Domain (GPRS)</div>
+        <p class="lead">2G 核心网本质上是一张"会移动的数字电话网"。它的设计目标是高可靠地接通语音呼叫，因此采用电路交换（Circuit Switched, CS）——为每通电话独占一条端到端的时隙通道。后期的 GPRS 才补上了分组数据能力。</p>
+      </div>
+
+      <h3 class="sec">电路域（CS Domain）架构</h3>
+      <div class="arch">
+        <div class="arch-title">GSM CS 核心网</div>
+        <div class="arch-rail">
+          <div class="node ran">BSS<small>BTS+BSC</small></div>
+          <div class="conn"></div>
+          <div class="node cp">MSC<small>移动交换中心</small></div>
+          <div class="conn"></div>
+          <div class="node cp">GMSC<small>网关MSC</small></div>
+          <div class="conn"></div>
+          <div class="node ext">PSTN<small>固定电话网</small></div>
+        </div>
+        <div class="layer" style="margin-top:18px">
+          <div class="node db">HLR<small>归属位置寄存器</small></div>
+          <div class="node db">VLR<small>访问位置寄存器</small></div>
+          <div class="node db">AuC<small>鉴权中心</small></div>
+          <div class="node db">EIR<small>设备识别寄存器</small></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i>接入(BSS)</span>
+          <span><i style="background:var(--cyan)"></i>交换/控制</span>
+          <span><i style="background:var(--amber)"></i>用户/签约数据库</span>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="nf">MSC</div><div class="full">Mobile Switching Center</div><div class="desc">核心交换节点，负责呼叫建立、路由、切换、计费。它就是移动版的电话交换机。</div></div>
+        <div class="card"><div class="nf">GMSC</div><div class="full">Gateway MSC</div><div class="desc">网关 MSC，负责与 PSTN 等外部网络互通，呼入时先查 HLR 再选路。</div></div>
+        <div class="card amber"><div class="nf">HLR</div><div class="full">Home Location Register</div><div class="desc">归属位置寄存器，永久存储用户签约数据与当前所在 VLR 地址。是用户数据的"户籍中心"。</div></div>
+        <div class="card amber"><div class="nf">VLR</div><div class="full">Visitor Location Register</div><div class="desc">访问位置寄存器，缓存当前服务区内用户的临时数据，通常与 MSC 合设。</div></div>
+        <div class="card amber"><div class="nf">AuC</div><div class="full">Authentication Center</div><div class="desc">鉴权中心，存储 Ki 密钥并生成鉴权三元组，是安全的根。常与 HLR 合设。</div></div>
+        <div class="card amber"><div class="nf">EIR</div><div class="full">Equipment Identity Register</div><div class="desc">设备识别寄存器，按 IMEI 维护黑/白/灰名单，拦截被盗或非法终端。</div></div>
+      </div>
+
+      <h3 class="sec">分组域（PS Domain）—— GPRS / 2.5G</h3>
+      <p>为了让手机能"上网"，GSM 在 CS 之外叠加了 GPRS 分组域，引入两个关键网元。这是移动核心网第一次拥有"互联网基因"。</p>
+      <div class="cards">
+        <div class="card magenta"><div class="nf">SGSN</div><div class="full">Serving GPRS Support Node</div><div class="desc">服务 GPRS 支持节点：分组域的"MSC"，负责移动性管理、会话管理、对分组数据计费与鉴权。</div></div>
+        <div class="card magenta"><div class="nf">GGSN</div><div class="full">Gateway GPRS Support Node</div><div class="desc">网关 GPRS 支持节点：分组域出口，分配 IP 地址、连接外部 PDN（互联网），是 4G PGW 的前身。</div></div>
+      </div>
+
+      <div class="note"><span class="lbl">信令底座</span>2G/3G 核心网信令运行在 <code>SS7（七号信令）</code> 之上，移动相关流程使用 <code>MAP</code>（Mobile Application Part）协议。这是一套与互联网 TCP/IP 完全不同的电信专用信令体系。</div>
+      <div class="note key"><span class="lbl">本代要点</span>CS 与 PS <b>双域并存</b>是 2G/3G 的核心特征：语音走电路域、数据走分组域，两套独立网元、两套独立流程。后续演进的一大主题，正是逐步淘汰 CS 域、走向全分组（All-IP）。</div>
+    </section>
+
+    <!-- ============ CH3 3G ============ -->
+    <section class="chapter" id="ch3">
+      <div class="ch-head">
+        <span class="era">3G · 2001</span>
+        <h2>3G UMTS 核心网与软交换变革</h2>
+        <div class="en">UMTS Release 99 → R4 Softswitch → R5 IMS</div>
+        <p class="lead">3G（以 WCDMA/UMTS 为代表）在核心网上最初是 2G 的"平滑升级"，但很快通过 R4 版本引入了影响深远的架构革命——<b>软交换</b>，第一次把"控制"和"承载"在工程上彻底分开。</p>
+      </div>
+
+      <h3 class="sec">R99：继承式架构</h3>
+      <p>3GPP Release 99 基本沿用 2G 的核心网结构，CS 域仍是 MSC/VLR/GMSC + HLR，PS 域仍是 SGSN/GGSN，只是升级以支持更高速率。变化主要在接入网：用 <code>UTRAN</code>（RNC + NodeB）取代了 GSM 的 BSS。</p>
+
+      <h3 class="sec">R4：软交换——控制与承载分离 ★</h3>
+      <p>这是核心网演进史上的关键转折。传统 MSC 一台设备同时干两件事：<b>呼叫控制信令</b>（决定怎么接通）和<b>媒体承载交换</b>（搬运语音流）。R4 把它一拆为二：</p>
+      <div class="cmp">
+        <div class="col old"><h5>传统 MSC（一体机）</h5>
+          <ul>
+            <li>控制 + 承载捆绑在同一硬件</li>
+            <li>承载基于 TDM 电路，扩容昂贵</li>
+            <li>新增业务需整机升级</li>
+            <li>控制能力与端口数强耦合</li>
+          </ul>
+        </div>
+        <div class="col new"><h5>R4 软交换（控制/承载分离）</h5>
+          <ul>
+            <li><b>MSC Server</b>：只管呼叫控制信令</li>
+            <li><b>MGW（媒体网关）</b>：只管语音媒体流交换</li>
+            <li>承载转向 IP/ATM 分组传输</li>
+            <li>控制与承载可独立扩容、集中部署</li>
+          </ul>
+        </div>
+      </div>
+      <div class="arch">
+        <div class="arch-title">R4 软交换：信令与媒体分离</div>
+        <div class="layer"><div class="node cp">MSC Server<small>控制面 · 呼叫信令</small></div></div>
+        <div class="flow">│ &nbsp;&nbsp; H.248 / Mc 控制 MGW</div>
+        <div class="arch-rail">
+          <div class="node ran">RNC<small>接入</small></div>
+          <div class="conn"></div>
+          <div class="node up">MGW<small>媒体网关 · 承载面</small></div>
+          <div class="conn"></div>
+          <div class="node ext">PSTN/IP<small>外部</small></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--cyan)"></i>控制面（信令）</span>
+          <span><i style="background:var(--magenta)"></i>承载面（媒体）</span>
+        </div>
+      </div>
+      <div class="note key"><span class="lbl">为什么重要</span>"控制与承载分离"的思想从这里发芽，一路延续到 4G 的 <b>CUPS</b> 和 5G 的 <b>UPF 独立用户面</b>。可以说，R4 软交换是 5G 架构的祖先之一。</div>
+
+      <h3 class="sec">R5/R6：IMS 登场</h3>
+      <p>Release 5 引入 <code>IMS</code>（IP Multimedia Subsystem，IP 多媒体子系统），用一套基于 <code>SIP</code> 协议的 IP 化框架来统一承载语音、视频、消息等多媒体业务。IMS 当时未被广泛商用，却成为 4G 时代 <b>VoLTE</b> 的技术基础。</p>
+      <div class="cards">
+        <div class="card"><div class="nf">CSCF</div><div class="full">Call Session Control Function</div><div class="desc">呼叫会话控制功能，分 P/I/S-CSCF，是 IMS 的 SIP 信令大脑。</div></div>
+        <div class="card amber"><div class="nf">HSS</div><div class="full">Home Subscriber Server</div><div class="desc">归属用户服务器，IMS 的用户数据库，也是 HLR 向 4G HSS 演进的雏形。</div></div>
+        <div class="card"><div class="nf">MGCF</div><div class="full">Media Gateway Control Function</div><div class="desc">媒体网关控制功能，负责 IMS 与传统 PSTN/CS 网络的互通。</div></div>
+      </div>
+    </section>
+
+    <!-- ============ CH4 4G EPC ============ -->
+    <section class="chapter" id="ch4">
+      <div class="ch-head">
+        <span class="era">4G · 2009</span>
+        <h2>4G EPC：全IP、扁平化、取消CS域</h2>
+        <div class="en">Evolved Packet Core (EPC) · System Architecture Evolution (SAE)</div>
+        <p class="lead">4G 核心网 EPC 是一次彻底的"瘦身与提速"。它做了一个大胆决定：<b>取消电路交换域，全网 IP 化</b>。语音不再有专用电路，而是作为一种特殊的数据业务（VoLTE）跑在分组网上。同时网络层级被压扁，时延大幅下降。</p>
+      </div>
+
+      <h3 class="sec">EPC 整体架构</h3>
+      <div class="arch">
+        <div class="arch-title">EPS = LTE 接入(E-UTRAN) + 核心网(EPC)</div>
+        <div class="arch-rail">
+          <div class="node ran">eNodeB<small>LTE基站</small></div>
+          <div class="conn"></div>
+          <div class="node up">S-GW<small>服务网关</small></div>
+          <div class="conn"></div>
+          <div class="node up">P-GW<small>分组数据网关</small></div>
+          <div class="conn"></div>
+          <div class="node ext">Internet/IMS<small>外部PDN</small></div>
+        </div>
+        <div class="flow" style="margin:14px 0">▲ 用户面 (User Plane) &nbsp;|&nbsp; 控制面 (Control Plane) ▼</div>
+        <div class="layer">
+          <div class="node cp">MME<small>移动性管理</small></div>
+          <div class="node db">HSS<small>签约数据库</small></div>
+          <div class="node cp">PCRF<small>策略与计费</small></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--green)"></i>接入</span>
+          <span><i style="background:var(--cyan)"></i>控制面</span>
+          <span><i style="background:var(--magenta)"></i>用户面</span>
+          <span><i style="background:var(--amber)"></i>数据库</span>
+        </div>
+      </div>
+
+      <h3 class="sec">五大核心网元</h3>
+      <div class="cards">
+        <div class="card"><div class="nf">MME</div><div class="full">Mobility Management Entity</div><div class="desc">控制面核心。处理 NAS 信令、用户鉴权、移动性管理、寻呼、承载管理与 SGW/PGW 选择。相当于 4G 的"指挥中心"。</div></div>
+        <div class="card magenta"><div class="nf">S-GW</div><div class="full">Serving Gateway</div><div class="desc">用户面本地锚点。转发用户数据包，处理 eNodeB 间切换时的数据路由，是用户面的"中转站"。</div></div>
+        <div class="card magenta"><div class="nf">P-GW</div><div class="full">PDN Gateway</div><div class="desc">用户面出口锚点。分配 IP 地址、连接外部数据网、执行策略与计费（PCEF）、深度包检测。GGSN 的演进体。</div></div>
+        <div class="card amber"><div class="nf">HSS</div><div class="full">Home Subscriber Server</div><div class="desc">归属用户服务器。融合了 HLR+AuC，集中存储签约数据与鉴权信息。通过 <code>S6a/Diameter</code> 与 MME 交互。</div></div>
+        <div class="card"><div class="nf">PCRF</div><div class="full">Policy & Charging Rules Function</div><div class="desc">策略与计费规则功能。动态下发 QoS、限速、计费策略到 P-GW 中的 PCEF 执行，实现精细化运营。</div></div>
+      </div>
+
+      <h3 class="sec">关键接口（专业速查）</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>接口</th><th>连接</th><th>协议</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">S1-MME</td><td>eNodeB ↔ MME</td><td>S1AP</td><td>控制面信令</td></tr>
+            <tr><td class="mono">S1-U</td><td>eNodeB ↔ S-GW</td><td>GTP-U</td><td>用户面数据隧道</td></tr>
+            <tr><td class="mono">S11</td><td>MME ↔ S-GW</td><td>GTP-C</td><td>会话/承载控制</td></tr>
+            <tr><td class="mono">S5/S8</td><td>S-GW ↔ P-GW</td><td>GTP/PMIP</td><td>网关间承载（S8为漫游）</td></tr>
+            <tr><td class="mono">S6a</td><td>MME ↔ HSS</td><td>Diameter</td><td>鉴权与签约下载</td></tr>
+            <tr><td class="mono">Gx</td><td>PCRF ↔ P-GW</td><td>Diameter</td><td>策略与计费规则下发</td></tr>
+            <tr><td class="mono">SGi</td><td>P-GW ↔ 外部PDN</td><td>IP</td><td>对接互联网/IMS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sec">语音怎么办？—— VoLTE 与回落</h3>
+      <p>既然 EPC 没了 CS 域，语音就需要新方案：</p>
+      <ul>
+        <li><b>VoLTE</b>（Voice over LTE）：语音作为 IMS 上的 VoIP 业务，跑在 LTE 分组网上，高清音质，是目标方案。</li>
+        <li><b>CSFB</b>（CS Fallback）：来电话时把终端临时"回落"到 2G/3G 的 CS 域接听，过渡方案。</li>
+        <li><b>SRVCC</b>（Single Radio Voice Call Continuity）：VoLTE 通话移动到无 LTE 覆盖区时，无缝切换到 2G/3G CS，保证不断线。</li>
+      </ul>
+
+      <h3 class="sec">CUPS：为 5G 埋下伏笔（R14）</h3>
+      <div class="note key"><span class="lbl">承上启下</span><code>CUPS</code>（Control and User Plane Separation，控制面与用户面分离）在 R14 引入，把 S-GW、P-GW 各自拆成 <b>控制面（SGW-C/PGW-C）</b> 与 <b>用户面（SGW-U/PGW-U）</b>。用户面可以独立下沉、靠近用户部署。这正是 5G UPF 灵活部署、边缘计算的直接前身。</div>
+      <div class="cmp">
+        <div class="col old"><h5>CUPS 之前</h5><ul><li>控制与转发功能耦合在网关内</li><li>用户面位置固定，难以下沉</li><li>容量按整机扩展</li></ul></div>
+        <div class="col new"><h5>CUPS 之后</h5><ul><li>控制面集中、用户面分布式</li><li>用户面可部署到网络边缘，降时延</li><li>控制与转发独立弹性扩容</li></ul></div>
+      </div>
+      <h3 class="sec">端到端流程演示：从开机到 VoLTE</h3>
+      <p>把上面这些网元"动起来"看一遍：一张图拆成四个阶段，点击标签查看该阶段的信令/数据路径与逐条步骤。<span style="color:var(--cyan)">控制面</span>负责"谈判建链"，<span style="color:#ff6bb0">用户面</span>负责"搬运数据"。</p>
+      <div class="cnflow" id="flow4g">
+        <div class="cnf-phases">
+          <div class="cnf-phase active" data-p="0"><span class="n">1</span><span class="lbl"><span class="t">开机附着与鉴权</span><span class="e">ATTACH &amp; AUTH</span></span></div>
+          <div class="cnf-phase" data-p="1"><span class="n">2</span><span class="lbl"><span class="t">默认承载建立</span><span class="e">DEFAULT BEARER</span></span></div>
+          <div class="cnf-phase" data-p="2"><span class="n">3</span><span class="lbl"><span class="t">用户数据传输</span><span class="e">USER PLANE</span></span></div>
+          <div class="cnf-phase" data-p="3"><span class="n">4</span><span class="lbl"><span class="t">专有承载 / VoLTE</span><span class="e">DEDICATED BEARER</span></span></div>
+        </div>
+        <div class="cnf-controls"><div class="cnf-play">▶ 自动演示</div></div>
+        <div class="cnf-grid">
+          <div class="cnf-diagram">
+            <div class="cnf-cap">EPC 网络拓扑 · Network Topology</div>
+            <svg viewBox="0 0 950 410" xmlns="http://www.w3.org/2000/svg">
+              <path class="cnf-conn" data-key="uu"    d="M126,348 L190,348"/>
+              <path class="cnf-conn" data-key="s1mme" d="M244,322 L342,150"/>
+              <path class="cnf-conn" data-key="s6a"   d="M388,96 L502,76"/>
+              <path class="cnf-conn" data-key="s1u"   d="M286,360 L420,360"/>
+              <path class="cnf-conn" data-key="s11"   d="M362,150 L470,322"/>
+              <path class="cnf-conn" data-key="s5"    d="M516,348 L610,348"/>
+              <path class="cnf-conn" data-key="gx"    d="M664,322 L728,150"/>
+              <path class="cnf-conn" data-key="sgi"   d="M706,348 L800,348"/>
+
+              <path class="cnf-line" data-key="uu"    d="M126,348 L190,348"/>
+              <path class="cnf-line" data-key="s1mme" d="M244,322 L342,150"/>
+              <path class="cnf-line" data-key="s6a"   d="M388,96 L502,76"/>
+              <path class="cnf-line" data-key="s1u"   d="M286,360 L420,360"/>
+              <path class="cnf-line" data-key="s11"   d="M362,150 L470,322"/>
+              <path class="cnf-line" data-key="s5"    d="M516,348 L610,348"/>
+              <path class="cnf-line" data-key="gx"    d="M664,322 L728,150"/>
+              <path class="cnf-line" data-key="sgi"   d="M706,348 L800,348"/>
+
+              <text class="cnf-if" data-key="uu"    x="158" y="340" text-anchor="middle">LTE-Uu</text>
+              <text class="cnf-if" data-key="s1mme" x="270" y="238" text-anchor="end">S1-MME</text>
+              <text class="cnf-if" data-key="s6a"   x="445" y="78"  text-anchor="middle">S6a</text>
+              <text class="cnf-if" data-key="s1u"   x="353" y="375" text-anchor="middle">S1-U</text>
+              <text class="cnf-if" data-key="s11"   x="430" y="242" text-anchor="start">S11</text>
+              <text class="cnf-if" data-key="s5"    x="563" y="340" text-anchor="middle">S5/S8</text>
+              <text class="cnf-if" data-key="gx"    x="708" y="238" text-anchor="start">Gx</text>
+              <text class="cnf-if" data-key="sgi"   x="753" y="340" text-anchor="middle">SGi</text>
+
+              <g class="cnf-node" data-key="hss">
+                <rect x="500" y="40" width="96" height="56" rx="11" fill="rgba(255,194,75,0.10)" stroke="#ffc24b" stroke-width="1.5"/>
+                <text class="nf" x="548" y="66" text-anchor="middle" font-size="15" fill="#ffc24b">HSS</text>
+                <text class="sub" x="548" y="83" text-anchor="middle" fill="#8294b8">签约数据库</text>
+              </g>
+              <g class="cnf-node" data-key="mme">
+                <rect x="300" y="90" width="96" height="56" rx="11" fill="rgba(45,226,230,0.10)" stroke="#2de2e6" stroke-width="1.5"/>
+                <text class="nf" x="348" y="116" text-anchor="middle" font-size="15" fill="#2de2e6">MME</text>
+                <text class="sub" x="348" y="133" text-anchor="middle" fill="#8294b8">移动性管理</text>
+              </g>
+              <g class="cnf-node" data-key="pcrf">
+                <rect x="690" y="90" width="96" height="56" rx="11" fill="rgba(123,92,255,0.12)" stroke="#7b5cff" stroke-width="1.5"/>
+                <text class="nf" x="738" y="116" text-anchor="middle" font-size="15" fill="#a78bff">PCRF</text>
+                <text class="sub" x="738" y="133" text-anchor="middle" fill="#8294b8">策略计费</text>
+              </g>
+              <g class="cnf-node" data-key="ue">
+                <rect x="30" y="320" width="96" height="56" rx="11" fill="rgba(55,230,164,0.10)" stroke="#37e6a4" stroke-width="1.5"/>
+                <text class="nf" x="78" y="346" text-anchor="middle" font-size="15" fill="#37e6a4">UE</text>
+                <text class="sub" x="78" y="363" text-anchor="middle" fill="#8294b8">用户终端</text>
+              </g>
+              <g class="cnf-node" data-key="enb">
+                <rect x="190" y="320" width="96" height="56" rx="11" fill="rgba(55,230,164,0.10)" stroke="#37e6a4" stroke-width="1.5"/>
+                <text class="nf" x="238" y="346" text-anchor="middle" font-size="14" fill="#37e6a4">eNodeB</text>
+                <text class="sub" x="238" y="363" text-anchor="middle" fill="#8294b8">LTE基站</text>
+              </g>
+              <g class="cnf-node" data-key="sgw">
+                <rect x="420" y="320" width="96" height="56" rx="11" fill="rgba(255,61,154,0.10)" stroke="#ff3d9a" stroke-width="1.5"/>
+                <text class="nf" x="468" y="346" text-anchor="middle" font-size="15" fill="#ff6bb0">S-GW</text>
+                <text class="sub" x="468" y="363" text-anchor="middle" fill="#8294b8">服务网关</text>
+              </g>
+              <g class="cnf-node" data-key="pgw">
+                <rect x="610" y="320" width="96" height="56" rx="11" fill="rgba(255,61,154,0.10)" stroke="#ff3d9a" stroke-width="1.5"/>
+                <text class="nf" x="658" y="346" text-anchor="middle" font-size="15" fill="#ff6bb0">P-GW</text>
+                <text class="sub" x="658" y="363" text-anchor="middle" fill="#8294b8">分组数据网关</text>
+              </g>
+              <g class="cnf-node" data-key="net">
+                <rect x="800" y="320" width="118" height="56" rx="11" fill="rgba(130,148,184,0.10)" stroke="#8294b8" stroke-width="1.5"/>
+                <text class="nf" x="859" y="346" text-anchor="middle" font-size="14" fill="#aab8d6">Internet</text>
+                <text class="sub" x="859" y="363" text-anchor="middle" fill="#8294b8">外部 PDN / IMS</text>
+              </g>
+
+              <text class="cnf-if" x="40" y="30" text-anchor="start" style="fill:#2de2e6;opacity:.7">▲ 控制面 Control Plane</text>
+              <text class="cnf-if" x="40" y="402" text-anchor="start" style="fill:#ff6bb0;opacity:.7">▼ 用户面 User Plane</text>
+            </svg>
+            <div class="cnf-legend">
+              <span><i style="background:#37e6a4"></i>接入(UE/eNodeB)</span>
+              <span><i style="background:#2de2e6"></i>控制面(MME)</span>
+              <span><i style="background:#ff3d9a"></i>用户面(S/P-GW)</span>
+              <span><i style="background:#ffc24b"></i>数据库(HSS)</span>
+              <span><i style="background:#7b5cff"></i>策略(PCRF)</span>
+              <span><i style="background:linear-gradient(90deg,#2de2e6,#7b5cff)"></i>当前流向</span>
+            </div>
+          </div>
+          <div class="cnf-steps">
+            <div class="cnf-cap">流程步骤 · Signaling &amp; Data</div>
+            <div class="cnf-phhead"><div class="cnf-phtitle"></div><div class="cnf-phdesc"></div></div>
+            <div class="cnf-datapath"></div>
+            <ol class="cnf-steplist"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CH5 5GC ============ -->
+    <section class="chapter" id="ch5">
+      <div class="ch-head">
+        <span class="era">5G · 2018</span>
+        <h2>5G 核心网 5GC：服务化架构 SBA</h2>
+        <div class="en">5G Core · Service-Based Architecture</div>
+        <p class="lead">5GC 是核心网历史上最彻底的一次重构。它不再画"一个个盒子用线连起来"的传统架构图，而是把每个网络功能（NF）变成一个<b>可被发现、可被调用的微服务</b>，挂在一条公共总线上互相通信。这就是 <b>SBA（Service-Based Architecture，服务化架构）</b>。</p>
+      </div>
+
+      <h3 class="sec">从"点对点接口"到"服务总线"</h3>
+      <div class="cmp">
+        <div class="col old"><h5>4G 及以前：刚性点对点</h5><ul><li>网元间用固定接口（S11/S6a…）两两相连</li><li>新增一个网元，要改一堆接口</li><li>协议各异（Diameter/GTP/SS7）</li></ul></div>
+        <div class="col new"><h5>5G SBA：服务化总线</h5><ul><li>NF 把能力封装成"服务"注册到总线</li><li>调用方通过 NRF 发现并按需调用</li><li>统一用 <code>HTTP/2 + REST + JSON</code></li><li>即插即用、独立升级、云原生友好</li></ul></div>
+      </div>
+
+      <div class="arch">
+        <div class="arch-title">5GC 服务化架构（SBA）</div>
+        <div class="layer">
+          <div class="node cp">NSSF</div>
+          <div class="node cp">NEF</div>
+          <div class="node cp">NRF</div>
+          <div class="node cp">AUSF</div>
+          <div class="node db">UDM</div>
+          <div class="node cp">PCF</div>
+          <div class="node cp">AF</div>
+        </div>
+        <div class="bus">◇ &nbsp; SBI 服务化总线 · HTTP/2 / REST &nbsp; ◇</div>
+        <div class="layer">
+          <div class="node cp">AMF<small>接入移动管理</small></div>
+          <div class="node cp">SMF<small>会话管理</small></div>
+        </div>
+        <div class="flow" style="margin:12px 0 8px">控制面 ↑ &nbsp;&nbsp;|&nbsp;&nbsp; 用户面 ↓（N4 控制）</div>
+        <div class="arch-rail">
+          <div class="node ran">gNB<small>5G基站</small></div>
+          <div class="conn"></div>
+          <div class="node up">UPF<small>用户面功能 · 可下沉边缘</small></div>
+          <div class="conn"></div>
+          <div class="node ext">DN<small>数据网络</small></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--cyan)"></i>控制面 NF</span>
+          <span><i style="background:var(--magenta)"></i>用户面 UPF</span>
+          <span><i style="background:var(--amber)"></i>数据管理</span>
+          <span><i style="background:var(--green)"></i>接入</span>
+        </div>
+      </div>
+
+      <h3 class="sec">核心网络功能（NF）一览</h3>
+      <div class="cards">
+        <div class="card"><div class="nf">AMF</div><div class="full">Access & Mobility Mgmt Function</div><div class="desc">接入与移动性管理。承接 4G MME 的移动性部分：注册、连接、移动性、寻呼、NAS 信令。</div></div>
+        <div class="card"><div class="nf">SMF</div><div class="full">Session Management Function</div><div class="desc">会话管理。负责 PDU 会话建立、IP 地址分配、并通过 <code>N4</code> 控制 UPF。承接 MME/SGW-C/PGW-C 的会话部分。</div></div>
+        <div class="card magenta"><div class="nf">UPF</div><div class="full">User Plane Function</div><div class="desc">唯一用户面功能。数据包路由转发、QoS 执行、计费统计。可灵活下沉到边缘，是低时延与 MEC 的关键。</div></div>
+        <div class="card"><div class="nf">AUSF</div><div class="full">Authentication Server Function</div><div class="desc">鉴权服务功能，负责 5G 接入鉴权流程，与 UDM 配合完成安全认证。</div></div>
+        <div class="card amber"><div class="nf">UDM</div><div class="full">Unified Data Management</div><div class="desc">统一数据管理，5G 的"HSS"，处理签约、鉴权数据、用户标识。计算逻辑与存储分离。</div></div>
+        <div class="card amber"><div class="nf">UDR</div><div class="full">Unified Data Repository</div><div class="desc">统一数据仓库，真正存放签约/策略/结构化数据，供 UDM/PCF 等读写。实现"计算-存储分离"。</div></div>
+        <div class="card"><div class="nf">PCF</div><div class="full">Policy Control Function</div><div class="desc">策略控制功能，4G PCRF 的演进，统一管理 QoS、计费、接入与移动性策略。</div></div>
+        <div class="card violet"><div class="nf">NRF</div><div class="full">Network Repository Function</div><div class="desc">网络存储功能，SBA 的"服务注册与发现中心"。所有 NF 在此注册，调用方在此查找。是 5GC 独有的灵魂网元。</div></div>
+        <div class="card violet"><div class="nf">NSSF</div><div class="full">Network Slice Selection Function</div><div class="desc">网络切片选择功能，根据业务为终端选择合适的网络切片实例。</div></div>
+        <div class="card violet"><div class="nf">NEF</div><div class="full">Network Exposure Function</div><div class="desc">网络能力开放功能，把核心网能力安全地开放给第三方应用/AF，是 5G to B 的桥梁。</div></div>
+      </div>
+
+      <h3 class="sec">5GC 的三大杀手锏</h3>
+      <div class="cards">
+        <div class="card"><div class="nf">网络切片</div><div class="full">Network Slicing</div><div class="desc">在同一物理网络上切出多张相互隔离的逻辑专网，分别面向 <span class="tag cp">eMBB</span><span class="tag up">URLLC</span><span class="tag db">mMTC</span> 等不同场景，各有独立 QoS 与资源。</div></div>
+        <div class="card magenta"><div class="nf">边缘计算 MEC</div><div class="full">Multi-access Edge Computing</div><div class="desc">借助 UPF 下沉，把数据处理放到靠近用户的边缘节点，实现毫秒级时延，支撑工业控制、自动驾驶、AR/VR。</div></div>
+        <div class="card violet"><div class="nf">能力开放</div><div class="full">Capability Exposure</div><div class="desc">通过 NEF 将网络能力 API 化对外开放，让行业应用按需调用 QoS、定位、切片等，催生 5G to B 商业模式。</div></div>
+      </div>
+
+      <h3 class="sec">SA 与 NSA：两种组网选择</h3>
+      <div class="cmp">
+        <div class="col old"><h5>NSA 非独立组网</h5><ul><li>5G 基站锚定在 4G EPC 核心网上</li><li>快速部署，复用 4G 投资</li><li>仅增强带宽，难用切片/URLLC</li></ul></div>
+        <div class="col new"><h5>SA 独立组网</h5><ul><li>5G 基站直连全新 5GC 核心网</li><li>完整释放切片、MEC、URLLC 能力</li><li>是 5G 价值的真正载体</li></ul></div>
+      </div>
+      <div class="note warn"><span class="lbl">易混淆点</span>很多人以为"上了 5G 就是 5GC"。其实 NSA 阶段的 5G 仍在使用 4G 的 EPC 核心网，只有切换到 <b>SA 独立组网</b> 才真正用上 5GC 服务化架构与全部新能力。</div>
+      <h3 class="sec">端到端流程演示：从注册到边缘计算</h3>
+      <p>5GC 没有传统意义上的"两两接口"，所有控制面 NF 都通过 <b>SBI 服务化总线</b>互相调用。下面这张交互图把一次完整的 5G 用户体验拆成四个阶段——从注册鉴权、PDU 会话建立、用户面数据传输，一直到边缘计算本地分流。点击标签查看每阶段的信令/数据路径与逐条步骤。</p>
+      <div class="cnflow" id="flow5g">
+        <div class="cnf-phases">
+          <div class="cnf-phase active" data-p="0"><span class="n">1</span><span class="lbl"><span class="t">注册与主鉴权</span><span class="e">REGISTRATION</span></span></div>
+          <div class="cnf-phase" data-p="1"><span class="n">2</span><span class="lbl"><span class="t">PDU 会话建立</span><span class="e">PDU SESSION</span></span></div>
+          <div class="cnf-phase" data-p="2"><span class="n">3</span><span class="lbl"><span class="t">用户数据传输</span><span class="e">USER PLANE</span></span></div>
+          <div class="cnf-phase" data-p="3"><span class="n">4</span><span class="lbl"><span class="t">边缘计算本地分流</span><span class="e">MEC / LOCAL</span></span></div>
+        </div>
+        <div class="cnf-controls"><div class="cnf-play">▶ 自动演示</div></div>
+        <div class="cnf-grid">
+          <div class="cnf-diagram">
+            <div class="cnf-cap">5GC 服务化拓扑 · SBA Topology</div>
+            <svg viewBox="0 0 1000 470" xmlns="http://www.w3.org/2000/svg">
+              <!-- SBI bus -->
+              <rect class="cnf-bus" x="90" y="104" width="620" height="24" rx="12"/>
+              <text class="cnf-if" x="400" y="121" text-anchor="middle" style="fill:#7af1f4;opacity:.85">◇ SBI 服务化总线 · HTTP/2 / REST ◇</text>
+
+              <!-- taps: NF -> bus -->
+              <path class="cnf-conn" data-key="tap_ausf" d="M150,90 L150,104"/>
+              <path class="cnf-conn" data-key="tap_udm"  d="M330,90 L330,104"/>
+              <path class="cnf-conn" data-key="tap_nrf"  d="M510,90 L510,104"/>
+              <path class="cnf-conn" data-key="tap_pcf"  d="M690,90 L690,104"/>
+              <!-- taps: bus -> AMF/SMF -->
+              <path class="cnf-conn" data-key="tap_amf" d="M290,128 L290,168"/>
+              <path class="cnf-conn" data-key="tap_smf" d="M560,128 L560,168"/>
+
+              <path class="cnf-line" data-key="tap_ausf" d="M150,90 L150,104"/>
+              <path class="cnf-line" data-key="tap_udm"  d="M330,90 L330,104"/>
+              <path class="cnf-line" data-key="tap_nrf"  d="M510,90 L510,104"/>
+              <path class="cnf-line" data-key="tap_pcf"  d="M690,90 L690,104"/>
+              <path class="cnf-line" data-key="tap_amf" d="M290,128 L290,168"/>
+              <path class="cnf-line" data-key="tap_smf" d="M560,128 L560,168"/>
+
+              <!-- user-plane / control inter-node links -->
+              <path class="cnf-conn" data-key="n2"  d="M210,330 L290,218"/>
+              <path class="cnf-conn" data-key="n11" d="M336,193 L514,193"/>
+              <path class="cnf-conn" data-key="n4"  d="M560,218 L430,330"/>
+              <path class="cnf-conn" data-key="uu"  d="M120,358 L162,358"/>
+              <path class="cnf-conn" data-key="n3"  d="M258,358 L382,358"/>
+              <path class="cnf-conn" data-key="n6"  d="M478,358 L652,358"/>
+              <path class="cnf-conn" data-key="mec" d="M430,384 L560,410"/>
+
+              <path class="cnf-line" data-key="n2"  d="M210,330 L290,218"/>
+              <path class="cnf-line" data-key="n11" d="M336,193 L514,193"/>
+              <path class="cnf-line" data-key="n4"  d="M560,218 L430,330"/>
+              <path class="cnf-line" data-key="uu"  d="M120,358 L162,358"/>
+              <path class="cnf-line" data-key="n3"  d="M258,358 L382,358"/>
+              <path class="cnf-line" data-key="n6"  d="M478,358 L652,358"/>
+              <path class="cnf-line" data-key="mec" d="M430,384 L560,410"/>
+
+              <!-- interface labels -->
+              <text class="cnf-if" data-key="uu"  x="141" y="350" text-anchor="middle">NR-Uu</text>
+              <text class="cnf-if" data-key="n2"  x="238" y="282" text-anchor="end">N2</text>
+              <text class="cnf-if" data-key="n11" x="425" y="187" text-anchor="middle">N11</text>
+              <text class="cnf-if" data-key="n4"  x="486" y="284" text-anchor="start">N4</text>
+              <text class="cnf-if" data-key="n3"  x="320" y="350" text-anchor="middle">N3</text>
+              <text class="cnf-if" data-key="n6"  x="565" y="350" text-anchor="middle">N6</text>
+              <text class="cnf-if" data-key="mec" x="470" y="404" text-anchor="start">本地分流</text>
+              <text class="cnf-if" data-key="tap_amf" x="298" y="152" text-anchor="start">SBI</text>
+              <text class="cnf-if" data-key="tap_smf" x="568" y="152" text-anchor="start">SBI</text>
+
+              <!-- control-plane NFs (top row) -->
+              <g class="cnf-node" data-key="ausf">
+                <rect x="104" y="40" width="92" height="50" rx="10" fill="rgba(255,194,75,0.10)" stroke="#ffc24b" stroke-width="1.5"/>
+                <text class="nf" x="150" y="66" text-anchor="middle" font-size="14" fill="#ffc24b">AUSF</text>
+                <text class="sub" x="150" y="82" text-anchor="middle" font-size="10" fill="#8294b8">鉴权服务</text>
+              </g>
+              <g class="cnf-node" data-key="udm">
+                <rect x="284" y="40" width="92" height="50" rx="10" fill="rgba(255,194,75,0.10)" stroke="#ffc24b" stroke-width="1.5"/>
+                <text class="nf" x="330" y="66" text-anchor="middle" font-size="14" fill="#ffc24b">UDM</text>
+                <text class="sub" x="330" y="82" text-anchor="middle" font-size="10" fill="#8294b8">统一数据</text>
+              </g>
+              <g class="cnf-node" data-key="nrf">
+                <rect x="464" y="40" width="92" height="50" rx="10" fill="rgba(123,92,255,0.12)" stroke="#7b5cff" stroke-width="1.5"/>
+                <text class="nf" x="510" y="66" text-anchor="middle" font-size="14" fill="#a78bff">NRF</text>
+                <text class="sub" x="510" y="82" text-anchor="middle" font-size="10" fill="#8294b8">服务发现</text>
+              </g>
+              <g class="cnf-node" data-key="pcf">
+                <rect x="644" y="40" width="92" height="50" rx="10" fill="rgba(123,92,255,0.12)" stroke="#7b5cff" stroke-width="1.5"/>
+                <text class="nf" x="690" y="66" text-anchor="middle" font-size="14" fill="#a78bff">PCF</text>
+                <text class="sub" x="690" y="82" text-anchor="middle" font-size="10" fill="#8294b8">策略控制</text>
+              </g>
+
+              <!-- AMF / SMF -->
+              <g class="cnf-node" data-key="amf">
+                <rect x="244" y="168" width="92" height="50" rx="10" fill="rgba(45,226,230,0.10)" stroke="#2de2e6" stroke-width="1.5"/>
+                <text class="nf" x="290" y="194" text-anchor="middle" font-size="14" fill="#2de2e6">AMF</text>
+                <text class="sub" x="290" y="210" text-anchor="middle" font-size="10" fill="#8294b8">接入移动管理</text>
+              </g>
+              <g class="cnf-node" data-key="smf">
+                <rect x="514" y="168" width="92" height="50" rx="10" fill="rgba(45,226,230,0.10)" stroke="#2de2e6" stroke-width="1.5"/>
+                <text class="nf" x="560" y="194" text-anchor="middle" font-size="14" fill="#2de2e6">SMF</text>
+                <text class="sub" x="560" y="210" text-anchor="middle" font-size="10" fill="#8294b8">会话管理</text>
+              </g>
+
+              <!-- user plane -->
+              <g class="cnf-node" data-key="ue">
+                <rect x="24" y="330" width="96" height="54" rx="11" fill="rgba(55,230,164,0.10)" stroke="#37e6a4" stroke-width="1.5"/>
+                <text class="nf" x="72" y="358" text-anchor="middle" font-size="15" fill="#37e6a4">UE</text>
+                <text class="sub" x="72" y="375" text-anchor="middle" font-size="10" fill="#8294b8">用户终端</text>
+              </g>
+              <g class="cnf-node" data-key="gnb">
+                <rect x="162" y="330" width="96" height="54" rx="11" fill="rgba(55,230,164,0.10)" stroke="#37e6a4" stroke-width="1.5"/>
+                <text class="nf" x="210" y="358" text-anchor="middle" font-size="14" fill="#37e6a4">gNB</text>
+                <text class="sub" x="210" y="375" text-anchor="middle" font-size="10" fill="#8294b8">5G基站</text>
+              </g>
+              <g class="cnf-node" data-key="upf">
+                <rect x="382" y="330" width="96" height="54" rx="11" fill="rgba(255,61,154,0.10)" stroke="#ff3d9a" stroke-width="1.5"/>
+                <text class="nf" x="430" y="358" text-anchor="middle" font-size="15" fill="#ff6bb0">UPF</text>
+                <text class="sub" x="430" y="375" text-anchor="middle" font-size="10" fill="#8294b8">用户面·可下沉</text>
+              </g>
+              <g class="cnf-node" data-key="dn">
+                <rect x="652" y="330" width="96" height="54" rx="11" fill="rgba(130,148,184,0.10)" stroke="#8294b8" stroke-width="1.5"/>
+                <text class="nf" x="700" y="358" text-anchor="middle" font-size="14" fill="#aab8d6">DN</text>
+                <text class="sub" x="700" y="375" text-anchor="middle" font-size="10" fill="#8294b8">数据网络</text>
+              </g>
+              <g class="cnf-node" data-key="mec">
+                <rect x="495" y="410" width="130" height="46" rx="11" fill="rgba(255,194,75,0.10)" stroke="#ffc24b" stroke-width="1.5"/>
+                <text class="nf" x="560" y="432" text-anchor="middle" font-size="13" fill="#ffc24b">MEC 边缘应用</text>
+                <text class="sub" x="560" y="448" text-anchor="middle" font-size="9.5" fill="#8294b8">本地终结 · 低时延</text>
+              </g>
+
+              <text class="cnf-if" x="30" y="28" text-anchor="start" style="fill:#2de2e6;opacity:.7">▲ 控制面 NF · SBI 总线</text>
+              <text class="cnf-if" x="30" y="322" text-anchor="start" style="fill:#ff6bb0;opacity:.7">▼ 用户面 User Plane</text>
+            </svg>
+            <div class="cnf-legend">
+              <span><i style="background:#37e6a4"></i>接入(UE/gNB)</span>
+              <span><i style="background:#2de2e6"></i>控制面 NF(AMF/SMF/SBI)</span>
+              <span><i style="background:#ff3d9a"></i>用户面(UPF/DN)</span>
+              <span><i style="background:#ffc24b"></i>鉴权/数据/边缘</span>
+              <span><i style="background:#7b5cff"></i>策略/发现(NRF/PCF)</span>
+              <span><i style="background:linear-gradient(90deg,#2de2e6,#7b5cff)"></i>当前流向</span>
+            </div>
+          </div>
+          <div class="cnf-steps">
+            <div class="cnf-cap">流程步骤 · Signaling &amp; Data</div>
+            <div class="cnf-phhead"><div class="cnf-phtitle"></div><div class="cnf-phdesc"></div></div>
+            <div class="cnf-datapath"></div>
+            <ol class="cnf-steplist"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CH6 架构理念 ============ -->
+    <section class="chapter" id="ch6">
+      <div class="ch-head">
+        <span class="era">PRINCIPLES</span>
+        <h2>贯穿四代的三大架构理念</h2>
+        <div class="en">Three Great Decouplings That Shaped the Core</div>
+        <p class="lead">如果只记住一件事，那就是：核心网演进史，是一部"解耦史"。把这三条主线看透，任何一代架构图都能秒懂。</p>
+      </div>
+
+      <h3 class="sec">① 业务解耦：电路域 → 分组域（CS → PS）</h3>
+      <p>从 2G 的电路交换，到 GPRS 引入分组域双域并存，再到 4G EPC 干脆<b>取消 CS 域、全网 IP 化</b>。语音从"独占电路"变成"分组网上的一种数据业务（VoLTE）"。这是从"电话网思维"到"互联网思维"的根本转变。</p>
+
+      <h3 class="sec">② 转发解耦：控制与承载分离（CUPS）</h3>
+      <p>这条线索贯穿最久：3G R4 软交换（MSC Server / MGW）→ 4G CUPS（SGW/PGW 各拆控制面与用户面）→ 5G 把用户面彻底独立为 UPF。好处是用户面能灵活下沉到边缘、控制面能集中云化。</p>
+      <div class="arch">
+        <div class="arch-title">"控制/承载分离"的接力演进</div>
+        <div class="arch-rail">
+          <div class="node">R4 软交换<small>MSC-S / MGW</small></div>
+          <div class="conn"></div>
+          <div class="node v4 cp">4G CUPS<small>xGW-C / xGW-U</small></div>
+          <div class="conn"></div>
+          <div class="node vio">5G SBA<small>SMF / UPF</small></div>
+        </div>
+      </div>
+
+      <h3 class="sec">③ 软硬解耦 + 功能解耦：虚拟化与服务化</h3>
+      <p>两个并行的趋势在 5G 汇合：</p>
+      <ul>
+        <li><b>软硬解耦（NFV）</b>：网络功能从专用电信设备里"软件化"出来，跑在通用 x86 服务器/云上。一台设备不再只能干一件事。</li>
+        <li><b>功能解耦（SBA）</b>：网元之间从刚性点对点接口，变成总线上互相调用的服务，可独立扩缩容、升级、即插即用。</li>
+      </ul>
+
+      <h3 class="sec">理念演进全景对照</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>维度</th><th class="gen-2g">2G/3G</th><th class="gen-4g">4G</th><th class="gen-5g">5G</th></tr></thead>
+          <tbody>
+            <tr><td>交换方式</td><td>电路 + 分组双域</td><td>全分组 All-IP</td><td>全分组 + 云原生</td></tr>
+            <tr><td>控制/承载</td><td>R4 起初步分离</td><td>CUPS 分离</td><td>UPF 完全独立</td></tr>
+            <tr><td>网元形态</td><td>专用一体机</td><td>专用/部分虚拟化</td><td>云原生微服务(CNF)</td></tr>
+            <tr><td>互联方式</td><td>SS7 / 点对点</td><td>Diameter/GTP 点对点</td><td>SBI 服务总线(HTTP/2)</td></tr>
+            <tr><td>语音承载</td><td>CS 电路域</td><td>VoLTE(IMS)</td><td>VoNR(IMS)</td></tr>
+            <tr><td>部署位置</td><td>集中机房</td><td>集中 + 初步下沉</td><td>中心云 + 边缘云</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note key"><span class="lbl">一句话总结</span>从"<b>专用、刚性、集中、电路</b>"走向"<b>通用、弹性、分布、分组</b>"——四个词，概括四十年。</div>
+    </section>
+
+    <!-- ============ CH7 云化 ============ -->
+    <section class="chapter" id="ch7">
+      <div class="ch-head">
+        <span class="era">CLOUD</span>
+        <h2>核心网云化：NFV、SDN 与云原生</h2>
+        <div class="en">Telco Cloud · From Virtualization to Cloud-Native</div>
+        <p class="lead">5GC 的服务化只有跑在"云"上才能发挥威力。支撑这一切的，是三套关键技术：NFV（虚拟化）、SDN（网络可编程）、以及云原生（容器与微服务）。它们共同把核心网从"一柜柜专用机"变成"一片可弹性调度的软件"。</p>
+      </div>
+
+      <h3 class="sec">NFV：网络功能虚拟化</h3>
+      <p><code>NFV</code>（Network Functions Virtualization）的核心思想：把过去固化在专用硬件里的网络功能，变成可在通用服务器上运行的软件（VNF）。由 ETSI 定义的标准框架包含三层：</p>
+      <div class="cards">
+        <div class="card"><div class="nf">VNF</div><div class="full">Virtualized Network Function</div><div class="desc">虚拟化网络功能，即软件化的网元（如虚拟 AMF/SMF）。</div></div>
+        <div class="card magenta"><div class="nf">NFVI</div><div class="full">NFV Infrastructure</div><div class="desc">承载 VNF 的基础设施：通用计算、存储、网络 + 虚拟化层。</div></div>
+        <div class="card violet"><div class="nf">MANO</div><div class="full">Management & Orchestration</div><div class="desc">管理与编排：负责 VNF 的生命周期、资源调度与自动化部署。</div></div>
+      </div>
+
+      <h3 class="sec">SDN：软件定义网络</h3>
+      <p><code>SDN</code>（Software Defined Networking）把网络设备的<b>控制面与转发面分离</b>，用集中的控制器统一编程下发转发规则。它与核心网"控制/承载分离"的理念同源，让网络连接像软件一样可编程、可灵活调度——尤其在数据中心内部和切片承载中作用突出。</p>
+
+      <h3 class="sec">从虚拟机到云原生（Cloud Native）</h3>
+      <p>NFV 早期用<b>虚拟机（VM）</b>承载 VNF，较重。5G 时代进一步走向<b>容器化</b>：网络功能被拆成微服务、打包成容器、由 Kubernetes 编排，称为 <code>CNF</code>（Cloud-Native Network Function）。</p>
+      <div class="arch">
+        <div class="arch-title">承载形态演进</div>
+        <div class="arch-rail">
+          <div class="node ext">专用硬件<small>物理网元</small></div>
+          <div class="conn"></div>
+          <div class="node cp">VM / VNF<small>NFV 虚拟机</small></div>
+          <div class="conn"></div>
+          <div class="node vio">容器 / CNF<small>云原生微服务</small></div>
+        </div>
+      </div>
+      <div class="cmp">
+        <div class="col old"><h5>VNF（虚拟机时代）</h5><ul><li>整网元打包成一个虚拟机镜像</li><li>启动慢、资源占用大</li><li>弹性伸缩粒度粗</li></ul></div>
+        <div class="col new"><h5>CNF（云原生时代）</h5><ul><li>拆成微服务、容器化部署</li><li>秒级弹性、按需扩缩单个服务</li><li>配合 CI/CD 实现持续交付</li><li>故障自愈、灰度升级</li></ul></div>
+      </div>
+      <div class="note"><span class="lbl">Telco Cloud</span>运营商为此构建专门的<b>电信云</b>：在中心 DC 部署控制面 NF，在边缘 DC 部署 UPF 等用户面，配合 MANO 与 K8s 实现全网自动化编排。这就是"核心网上云"的工程落地形态。</div>
+      <div class="note key"><span class="lbl">价值闭环</span>软硬解耦（NFV）让功能上云 → 服务化（SBA）让功能可灵活组合 → 云原生（CNF）让功能弹性敏捷。三者叠加，核心网才真正具备了"软件定义、按需生长"的能力。</div>
+    </section>
+
+    <!-- ============ CH8 6G ============ -->
+    <section class="chapter" id="ch8">
+      <div class="ch-head">
+        <span class="era">6G · 2030+</span>
+        <h2>6G 展望：面向智能内生的核心网</h2>
+        <div class="en">Toward 6G · AI-Native & Converged Core (Exploratory)</div>
+        <p class="lead">6G 仍处于研究与标准前期，架构尚未冻结。但业界方向已逐渐清晰：在 5G 服务化与云原生的基础上，让网络<b>内生智能、内生安全</b>，并把通信、感知、计算、卫星深度融合。以下为当前主流探索方向，供前瞻参考。</p>
+      </div>
+
+      <div class="note warn"><span class="lbl">阅读提醒</span>本章内容为<b>面向未来的技术趋势与研究方向</b>，并非已冻结的标准。具体网元名称与架构以未来 3GPP 正式版本为准。</div>
+
+      <h3 class="sec">六个主要探索方向</h3>
+      <div class="cards">
+        <div class="card violet"><div class="nf">AI 原生</div><div class="full">AI-Native Network</div><div class="desc">AI 不再是外挂工具，而是内嵌于核心网架构本身：网络自优化、自配置、自愈，意图驱动运维。可能出现专门的网络智能功能（如 NWDAF 的演进）。</div></div>
+        <div class="card"><div class="nf">确定性网络</div><div class="full">Deterministic Networking</div><div class="desc">提供有界、可保证的端到端时延与抖动，支撑工业全闭环控制、远程手术、全息通信等严苛场景。</div></div>
+        <div class="card magenta"><div class="nf">通感算一体</div><div class="full">ISAC + Computing</div><div class="desc">通信与感知融合（用信号"看"环境），并将算力作为网络原生资源，连接与计算统一编排（算力网络）。</div></div>
+        <div class="card"><div class="nf">空天地一体</div><div class="full">NTN Integration</div><div class="desc">卫星（NTN）与地面网络在同一核心架构下统一接入与管理，实现真正的全球无缝覆盖。</div></div>
+        <div class="card violet"><div class="nf">数字孪生网络</div><div class="full">Digital Twin Network</div><div class="desc">为物理网络建立实时数字镜像，先在孪生体中仿真验证再下发，实现预测式运维与零接触运营。</div></div>
+        <div class="card amber"><div class="nf">内生安全</div><div class="full">Intrinsic Security</div><div class="desc">安全从"打补丁"变为架构内生：零信任、隐私计算、抗量子加密成为核心网默认能力。</div></div>
+      </div>
+
+      <h3 class="sec">从 5G 到 6G 的架构延续性</h3>
+      <p>6G 不会推倒重来，而是沿着 5G 的方向继续深化：</p>
+      <ul>
+        <li><b>服务化更彻底</b>：从 NF 服务化走向"网络即服务（NaaS）"，能力进一步原子化、API 化。</li>
+        <li><b>云原生更下沉</b>：算力与网络融合，UPF/边缘进一步分布式、随业务流动。</li>
+        <li><b>智能更内生</b>：数据采集、模型训练、推理闭环成为架构标准组件。</li>
+        <li><b>覆盖更立体</b>：从地面平面网络走向"空-天-地-海"三维网络。</li>
+      </ul>
+      <div class="arch">
+        <div class="arch-title">演进延续：解耦 → 服务化 → 智能化</div>
+        <div class="arch-rail">
+          <div class="node v4 cp">4G 全IP+CUPS</div>
+          <div class="conn"></div>
+          <div class="node vio">5G SBA+云原生</div>
+          <div class="conn"></div>
+          <div class="node v6" style="background:rgba(255,61,154,.1);border-color:rgba(255,61,154,.45);color:#ff6bb0">6G AI原生+一体化</div>
+        </div>
+      </div>
+      <div class="note key"><span class="lbl">展望小结</span>如果说 5G 让核心网"上了云"，6G 的目标是让核心网"长出大脑"——网络能感知、会思考、自运营，并把通信、计算、感知、覆盖融为一体。</div>
+    </section>
+
+    <!-- ============ CH9 对照表 ============ -->
+    <section class="chapter" id="ch9">
+      <div class="ch-head">
+        <span class="era">REFERENCE</span>
+        <h2>网元功能演进对照表</h2>
+        <div class="en">Network Element Mapping Across Generations</div>
+        <p class="lead">同一种"职责"在不同代际由不同网元承担。这张表把功能作为锚点，纵览 2G→5G 的"血脉传承"，是理解整套演进的速查地图。</p>
+      </div>
+
+      <div class="legend">
+        <span><i style="background:#ff8a5c"></i>2G</span>
+        <span><i style="background:var(--amber)"></i>3G</span>
+        <span><i style="background:var(--green)"></i>4G</span>
+        <span><i style="background:var(--cyan)"></i>5G</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>功能职责</th><th class="gen-2g">2G GSM/GPRS</th><th class="gen-3g">3G UMTS</th><th class="gen-4g">4G EPC</th><th class="gen-5g">5G 5GC</th></tr></thead>
+          <tbody>
+            <tr><td><b>移动性管理(语音)</b></td><td>MSC/VLR</td><td>MSC Server</td><td>—（CS取消）</td><td>—</td></tr>
+            <tr><td><b>移动性管理(数据)</b></td><td>SGSN</td><td>SGSN</td><td class="gen-4g mono">MME</td><td class="gen-5g mono">AMF</td></tr>
+            <tr><td><b>会话管理</b></td><td>SGSN</td><td>SGSN</td><td class="gen-4g mono">MME+SGW-C/PGW-C</td><td class="gen-5g mono">SMF</td></tr>
+            <tr><td><b>用户面/网关</b></td><td>GGSN</td><td>GGSN</td><td class="gen-4g mono">S-GW + P-GW</td><td class="gen-5g mono">UPF</td></tr>
+            <tr><td><b>媒体承载(语音)</b></td><td>MSC内</td><td>MGW</td><td>VoLTE/IMS</td><td>VoNR/IMS</td></tr>
+            <tr><td><b>用户签约数据库</b></td><td>HLR</td><td>HLR/HSS</td><td class="gen-4g mono">HSS</td><td class="gen-5g mono">UDM+UDR</td></tr>
+            <tr><td><b>鉴权安全</b></td><td>AuC</td><td>AuC</td><td>HSS内</td><td class="gen-5g mono">AUSF+UDM</td></tr>
+            <tr><td><b>策略与计费</b></td><td>—</td><td>—</td><td class="gen-4g mono">PCRF</td><td class="gen-5g mono">PCF</td></tr>
+            <tr><td><b>设备识别</b></td><td>EIR</td><td>EIR</td><td>EIR</td><td>5G-EIR</td></tr>
+            <tr><td><b>服务注册发现</b></td><td>—</td><td>—</td><td>—</td><td class="gen-5g mono">NRF</td></tr>
+            <tr><td><b>切片选择</b></td><td>—</td><td>—</td><td>—</td><td class="gen-5g mono">NSSF</td></tr>
+            <tr><td><b>能力开放</b></td><td>—</td><td>—</td><td>SCEF</td><td class="gen-5g mono">NEF</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sec">三条最值得记住的"传承链"</h3>
+      <div class="cards">
+        <div class="card"><div class="nf">移动性管理链</div><div class="full">谁管你在哪、怎么连</div><div class="desc">SGSN → <b>MME</b> → <b>AMF</b></div></div>
+        <div class="card magenta"><div class="nf">用户面网关链</div><div class="full">谁搬运你的数据</div><div class="desc">GGSN → S-GW + P-GW → <b>UPF</b></div></div>
+        <div class="card amber"><div class="nf">用户数据库链</div><div class="full">谁记得你是谁</div><div class="desc">HLR + AuC → <b>HSS</b> → <b>UDM + UDR + AUSF</b></div></div>
+      </div>
+      <div class="note key"><span class="lbl">记忆口诀</span>"管位置的"越拆越清（SGSN→MME→AMF），"搬数据的"越合越简（双网关→单 UPF），"存身份的"越分越细（HLR/AuC→HSS→UDM/UDR/AUSF 计算存储分离）。</div>
+    </section>
+
+    <!-- ============ CH10 术语表 ============ -->
+    <section class="chapter" id="ch10">
+      <div class="ch-head">
+        <span class="era">GLOSSARY</span>
+        <h2>术语 · 缩略语速查</h2>
+        <div class="en">Acronyms & Glossary</div>
+        <p class="lead">按主题归类的核心缩略语，便于随时回查。</p>
+      </div>
+
+      <h3 class="sec">架构与域</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>缩写</th><th>英文全称</th><th>中文 / 说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">CN</td><td>Core Network</td><td>核心网</td></tr>
+          <tr><td class="mono">RAN</td><td>Radio Access Network</td><td>无线接入网</td></tr>
+          <tr><td class="mono">CS / PS</td><td>Circuit / Packet Switched</td><td>电路交换域 / 分组交换域</td></tr>
+          <tr><td class="mono">EPC</td><td>Evolved Packet Core</td><td>4G 演进分组核心网</td></tr>
+          <tr><td class="mono">5GC</td><td>5G Core</td><td>5G 核心网</td></tr>
+          <tr><td class="mono">SBA</td><td>Service-Based Architecture</td><td>服务化架构</td></tr>
+          <tr><td class="mono">SBI</td><td>Service-Based Interface</td><td>服务化接口（HTTP/2）</td></tr>
+          <tr><td class="mono">CUPS</td><td>Control & User Plane Separation</td><td>控制面与用户面分离</td></tr>
+          <tr><td class="mono">IMS</td><td>IP Multimedia Subsystem</td><td>IP 多媒体子系统</td></tr>
+          <tr><td class="mono">SA / NSA</td><td>Standalone / Non-Standalone</td><td>独立 / 非独立组网</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sec">关键网元</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>缩写</th><th>英文全称</th><th>代际 · 中文</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">MSC</td><td>Mobile Switching Center</td><td><span class="gen-2g">2G</span> 移动交换中心</td></tr>
+          <tr><td class="mono">HLR / VLR</td><td>Home / Visitor Location Register</td><td><span class="gen-2g">2G</span> 归属/访问位置寄存器</td></tr>
+          <tr><td class="mono">SGSN / GGSN</td><td>Serving / Gateway GPRS Support Node</td><td><span class="gen-2g">2G</span> 分组域服务/网关节点</td></tr>
+          <tr><td class="mono">MGW</td><td>Media Gateway</td><td><span class="gen-3g">3G</span> 媒体网关</td></tr>
+          <tr><td class="mono">MME</td><td>Mobility Management Entity</td><td><span class="gen-4g">4G</span> 移动性管理实体</td></tr>
+          <tr><td class="mono">S-GW / P-GW</td><td>Serving / PDN Gateway</td><td><span class="gen-4g">4G</span> 服务/分组数据网关</td></tr>
+          <tr><td class="mono">HSS</td><td>Home Subscriber Server</td><td><span class="gen-4g">4G</span> 归属用户服务器</td></tr>
+          <tr><td class="mono">PCRF</td><td>Policy & Charging Rules Function</td><td><span class="gen-4g">4G</span> 策略与计费规则功能</td></tr>
+          <tr><td class="mono">AMF</td><td>Access & Mobility Mgmt Function</td><td><span class="gen-5g">5G</span> 接入与移动性管理</td></tr>
+          <tr><td class="mono">SMF</td><td>Session Management Function</td><td><span class="gen-5g">5G</span> 会话管理功能</td></tr>
+          <tr><td class="mono">UPF</td><td>User Plane Function</td><td><span class="gen-5g">5G</span> 用户面功能</td></tr>
+          <tr><td class="mono">AUSF</td><td>Authentication Server Function</td><td><span class="gen-5g">5G</span> 鉴权服务功能</td></tr>
+          <tr><td class="mono">UDM / UDR</td><td>Unified Data Management / Repository</td><td><span class="gen-5g">5G</span> 统一数据管理/仓库</td></tr>
+          <tr><td class="mono">PCF</td><td>Policy Control Function</td><td><span class="gen-5g">5G</span> 策略控制功能</td></tr>
+          <tr><td class="mono">NRF</td><td>Network Repository Function</td><td><span class="gen-5g">5G</span> 网络存储/注册发现</td></tr>
+          <tr><td class="mono">NSSF</td><td>Network Slice Selection Function</td><td><span class="gen-5g">5G</span> 网络切片选择功能</td></tr>
+          <tr><td class="mono">NEF</td><td>Network Exposure Function</td><td><span class="gen-5g">5G</span> 网络能力开放功能</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 class="sec">协议与云化</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>缩写</th><th>英文全称</th><th>中文 / 说明</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">SS7</td><td>Signaling System No.7</td><td>七号信令系统</td></tr>
+          <tr><td class="mono">GTP</td><td>GPRS Tunneling Protocol</td><td>GPRS 隧道协议（C/U）</td></tr>
+          <tr><td class="mono">NAS</td><td>Non-Access Stratum</td><td>非接入层信令</td></tr>
+          <tr><td class="mono">VoLTE / VoNR</td><td>Voice over LTE / NR</td><td>4G / 5G 高清语音</td></tr>
+          <tr><td class="mono">NFV</td><td>Network Functions Virtualization</td><td>网络功能虚拟化</td></tr>
+          <tr><td class="mono">SDN</td><td>Software Defined Networking</td><td>软件定义网络</td></tr>
+          <tr><td class="mono">VNF / CNF</td><td>Virtualized / Cloud-Native NF</td><td>虚拟化 / 云原生网络功能</td></tr>
+          <tr><td class="mono">MANO</td><td>Management & Orchestration</td><td>管理与编排</td></tr>
+          <tr><td class="mono">MEC</td><td>Multi-access Edge Computing</td><td>多接入边缘计算</td></tr>
+          <tr><td class="mono">eMBB/URLLC/mMTC</td><td>—</td><td>5G 三大场景：增强宽带/低时延高可靠/海量连接</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note"><span class="lbl">手册结束</span>从 MSC 到 UPF，从 SS7 到 HTTP/2，核心网四十年走过的是一条"持续解耦、持续上云、持续智能"的路。理解了这条主线，再复杂的架构图也只是它的一个快照。</div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var nav = document.getElementById('nav');
+  var items = nav.querySelectorAll('.nav-item');
+  var chapters = document.querySelectorAll('.chapter');
+  var crumb = document.getElementById('crumb');
+  var meta = document.getElementById('meta');
+  var content = document.getElementById('content');
+  var total = items.length;
+
+  function activate(chId, label, idx){
+    chapters.forEach(function(c){ c.classList.toggle('active', c.id === chId); });
+    items.forEach(function(it){ it.classList.toggle('active', it.getAttribute('data-ch') === chId); });
+    crumb.textContent = label;
+    meta.textContent = 'SECTION ' + String(idx).padStart(2,'0') + ' / ' + String(total-1).padStart(2,'0');
+    content.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  items.forEach(function(it, i){
+    it.addEventListener('click', function(){
+      var chId = it.getAttribute('data-ch');
+      var label = it.querySelector('.t').textContent;
+      activate(chId, label, i);
+    });
+  });
+
+  // keyboard nav: arrow up/down
+  document.addEventListener('keydown', function(e){
+    var current = -1;
+    items.forEach(function(it,i){ if(it.classList.contains('active')) current = i; });
+    if(e.key === 'ArrowDown' && current < total-1){ items[current+1].click(); }
+    if(e.key === 'ArrowUp' && current > 0){ items[current-1].click(); }
+  });
+})();
+</script>
+
+<script>
+/* ===== embedded interactive flow widgets (4G EPC & 5GC SBA) ===== */
+(function(){
+  function initFlow(root, conf){
+    if(!root) return;
+    var data = conf.phases, colors = conf.colors || {};
+    var allNodes = root.querySelectorAll('.cnf-node');
+    var allConns = root.querySelectorAll('.cnf-conn');
+    var allLines = root.querySelectorAll('.cnf-line');
+    var allIfs   = root.querySelectorAll('.cnf-if[data-key]');
+    var allBus   = root.querySelectorAll('.cnf-bus');
+    var phaseEls = root.querySelectorAll('.cnf-phase');
+    var stepList = root.querySelector('.cnf-steplist');
+    var phTitle  = root.querySelector('.cnf-phtitle');
+    var phDesc   = root.querySelector('.cnf-phdesc');
+    var dataPath = root.querySelector('.cnf-datapath');
+
+    function render(idx){
+      var p = data[idx];
+      phaseEls.forEach(function(b,i){ b.classList.toggle('active', i===idx); });
+      allNodes.forEach(function(el){ el.classList.toggle('dim', p.nodes.indexOf(el.getAttribute('data-key'))===-1); });
+      allConns.forEach(function(el){ el.classList.toggle('dim', p.flows.indexOf(el.getAttribute('data-key'))===-1); });
+      allIfs.forEach(function(el){ el.classList.toggle('dim', p.flows.indexOf(el.getAttribute('data-key'))===-1); });
+      var busOn = p.bus !== false;
+      allBus.forEach(function(el){ el.classList.toggle('dim', !busOn); });
+      allLines.forEach(function(el){
+        var k = el.getAttribute('data-key');
+        if(p.flows.indexOf(k) > -1){ el.setAttribute('stroke', colors[k] || '#2de2e6'); el.classList.add('on'); }
+        else { el.classList.remove('on'); }
+      });
+      phTitle.textContent = p.title;
+      phDesc.textContent  = p.desc;
+      dataPath.className  = 'cnf-datapath ' + (p.pathCls || '');
+      dataPath.innerHTML  = '<b>' + (p.pathCls==='cp' ? 'CONTROL PLANE' : 'USER PLANE') + '</b><br>' + p.path;
+      stepList.innerHTML = '';
+      p.steps.forEach(function(s,i){
+        var li = document.createElement('li');
+        li.style.animationDelay = (i*0.05) + 's';
+        var pill = s[2] ? '<span class="cnf-pill '+s[2]+'">'+(s[2]==='cp'?'控制面':'用户面')+'</span>' : '';
+        li.innerHTML = '<span class="sn">'+s[0]+'</span><span class="stext">'+s[1]+pill+'</span>';
+        stepList.appendChild(li);
+      });
+    }
+
+    phaseEls.forEach(function(b,i){ b.addEventListener('click', function(){ stopPlay(); render(i); }); });
+
+    var playing=false, timer=null, cur=0;
+    var playBtn = root.querySelector('.cnf-play');
+    function stopPlay(){ playing=false; clearInterval(timer); if(playBtn) playBtn.innerHTML='▶ 自动演示'; }
+    if(playBtn){
+      playBtn.addEventListener('click', function(){
+        if(playing){ stopPlay(); return; }
+        playing=true; playBtn.innerHTML='⏸ 暂停演示';
+        timer=setInterval(function(){ cur=(cur+1)%data.length; render(cur); }, 3400);
+      });
+    }
+    render(0);
+  }
+
+  var FLOW_4G = {
+    colors:{uu:"#37e6a4",s1mme:"#2de2e6",s6a:"#ffc24b",s11:"#2de2e6",s5:"#ff3d9a",gx:"#7b5cff",sgi:"#ff3d9a",s1u:"#ff3d9a"},
+    phases:[
+      { title:"阶段一：开机附着与鉴权",
+        desc:"终端开机，向网络登记身份并完成双向鉴权与安全建立。此阶段全部是控制面信令，尚无用户数据。",
+        pathCls:"cp",
+        path:"信令路径：UE → eNodeB →（S1-MME）→ MME ⇄（S6a）⇄ HSS",
+        nodes:["ue","enb","mme","hss"], flows:["uu","s1mme","s6a"],
+        steps:[
+          ["1","UE 发起 <code>Attach Request</code>（NAS 信令），经 eNodeB 透传至 MME","cp"],
+          ["2","MME 向 HSS 请求鉴权向量（<code>S6a / Diameter</code>：Authentication Info Request）","cp"],
+          ["3","HSS 返回鉴权向量，MME 与 UE 完成双向鉴权（<code>EPS-AKA</code>）","cp"],
+          ["4","MME 与 UE 协商 NAS 安全，启动信令加密与完整性保护","cp"],
+          ["5","MME 向 HSS 发 <code>Update Location</code>，下载用户签约数据（QoS、套餐、权限）","cp"]
+        ]},
+      { title:"阶段二：默认承载建立",
+        desc:"鉴权通过后，核心网建立从 UE 到外部网络的默认 EPS 承载，并为终端分配 IP 地址，端到端通道打通。",
+        pathCls:"cp",
+        path:"信令路径：MME →（S11）→ S-GW →（S5）→ P-GW ⇄（Gx）⇄ PCRF",
+        nodes:["mme","sgw","pgw","pcrf","enb","ue"], flows:["s11","s5","gx","s1u","uu"],
+        steps:[
+          ["6","MME → S-GW 发 <code>Create Session Request</code>（<code>S11 / GTP-C</code>）","cp"],
+          ["7","S-GW → P-GW 发 <code>Create Session Request</code>（<code>S5 / GTP-C</code>）","cp"],
+          ["8","P-GW ⇄ PCRF 建立 IP-CAN 会话，下发默认 QoS 与计费策略（<code>Gx</code>）","cp"],
+          ["9","P-GW 为 UE 分配 IP 地址，成为用户面出口锚点","cp"],
+          ["10","响应回传 P-GW→S-GW→MME；MME 下发 <code>Attach Accept</code>，eNodeB 建立无线承载","cp"],
+          ["11","UE 回 <code>Attach Complete</code>，默认 EPS 承载贯通（GTP-U 隧道就绪）","up"]
+        ]},
+      { title:"阶段三：用户数据传输",
+        desc:"承载建好后，数据在用户面 GTP-U 隧道内端到端转发。控制面（MME/HSS/PCRF）不参与数据搬运，只在前期建链。",
+        pathCls:"up",
+        path:"数据路径：UE ⇄ eNodeB ⇄（S1-U）⇄ S-GW ⇄（S5）⇄ P-GW ⇄（SGi）⇄ Internet",
+        nodes:["ue","enb","sgw","pgw","net"], flows:["uu","s1u","s5","sgi"],
+        steps:[
+          ["▲","<b>上行</b>：UE → eNodeB →（<code>S1-U</code> GTP-U）→ S-GW →（<code>S5</code> GTP-U）→ P-GW →（<code>SGi</code>）→ Internet","up"],
+          ["▼","<b>下行</b>：Internet → P-GW → S-GW → eNodeB → UE，按相同隧道反向回传","up"],
+          ["·","全程封装在默认 EPS 承载的 <code>GTP-U</code> 隧道中，S-GW 为移动锚点、P-GW 为业务出口","up"],
+          ["·","P-GW 内的 PCEF 按 PCRF 策略执行限速、计费与业务识别","up"]
+        ]},
+      { title:"阶段四：专有承载 / VoLTE",
+        desc:"当发起对 QoS 敏感的业务（如 VoLTE 语音）时，网络在默认承载之外动态建立专有承载，提供有保障的带宽与时延。",
+        pathCls:"up",
+        path:"建立路径：PCRF →（Gx）→ P-GW →（S5）→ S-GW →（S1-U）→ eNodeB → UE",
+        nodes:["pcrf","pgw","sgw","enb","ue"], flows:["gx","s5","s1u","uu"],
+        steps:[
+          ["12","发起 VoLTE 等业务，IMS 触发 PCRF 下发新的策略决策","cp"],
+          ["13","PCRF →（<code>Gx</code>）→ P-GW 下发专有承载策略（<code>QCI=1</code>，GBR 保证比特率）","cp"],
+          ["14","P-GW→S-GW→eNodeB→UE 逐段建立专有承载，独立于默认承载","cp"],
+          ["15","语音流在专有承载的 GTP-U 隧道中传输，时延与带宽获得保障","up"]
+        ]}
+    ]
+  };
+
+  var FLOW_5G = {
+    colors:{uu:"#37e6a4",n2:"#2de2e6",n11:"#2de2e6",n4:"#7b5cff",n3:"#ff3d9a",n6:"#ff3d9a",mec:"#ffc24b",
+            tap_ausf:"#2de2e6",tap_udm:"#2de2e6",tap_nrf:"#2de2e6",tap_pcf:"#2de2e6",tap_amf:"#2de2e6",tap_smf:"#2de2e6"},
+    phases:[
+      { title:"阶段一：注册与主鉴权",
+        desc:"终端开机向 5GC 注册登记身份，经 SBI 总线完成 5G-AKA 鉴权与签约/切片数据下载。全程控制面，服务化接口交互。",
+        pathCls:"cp", bus:true,
+        path:"信令路径：UE → gNB →（N2/NAS）→ AMF ⇄ SBI ⇄ AUSF ⇄ UDM；AMF → NRF 发现",
+        nodes:["ue","gnb","amf","ausf","udm","nrf"], flows:["uu","n2","tap_amf","tap_ausf","tap_udm","tap_nrf"],
+        steps:[
+          ["1","UE 经 gNB 向 AMF 发起 <code>Registration Request</code>（NAS 信令，N2 透传）","cp"],
+          ["2","AMF 通过 <code>NRF</code> 发现 AUSF/UDM 等服务实例（SBI：<code>Nnrf_NFDiscovery</code>）","cp"],
+          ["3","AMF ⇄ <code>AUSF</code> 调用主鉴权（<code>Nausf_UEAuthentication</code>，5G-AKA）","cp"],
+          ["4","AUSF ⇄ <code>UDM</code> 取鉴权向量与签约（<code>Nudm_UEAuthentication</code>）","cp"],
+          ["5","AMF ⇄ UDM 下载签约数据、选择切片（<code>Nudm_SDM</code>；NSSF 辅助切片选择）","cp"],
+          ["6","AMF 与 UE 完成安全模式命令，回 <code>Registration Accept</code>","cp"]
+        ]},
+      { title:"阶段二：PDU 会话建立",
+        desc:"注册后建立从 UE 到数据网络的 PDU 会话，SMF 经 SBI 取策略并经 N4 指挥 UPF，打通用户面隧道并分配 IP。",
+        pathCls:"cp", bus:true,
+        path:"信令路径：UE → AMF →（N11）→ SMF ⇄ SBI ⇄ UDM/PCF；SMF →（N4）→ UPF",
+        nodes:["ue","gnb","amf","smf","udm","pcf","upf","nrf"], flows:["n2","n11","tap_smf","tap_udm","tap_pcf","tap_nrf","n4"],
+        steps:[
+          ["7","UE 发起 <code>PDU Session Establishment Request</code>（NAS），经 AMF 处理","cp"],
+          ["8","AMF →（<code>N11</code>）→ SMF 创建会话；SMF 经 NRF 发现所需 NF","cp"],
+          ["9","SMF ⇄ <code>UDM</code> 取会话相关签约（<code>Nudm_SDM</code>，DNN/S-NSSAI/QoS）","cp"],
+          ["10","SMF ⇄ <code>PCF</code> 建立策略关联（<code>Npcf_SMPolicyControl</code>），下发 QoS/计费规则","cp"],
+          ["11","SMF →（<code>N4</code>）→ UPF 安装转发、QoS 与计费规则，选择 UPF 并分配 IP","cp"],
+          ["12","会话建立完成，N3/N6 用户面隧道就绪，回 <code>PDU Session Establishment Accept</code>","up"]
+        ]},
+      { title:"阶段三：用户数据传输",
+        desc:"PDU 会话贯通后，数据在用户面 GTP-U 隧道内端到端转发。控制面 NF 不再参与，UPF 作为唯一用户面执行路由与 QoS。",
+        pathCls:"up", bus:false,
+        path:"数据路径：UE ⇄ gNB ⇄（N3）⇄ UPF ⇄（N6）⇄ DN（数据网络）",
+        nodes:["ue","gnb","upf","dn"], flows:["uu","n3","n6"],
+        steps:[
+          ["▲","<b>上行</b>：UE → gNB →（<code>N3</code> GTP-U）→ UPF →（<code>N6</code>）→ DN","up"],
+          ["▼","<b>下行</b>：DN → UPF → gNB → UE，按相同隧道反向回传","up"],
+          ["·","全程封装在 PDU 会话的 <code>GTP-U</code> 隧道中，UPF 是唯一用户面锚点","up"],
+          ["·","UPF 按 N4 下发规则执行 QoS 限速、计费统计与业务分流","up"]
+        ]},
+      { title:"阶段四：边缘计算与本地分流",
+        desc:"UPF 下沉到边缘并按 N4 规则本地分流，业务流量直接终结于边缘应用，无需回传中心，实现毫秒级低时延。",
+        pathCls:"up", bus:false,
+        path:"数据路径：UE → gNB →（N3）→ 边缘 UPF → 本地 MEC 应用（本地分流，不回中心 DN）",
+        nodes:["ue","gnb","upf","mec"], flows:["uu","n3","mec"],
+        steps:[
+          ["13","SMF 经 <code>N4</code> 向边缘 UPF 下发本地分流规则（UL-CL 上行分类 / 本地路由）","cp"],
+          ["14","<b>上行</b>：UE → gNB →（<code>N3</code>）→ 边缘 UPF → 本地 MEC 应用","up"],
+          ["15","时延敏感业务在边缘就地终结，无需回传中心 DN，实现毫秒级响应","up"],
+          ["16","非本地业务仍可经中心 UPF→DN 转发，本地与中心流量相互隔离","up"]
+        ]}
+    ]
+  };
+
+  initFlow(document.getElementById('flow4g'), FLOW_4G);
+  initFlow(document.getElementById('flow5g'), FLOW_5G);
+})();
+</script>
+</body>
+</html>
