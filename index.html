@@ -220,6 +220,15 @@
             <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
           </div>
         </div>
+        <div class="sec">
+          <h3>下载原文件 / 迁移</h3>
+          <p class="sub">把 HTML 文档批量下载到电脑，便于分享或迁移到别处。</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn primary" onclick="downloadAllZip()">⬇ 打包下载全部文档(ZIP)</button>
+            <button class="btn ghost" onclick="downloadRepoZip()">⬇ 下载整库压缩包(含框架)</button>
+          </div>
+          <div class="resolved" id="dlStatus" style="margin-top:10px"></div>
+        </div>
       </div>
     </details>
   </div>
@@ -671,6 +680,36 @@ function importData(e){ const file=e.target.files[0]; if(!file) return; const r=
   r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(!obj||!Array.isArray(obj.modules)||!Array.isArray(obj.pages)) throw 0;
     if(!confirm("导入将覆盖当前目录，确定？")) return; data=obj; saveLocal(); render(); renderSettings(); switchTab("browse"); toast("已导入"); }
     catch(err){ alert("文件格式不对，导入失败。"); } }; r.readAsText(file); e.target.value=""; }
+
+/* ---------- 批量下载 / 迁移 ---------- */
+function ensureJSZip(){ return new Promise((resolve,reject)=>{ if(window.JSZip) return resolve();
+  const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+  s.onload=()=>resolve(); s.onerror=()=>reject(new Error("load fail")); document.head.appendChild(s); }); }
+async function downloadAllZip(){
+  const st=document.getElementById("dlStatus");
+  if(!data.pages.length){ toast("还没有页面可下载"); return; }
+  if(!location.protocol.startsWith("http")){ alert("请在网址版下使用打包下载。"); return; }
+  st.textContent="准备打包工具…";
+  try{ await ensureJSZip(); }catch(e){ st.textContent="加载打包工具失败，请检查网络后重试。"; return; }
+  const zip=new JSZip(); let ok=0, fail=0, failed=[];
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; const m=moduleById(p.moduleId);
+    st.innerHTML="正在打包 <b>"+(i+1)+"/"+data.pages.length+"</b>："+esc(p.title);
+    try{ const res=await fetch(pathFor(p),{cache:"no-store"});
+      if(res.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await res.blob()); ok++; } else { fail++; failed.push(p.title); } }
+    catch(e){ fail++; failed.push(p.title); } }
+  if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
+  st.textContent="生成压缩包…";
+  const blob=await zip.generateAsync({type:"blob"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="我的图书馆_"+new Date().toISOString().slice(0,10)+".zip"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+  st.innerHTML="✅ 已打包 <b>"+ok+"</b> 篇"+(fail?("，"+fail+" 篇失败："+esc(failed.join("、"))):"")+"，已开始下载。";
+  toast("打包完成，开始下载");
+}
+function downloadRepoZip(){ const repo=rDeriveRepo(); if(!repo){ toast("无法确定仓库"); return; }
+  const br=(ghCfg().branch||"main");
+  window.open("https://github.com/"+repo+"/archive/refs/heads/"+encodeURIComponent(br)+".zip","_blank");
+  const st=document.getElementById("dlStatus"); if(st) st.textContent="已请求整库压缩包下载（含全部文件与框架）。"; }
 
 window.addEventListener("storage", e=>{ if(e.key==="wikiReadPos.v1" && document.getElementById("view-browse").style.display!=="none") render(); });
 window.addEventListener("focus", ()=>{ if(document.getElementById("view-browse").style.display!=="none") render(); });
