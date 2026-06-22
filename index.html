@@ -113,6 +113,19 @@
   .listrow .info{flex:1;min-width:0}
   .listrow .info small{color:var(--muted);font-size:12px}
   .listrow .acts{display:flex;gap:6px}
+  .dlbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .pg-grp{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+  .pg-head{display:flex;align-items:center;gap:10px;padding:11px 12px;background:#fcfcfd}
+  .pg-hi{flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;min-width:0}
+  .pg-ic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .pg-nm{font-weight:700;font-size:14px}
+  .pg-cnt{font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:0 8px;border-radius:999px}
+  .pg-chev{color:#b6bcc8;cursor:pointer;padding:4px 6px}
+  .pg-body{border-top:1px solid var(--line)}
+  .pg-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid #f1f2f5}
+  .pg-row:first-child{border-top:0}
+  .pg-row .pg-t{flex:1;min-width:0;font-size:13.5px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pg-row .pg-t:hover{color:var(--accent)}
 
   .banner{background:#fff7e6;border:1px solid #ffe1a8;border-radius:12px;padding:11px 15px;font-size:13px;color:#8a5a00;margin-bottom:18px}
   details.adv{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
@@ -171,9 +184,18 @@
     <div class="banner" id="modeBanner"></div>
 
     <div class="panel">
-      <h2>所有页面</h2>
-      <p class="sub">点击编辑信息或删除（删除只移除登记，不动你的 HTML 文件）</p>
-      <div id="pageList"></div>
+      <h2>下载 / 迁移</h2>
+      <p class="sub">勾选要打包的文档（可全选或部分），下载到电脑用于分享或迁移；展开分类可管理单篇（打开 / 编辑 / 删除）。</p>
+      <div class="dlbar">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;cursor:pointer">
+          <input type="checkbox" id="selAll" onchange="toggleSelectAll(this.checked)"> 全选</label>
+        <span id="selCount" style="font-size:12.5px;color:var(--muted)">未选择</span>
+        <span style="flex:1"></span>
+        <button class="btn primary sm" onclick="downloadSelectedZip()">⬇ 下载所选(ZIP)</button>
+        <button class="btn ghost sm" onclick="downloadRepoZip()">⬇ 整库压缩包</button>
+      </div>
+      <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
+      <div id="pageGroups"></div>
     </div>
 
     <div class="panel">
@@ -219,15 +241,6 @@
             <button class="btn ghost" onclick="document.getElementById('importFile').click()">⬆ 导入备份</button>
             <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
           </div>
-        </div>
-        <div class="sec">
-          <h3>下载原文件 / 迁移</h3>
-          <p class="sub">把 HTML 文档批量下载到电脑，便于分享或迁移到别处。</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn primary" onclick="downloadAllZip()">⬇ 打包下载全部文档(ZIP)</button>
-            <button class="btn ghost" onclick="downloadRepoZip()">⬇ 下载整库压缩包(含框架)</button>
-          </div>
-          <div class="resolved" id="dlStatus" style="margin-top:10px"></div>
         </div>
       </div>
     </details>
@@ -283,6 +296,7 @@ let activeModule = "all";
 let sourceMode = "seed";
 let modalMode = "add";
 let RP={}, RB={};
+let selPages=new Set(), expandedMod=new Set();
 
 function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
@@ -553,19 +567,66 @@ function renderSettings(){
   document.getElementById("modeBanner").innerHTML = ghOn()
     ? "✅ 已连接 GitHub，上传会自动同步到线上和手机。"
     : "⚠️ 还没连接 GitHub。展开下方「高级设置」填一次即可启用「上传即同步」。";
-  const pl=document.getElementById("pageList");
-  if(data.pages.length===0){ pl.innerHTML=`<p style="color:#9aa1ad;font-size:13px">还没有页面。</p>`; }
-  else pl.innerHTML=data.pages.slice().reverse().map(p=>{ const m=moduleById(p.moduleId)||{name:"?",color:"#888",icon:"📄",folder:""};
-    return `<div class="listrow"><span class="sw" style="background:${m.color}"></span>
-      <div class="info"><div class="name">${esc(p.title)}</div><small>${m.icon} ${esc(m.name)} · ${esc(m.folder)}/${esc(p.file)}</small></div>
-      <div class="acts"><button class="btn ghost sm" onclick="openPage('${p.id}')">打开</button>
-        <button class="btn ghost sm" onclick="openEdit('${p.id}')">编辑</button>
-        <button class="btn ghost sm danger" onclick="delPage('${p.id}')">删除</button></div></div>`; }).join("");
+  renderPageGroups();
   const ml=document.getElementById("moduleList");
   ml.innerHTML=data.modules.map(m=>{ const n=data.pages.filter(p=>p.moduleId===m.id).length;
     return `<div class="listrow"><span class="sw" style="background:${m.color}"></span>
       <div class="info"><div class="name">${m.icon} ${esc(m.name)}</div><small>${esc(m.folder)}/ · ${n} 个页面</small></div>
       <div class="acts"><button class="btn ghost sm danger" onclick="delModule('${m.id}')">删除</button></div></div>`; }).join("");
+}
+function renderPageGroups(){
+  const box=document.getElementById("pageGroups"); if(!box) return;
+  const mods=data.modules.filter(m=>data.pages.some(p=>p.moduleId===m.id));
+  if(!data.pages.length){ box.innerHTML=`<p style="color:#9aa1ad;font-size:13px">还没有页面。</p>`; updateSelBar(); return; }
+  box.innerHTML=mods.map(m=>{
+    const ps=data.pages.filter(p=>p.moduleId===m.id);
+    const open=expandedMod.has(m.id);
+    const allSel=ps.every(p=>selPages.has(p.id));
+    const rows=open?ps.map(p=>`<div class="pg-row">
+        <input type="checkbox" ${selPages.has(p.id)?"checked":""} onchange="togglePageSel('${p.id}',this.checked)">
+        <div class="pg-t" onclick="openPage('${p.id}')">${esc(p.title)}</div>
+        <button class="btn ghost sm" onclick="openEdit('${p.id}')">编辑</button>
+        <button class="btn ghost sm danger" onclick="delPage('${p.id}')">删除</button></div>`).join(""):"";
+    return `<div class="pg-grp">
+      <div class="pg-head">
+        <input type="checkbox" ${allSel?"checked":""} onchange="toggleGroupSel('${m.id}',this.checked)">
+        <div class="pg-hi" onclick="toggleGroup('${m.id}')"><span class="pg-ic" style="background:${m.color}1a;color:${m.color}">${m.icon}</span>
+          <span class="pg-nm">${esc(m.name)}</span><span class="pg-cnt">${ps.length}</span></div>
+        <span class="pg-chev" onclick="toggleGroup('${m.id}')">${open?"▾":"▸"}</span>
+      </div>${open?`<div class="pg-body">${rows}</div>`:""}</div>`;
+  }).join("");
+  updateSelBar();
+}
+function updateSelBar(){ const n=selPages.size, total=data.pages.length;
+  const sc=document.getElementById("selCount"); if(sc) sc.textContent = n?("已选 "+n+" 篇"):"未选择";
+  const sa=document.getElementById("selAll"); if(sa) sa.checked = total>0 && n===total; }
+function toggleGroup(id){ if(expandedMod.has(id)) expandedMod.delete(id); else expandedMod.add(id); renderPageGroups(); }
+function togglePageSel(id,ch){ if(ch) selPages.add(id); else selPages.delete(id); renderPageGroups(); }
+function toggleGroupSel(mid,ch){ data.pages.filter(p=>p.moduleId===mid).forEach(p=>{ if(ch) selPages.add(p.id); else selPages.delete(p.id); }); renderPageGroups(); }
+function toggleSelectAll(ch){ selPages = new Set(ch?data.pages.map(p=>p.id):[]); renderPageGroups(); }
+async function downloadSelectedZip(){
+  const pages=data.pages.filter(p=>selPages.has(p.id));
+  const st=document.getElementById("dlStatus");
+  if(!pages.length){ toast("请先勾选要下载的文档"); return; }
+  if(!location.protocol.startsWith("http")){ alert("请在网址版下使用打包下载。"); return; }
+  const fname="我的图书馆_"+new Date().toISOString().slice(0,10)+".zip";
+  let handle=null;
+  if(window.showSaveFilePicker){ try{ handle=await window.showSaveFilePicker({suggestedName:fname, types:[{description:"ZIP 压缩包",accept:{"application/zip":[".zip"]}}]}); }
+    catch(e){ if(e&&e.name==="AbortError"){ toast("已取消"); return; } handle=null; } }
+  st.textContent="准备打包工具…";
+  try{ await ensureJSZip(); }catch(e){ st.textContent="加载打包工具失败，请检查网络后重试。"; return; }
+  const zip=new JSZip(); let ok=0, fail=0, failed=[];
+  for(let i=0;i<pages.length;i++){ const p=pages[i]; const m=moduleById(p.moduleId);
+    st.innerHTML="正在打包 <b>"+(i+1)+"/"+pages.length+"</b>："+esc(p.title);
+    try{ const r=await fetch(pathFor(p),{cache:"no-store"}); if(r.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await r.blob()); ok++; } else { fail++; failed.push(p.title); } }
+    catch(e){ fail++; failed.push(p.title); } }
+  if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
+  st.textContent="生成压缩包…";
+  const blob=await zip.generateAsync({type:"blob"});
+  if(handle){ try{ const w=await handle.createWritable(); await w.write(blob); await w.close();
+    st.innerHTML="✅ 已保存 <b>"+ok+"</b> 篇到你选择的位置"+(fail?("，"+fail+" 篇失败"):"")+"。"; toast("已保存到所选位置"); return; }catch(e){} }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+  st.innerHTML="✅ 已打包 <b>"+ok+"</b> 篇"+(fail?("，"+fail+" 篇失败"):"")+"，已下载到默认下载文件夹。"; toast("打包完成，开始下载");
 }
 async function delPage(id){
   if(!confirm("删除这个页面登记？（不会删除 HTML 文件本身）")) return;
