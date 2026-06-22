@@ -40,6 +40,43 @@
   #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
     padding:10px 18px;border-radius:12px;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:30}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ---- 批注 / 高亮 ---- */
+  #npill{position:fixed;z-index:25;display:none;background:var(--ink);border-radius:11px;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);padding:4px}
+  #npill.show{display:flex}
+  #npill button{border:0;background:transparent;color:#fff;font:inherit;font-size:13.5px;font-weight:600;
+    padding:8px 13px;border-radius:8px;cursor:pointer;white-space:nowrap}
+  #npill button:hover{background:rgba(255,255,255,.18)}
+  #nmask{position:fixed;inset:0;background:rgba(20,24,33,.36);z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
+  #nmask.show{display:flex}
+  #nbox{width:430px;max-width:94vw;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.32);padding:16px 16px 14px}
+  #nbox h4{margin:0 0 10px;font-size:15px}
+  #nquote{font-size:13px;color:#5a6472;background:#f5f6f8;border-left:3px solid var(--bar);border-radius:6px;
+    padding:8px 10px;margin-bottom:11px;max-height:90px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+  #nswatch{display:flex;gap:9px;margin-bottom:11px}
+  #nswatch .sw{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+  #nswatch .sw.on{border-color:var(--ink);transform:scale(1.1)}
+  #ntext{width:100%;min-height:100px;resize:vertical;border:1px solid var(--line);border-radius:10px;
+    padding:10px;font:inherit;font-size:14px;line-height:1.55;box-sizing:border-box}
+  #nbtns{display:flex;gap:8px;margin-top:12px;align-items:center}
+  #nbtns .sp{flex:1}
+  #nbtns button{border:0;font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer}
+  #nsave{background:var(--bar);color:#fff}
+  #ncancel{background:#eef0f3;color:var(--ink)}
+  #ndel{background:#fdeaea;color:#d64545}
+  #npanel{position:fixed;top:50px;right:10px;width:330px;max-width:92vw;max-height:74vh;overflow:auto;background:#fff;
+    border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.18);z-index:20;display:none;padding:10px}
+  #npanel.show{display:block}
+  #npanel .nhd{font-size:12.5px;color:#8a93a3;padding:2px 4px 9px}
+  #npanel .nempty{color:#9aa1ad;font-size:13px;text-align:center;padding:16px 8px;line-height:1.6}
+  .nrow{display:flex;align-items:flex-start;gap:8px;padding:9px 4px;border-top:1px solid var(--line)}
+  .nrow .nc{width:12px;height:12px;border-radius:50%;margin-top:4px;flex:0 0 auto}
+  .nrow .nbody{flex:1;min-width:0;cursor:pointer}
+  .nrow .nt{font-size:13.5px;color:var(--ink);white-space:pre-wrap;word-break:break-word;line-height:1.45}
+  .nrow .nq{font-size:12px;color:#8a93a3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+  .nrow .nq.orphan{color:#c98a00}
+  .nrow .del{border:0;background:transparent;color:#4f7cff;cursor:pointer;font-size:12.5px;padding:4px 6px;border-radius:6px}
+  .nrow .del:hover{background:#eef2ff}
 </style>
 </head>
 <body>
@@ -47,17 +84,28 @@
   <a href="#" id="backbtn">← 图书馆</a>
   <div id="title">阅读器</div>
   <span id="pct">0%</span>
+  <button id="nbtn" title="批注">📝 批注</button>
   <button id="bmbtn" title="书签">🔖 书签</button>
   <button id="topbtn" title="回到顶部">↑ 顶部</button>
 </div>
 <div id="progline"></div>
 <div id="bmpanel"></div>
+<div id="npanel"></div>
 <div id="wrap"><div id="loading">加载中…</div><iframe id="frame"></iframe></div>
 <button id="resume"></button>
+<div id="npill"><button id="npillbtn">🖍 高亮 / 批注</button></div>
+<div id="nmask"><div id="nbox">
+  <h4 id="ntitle">添加批注</h4>
+  <div id="nquote"></div>
+  <div id="nswatch"></div>
+  <textarea id="ntext" placeholder="写下你的笔记 / 批注（也可以留空，仅高亮这段文字）"></textarea>
+  <div id="nbtns"><button id="ndel">删除</button><span class="sp"></span><button id="ncancel">取消</button><button id="nsave">保存</button></div>
+</div></div>
 <div id="toast"></div>
 <script>
 const KEY_POS="wikiReadPos.v1";
 const KEY_BM="wikiBookmarks.v1";
+const KEY_NOTES="wikiNotes.v1";
 const GH_KEY="learningWiki.github.v1";
 const params=new URLSearchParams(location.hash.slice(1));
 const doc=params.get("doc")||"";
@@ -90,12 +138,13 @@ async function apiPutReading(obj, sha, msg){ const c=ghCfg(), repo=c.repo||deriv
 function mergeByTs(a,b){ const out=Object.assign({},a||{}); const o=b||{}; for(const k in o){ if(!out[k]||((o[k].ts||0)>(out[k].ts||0))) out[k]=o[k]; } return out; }
 async function pullReading(){ const r=await apiGetReading(); if(!r||!r.data) return;
   lset(KEY_POS, mergeByTs(lget(KEY_POS), r.data.positions||{}));
-  lset(KEY_BM,  mergeByTs(lget(KEY_BM),  r.data.bookmarks||{})); }
+  lset(KEY_BM,  mergeByTs(lget(KEY_BM),  r.data.bookmarks||{}));
+  lset(KEY_NOTES, mergeByTs(lget(KEY_NOTES), r.data.notes||{})); }
 let pushing=false;
 async function pushReading(msg){ const c=ghCfg(); if(!c.token) return;
   if(pushing) return; pushing=true;
-  try{ const r=await apiGetReading(); const remote=(r&&r.data)||{positions:{},bookmarks:{}};
-    const merged={ positions: mergeByTs(remote.positions||{}, lget(KEY_POS)), bookmarks: mergeByTs(remote.bookmarks||{}, lget(KEY_BM)) };
+  try{ const r=await apiGetReading(); const remote=(r&&r.data)||{positions:{},bookmarks:{},notes:{}};
+    const merged={ positions: mergeByTs(remote.positions||{}, lget(KEY_POS)), bookmarks: mergeByTs(remote.bookmarks||{}, lget(KEY_BM)), notes: mergeByTs(remote.notes||{}, lget(KEY_NOTES)) };
     await apiPutReading(merged, r&&r.sha, msg);
   }catch(e){} finally{ pushing=false; } }
 
@@ -134,7 +183,7 @@ function renderBmPanel(){ const bms=bmList().sort((a,b)=>(a.pct||0)-(b.pct||0));
   bmpanel.innerHTML=h;
 }
 function escapeHtml(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
-function toggleBm(force){ const show=(force===undefined)?!bmpanel.classList.contains("show"):force; if(show) renderBmPanel(); bmpanel.classList.toggle("show",show); }
+function toggleBm(force){ const show=(force===undefined)?!bmpanel.classList.contains("show"):force; if(show){ renderBmPanel(); const _np=document.getElementById("npanel"); if(_np) _np.classList.remove("show"); } bmpanel.classList.toggle("show",show); }
 function nearestHeading(){ try{ const d=win.document; const top=(d.scrollingElement||d.documentElement).scrollTop;
   const hs=d.querySelectorAll("h1,h2,h3,h4"); let lab="";
   for(let i=0;i<hs.length;i++){ const y=hs[i].getBoundingClientRect().top+top; if(y<=top+90) lab=(hs[i].textContent||"").trim(); else break; }
@@ -151,6 +200,133 @@ document.getElementById("bmbtn").onclick=()=>toggleBm();
 document.getElementById("topbtn").onclick=()=>{ if(win) win.scrollTo({top:0,behavior:"smooth"}); };
 document.addEventListener("click",(e)=>{ if(bmpanel.classList.contains("show") && !bmpanel.contains(e.target) && e.target.id!=="bmbtn") toggleBm(false); });
 
+/* ================= 批注 / 高亮 ================= */
+const NCOLORS={ y:"#fff3a3", g:"#c7f0cf", b:"#cfe0ff", p:"#ffd6e7", o:"#ffe0b3" };
+const npill=document.getElementById("npill"), npillbtn=document.getElementById("npillbtn");
+const nmask=document.getElementById("nmask"), npanel=document.getElementById("npanel"), nbtn=document.getElementById("nbtn");
+let pendingAnchor=null, pendingRange=null, editingId=null, pickColor="y", ORPHANS=new Set();
+function nList(){ const o=lget(KEY_NOTES)[doc]; return (o&&o.items)?o.items.slice():[]; }
+function nSave(items){ const o=lget(KEY_NOTES); o[doc]={items:items, ts:Date.now()}; lset(KEY_NOTES,o); }
+function dnode(){ return win&&win.document; }
+
+/* 文本索引 + 引用锚定（exact + 前后文，断网/改版也能尽量重定位） */
+function buildIndex(){ const d=dnode(); const root=d&&(d.body||d.documentElement); if(!root) return {map:[],full:""};
+  const w=d.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); const map=[]; let full=""; let n;
+  while(n=w.nextNode()){ const p=n.parentNode; if(p&&/^(SCRIPT|STYLE|NOSCRIPT)$/.test(p.nodeName)) continue;
+    const t=n.nodeValue||""; if(!t) continue; map.push({node:n,start:full.length,end:full.length+t.length}); full+=t; }
+  return {map,full}; }
+function charOffset(idx,container,offset){ if(!container) return -1;
+  if(container.nodeType===3){ for(const s of idx.map) if(s.node===container) return s.start+offset; return -1; }
+  const child=container.childNodes&&container.childNodes[offset];
+  if(child){ let best=-1; for(const s of idx.map){ if(child===s.node||(child.contains&&child.contains(s.node))){ best=best<0?s.start:Math.min(best,s.start);} } if(best>=0) return best; }
+  let prev=container.childNodes&&container.childNodes[offset-1];
+  while(prev){ for(const s of idx.map){ if(prev===s.node||(prev.contains&&prev.contains(s.node))) return s.end; } prev=prev.previousSibling; }
+  return -1; }
+function locate(idx,off){ for(const s of idx.map){ if(off>=s.start&&off<=s.end) return {node:s.node,off:off-s.start}; }
+  const l=idx.map[idx.map.length-1]; return l?{node:l.node,off:(l.node.nodeValue||"").length}:null; }
+function anchorFromRange(range){ const idx=buildIndex(); if(!idx.map.length) return null;
+  const a=charOffset(idx,range.startContainer,range.startOffset), b=charOffset(idx,range.endContainer,range.endOffset);
+  if(a<0||b<0||b<=a) return null;
+  return { exact: idx.full.slice(a,b), prefix: idx.full.slice(Math.max(0,a-40),a), suffix: idx.full.slice(b,b+40) }; }
+function findRange(item){ const idx=buildIndex(); const hay=idx.full, ex=item.exact; if(!ex||!hay) return null;
+  let pos=[], i=-1; while((i=hay.indexOf(ex,i+1))>=0){ pos.push(i); if(pos.length>500) break; }
+  if(!pos.length) return null; let best=pos[0];
+  if(pos.length>1){ let bs=-1; const pf=item.prefix||"", sf=item.suffix||"";
+    pos.forEach(p=>{ const pre=hay.slice(Math.max(0,p-pf.length),p), suf=hay.slice(p+ex.length,p+ex.length+sf.length); let sc=0;
+      if(pf){ if(pre.endsWith(pf)) sc+=4; else { let k=0; while(k<pre.length&&k<pf.length&&pre[pre.length-1-k]===pf[pf.length-1-k]) k++; sc+=k/Math.max(1,pf.length)*2; } }
+      if(sf){ if(suf.startsWith(sf)) sc+=4; else { let k=0; while(k<suf.length&&k<sf.length&&suf[k]===sf[k]) k++; sc+=k/Math.max(1,sf.length)*2; } }
+      if(sc>bs){ bs=sc; best=p; } }); }
+  const A=locate(idx,best), B=locate(idx,best+ex.length); if(!A||!B) return null;
+  try{ const r=dnode().createRange(); r.setStart(A.node,A.off); r.setEnd(B.node,B.off); return r; }catch(e){ return null; } }
+function ensureHlStyle(){ const d=dnode(); if(!d||d.getElementById("wiki-hl-style")) return;
+  const st=d.createElement("style"); st.id="wiki-hl-style";
+  st.textContent=".wiki-hl{border-radius:3px;padding:0 1px;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone}.wiki-hl.flash{outline:2px solid #4f7cff;outline-offset:2px}";
+  (d.head||d.body||d.documentElement).appendChild(st); }
+function wrapRange(range,nid,color){ const d=dnode(); if(!d||!range) return false;
+  const cac=range.commonAncestorContainer, root=cac.nodeType===1?cac:cac.parentNode; if(!root) return false;
+  const w=d.createTreeWalker(root, NodeFilter.SHOW_TEXT, null); const tg=[]; let n;
+  while(n=w.nextNode()){ if(!range.intersectsNode(n)) continue; const p=n.parentNode; if(p&&/^(SCRIPT|STYLE)$/.test(p.nodeName)) continue;
+    let s=0,e=(n.nodeValue||"").length; if(n===range.startContainer) s=range.startOffset; if(n===range.endContainer) e=range.endOffset; if(s<e) tg.push([n,s,e]); }
+  let ok=false; tg.forEach(a=>{ try{ const r=d.createRange(); r.setStart(a[0],a[1]); r.setEnd(a[0],a[2]);
+    const sp=d.createElement("span"); sp.className="wiki-hl"; sp.setAttribute("data-nid",nid); sp.style.background=NCOLORS[color]||NCOLORS.y;
+    r.surroundContents(sp); ok=true; }catch(e2){} }); return ok; }
+function applyAllNotes(){ const d=dnode(); if(!d) return; ensureHlStyle(); ORPHANS=new Set();
+  nList().forEach(it=>{ const r=findRange(it); let ok=false; if(r) ok=wrapRange(r,it.id,it.color||"y"); if(!ok) ORPHANS.add(it.id); });
+  nList().forEach(it=>{ if(it.note) d.querySelectorAll('.wiki-hl[data-nid="'+it.id+'"]').forEach(sp=>sp.title=it.note); });
+  updateNoteBtn(); }
+function updateNoteBtn(){ const c=nList().length; nbtn.textContent = c?("📝 批注 "+c):"📝 批注"; }
+
+/* 选区浮动按钮 */
+function hidePill(){ npill.classList.remove("show"); }
+function onSel(){ setTimeout(()=>{ if(!win) return; let sel; try{ sel=win.getSelection(); }catch(e){ return; }
+  if(!sel||sel.isCollapsed||!sel.rangeCount){ hidePill(); return; }
+  if((sel.toString()||"").trim().length<2){ hidePill(); return; }
+  const range=sel.getRangeAt(0); const rect=range.getBoundingClientRect(); if(!rect||(!rect.width&&!rect.height)){ hidePill(); return; }
+  pendingRange=range.cloneRange(); pendingAnchor=anchorFromRange(range);
+  const OFF=46; npill.classList.add("show"); const pw=npill.offsetWidth||130, ph=npill.offsetHeight||36;
+  let x=rect.left+rect.width/2-pw/2; x=Math.max(8,Math.min(window.innerWidth-pw-8,x));
+  let top=rect.top+OFF-ph-8; if(top<OFF+4) top=rect.bottom+OFF+8; top=Math.min(top, window.innerHeight-ph-8);
+  npill.style.left=x+"px"; npill.style.top=top+"px"; }, 10); }
+npillbtn.addEventListener("mousedown",e=>e.preventDefault());
+npillbtn.addEventListener("click",e=>{ e.preventDefault(); if(!pendingAnchor||!pendingAnchor.exact){ toast("无法定位所选文字，请重新选择"); hidePill(); return; }
+  editingId=null; pickColor="y"; openEditor(pendingAnchor.exact,"","y",null); hidePill(); });
+
+/* 编辑器 */
+function buildSwatch(){ document.getElementById("nswatch").innerHTML=Object.keys(NCOLORS).map(k=>'<div class="sw'+(k===pickColor?' on':'')+'" data-c="'+k+'" style="background:'+NCOLORS[k]+'"></div>').join(""); }
+function openEditor(quote,note,color,id){ editingId=id||null; pickColor=color||"y";
+  document.getElementById("ntitle").textContent=editingId?"编辑批注":"添加批注";
+  document.getElementById("nquote").textContent=quote||"";
+  document.getElementById("ntext").value=note||"";
+  document.getElementById("ndel").style.display=editingId?"inline-block":"none";
+  buildSwatch(); nmask.classList.add("show"); setTimeout(()=>{try{document.getElementById("ntext").focus();}catch(e){}},60); }
+function closeEditor(){ nmask.classList.remove("show"); editingId=null; pendingRange=null; pendingAnchor=null; }
+document.getElementById("nswatch").addEventListener("click",e=>{ const sw=e.target.closest&&e.target.closest(".sw"); if(!sw) return; pickColor=sw.getAttribute("data-c"); buildSwatch(); });
+document.getElementById("ncancel").addEventListener("click",closeEditor);
+nmask.addEventListener("click",e=>{ if(e.target===nmask) closeEditor(); });
+document.getElementById("nsave").addEventListener("click",()=>{ const note=document.getElementById("ntext").value.trim(); const d=dnode();
+  if(editingId){ const id=editingId; nSave(nList().map(it=>it.id===id?Object.assign({},it,{note:note,color:pickColor,ts:Date.now()}):it));
+    if(d) d.querySelectorAll('.wiki-hl[data-nid="'+id+'"]').forEach(sp=>{ sp.style.background=NCOLORS[pickColor]||NCOLORS.y; if(note) sp.title=note; else sp.removeAttribute("title"); });
+    closeEditor(); toast("已更新批注"); updateNoteBtn(); if(npanel.classList.contains("show")) renderNotePanel(); pushReading("更新批注："+title); return; }
+  if(!pendingAnchor||!pendingAnchor.exact){ toast("定位失败，请重新选择文字"); return; }
+  const id="n"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  const m=metrics(); const pct=(m&&m.max>0)?m.top/m.max:0;
+  const item={id:id, exact:pendingAnchor.exact, prefix:pendingAnchor.prefix, suffix:pendingAnchor.suffix, color:pickColor, note:note, pct:pct, ts:Date.now()};
+  const items=nList(); items.push(item); nSave(items); ensureHlStyle();
+  let ok=false; if(pendingRange){ try{ ok=wrapRange(pendingRange,id,pickColor);}catch(e){} }
+  if(!ok){ const r=findRange(item); if(r) ok=wrapRange(r,id,pickColor); }
+  if(!ok) ORPHANS.add(id); else if(note&&d) d.querySelectorAll('.wiki-hl[data-nid="'+id+'"]').forEach(sp=>sp.title=note);
+  try{ win.getSelection().removeAllRanges(); }catch(e){}
+  closeEditor(); toast(note?"已保存批注":"已高亮"); updateNoteBtn(); if(npanel.classList.contains("show")) renderNotePanel(); pushReading("添加批注："+title); });
+document.getElementById("ndel").addEventListener("click",()=>{ if(!editingId) return; const id=editingId; const d=dnode();
+  nSave(nList().filter(it=>it.id!==id));
+  if(d) d.querySelectorAll('.wiki-hl[data-nid="'+id+'"]').forEach(sp=>{ const t=d.createTextNode(sp.textContent); sp.parentNode.replaceChild(t,sp); });
+  ORPHANS.delete(id); closeEditor(); toast("已删除批注"); updateNoteBtn(); if(npanel.classList.contains("show")) renderNotePanel(); pushReading("删除批注"); });
+
+/* 汇总面板 */
+function renderNotePanel(){ const items=nList().slice().sort((a,b)=>(a.pct||0)-(b.pct||0));
+  let h='<div class="nhd">本文批注 '+items.length+' 条 · 在正文里选一段文字即可新增</div>';
+  if(!items.length) h+='<div class="nempty">还没有批注。<br>选中正文里的文字，点 🖍 高亮 / 批注 试试。</div>';
+  else h+=items.map(it=>{ const orphan=ORPHANS.has(it.id);
+    const q=escapeHtml((it.exact||"").replace(/\s+/g," ").slice(0,60));
+    const body=it.note?escapeHtml(it.note):'<span style="color:#9aa1ad">（仅高亮，无文字）</span>';
+    return '<div class="nrow"><div class="nc" style="background:'+(NCOLORS[it.color]||NCOLORS.y)+'"></div>'+
+      '<div class="nbody" onclick="gotoNote(\''+it.id+'\')"><div class="nt">'+body+'</div>'+
+      '<div class="nq'+(orphan?' orphan':'')+'">'+(orphan?'⚠ 原文未找到 · ':'')+'“'+q+'”</div></div>'+
+      '<button class="del" onclick="openNoteEditorById(\''+it.id+'\')">编辑</button></div>'; }).join("");
+  npanel.innerHTML=h; }
+function toggleNotes(force){ const show=(force===undefined)?!npanel.classList.contains("show"):force; if(show){ renderNotePanel(); toggleBm(false); } npanel.classList.toggle("show",show); }
+function openNoteEditorById(id){ const it=nList().find(x=>x.id===id); if(!it) return; openEditor(it.exact,it.note||"",it.color||"y",id); }
+function gotoNote(id){ const d=dnode(); const sp=d&&d.querySelector('.wiki-hl[data-nid="'+id+'"]');
+  if(sp){ sp.scrollIntoView({behavior:"smooth",block:"center"}); sp.classList.add("flash"); setTimeout(()=>sp.classList.remove("flash"),1600); toggleNotes(false); }
+  else { const it=nList().find(x=>x.id===id); if(it){ jumpTo(it.pct||0); toast("原文未找到，已跳到大致位置"); toggleNotes(false); } } }
+nbtn.addEventListener("click",()=>toggleNotes());
+document.addEventListener("click",e=>{ if(npanel.classList.contains("show") && !npanel.contains(e.target) && e.target.id!=="nbtn") toggleNotes(false); });
+function attachNotes(){ try{ const d=dnode(); if(!d) return;
+  d.addEventListener("mouseup", onSel); d.addEventListener("touchend", onSel);
+  win.addEventListener("scroll", hidePill, {passive:true});
+  d.addEventListener("click",e=>{ const hl=e.target.closest&&e.target.closest(".wiki-hl"); if(hl){ e.preventDefault(); e.stopPropagation(); openNoteEditorById(hl.getAttribute("data-nid")); } }, true);
+}catch(e){} }
+
 /* leave -> push */
 function flushAndPush(){ const m=metrics(); if(m&&m.max>0){ const pct=m.top/m.max; if(pct>0.005) savePosLocal(pct); } if(dirty){ dirty=false; pushReading("同步阅读进度："+title); } }
 document.getElementById("backbtn").addEventListener("click",(e)=>{ e.preventDefault(); flushAndPush(); setTimeout(()=>{ location.href="./index.html"; }, 250); });
@@ -160,7 +336,8 @@ window.addEventListener("pagehide", flushAndPush);
 /* load */
 frame.addEventListener("load", ()=>{ document.getElementById("loading").style.display="none";
   try{ win=frame.contentWindow; win.addEventListener("scroll", onScroll, {passive:true});
-    setTimeout(()=>{ const m=metrics(); if(m){ updateBar(m.max>0?m.top/m.max:0); setupResume(); } }, 350);
+    attachNotes();
+    setTimeout(()=>{ const m=metrics(); if(m){ updateBar(m.max>0?m.top/m.max:0); applyAllNotes(); setupResume(); } }, 350);
   }catch(e){}
 });
 (async ()=>{ await pullReading(); })().finally(()=>{ frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")) : "about:blank"; });
