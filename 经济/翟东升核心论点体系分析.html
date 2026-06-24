@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翟东升核心论点体系分析 · Systematic Analysis</title>
+<style>
+  :root{
+    --bg-0:#03060f;
+    --bg-1:#070d1f;
+    --cyan:#36e2ff;
+    --blue:#4d7cff;
+    --purple:#9b6dff;
+    --pink:#ff5fa8;
+    --gold:#ffc24d;
+    --green:#3dffa6;
+    --red:#ff5d5d;
+    --text:#e8f1ff;
+    --text-dim:#8ea3c7;
+    --text-faint:#5a6b8a;
+    --glass:rgba(20,32,58,0.45);
+    --glass-border:rgba(110,160,255,0.18);
+    --glass-hi:rgba(120,180,255,0.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,"SF Pro Display","Helvetica Neue",sans-serif;
+    background:var(--bg-0);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .bg-grid{
+    background-image:
+      linear-gradient(rgba(70,120,220,0.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(70,120,220,0.06) 1px,transparent 1px);
+    background-size:54px 54px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 90%);
+    -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 90%);
+  }
+  .bg-glow-1{position:fixed;width:60vw;height:60vw;left:-15vw;top:-15vw;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(54,226,255,0.10),transparent 60%);filter:blur(20px);animation:drift1 24s ease-in-out infinite}
+  .bg-glow-2{position:fixed;width:55vw;height:55vw;right:-12vw;bottom:-12vw;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(155,109,255,0.10),transparent 60%);filter:blur(20px);animation:drift2 30s ease-in-out infinite}
+  .bg-glow-3{position:fixed;width:40vw;height:40vw;left:30vw;bottom:0;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(255,95,168,0.06),transparent 60%);filter:blur(20px);animation:drift3 28s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(8vw,6vh)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-6vw,-4vh)}}
+  @keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(4vw,-8vh)}}
+  #particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 24px}
+
+  header.hero{padding:90px 0 50px;text-align:center}
+  .tag-line{display:inline-flex;align-items:center;gap:8px;font-family:"SF Mono","Fira Code",monospace;font-size:12px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;border:1px solid rgba(54,226,255,0.3);border-radius:30px;padding:6px 18px;margin-bottom:28px;background:rgba(54,226,255,0.05);backdrop-filter:blur(10px)}
+  .tag-line .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  h1.title{font-size:clamp(34px,6vw,62px);font-weight:800;letter-spacing:2px;background:linear-gradient(120deg,#fff 0%,var(--cyan) 40%,var(--blue) 60%,var(--purple) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+  .subtitle{margin-top:18px;color:var(--text-dim);font-size:clamp(15px,2vw,18px);max-width:680px;margin-left:auto;margin-right:auto}
+  .meta-row{margin-top:34px;display:flex;flex-wrap:wrap;justify-content:center;gap:14px;font-family:"SF Mono","Fira Code",monospace;font-size:13px}
+  .meta-chip{padding:8px 16px;border-radius:10px;background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--glass-border);color:var(--text-dim)}
+  .meta-chip b{color:var(--cyan);font-weight:600}
+
+  .intro-panel{margin:40px 0 20px;padding:32px;border-radius:22px;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:0 8px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06)}
+  .intro-panel h2{font-size:20px;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .intro-panel h2::before{content:"";width:4px;height:20px;background:linear-gradient(var(--cyan),var(--blue));border-radius:2px}
+  .intro-panel p{color:var(--text-dim);font-size:15px;margin-bottom:10px}
+  .intro-panel p strong{color:var(--text)}
+  .framework-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:20px}
+  .framework-cell{padding:14px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);text-align:center}
+  .framework-cell .icon{font-size:22px}
+  .framework-cell .label{font-size:13px;color:var(--text-dim);margin-top:6px}
+  .framework-cell .val{font-size:11px;color:var(--text-faint);font-family:"SF Mono",monospace;margin-top:2px}
+
+  .section-head{margin:60px 0 28px;text-align:center}
+  .section-head .num{font-family:"SF Mono",monospace;font-size:13px;color:var(--purple);letter-spacing:4px}
+  .section-head h2{font-size:clamp(24px,4vw,34px);font-weight:700;margin-top:8px;background:linear-gradient(90deg,#fff,var(--text-dim));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .section-head .line{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);margin:16px auto 0}
+
+  .chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding-bottom:60px}
+  .chapter-card{position:relative;cursor:pointer;border-radius:20px;overflow:hidden;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--glass-border);box-shadow:0 6px 30px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.05);transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s,border-color .4s;padding:28px 24px 24px}
+  .chapter-card::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .4s;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(54,226,255,0.12),transparent 60%);pointer-events:none}
+  .chapter-card:hover{transform:translateY(-6px);box-shadow:0 16px 50px rgba(0,0,0,0.4),0 0 0 1px var(--glass-hi);border-color:var(--glass-hi)}
+  .chapter-card:hover::before{opacity:1}
+  .ch-num{font-family:"SF Mono",monospace;font-size:13px;color:var(--text-faint);letter-spacing:2px}
+  .ch-accent{position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--c1,var(--cyan)),var(--c2,var(--purple)))}
+  .ch-title{font-size:20px;font-weight:700;margin-top:10px;color:var(--text);line-height:1.4}
+  .ch-desc{font-size:14px;color:var(--text-dim);margin-top:12px;line-height:1.7}
+  .ch-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .ch-tag{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--text-faint)}
+  .ch-enter{margin-top:18px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--cyan);font-family:"SF Mono",monospace}
+  .ch-enter .arr{transition:transform .3s}
+  .chapter-card:hover .ch-enter .arr{transform:translateX(6px)}
+
+  #chapter-view{position:fixed;inset:0;z-index:100;overflow-y:auto;background:rgba(3,6,15,0.85);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
+  #chapter-view.active{opacity:1;pointer-events:auto}
+  #chapter-view .cv-inner{max-width:940px;margin:0 auto;padding:40px 24px 80px}
+  .cv-topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 0;margin-bottom:24px;background:linear-gradient(180deg,rgba(3,6,15,0.95),rgba(3,6,15,0.7) 70%,transparent);backdrop-filter:blur(10px)}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:"SF Mono",monospace;font-size:13px;color:var(--text-dim);padding:8px 16px;border-radius:10px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(10px);transition:all .3s}
+  .back-btn:hover{color:var(--cyan);border-color:var(--glass-hi)}
+  .cv-progress{font-family:"SF Mono",monospace;font-size:12px;color:var(--text-faint)}
+
+  .cv-header{margin-bottom:36px}
+  .cv-cat{font-family:"SF Mono",monospace;font-size:12px;letter-spacing:3px;color:var(--c1,var(--cyan));text-transform:uppercase}
+  .cv-title{font-size:clamp(26px,4.5vw,40px);font-weight:800;margin-top:10px;line-height:1.25;background:linear-gradient(120deg,#fff,var(--c1,var(--cyan)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .cv-lead{margin-top:16px;font-size:16px;color:var(--text-dim);line-height:1.8}
+
+  .block{margin-bottom:30px;padding:26px;border-radius:18px;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);box-shadow:0 4px 24px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.04)}
+  .block-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .block-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700;background:linear-gradient(135deg,var(--c1,var(--cyan)),var(--c2,var(--purple)));box-shadow:0 0 18px rgba(54,226,255,0.25);color:#fff}
+  .block-head h3{font-size:17px;font-weight:700;color:var(--text)}
+  .block-head .sub{font-size:12px;color:var(--text-faint);font-family:"SF Mono",monospace}
+  .block p{color:var(--text-dim);font-size:14.5px;margin-bottom:12px}
+  .block p:last-child{margin-bottom:0}
+  .block p strong{color:var(--text)}
+  .block ul{list-style:none;padding:0;margin:8px 0}
+  .block ul li{color:var(--text-dim);font-size:14px;padding:6px 0 6px 22px;position:relative}
+  .block ul li::before{content:"▸";position:absolute;left:0;color:var(--c1,var(--cyan))}
+
+  /* theory citations */
+  .theory-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .theory-item{display:flex;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border-left:3px solid var(--c1,var(--cyan))}
+  .theory-item .src{font-family:"SF Mono",monospace;font-size:12px;color:var(--c1,var(--cyan));min-width:120px;flex-shrink:0;font-weight:600}
+  .theory-item .exp{font-size:14px;color:var(--text-dim)}
+  .theory-item .exp b{color:var(--text)}
+
+  .chain-wrap{margin-top:8px;padding:10px;border-radius:14px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.05);overflow-x:auto}
+  .chain-wrap svg{display:block;min-width:760px;width:100%;height:auto}
+  .chain-node text{fill:var(--text);font-size:12px;font-weight:600;font-family:"PingFang SC",sans-serif}
+  .chain-node rect{transition:filter .3s}
+  .chain-node:hover rect{filter:brightness(1.3)}
+  .chain-edge{stroke-dasharray:6 5;animation:flow 1.2s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-22}}
+  .chain-note{margin-top:14px;padding:14px 16px;border-radius:12px;background:rgba(54,226,255,0.05);border:1px dashed rgba(54,226,255,0.2);font-size:13.5px;color:var(--text-dim)}
+  .chain-note b{color:var(--c1,var(--cyan))}
+
+  .timeline{position:relative;padding-left:28px;margin-top:10px}
+  .timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--c1,var(--cyan)),var(--c2,var(--purple)),transparent)}
+  .tl-item{position:relative;padding-bottom:18px}
+  .tl-item::before{content:"";position:absolute;left:-25px;top:5px;width:14px;height:14px;border-radius:50%;background:var(--bg-0);border:2px solid var(--c1,var(--cyan));box-shadow:0 0 10px var(--c1,var(--cyan))}
+  .tl-time{font-family:"SF Mono",monospace;font-size:12px;color:var(--c1,var(--cyan))}
+  .tl-text{font-size:14.5px;color:var(--text-dim);margin-top:3px}
+
+  /* scholar comparison */
+  .scholar-summary{padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(54,226,255,0.08),rgba(155,109,255,0.08));border:1px solid rgba(110,160,255,0.2);margin-bottom:18px}
+  .scholar-summary .ss-label{font-family:"SF Mono",monospace;font-size:11px;color:var(--c1,var(--cyan));letter-spacing:2px;margin-bottom:6px}
+  .scholar-summary p{margin:0;color:var(--text);font-size:14.5px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+  .compare-col{padding:16px;border-radius:14px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06)}
+  .compare-col h4{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .compare-col.cn h4{color:var(--gold)}
+  .compare-col.en h4{color:var(--cyan)}
+  .compare-col h4 .flag{font-size:16px}
+  .scholar-entry{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .scholar-entry:last-child{border-bottom:none}
+  .scholar-entry .name{font-size:13.5px;font-weight:600;color:var(--text)}
+  .scholar-entry .name span{font-size:11px;color:var(--text-faint);font-weight:400;margin-left:6px}
+  .scholar-entry .view{font-size:13px;color:var(--text-dim);margin-top:3px;line-height:1.65}
+  .divergence-box{padding:14px 16px;border-radius:12px;background:rgba(255,94,93,0.06);border:1px solid rgba(255,94,93,0.2)}
+  .divergence-box .dl{font-family:"SF Mono",monospace;font-size:11px;color:var(--red);letter-spacing:2px;margin-bottom:6px}
+  .divergence-box p{margin:0;color:var(--text);font-size:14px}
+  .divergence-box p b{color:var(--red)}
+
+  /* opposing views */
+  .oppose-section{margin-bottom:16px;border-radius:14px;padding:16px;background:rgba(255,120,80,0.05);border:1px solid rgba(255,120,80,0.18)}
+  .oppose-section .os-head{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--gold)}
+  .oppose-section .os-head .flag{font-size:16px}
+  .oppose-section .os-head .sub{font-family:"SF Mono",monospace;font-size:10px;color:var(--text-faint);font-weight:400;margin-left:auto}
+  .oppose-entry{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .oppose-entry:last-child{border-bottom:none}
+  .oppose-entry .oe-icon{flex-shrink:0;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,120,80,0.12);border:1px solid rgba(255,120,80,0.2)}
+  .oppose-entry .oe-body{flex:1}
+  .oppose-entry .name{font-size:13.5px;font-weight:600;color:var(--text)}
+  .oppose-entry .name span{font-size:11px;color:var(--text-faint);font-weight:400;margin-left:6px}
+  .oppose-entry .view{font-size:13px;color:var(--text-dim);margin-top:3px;line-height:1.65}
+  .oppose-entry .view b{color:var(--gold)}
+
+  /* value meter */
+  .value-meter{display:flex;align-items:center;gap:12px;margin-top:8px}
+  .meter-bar{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;position:relative}
+  .meter-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--c1,var(--cyan)),var(--c2,var(--purple)));box-shadow:0 0 12px rgba(54,226,255,0.4);transition:width 1s ease}
+  .meter-label{font-family:"SF Mono",monospace;font-size:12px;color:var(--text-faint);min-width:90px;text-align:right}
+
+  /* impact */
+  .impact-macro{margin-bottom:18px}
+  .impact-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:8px}
+  .impact-card{padding:14px;border-radius:13px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);transition:all .3s}
+  .impact-card:hover{border-color:var(--c1,var(--cyan));background:rgba(54,226,255,0.04)}
+  .impact-card .ic-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .impact-card .ic-icon{font-size:18px}
+  .impact-card .ic-who{font-size:13.5px;font-weight:600;color:var(--c1,var(--cyan))}
+  .impact-card .ic-text{font-size:13px;color:var(--text-dim);line-height:1.65}
+  .impact-risk{margin-top:16px;padding:14px 16px;border-radius:12px;background:rgba(255,194,77,0.06);border:1px solid rgba(255,194,77,0.2)}
+  .impact-risk .rl{font-family:"SF Mono",monospace;font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:6px}
+  .impact-risk p{margin:0;color:var(--text);font-size:13.5px}
+
+  .new-view{margin-top:14px;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,rgba(155,109,255,0.10),rgba(54,226,255,0.06));border:1px solid rgba(155,109,255,0.25)}
+  .new-view .nv-label{font-family:"SF Mono",monospace;font-size:11px;color:var(--purple);letter-spacing:2px;margin-bottom:8px}
+  .new-view p{color:var(--text);font-size:14.5px;margin:0}
+
+  footer{padding:50px 24px;text-align:center;color:var(--text-faint);font-size:13px;border-top:1px solid rgba(255,255,255,0.05);position:relative;z-index:2}
+  footer .disclaimer{max-width:680px;margin:0 auto 16px;line-height:1.8;color:var(--text-faint)}
+
+  .cv-nav{display:flex;justify-content:space-between;gap:16px;margin-top:40px}
+  .cv-nav button{flex:1;cursor:pointer;padding:18px;border-radius:14px;text-align:left;background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--glass-border);color:var(--text-dim);transition:all .3s}
+  .cv-nav button:hover{border-color:var(--glass-hi);color:var(--text)}
+  .cv-nav button .dir{font-family:"SF Mono",monospace;font-size:11px;color:var(--cyan)}
+  .cv-nav button .nt{font-size:15px;margin-top:4px;font-weight:600}
+  .cv-nav button.next{text-align:right}
+
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:700px){
+    .chapter-grid{grid-template-columns:1fr}
+    .cv-nav{flex-direction:column}
+    .compare-grid{grid-template-columns:1fr}
+  }
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(110,160,255,0.2);border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(110,160,255,0.4)}
+</style>
+</head>
+<body>
+
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+<div class="bg-glow-3"></div>
+<div class="bg-layer bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<div class="wrap" id="main-view">
+  <header class="hero">
+    <div class="tag-line"><span class="dot"></span> SYSTEMATIC ANALYSIS · 论点体系深度拆解</div>
+    <h1 class="title">翟东升核心论点体系</h1>
+    <p class="subtitle">从美元霸权到文明周期 —— 系统拆解中国人民大学翟东升教授八大核心论点的理论依据、逻辑链条、学者对比与现实影响</p>
+    <div class="meta-row">
+      <span class="meta-chip">学者 <b>翟东升</b></span>
+      <span class="meta-chip">领域 <b>国际政治经济学</b></span>
+      <span class="meta-chip">论点 <b>8 项</b></span>
+      <span class="meta-chip">维度 <b>理论/逻辑/对比/影响</b></span>
+    </div>
+  </header>
+
+  <div class="intro-panel reveal">
+    <h2>理论框架总览</h2>
+    <p>翟东升的理论体系以<strong>「权力—货币—产业」</strong>为三元分析轴，将国际政治经济现象归结为<strong>权力结构的投射</strong>。他反对纯市场视角的新古典解释，主张从国家能力、货币霸权与制造业硬实力三个维度理解财富分配与大国兴衰。</p>
+    <p>其论点贯穿一条主线：<strong>美元体系不可持续 → 中国制造不可替代 → 全球化中心东移 → 东方周期回归</strong>。八大论点分别从货币、产业、贸易、人口、文明、权力、地缘、战略八个层面展开论证，每一论点均有明确的<strong>理论渊源</strong>，并可与中西学者同类观点构成对话。</p>
+    <p>本分析在原有六维结构（是什么/逻辑链/时间/反应/价值/新观点）基础上，新增<strong>理论依据、学者态度中西对比、对中国及不同人群影响</strong>三个深度维度，共九板块构成完整分析框架。</p>
+    <div class="framework-grid">
+      <div class="framework-cell"><div class="icon">💰</div><div class="label">货币权力</div><div class="val">CURRENCY</div></div>
+      <div class="framework-cell"><div class="icon">🏭</div><div class="label">制造硬实力</div><div class="val">INDUSTRY</div></div>
+      <div class="framework-cell"><div class="icon">🌐</div><div class="label">贸易枢纽</div><div class="val">TRADE</div></div>
+      <div class="framework-cell"><div class="icon">👥</div><div class="label">人口转型</div><div class="val">DEMOGRAPHY</div></div>
+      <div class="framework-cell"><div class="icon">♾️</div><div class="label">文明周期</div><div class="val">CYCLES</div></div>
+      <div class="framework-cell"><div class="icon">⚡</div><div class="label">权力本质</div><div class="val">POWER</div></div>
+      <div class="framework-cell"><div class="icon">🗺️</div><div class="label">地缘预判</div><div class="val">GEOPOLITICS</div></div>
+      <div class="framework-cell"><div class="icon">🔄</div><div class="label">双循环战略</div><div class="val">STRATEGY</div></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="num">CHAPTERS · 01 — 08</div>
+    <h2>点击章节进入独立成章</h2>
+    <div class="line"></div>
+  </div>
+
+  <nav class="chapter-grid" id="chapter-grid"></nav>
+</div>
+
+<div id="chapter-view">
+  <div class="cv-inner" id="cv-inner"></div>
+</div>
+
+<footer>
+  <p class="disclaimer">本文件基于公开学术资料与讲座内容进行系统性整理与分析，旨在呈现论点的逻辑结构、理论依据与学术价值，不代表对任何具体预测的背书。学者观点归属其本人，引用旨在构成学术对话。读者应结合多方视角独立判断。</p>
+  <p>翟东升核心论点体系分析 · Systematic Analysis · 2026</p>
+</footer>
+
+<script>
+const CHAPTERS = [
+/* ===================== CHAPTER 01 ===================== */
+{
+  n:"01", c1:"#36e2ff", c2:"#4d7cff", icon:"💰",
+  title:"美元霸权与去美元化论",
+  desc:"美元特权建立在「军事+石油+金融」三位一体之上，而非经济基本面。通过铸币税向全球征税的体系不可持续，去美元化是历史必然。",
+  tags:["货币体系","石油美元","铸币税","本币结算"],
+  lead:"翟东升货币观的核心：美元霸权本质是权力货币，而非市场货币。一旦权力基础动摇，货币信用随之瓦解。这一判断的理论根基可追溯至特里芬难题与结构性权力理论。",
+  what:[
+    "翟东升认为，美元的国际储备货币地位并非源于美国经济基本面最强，而是建立在<strong>「军事力量—石油定价—金融清算」三位一体</strong>的权力结构之上。",
+    "这一特权使美国能够通过<strong>铸币税</strong>向全球「征税」——用本国货币购买全球商品与资产，并以通胀方式稀释债务。这是一种结构性剥削。",
+    "他判断：随着美国制造业空心化、债务规模失控、军事相对优势收窄，这一权力基础正在松动，<strong>去美元化是不可逆的历史进程</strong>。"
+  ],
+  theory:[
+    {src:"特里芬难题<br/>Triffin Dilemma",exp:"储备货币发行国必须通过持续逆差向世界输出流动性，但逆差累积必然侵蚀货币信用——这是美元体系的<b>内生性矛盾</b>。翟东升将其作为去美元化的底层逻辑。"},
+    {src:"结构性权力<br/>Susan Strange",exp:"安全、生产、金融、知识四种结构性权力构成国际秩序基石。美元是金融权力的集中体现，其信用最终由<b>军事安全权力担保</b>，而非市场自发选择。"},
+    {src:"嚣张的特权<br/>Eichengreen",exp:"法国财长德斯坦所创概念。美元特权使美国获得<b>年均GDP约0.5%—1%</b>的隐性收益。翟东升将其量化为全球向美国的'结构性转移支付'。"},
+    {src:"格雷欣法则<br/>货币竞争",exp:"良币与劣币的竞争关系中，当权力担保弱化，市场会自发寻找替代——数字货币、本币结算是这一法则的当代演绎。"}
+  ],
+  chain:["美元脱离金本位<br/>1971布雷顿解亡","绑定石油<br/>石油美元体系","军事力量<br/>维持结算垄断","制造业空心化<br/>+债务失控","信用透支<br/>特里芬难题显化","各国本币结算<br/>去美元化加速","美元体系瓦解<br/>多极货币格局"],
+  chainNote:"完整逻辑链包含<strong>三个层次</strong>：① 历史层——从金本位到石油美元的权力建构；② 矛盾层——特里芬难题导致的内生性信用侵蚀；③ 替代层——技术（数字货币）与制度（本币结算）双轮驱动下的体系瓦解。翟东升的独特贡献在于将这三层贯通，并强调军事权力的衰落是触发点。",
+  time:[
+    {t:"2010 年前后",d:"在著作《中国为什么有前途》及系列课程中初步系统阐述美元霸权的权力本质"},
+    {t:"2016—2019",d:"贸易战背景下，去美元化论点在其公开讲座中反复强化，社交媒体传播加速"},
+    {t:"2022 年后",d:"俄乌冲突与金融制裁事件（俄外汇储备被冻结），使其去美元化预判获得空前关注"}
+  ],
+  scholar:{
+    summary:"两极分化明显。主流国际经济学界多视为'边缘观点'，认为美元网络效应不可破；政治经济学与国际关系界共鸣较多，尤其2022年制裁事件后讨论升温。整体看，翟东升在'方向判断'上获越来越多认同，在'时间表与速度'上仍被普遍认为偏激进。",
+    cn:[
+      {name:"余永定",info:"社科院世经政所",view:"同样批评美元霸权，但更强调中国自身金融改革与资本账户开放的节奏，认为去美元化不能操之过急"},
+      {name:"向松祚",info:"经济学家",view:"同为'看空美元派'，侧重蒙代尔货币理论，主张人民币国际化是系统性工程而非情绪化'去美元'"},
+      {name:"黄奇帆",info:"前重庆市长",view:"系统论述去美元化路径，但更偏政策操作层面——CIPS建设、本币互换、数字人民币试点等具体抓手"}
+    ],
+    en:[
+      {name:"Ray Dalio",info:"桥水基金",view:"《不断变化的世界秩序》中同样论述美元长期衰落，框架更数据化、周期化，结论与翟东升高度相近"},
+      {name:"Barry Eichengreen",info:"UC Berkeley",view:"《嚣张的特权》系统分析美元替代可能性，但强调替代是<b>渐进的、多极的</b>而非断裂性的"},
+      {name:"Nouriel Roubini",info:"纽约大学",view:"预警美元替代与'去美元化'趋势，但归因更侧重美国自身财政与政治 dysfunction"}
+    ],
+    oppose:[
+      {name:"易纲",info:"央行前行长",tag:"🏦",view:"认为美元体系虽有缺陷但在相当长时期内仍是最优选择，人民币国际化应<b>渐进推进</b>而非急于'去美元'，冒进可能触发金融风险"},
+      {name:"Kenneth Rogoff",info:"哈佛大学",tag:"📉",view:"承认美元有结构性问题但<b>短期内无替代品</b>，'去美元化'叙事被严重夸大，美元的网络效应远比预想坚固"},
+      {name:"Eswar Prasad",info:"Cornell",tag:"🔍",view:"《Gaining Currency》指出人民币国际化面临<b>资本管制等根本性障碍</b>——去美元化不等于人民币替代，中间存在巨大鸿沟"},
+      {name:"管涛",info:"中银证券",tag:"⚖️",view:"去美元化不能脱离中国自身金融体系改革，警惕<b>情绪化'去美元'</b>，金融开放与汇率市场化是前提条件"}
+    ],
+    divergence:"核心分歧在于<strong>速度与路径</strong>：西方学者多认为美元衰落是渐进的、多极并存的过程（欧元、人民币分一杯羹）；翟东升倾向加速的、断裂性的瓦解，并更强调军事权力作为触发变量。"
+  },
+  value:65,
+  valueText:"部分应验：金砖本币结算增加、人民币国际化推进、多国减持美债、俄被踢出SWIFT反而加速替代结算探索。但美元仍占全球支付近半数，去美元化速度比其预判更慢、更曲折，且美元在危机中仍有避险吸引力。2022年制裁是'去美元化'叙事的转折点，但尚未形成系统性替代。",
+  valuePros:"方向性判断有前瞻性，制裁事件提供强力实证",
+  valueCons:"低估了美元体系的惯性与深度，时间表偏乐观",
+  chinaImpact:{
+    macro:[
+      "<strong>战略层面：</strong>为人民币国际化战略提供理论支撑与战略信心，推动CIPS系统建设、本币互换协议网络扩展",
+      "<strong>储备管理：</strong>影响外汇储备多元化决策——增持黄金（2023年中国央行连续多月增持）、减持美债趋势显现",
+      "<strong>风险层面：</strong>去美元化推进过快可能触发中美金融冲突，需平衡'推进速度'与'系统性风险'",
+      "<strong>数字货币：</strong>数字人民币（e-CNY）与多边数字货币桥（mBridge）成为去美元化的技术路径抓手"
+    ],
+    groups:[
+      {who:"政策制定者",icon:"🏛️",impact:"获得去美元化的理论支撑与战略信心，影响外汇储备与金融开放节奏决策"},
+      {who:"出口企业",icon:"📦",impact:"需关注结算货币多元化带来的汇率风险管理需求，本币结算降低美元依赖但也增加汇兑复杂度"},
+      {who:"投资者",icon:"📊",impact:"影响对美元资产、黄金、人民币资产的配置判断——去美元化逻辑下黄金与新兴市场资产获理论支撑"},
+      {who:"普通民众",icon:"👤",impact:"对'美元是否还安全'的认知影响海外资产配置与留学、移民等长期规划"}
+    ],
+    risk:"去美元化论若被过度简化为'美元即将崩溃'，可能导致民间非理性资产转移或金融投机行为。政策层面若操之过急，可能引发美方金融反制。"
+  },
+  newView:"后期更强调<strong>央行数字货币（CBDC）与区块链清算</strong>对去美元化的加速作用。原因：技术路径绕开了SWIFT等传统基础设施，多边数字货币桥项目（mBridge）等提供了制度载体，技术变革正成为去美元化的新引擎——从'政治意愿驱动'转向'技术路径驱动'。"
+},
+
+/* ===================== CHAPTER 02 ===================== */
+{
+  n:"02", c1:"#3dffa6", c2:"#36e2ff", icon:"🏭",
+  title:"中国制造不可替代论",
+  desc:"中国制造业的完整产业链、规模效应与协同生态构成不可复制的系统性优势，所谓产业链外迁多为低端环节转移，核心制造能力无法被替代。",
+  tags:["产业链","规模效应","生态壁垒","China+1"],
+  lead:"制造业不是单点能力，而是生态系统。中国的优势在于'网络密度'而非单一成本——这是新经济地理学与复杂系统理论的现实投射，使得替代极为困难。",
+  what:[
+    "翟东升认为，中国制造业的优势不仅在于低成本，更在于<strong>全品类工业体系、基础设施密度、供应链网络化协同与工程师红利</strong>四者叠加形成的「生态系统」。",
+    "这套生态系统具有<strong>规模报酬递增</strong>特征——越多的环节聚集，整体效率越高，新进入者难以单点切入复制。",
+    "因此跨国企业的「China+1」策略本质是<strong>低端环节分散</strong>，而非核心制造能力外迁，最终会因缺乏配套而回流或失败。"
+  ],
+  theory:[
+    {src:"新经济地理学<br/>Krugman",exp:"克鲁格曼的产业聚集理论：路径依赖与规模报酬递增使聚集一旦形成便具有<b>自我强化</b>特征。中国制造业集群正是这一理论的极端案例。"},
+    {src:"钻石模型<br/>Porter",exp:"波特国家竞争优势四要素（要素条件/需求条件/相关产业/企业战略）叠加构成系统性优势。中国同时具备<b>超大规模需求+完整配套+激烈竞争</b>三重条件。"},
+    {src:"全球价值链<br/>GVC Theory",exp:"微笑曲线与网络嵌入性：中国在曲线中段的制造环节形成了<b>深度嵌入</b>，迁移成本不仅是劳动力差价，而是整条网络的重建。"},
+    {src:"复杂系统<br/>Emergence",exp:"制造业生态是<b>涌现性系统</b>——整体能力大于部分之和。翟东升的'不可替代'本质是涌现性不可拆解、不可单点复制。"}
+  ],
+  chain:["改革开放积累<br/>制造业资本与经验","完整工业体系<br/>全球唯一全品类","规模报酬递增<br/>+基础设施密度","供应链网络化<br/>涌现性不可分割","「China+1」试错<br/>配套缺失成本高","中低端外迁<br/>但核心环节留存","制造业升级<br/>从成本到技术壁垒"],
+  chainNote:"逻辑链的关键转折在<strong>第三至第四节点</strong>：从'规模效应'（可量化成本优势）跃迁到'涌现性生态'（质的不可复制性）。这是翟东升区别于主流'迁移成本'分析框架的核心——他用'系统不可拆解'替代了'成本可计算'，从而得出更强的不可替代结论。",
+  time:[
+    {t:"2018 年",d:"中美贸易战爆发，产业链外迁论成为焦点，翟东升系统提出不可替代论"},
+    {t:"2020 年",d:"疫情冲击全球供应链，其论点获得实证场景支持——越南、印度因封锁停摆，中国快速恢复"},
+    {t:"2022—2023",d:"针对苹果、特斯拉等企业在越南、印度扩产的案例持续分析，区分'低端分散'与'核心留存'"}
+  ],
+  scholar:{
+    summary:"务实派较多认同其'生态壁垒'判断，纯市场派与西方智库有保留。产业界一线从业者的认同度高于学院派经济学家。整体看，此论点的接受度在八大论点中偏高，但'不可替代'的绝对化表述引发'应限定范围'的修正意见。",
+    cn:[
+      {name:"林毅夫",info:"北大国发院",view:"比较优势与产业升级理论，认同中国制造基础牢固，但更侧重<b>'跟随式升级'</b>路径，对不可替代的绝对化表述较谨慎"},
+      {name:"黄奇帆",info:"前重庆市长",view:"系统论述产业链集群优势，与翟东升高度共鸣，强调'集群效应'不可复制"},
+      {name:"贾根良",info:"人大经济学院",view:"'新李斯特'经济学视角，主张产业政策保护本土制造，比翟东升更激进地主张主动保护"}
+    ],
+    en:[
+      {name:"Richard Baldwin",info:"IMD/CEPR",view:"全球价值链研究权威，认为供应链重组成本<b>极高</b>，'友岸外包'难以真正替代中国，实证支持不可替代论"},
+      {name:"Peter Navarro",info:"前白宫顾问",view:"<b>反向印证</b>——其《致命中国》论证中国制造威胁美国，侧面承认了不可替代性与迁移困难"},
+      {name:"Daron Acemoglu",info:"MIT",view:"更中性，认为产业转移是长期趋势，但承认中国生态优势短期难以复制，时间尺度是关键分歧"}
+    ],
+    oppose:[
+      {name:"Christopher Balding",info:"曾任北大汇丰",tag:"📊",view:"认为中国制造成本优势正在<b>实质性削弱</b>，产业转移是真实趋势而非假象，数据不支持'不可替代'的绝对化判断"},
+      {name:"朱海斌",info:"摩根大通",tag:"📈",view:"部分制造业外迁是<b>结构性而非暂时性</b>，受成本、地缘、政策多重驱动，不可替代论过于绝对"},
+      {name:"Michael Hart",info:"美中贸委会",tag:"🏢",view:"大量会员企业确实在推进'China+1'甚至'China+2'，转移<b>不是假象而是真实战略</b>，不可替代论与一线企业感受脱节"},
+      {name:"赵晓",info:"经济学家",tag:"🔄",view:"比较优势变化下产业转移是<b>经济规律</b>，不应政治化解读，过度强调'不可替代'可能延误产业升级窗口"}
+    ],
+    divergence:"核心分歧在于<strong>分析框架</strong>：西方学者多用'迁移成本'框架（成本可计算、可随时间消化），翟东升用'生态不可复制'框架（质的差异、不可通过成本补偿解决）。这导致对'多久能替代'的判断产生根本分歧。"
+  },
+  value:72,
+  valueText:"较有预见性：疫情后越南、印度难以承接高端制造，中国出口结构持续升级，新能源、电动车领域全球领先。但中低端劳动密集型环节确实在转移，'不可替代'应限定在核心制造与中高端环节，而非全产业链。整体判断优于主流'中国制造衰退论'，2023年中国出口占全球比重不降反升佐证了这一点。",
+  valuePros:"生态壁垒判断准确，升级路径预见性强",
+  valueCons:"对低端外迁规模有所低估，'不可替代'需限定范围",
+  chinaImpact:{
+    macro:[
+      "<strong>产业政策：</strong>支撑'制造强国'战略信心，影响对产业转移的容忍度——不恐慌外迁、聚焦升级",
+      "<strong>贸易谈判：</strong>增强谈判底气，理解脱钩不可完成，为'以打促谈'提供底气",
+      "<strong>战略定力：</strong>在'去风险'声浪中保持对制造业根基的信心，避免过度让步",
+      "<strong>风险提示：</strong>过度自信可能导致对高端技术瓶颈（先进制程芯片、光刻机等）的低估与忽视"
+    ],
+    groups:[
+      {who:"制造业企业家",icon:"🏭",impact:"增强扎根信心，推动从'成本竞争'转向'技术+规模双壁垒'的升级投资"},
+      {who:"跨国企业高管",icon:"🌍",impact:"影响全球供应链布局决策——'China+1'还是'China first'的战略取舍"},
+      {who:"产业工人",icon:"🔧",impact:"相对利好但需技能升级，低端岗位外迁与高端岗位扩张并存"},
+      {who:"投资者",icon:"📊",impact:"为制造业升级主题投资提供框架——新能源、电动车、高端装备等'中国优势赛道'"}
+    ],
+    risk:"若将'不可替代'理解为'无需升级'，可能错失技术追赶窗口。高端环节（先进制程半导体）的可替代性远高于中低端组装，需区分对待。"
+  },
+  newView:"近期转向<strong>'新质生产力'与高端制造突破</strong>，认为产业升级将巩固而非削弱制造地位。原因：中国在光伏、动力电池、电动车、成熟制程半导体等领域已形成全球竞争力，升级路径使制造优势从'成本'转向'技术与规模双重壁垒'——不可替代性的来源正在从'便宜'升级为'又好又全又便宜'。"
+},
+
+/* ===================== CHAPTER 03 ===================== */
+{
+  n:"03", c1:"#9b6dff", c2:"#ff5fa8", icon:"🌐",
+  title:"逆全球化实为再全球化论",
+  desc:"西方主导的「逆全球化」本质是「去中国化」失败的表象，真实趋势是围绕中国为中心的再全球化——全球化没有终结，只是重心东移。",
+  tags:["再全球化","去中国化","RCEP","全球南方"],
+  lead:"全球化不会终结，只会换中心。当旧中心试图排斥新枢纽时，新的网络会自发绕过障碍重新连接——这是网络经济学与世界体系理论的现实演绎。",
+  what:[
+    "翟东升对「逆全球化/脱钩」叙事提出根本性质疑：全球化作为<strong>分工深化与网络连接</strong>的过程并未停止，只是<strong>中心从美国转向中国</strong>。",
+    "中国已是140多个国家和地区的最大贸易伙伴，这种枢纽地位使「去中国化」成本不可承受，实际形成的是<strong>「双轨并行」</strong>而非割裂。",
+    "所谓逆全球化，实质是美国试图维护旧中心地位的<strong>政治动作</strong>，经济上无法实现真正的脱钩。"
+  ],
+  theory:[
+    {src:"世界体系理论<br/>Wallerstein",exp:"中心-半边缘-边缘结构中，中心转移是体系演化的核心动力。翟东升将'去中国化'重新定义为<b>旧中心的防御性动作</b>，而非体系终结。"},
+    {src:"网络效应<br/>Hub Theory",exp:"枢纽节点（Hub）的网络效应具有先发锁定优势——中国作为140+国最大贸易伙伴的枢纽地位，使脱离成本指数级高于连接成本。"},
+    {src:"复杂适应系统<br/>CAS",exp:"网络具有自愈性——当某条连接被阻断，系统会自发寻找替代路径重新连接。'友岸外包'本质是网络绕路，而非网络断裂。"},
+    {src:"结构性权力<br/>Strange",exp:"生产结构与金融结构共同决定谁是中心。中国在生产结构上的枢纽地位，正在对冲美国在金融结构上的中心地位。"}
+  ],
+  chain:["旧全球化<br/>美国为中心","美国相对衰落<br/>维护霸权焦虑","试图「去中国化」<br/>贸易战+脱钩","但中国已成<br/>全球贸易枢纽","脱钩成本不可承受<br/>双轨并行","全球南方崛起<br/>南南合作加速","中国主导再全球化<br/>RCEP/一带一路"],
+  chainNote:"逻辑链的核心洞察在<strong>第四节点</strong>：'去中国化'失败不是因为中国反抗，而是因为<strong>网络经济学规律使然</strong>——枢纽节点的连接价值远超脱离收益。这是从政治叙事到经济逻辑的关键转换。翟东升的原创性在于将世界体系理论的'中心转移'与网络经济学的'枢纽锁定'结合。",
+  time:[
+    {t:"2018—2019",d:"贸易战期间初步提出脱钩不可能完成的判断"},
+    {t:"2020—2021",d:"RCEP签署、中欧投资协定谈判期间系统阐述再全球化论"},
+    {t:"2023 年后",d:"'去风险'取代'脱钩'概念，西方措辞软化的转变某种程度上验证其判断"}
+  ],
+  scholar:{
+    summary:"争议较大，被视为'中国中心论'过度叙事。主流贸易经济学家多数仍接受'全球化退潮'框架，但全球南方视角与发展经济学界有较多共鸣。'去风险'取代'脱钩'的措辞演变，某种程度是对其判断的间接承认。",
+    cn:[
+      {name:"郑永年",info:"港中文(深圳)",view:"同样论述中国作为全球化新枢纽，但更强调<b>'制度型开放'</b>而非枢纽地位本身，认为开放制度建设比网络位置更重要"},
+      {name:"张宇燕",info:"社科院世经政所",view:"国际政治经济学视角下认同中心转移趋势，但对'再全球化'的单一中心叙事持保留"},
+      {name:"陈文玲",info:"国经中心",view:"认同全球化未终结、重心东移，论述偏向政策支撑与一带一路叙事"}
+    ],
+    en:[
+      {name:"Branko Milanovic",info:"经济学家",view:"明确指出'自由主义全球化已死，但全球化未死'——与翟东升'换中心'论高度接近，但归因更侧重不平等与民粹"},
+      {name:"Parag Khanna",info:"未来学家",view:"《亚洲未来》中的连接性地图认同重心东移，但强调<b>多中心亚洲</b>而非单一中国中心"},
+      {name:"Dani Rodrik",info:"哈佛大学",view:"全球化三难困境理论，倾向认为全球化确实在退潮——与翟东升'未终结'判断存在根本分歧"}
+    ],
+    oppose:[
+      {name:"Dani Rodrik",info:"哈佛大学",tag:"📉",view:"全球化三难困境理论——超全球化时代<b>确实已结束</b>，这不是'换轨'而是'退潮'，民族国家正在重新主张经济主权"},
+      {name:"Martin Wolf",info:"金融时报",tag:"📰",view:"全球化确实在<b>碎片化</b>，安全逻辑正在系统性压倒效率逻辑，'再全球化'掩盖了真实的分裂趋势"},
+      {name:"余淼杰",info:"北大国发院",tag:"⚖️",view:"全球化面临<b>真实挑战</b>，贸易重组中有赢家也有输家，不能简单用'换轨'概括为乐观叙事"},
+      {name:"Matthew Goodman",info:"CSIS",tag:"🔒",view:"技术领域脱钩是<b>真实的实质性切割</b>——半导体、AI等战略领域出现硬边界，非'换轨'可解释"}
+    ],
+    divergence:"核心分歧在于<strong>'全球化'的定义</strong>：Rodrik等将全球化定义为'深度一体化'，认为确实在退潮；翟东升定义为'分工网络连接'，认为只是重组。定义不同导致结论相反。"
+  },
+  value:58,
+  valueText:"有一定解释力：全球贸易总量未大幅下降，只是重组，2023年中国贸易总额再创新高。但地缘政治分割确实加深，技术领域（半导体）出现真实脱钩，安全逻辑部分压倒效率逻辑。'再全球化'框架有洞察，但低估了分裂的持续性与技术领域的真实切割。",
+  valuePros:"'脱钩不可完成'判断基本成立，贸易数据佐证",
+  valueCons:"低估了技术领域的真实分割与安全逻辑的持续性",
+  chinaImpact:{
+    macro:[
+      "<strong>战略定力：</strong>支撑'高水平开放'信心，不被脱钩叙事动摇，坚持开放而非封闭应对",
+      "<strong>制度抓手：</strong>为一带一路、RCEP提供再全球化的制度载体逻辑——主动塑造新网络而非被动防御",
+      "<strong>全球南方：</strong>将外交重心向全球南方倾斜，金砖扩员、上合发展是再全球化的制度化表达",
+      "<strong>风险层面：</strong>可能低估安全逻辑对经济逻辑的压制力度，技术领域脱钩是真实而非表象"
+    ],
+    groups:[
+      {who:"外贸从业者",icon:"🚢",impact:"理解贸易重组趋势，主动调整市场布局——从'欧美为主'转向'多元化+全球南方'"},
+      {who:"一带一路参与者",icon:"🛤️",impact:"提供再全球化的理论支撑，增强对新兴市场投资的战略信心"},
+      {who:"学者/智库",icon:"📚",impact:"影响对全球化趋势的判断框架——'退潮论'还是'换轨论'决定政策建议方向"},
+      {who:"外资企业",icon:"🏢",impact:"评估'在中国、为中国'策略的合理性——再全球化逻辑下中国市场的枢纽价值不降反升"}
+    ],
+    risk:"若将'再全球化'理解为'中国必然主导'，可能忽视多极化中的竞争（印度、东盟也在争取枢纽地位）与部分领域的真实脱钩。"
+  },
+  newView:"更强调<strong>'全球南方'崛起与南南合作</strong>的重要性，认为再全球化的新主体是金砖扩员与上合组织。原因：沙特伊朗和解、金砖扩员至十国、上合组织发展等事件显示，非西方世界的制度化合作正在成为再全球化的载体——再全球化不等于'中国化'，而是'去西方中心化'的多极网络。"
+},
+
+/* ===================== CHAPTER 04 ===================== */
+{
+  n:"04", c1:"#ffc24d", c2:"#ff5fa8", icon:"👥",
+  title:"人口结构转型优势论",
+  desc:"人口红利转向人才红利，数量下降伴随质量提升，老龄化倒逼产业升级，是发展阶段的必然而非危机。",
+  tags:["人才红利","老龄化","自动化","产业升级"],
+  lead:"人口问题的本质不是数量，而是单位人口的产出能力。从'人手'到'人脑'的转型是发达国家的必经之路——但转型期阵痛不可忽视，这是该论点争议最大的根源。",
+  what:[
+    "翟东升对中国人口问题持相对乐观态度，认为出生率下降是<strong>工业化与城市化的普遍规律</strong>，并非中国独有的危机。",
+    "关键在于<strong>「人才红利」替代「人口红利」</strong>：劳动力数量虽减，但人均教育水平、技能密度大幅提升，单位产出能力跃升。",
+    "老龄化反而<strong>倒逼产业升级</strong>——劳动短缺推动自动化与AI应用，从劳动密集型转向技术密集型，是高质量发展的催化剂。"
+  ],
+  theory:[
+    {src:"人口转型理论<br/>Demographic Transition",exp:"出生率下降是工业化、城市化、女性就业率提升的<b>普遍规律</b>——日韩欧皆如此。翟东升据此将中国人口下降'去特殊化'。"},
+    {src:"人力资本理论<br/>Becker/Schultz",exp:"质量对数量的替代：人力资本投资（教育、健康、技能）使单位劳动力产出倍增。这是'人才红利'的理论根基。"},
+    {src:"内生增长理论<br/>Romer",exp:"长期增长的核心驱动力是<b>知识与技术</b>而非劳动力数量。人力资本质量比数量更重要——为'转型优势'提供增长理论支撑。"},
+    {src:"自动化替代<br/>Acemoglu/Restrepo",exp:"劳动短缺是自动化投资的<b>催化剂</b>而非单纯的拖累。老龄化倒逼机器换人，反而可能加速技术升级——这是'倒逼论'的微观基础。"}
+  ],
+  chain:["计划生育+经济发展<br/>出生率普遍下降","劳动力数量减少<br/>BUT 教育密度提升","人才红利<br/>替代人口红利","自动化/AI<br/>弥补劳动力缺口","老龄化倒逼<br/>产业升级","劳动密集→技术密集<br/>高质量发展","但转型期阵痛<br/>养老/消费压力"],
+  chainNote:"逻辑链在<strong>第六至第七节点</strong>出现关键张力：理论推演支持'转型优势'，但现实存在'转型期阵痛'——养老金缺口、消费需求萎缩、抚养比攀升是即时冲击，而人才红利与自动化的兑现存在时滞。<strong>时滞问题</strong>是该论点最大软肋：长期可能成立，但中短期阵痛被低估。",
+  time:[
+    {t:"2021 年",d:"七普数据公布，人口危机论成为舆论焦点，翟东升提出逆向乐观论"},
+    {t:"2022—2023",d:"人口首次负增长背景下持续阐释转型优势观"},
+    {t:"2023 年后",d:"结合AI爆发进一步论证劳动力结构性重塑——'人脑+AI'替代'人手'"}
+  ],
+  scholar:{
+    summary:"此论点争议最大、反对声最多。主流人口学与劳动经济学界多持批评态度，认为严重低估了老龄化的速度与冲击。仅少数技术乐观派与AI研究者有类似转型论倾向。整体看，这是八大论点中学术支持度最低的一个。",
+    cn:[
+      {name:"蔡昉",info:"社科院",view:"系统论证人口红利消失对增长的<b>实质性拖累</b>，认为刘易斯拐点已过，潜在增长率下行不可避免——与翟东升形成直接对立"},
+      {name:"梁建章",info:"携程/人口研究",view:"强烈反对，主张积极生育政策，认为人口规模是创新与国力的根本，数量下降不可由质量完全补偿"},
+      {name:"彭希哲",info:"复旦",view:"相对平衡，承认转型逻辑但强调<b>制度准备</b>（养老金、延迟退休）是前提，否则转型优势无法兑现"}
+    ],
+    en:[
+      {name:"David Bloom",info:"哈佛大学",view:"人口红利理论奠基者，认为人口结构显著影响增长——<b>数量红利消失是实质损失</b>，质量替代有限度"},
+      {name:"Charles Jones",info:"斯坦福",view:"'空日本'研究显示老龄化经济仍可维持，但承认是<b>极限实验</b>而非普适规律"},
+      {name:"Bryan Jones等",info:"人口经济学",view:"部分支持转型论，但指出日本'失去的二十年'中老龄化是重要因素，转型代价高昂"}
+    ],
+    oppose:[
+      {name:"陆铭",info:"上海交大",tag:"🏙️",view:"人口总量下降仍是<b>硬约束</b>，空间再分布（大城市化）能优化配置但不能替代总量，转型论忽视了规模效应的损失"},
+      {name:"任泽平",info:"经济学家",tag:"📉",view:"人口危机被<b>严重低估</b>，影响消费、创新与国力，'转型优势'是自我安慰——日韩转型代价极高"},
+      {name:"王广州",info:"社科院",tag:"🔢",view:"人口负增长的冲击具有<b>不可逆性</b>，育龄妇女减少意味着即使放开生育也难以扭转，转型论过于乐观"},
+      {name:"梁红",info:"中金研究院",tag:"💼",view:"老龄化对<b>财政与消费的冲击</b>比预判更严峻且来得更快，养老金缺口与医疗负担是即时压力而非远期问题"}
+    ],
+    divergence:"核心分歧在于<strong>'质量能否完全替代数量'</strong>：蔡昉/梁建章认为不能，人口下降是实质性损失；翟东升认为可以，关键是升级速度。AI爆发后这一分歧更尖锐——AI替代的是'脑力'还是'体力'将决定答案。"
+  },
+  value:48,
+  valueText:"部分有理：AI与自动化确实在改变劳动需求，中国工程师与高技能人才规模全球领先。但老龄化对消费需求、养老金缺口、医疗负担的压力比预判更严峻且来得更快，2023年人口负增长已现，'转型优势'不能掩盖结构挑战。此论点在八大论点中争议最大、证据最弱，长期方向或有理，但中短期冲击被明显低估。",
+  valuePros:"人才红利与自动化方向判断合理，AI爆发提供新支撑",
+  valueCons:"明显低估了老龄化速度与冲击，时滞问题严重",
+  chinaImpact:{
+    macro:[
+      "<strong>政策方向：</strong>影响对生育政策、延迟退休、自动化投入的优先级判断——若接受转型论则淡化生育刺激",
+      "<strong>产业升级：</strong>为'倒逼升级'提供叙事支撑，推动机器换人与AI应用的政策倾斜",
+      "<strong>教育投入：</strong>强化'人才红利'逻辑下的教育投资优先级，从'量'转'质'",
+      "<strong>风险层面：</strong>若低估人口冲击，养老金改革、生育支持、医疗扩容等政策可能滞后，社会成本巨大"
+    ],
+    groups:[
+      {who:"政策制定者",icon:"🏛️",impact:"影响人口与产业政策的平衡——'积极应对老龄化'还是'倒逼升级'的战略排序"},
+      {who:"企业HR",icon:"👔",impact:"理解劳动力市场结构性变化——低端用工荒与高端人才竞争并存，招聘策略需调整"},
+      {who:"年轻人",icon:"🎓",impact:"影响婚育与职业规划判断——'少子化是常态'的认知可能影响个人生育决策"},
+      {who:"养老产业",icon:"🏥",impact:"老龄化既是挑战也是机遇——转型论视角下，养老/医疗/自动化是增长赛道"}
+    ],
+    risk:"此论点最大的现实风险是<strong>政策误导</strong>：若决策层过度接受'转型优势'，可能延误生育支持政策与养老金制度改革的窗口期。人口问题的不可逆性使试错成本极高。"
+  },
+  newView:"更强调<strong>生成式AI对劳动力结构的颠覆性重塑</strong>，认为AI将使'人口数量'这一传统变量在国力方程中权重大幅下降。原因：2023年AI爆发后，智力劳动的可替代性上升，人才质量与AI基础设施比人口数量更重要——但这一新观点也使原论点的'人才红利'前提被动摇（AI可能替代人才本身）。"
+},
+
+/* ===================== CHAPTER 05 ===================== */
+{
+  n:"05", c1:"#4d7cff", c2:"#9b6dff", icon:"♾️",
+  title:"文明周期与东方崛起论",
+  desc:"从五百年长周期视角，西方主导世界的周期正在结束，东方（以中国为代表）回归历史常态地位，这是「百年未有之大变局」的深层逻辑。",
+  tags:["长周期","权力转移","多极化","大变局"],
+  lead:"历史不是直线，而是周期。西方领先五百年是异常，东方回归常态才是常态。大变局的本质是权力重心的文明级位移——但'周期'不等于'决定论'，非线性变量始终存在。",
+  what:[
+    "翟东升从<strong>超长周期（500年量级）</strong>视角解读国际格局：大航海时代以来西方领先是特定历史阶段的产物，而非永恒常态。",
+    "西方相对衰落的标志是<strong>去工业化、债务膨胀、社会撕裂、人口衰退</strong>四重危机叠加，而东方工业化追赶已进入收尾阶段。",
+    "「百年未有之大变局」的深层含义是<strong>文明级权力重心东移</strong>，中国凭借文明韧性与规模正在回归历史常态地位。"
+  ],
+  theory:[
+    {src:"康波理论<br/>Kondratiev",exp:"50—60年技术长周期。翟东升将康波与更长的文明周期叠加，认为当前正处于<b>双重周期的底部切换</b>——旧技术周期结束+旧文明周期结束。"},
+    {src:"霸权周期<br/>Modelski",exp:"莫德尔斯基的霸权周期理论：每100—120年一次霸权更替。大航海以来葡萄牙→荷兰→英国(两次)→美国的序列，当前正进入新一轮更替窗口。"},
+    {src:"挑战-应战<br/>Toynbee",exp:"汤因比文明兴衰理论：文明的兴衰取决于应对挑战的能力。西方的挑战（去工业化/债务/撕裂）若无法有效应战，则衰落加速。"},
+    {src:"长时段<br/>Braudel",exp:"布罗代尔的'长时段'历史观：结构性变迁以世纪为单位，短期事件是表层浪花。翟东升的500年框架正是长时段视角的应用。"}
+  ],
+  chain:["大航海时代<br/>西方领先500年","殖民+工业革命<br/>确立全球主导","西方相对衰落<br/>去工业化/债务/撕裂","东方工业化追赶<br/>进入收尾阶段","中国文明韧性<br/>+超大规模优势","权力重心东移<br/>多极化回归","技术周期叠加<br/>AI或为新康波起点"],
+  chainNote:"逻辑链的深层结构是<strong>双周期叠加</strong>：① 文明周期（500年级）——西方主导的异常期结束；② 技术周期（50—60年级）——新一轮康波或由AI启动。翟东升的独特视角在于将两者叠加解读，认为'百年未有之大变局'不是政治口号而是<b>周期共振的客观描述</b>。但'周期'有决定论风险——历史非线性。",
+  time:[
+    {t:"贯穿学术生涯",d:"在多部著作中从历史长周期视角阐述文明兴衰规律"},
+    {t:"2018 年后",d:"'百年未有之大变局'概念普及，其文明周期论获得政策语境对接"},
+    {t:"2020 年后",d:"结合疫情应对差异、西方内部冲突（国会山事件等）持续论证西方衰落"}
+  ],
+  scholar:{
+    summary:"国内战略界共鸣较多，与官方'大变局'判断形成学术呼应。西方学界普遍不认同'线性衰落'叙事，强调制度韧性与创新逆转的可能。作为宏观分析框架有启发价值，但'决定论'色彩是普遍批评点。",
+    cn:[
+      {name:"张维为",info:"复旦中国研究院",view:"'文明型国家'论述，同样强调中国独特性与历史回归，与翟东升高度共鸣——但张更侧重制度叙事，翟更侧重经济权力"},
+      {name:"潘维",info:"北大",view:"政治学视角的文明叙事，强调'民心政治'的历史延续性，与文明周期论形成互补"},
+      {name:"阎学通",info:"清华",view:"同样研究权力转移但更谨慎，认为'东升西降'是趋势但非必然，强调<b>不确定性</b>与政策选择的作用"}
+    ],
+    en:[
+      {name:"Ray Dalio",info:"桥水基金",view:"《不断变化的世界秩序》中系统论述帝国兴衰周期，结论与翟东升<b>高度接近</b>，但框架更量化、更强调债务周期"},
+      {name:"Joseph Nye",info:"哈佛大学",view:"<b>反对美国衰落论</b>，认为美国的软实力、制度韧性、创新能力被低估，衰落论者屡屡被证伪"},
+      {name:"Karen Armstrong",info:"文明史学者",view:"从文明史视角认同文明兴衰的周期性，但对'东方崛起'的单向叙事持保留——文明是多元互动而非线性替代"}
+    ],
+    oppose:[
+      {name:"Joseph Nye",info:"哈佛大学",tag:"🛡️",view:"<b>反对美国衰落论</b>，认为美国的软实力、制度韧性、创新能力被系统性低估，衰落论者屡屡被证伪（如1990年代复兴）"},
+      {name:"Michael Beckley",info:"Tufts大学",tag:"📈",view:"《Unrivaled》论证美国综合优势<b>仍在扩大而非缩小</b>——财富、技术、军事、盟友网络全面领先，'东方崛起'是选择性叙事"},
+      {name:"G. John Ikenberry",info:"普林斯顿",tag:"🌐",view:"自由主义国际秩序具有<b>自我调适韧性</b>，西方联盟体系的制度化深度使其能吸收冲击，周期论低估了制度弹性"},
+      {name:"William Wohlforth",info:"Dartmouth",tag:"⚖️",view:"单极稳定论——美国霸权<b>远未终结</b>，权力转移是缓慢的过程而非文明级断裂，'500年周期结束'缺乏实证支撑"}
+    ],
+    divergence:"核心分歧在于<strong>'衰落是否可逆'</strong>：Nye等认为制度韧性与创新可逆转衰落（如美国1990年代复兴）；翟东升倾向结构性不可逆，认为西方四重危机是系统性而非周期性。这是'周期论'与'波动论'的根本对立。"
+  },
+  value:55,
+  valueText:"作为宏观分析框架有洞察力，西方相对衰落的多重征兆确实存在，多极化趋势明朗。但'文明周期论'过于线性与决定论化——文明兴衰非线性，技术革命、制度创新、黑天鹅事件都可能改写轨迹。框架价值大于预测价值，应作为思考工具而非预言。Dalio的量化周期研究提供了更稳健的平行佐证。",
+  valuePros:"宏观框架有洞察，多极化判断成立，Dalio平行佐证",
+  valueCons:"决定论色彩过重，忽视非线性变量与制度韧性",
+  chinaImpact:{
+    macro:[
+      "<strong>战略自信：</strong>提供'历史在我'的宏观叙事支撑，影响长期战略定力与外交姿态",
+      "<strong>政策语境：</strong>与'百年未有之大变局'官方判断形成学术呼应，为政策提供理论合法性",
+      "<strong>风险层面：</strong>决定论可能导致战略自满或冒进——'周期在我'不等于'无需努力'",
+      "<strong>叙事建构：</strong>影响对外话语体系的构建——'文明复兴'叙事vs'威胁论'叙事的话语竞争"
+    ],
+    groups:[
+      {who:"战略研究者",icon:"♟️",impact:"提供长周期分析框架，影响对中美博弈时间维度的判断——'百年尺度'vs'十年尺度'"},
+      {who:"公众",icon:"👥",impact:"影响民族自信与对国际形势的认知——'东升西降'叙事增强信心但也可能助长盲目乐观"},
+      {who:"外交决策者",icon:"🤝",impact:"影响对中美博弈的时间判断——若信'时间在我'则倾向战略耐心，若信'窗口有限'则倾向积极作为"},
+      {who:"海外华人",icon:"🌏",impact:"影响身份认同与归属判断——'文明回归'叙事增强文化认同但也增加在地政治敏感度"}
+    ],
+    risk:"决定论叙事的最大风险是<strong>自我实现的冒进</strong>——若决策层过度相信'历史必然性'，可能在台湾问题等高敏感议题上低估风险、低估对手能动性。周期论应作为分析工具而非行动指南。"
+  },
+  newView:"更关注<strong>技术周期（康波）与文明周期的叠加</strong>，认为AI革命可能是新一轮康波上升期的起点，谁主导AI谁就主导下一个长周期。原因：历史显示技术革命是权力转移的加速器，AI的通用性与规模效应可能比前几轮康波（蒸汽/电气/信息）更具颠覆性——中美AI竞赛本质上是下一个文明周期的主导权之争。"
+},
+
+/* ===================== CHAPTER 06 ===================== */
+{
+  n:"06", c1:"#ff5fa8", c2:"#ffc24d", icon:"⚡",
+  title:"权力与财富的本质论",
+  desc:"财富的本质是权力分配的产物，而非纯粹市场结果。货币、规则、贸易体系都是权力的体现。理解经济必须理解权力结构。",
+  tags:["政治经济学","权力结构","货币权力","规则制定权"],
+  lead:"市场不是自然现象，而是权力建构的规则游戏。谁制定规则，谁就定义财富的流向。这是翟东升全部理论的哲学基石，也是学术生命力最强的一论点。",
+  what:[
+    "翟东升的理论基石：<strong>财富是权力分配的产物</strong>，而非市场自发均衡的结果。国际货币体系、贸易规则、技术标准都是权力结构的投射。",
+    "<strong>货币是核心权力工具</strong>——谁发行国际货币谁就掌握财富分配的「印钞权」，铸币税是权力的直接变现。",
+    "<strong>制造业是硬权力，金融是软权力</strong>：硬权力决定底线，软权力决定分配上限。权力转移，则财富格局随之转移。"
+  ],
+  theory:[
+    {src:"结构性权力<br/>Susan Strange",exp:"这是翟东升的<b>核心理论来源</b>。安全、生产、金融、知识四种结构性权力决定国际秩序。美元是金融权力的集中体现——货币信用最终由安全权力担保。"},
+    {src:"马克思主义<br/>政治经济学",exp:"经济基础决定上层建筑，生产关系决定分配关系。翟东升的'财富是权力产物'与马克思主义有共通处，但更侧重<b>国际权力结构</b>而非阶级关系。"},
+    {src:"制度理论<br/>Keohane",exp:"国际制度是权力的制度化——规则、标准、组织都是权力的固化形态。'谁制定规则谁受益'是制度理论的直接推论。"},
+    {src:"霸权稳定论<br/>Gilpin",exp:"霸权国提供公共物品（安全/货币/贸易秩序）以换取结构性收益。翟东升的'铸币税'正是霸权收益的货币化表达。"}
+  ],
+  chain:["财富≠市场自发<br/>财富=权力安排","货币是权力工具<br/>发行者收铸币税","规则制定权<br/>决定分配格局","制造业=硬权力<br/>金融=软权力","国家能力<br/>是权力根本","权力转移→<br/>财富格局重构","数字权力崛起<br/>第三权力维度"],
+  chainNote:"逻辑链的<strong>理论完整性最高</strong>：从哲学层（财富本质）→工具层（货币/规则）→实力层（硬/软权力）→动态层（权力转移）形成闭环。翟东升的整合贡献在于将Strange的结构性权力、Gilpin的霸权稳定与马克思主义政治经济学三者贯通，并应用于中国语境。最新扩展是'数字权力'作为第三维度。",
+  time:[
+    {t:"贯穿理论体系",d:"作为其全部论点的哲学基石，贯穿学术生涯——是最根本的分析框架"},
+    {t:"2010 年代",d:"在著作中系统阐释权力货币观，与新古典经济学形成对照"},
+    {t:"2022 年后",d:"金融制裁事件（俄储备冻结）使其'权力决定财富'论获得<b>极端实证</b>——3000亿美元储备可被一键冻结"}
+  ],
+  scholar:{
+    summary:"学术价值最受认可的论点，政治经济学界共鸣最强。中西方学者在此议题上共识较多——Strange/Gilpin/Cohen的框架本就是西方理论。翟东升的贡献不在原创理论，而在系统应用于中国语境与当代实证。2022年制裁事件后，此论点几乎成为'共识'。",
+    cn:[
+      {name:"张宇燕",info:"社科院世经政所",view:"国际政治经济学的权力视角，与翟东升高度一致——制度与规则是权力的制度化表达"},
+      {name:"王缉思",info:"北大国际战略",view:"权力转移与国际秩序研究，认同权力结构决定财富分配，但对'硬权力优先'的排序有保留"},
+      {name:"温铁军",info:"人大农业与农村",view:"同样强调制度性权力，但侧重三农与内循环视角——'成本转嫁论'与'权力决定分配'有共通逻辑"}
+    ],
+    en:[
+      {name:"Susan Strange",info:"已故/理论源头",view:"结构性权力理论<b>原创者</b>——翟东升的直接理论来源。Strange本人即批判新古典经济学忽视权力"},
+      {name:"Benjamin Cohen",info:"UCSB",view:"货币权力地理学，系统论述货币即权力——与翟东升'货币是权力工具'论高度一致"},
+      {name:"Robert Gilpin",info:"已故/普林斯顿",view:"霸权稳定论：霸权国提供秩序以换取结构性收益——'嚣张的特权'是霸权收益的体现"}
+    ],
+    oppose:[
+      {name:"张维迎",info:"北大国发院",tag:"🕊️",view:"强调<b>市场自发秩序与创新活力</b>，反对将经济现象过度权力化解读——市场有独立于权力的效率逻辑"},
+      {name:"Eugene Fama",info:"芝加哥大学",tag:"📊",view:"有效市场假说——市场价格反映信息而非权力操纵，金融体系的运行逻辑是<b>信息效率</b>而非权力分配"},
+      {name:"田国强",info:"上海财大",tag:"🏛️",view:"制度效率比权力结构更重要——<b>市场制度环境</b>（法治、产权、竞争）才是财富根本，权力视角可能为干预提供借口"},
+      {name:"朱嘉明",info:"数字经济学者",tag:"🔗",view:"去中心化技术（区块链/Web3）正在<b>削弱传统权力结构</b>，Strange的权力分析框架需更新——数字时代的权力正在分散化"}
+    ],
+    divergence:"此论点的中西方分歧<strong>最小</strong>——因为理论源头本就在西方（Strange/Gilpin）。主要分歧在于<strong>规范性立场</strong>：西方学者多视为'描述性分析'，翟东升带有更强的'规范性主张'（中国应主动建设权力），这被部分西方学者解读为'权力政治的正当化'。"
+  },
+  value:78,
+  valueText:"最具学术生命力的论点。提供了一套不同于纯市场视角的分析框架，对理解金融制裁、贸易战、技术封锁等现象有强解释力。2022年俄罗斯外汇储备被冻结一事，是'财富受制于权力'的极端实证——3000亿美元可被一键冻结，彻底打破了'私有财产不可侵犯'的市场神话。此论点作为分析工具的价值远高于具体预测，几乎已成为政治经济学共识。",
+  valuePros:"分析框架价值最高，制裁实证强力支撑，中西共识多",
+  valueCons:"需警惕权力视角的过度泛化——市场机制仍有独立效率功能",
+  chinaImpact:{
+    macro:[
+      "<strong>分析框架：</strong>为理解制裁、贸易战、技术封锁提供统一分析工具——一切经济冲突本质是权力博弈",
+      "<strong>战略思维：</strong>影响'硬权力优先'的战略排序——制造业、科技、军事作为硬权力基石优先于金融软权力",
+      "<strong>制度建设：</strong>支撑人民币国际化、科技自立、数字基础设施等'权力建设'投入——不是经济效率问题而是权力安全问题",
+      "<strong>储备安全：</strong>2022年制裁后，'权力决定财富'论直接影响外汇储备安全管理策略——多元化+去美元化+黄金增持"
+    ],
+    groups:[
+      {who:"学者",icon:"📚",impact:"提供分析框架——理解国际经济现象不能脱离权力结构，影响研究方向与方法论"},
+      {who:"企业战略层",icon:"💼",impact:"理解地缘风险对经营的实质影响——'合规'本质是遵守权力制定的规则，规则可被权力随时改变"},
+      {who:"金融从业者",icon:"🏦",impact:"理解货币权力的实际运作——跨境支付、制裁合规、储备管理都需权力视角"},
+      {who:"公众",icon:"👤",impact:"帮助理解'为什么制裁有效/无效'——打破'市场中性'的迷思，理解经济与政治的不可分"}
+    ],
+    risk:"权力视角的过度泛化风险：若将一切经济现象都归因于权力博弈，可能忽视市场机制的独立效率功能与创新活力。'权力决定一切'的极端化可能为过度干预提供借口。"
+  },
+  newView:"强调<strong>'数字权力'作为新型权力形态</strong>的崛起——数据成为生产要素，平台权力、算法治理、数字基础设施正在重塑权力结构。原因：科技巨头的准主权能力、数据跨境流动的规则博弈、AI算力成为新型战略资源，使'数字权力'与货币、制造业并列成为第三权力维度。这是对Strange四维权力框架的当代扩展。"
+},
+
+/* ===================== CHAPTER 07 ===================== */
+{
+  n:"07", c1:"#36e2ff", c2:"#3dffa6", icon:"🗺️",
+  title:"地缘政治预判论",
+  desc:"对俄乌冲突、中美博弈等地缘事件做趋势性预判，强调中国应保持战略定力，时间在中国一边，避免被卷入消耗性冲突。",
+  tags:["战略定力","代理人战争","实力消长","时间在我"],
+  lead:"霸权的衰落往往通过制造冲突来延缓，但消耗的是自身。战略耐心比战术激进出价更高——但权力转移期恰恰是最危险的时刻，定力不等于安全。",
+  what:[
+    "翟东升的地缘观核心：<strong>综合国力对比的变化是地缘冲突的根本动因</strong>。美国维护霸权的焦虑上升，倾向于制造冲突（尤其代理人战争）转移压力。",
+    "中国的最优策略是<strong>战略定力</strong>——不主动卷入消耗性冲突，专注发展自身实力，让实力此消彼长自然演进。",
+    "核心判断：<strong>「时间在中国一边」</strong>——只要保持发展节奏，相对优势将持续积累，急躁的是守成方。"
+  ],
+  theory:[
+    {src:"修昔底德陷阱<br/>Allison",exp:"崛起国与守成国的结构性冲突——但Allison强调<b>冲突概率上升</b>，翟东升侧重'代理人战争消耗守成方'的非传统解读"},
+    {src:"权力转移理论<br/>Organski",exp:"实力接近时冲突概率最高。但翟东升的独特判断是：<b>代理人战争消耗的是守成方而非崛起方</b>——这与传统权力转移理论的预期相反"},
+    {src:"消耗战模型<br/>博弈论",exp:"在消耗战博弈中，时间偏好较低（更有耐心）的一方占优。翟东升的'战略定力'本质是<b>降低时间偏好</b>的策略选择"},
+    {src:"霸权过度扩张<br/>Kennedy",exp:"保罗·肯尼迪'帝国过度扩张'论：霸权因维护全球承诺而消耗自身。美国在全球制造冲突正是过度扩张的表现"}
+  ],
+  chain:["综合国力对比变化<br/>守成vs崛起","美国霸权焦虑<br/>制造冲突转移压力","代理人战争<br/>消耗自身而非对手","中国保持定力<br/>不介入消耗","实力此消彼长<br/>持续积累","战略耐心<br/>换取最终优势","但权力转移期<br/>最危险时刻"],
+  chainNote:"逻辑链在<strong>第三节点出现关键反转</strong>：传统权力转移理论认为代理人战争消耗崛起国，翟东升判断消耗的是守成方（美国）。这一反转的实证支撑是俄乌冲突中西方弹药库与财政的消耗。但<strong>第七节点</strong>引入关键张力：权力转移期恰是最危险时刻——定力可能被对手主动制造的危机打破，'时间在我'存在被翻转的风险。",
+  time:[
+    {t:"2022 年",d:"俄乌冲突爆发后尤为活跃，提出冲突长期化与消耗美国的判断"},
+    {t:"2022—2023",d:"就中美博弈走向、台海问题持续分析战略定力论"},
+    {t:"2023 年后",d:"中东变局（沙伊和解、巴以冲突）后扩展地缘预判框架"}
+  ],
+  scholar:{
+    summary:"预判准确度参差——'冲突长期化'与'消耗西方'判断基本应验，但'时间在我'的乐观判断争议最大。现实主义国际关系学者普遍警惕权力转移期的危险性，认为定力不等于安全。整体看，战术预判优于战略乐观。",
+    cn:[
+      {name:"阎学通",info:"清华",view:"同样研究权力转移但<b>更谨慎</b>，不轻易判断'时间在我'，强调不确定性、政策选择与危机管控的重要性"},
+      {name:"金灿荣",info:"人大",view:"相对乐观但强调不确定性，认为中美博弈是'持久战'，需有底线思维而非线性外推"},
+      {name:"时殷弘",info:"人大",view:"<b>更强调风险与窗口期</b>，认为权力转移期危险最高，定力需配合主动塑造而非被动等待"}
+    ],
+    en:[
+      {name:"Graham Allison",info:"哈佛",view:"修昔底德陷阱框架，<b>警惕冲突</b>——16次历史案例中12次以战争收场，对'时间在我'的乐观持强烈保留"},
+      {name:"John Mearsheimer",info:"芝加哥",view:"大国政治悲剧，<b>极度悲观</b>——认为中美结构性冲突不可避免，定力可能被对手主动打破"},
+      {name:"Stephen Walt",info:"哈佛",view:"均势理论，认为美国过度扩张在自我消耗——与翟东升'消耗守成方'判断<b>部分接近</b>，但不认同'时间在我'的线性乐观"}
+    ],
+    oppose:[
+      {name:"Robert Kaplan",info:"战略家/Eurasia Group",tag:"🗺️",view:"地理与权力政治使中美对抗具有<b>结构必然性</b>，'定力'是崛起国的奢侈品——对手不会给你时间"},
+      {name:"Michael Beckley",info:"Tufts大学",tag:"📉",view:"与其说'时间在中国一边'，不如说中美<b>都在面临各自衰退</b>，相对优势未必在中国——人口、债务、增长放缓是共同挑战"},
+      {name:"Kishore Mahbubani",info:"新加坡国立大学",tag:"⚖️",view:"认同亚洲崛起但<b>警告中国过度自信风险</b>——'时间在我'可能自我实现为冒进，美国的反击能力被低估"},
+      {name:"唐世平",info:"复旦大学",tag:"🎲",view:"国际秩序演化论——反对任何形式的<b>线性预判</b>，权力转移充满偶然性与黑天鹅，'时间在我'是不可证伪的信念而非分析"}
+    ],
+    divergence:"核心分歧在于<strong>'时间是否真的在中国一边'</strong>：阎学通/Allison/Mearsheimer强调权力转移期的危险性与不确定性，认为对手不会被动等待；翟东升倾向线性乐观，认为实力消长的趋势不可逆。这是'乐观派'与'警觉派'的根本对立。"
+  },
+  value:62,
+  valueText:"部分预判应验：俄乌冲突长期化且消耗西方弹药库与财政，美国战略注意力被分散，中东再起冲突进一步牵制。但'时间在我'判断存在风险——对手不会被动等待，技术封锁、联盟围堵等主动策略正在压缩中国空间，且黑天鹅事件（突发危机）可能打破线性推演。定力论有价值，但不能等同于被动。战术预判（冲突长期化）优于战略乐观（时间在我）。",
+  valuePros:"冲突长期化与消耗判断基本准确，沙伊和解展示调停能力",
+  valueCons:"'时间在我'存在线性外推风险，低估对手主动性与危机可能性",
+  chinaImpact:{
+    macro:[
+      "<strong>战略定力：</strong>支撑'不急、不乱'的定力论，影响台海、南海等高敏感议题的节奏把控",
+      "<strong>危机管控：</strong>强调避免被卷入消耗性冲突，影响对代理人战争（如俄乌）的应对姿态——'劝和促谈'而非选边",
+      "<strong>风险层面：</strong>若过度信'时间在我'，可能低估对手主动制造危机的可能——台海是最危险的被翻转场景",
+      "<strong>中东布局：</strong>沙伊和解标志中国具备塑造地缘格局的调停能力，'中国方案'开始具备可操作性"
+    ],
+    groups:[
+      {who:"外交/安全决策者",icon:"🎖️",impact:"影响战略耐心与危机管控——'定力'与'主动塑造'的平衡是核心难题"},
+      {who:"企业出海",icon:"🚢",impact:"评估地缘风险——冲突长期化意味着海外资产安全、供应链稳定需长期应对"},
+      {who:"投资者",icon:"📊",impact:"影响对地缘事件的资产配置——'消耗战'逻辑下，能源、军工、避险资产有结构性支撑"},
+      {who:"公众",icon:"👥",impact:"影响对国际局势的情绪与预期——'时间在我'增强信心但也可能助长轻敌情绪"}
+    ],
+    risk:"'时间在我'论的最大风险是<strong>被动等待的陷阱</strong>——若对手在窗口期关闭前主动制造危机（如台海），定力可能变为被动应对。定力需与主动塑造配合，而非消极等待实力自然超越。"
+  },
+  newView:"更关注<strong>中东变局与多极化加速</strong>，认为沙伊和解标志中国已具备塑造地缘格局的调停能力。原因：中东和解由中国斡旋达成，打破了美国在中东的垄断调解者角色，象征性意义大于实质——它证明'中国方案'在地缘治理中开始具备可操作性，这与'战略定力'配合形成'定力+塑造'的双轨策略。"
+},
+
+/* ===================== CHAPTER 08 ===================== */
+{
+  n:"08", c1:"#9b6dff", c2:"#36e2ff", icon:"🔄",
+  title:"双循环与新格局论",
+  desc:"支持并阐释「以国内大循环为主体、国内国际双循环相互促进」战略，认为这是应对脱钩压力、培育内生动力的必然选择。",
+  tags:["双循环","内需","科技自立","新质生产力"],
+  lead:"外部不确定性倒逼内生确定性。大循环筑基、双循环驱动，本质是从'出口依赖'转向'内需+创新'双轮——但内循环不应成为低效保护的借口。",
+  what:[
+    "翟东升认为双循环战略是对<strong>外部脱钩压力的战略回应</strong>：过度依赖出口与外部市场的脆弱性已在贸易战中暴露。",
+    "核心是<strong>扩大内需+科技自立</strong>，以国内大循环筑基，再以国内市场吸引力维系国际循环，形成内外双轮驱动。",
+    "这并非封闭，而是<strong>以更强的内生能力参与更高水平的开放</strong>——根基越牢，外部筹码越强。"
+  ],
+  theory:[
+    {src:"发展型国家<br/>Chalmers Johnson",exp:"国家主导的产业升级路径——双循环中的'科技自立'与产业政策延续发展型国家传统，国家在战略产业中发挥引导作用"},
+    {src:"内生增长<br/>Romer/Lucas",exp:"内需与创新作为增长引擎——'国内大循环'本质是将增长动力从外需转向<b>内生创新与消费</b>，符合内生增长理论"},
+    {src:"依附理论<br/>Dependencia",exp:"减少对外部中心的依赖——'去美元化'与'科技自立'都是降低依附性的策略，与拉美依附理论有共通逻辑"},
+    {src:"进口替代<br/>ISI vs 出口导向",exp:"双循环是两者的<b>辩证综合</b>——不是单纯进口替代（已证明低效），也不是纯出口导向（脆弱），而是以内需为基础的开放型自主"}
+  ],
+  chain:["外部环境恶化<br/>脱钩压力上升","过度依赖出口<br/>脆弱性暴露","扩大内需<br/>+科技自立","国内大循环<br/>筑牢根基","国内市场吸引力<br/>维系国际循环","内外双轮驱动<br/>更高水平开放","新质生产力<br/>升级双循环引擎"],
+  chainNote:"逻辑链的关键在<strong>第五至第六节点的辩证关系</strong>：内循环不是目的而是手段——通过做强内需市场形成'引力'，反而能维系甚至强化国际循环。这与传统'进口替代=封闭'的认知不同，翟东升强调的是<b>'更强内功支撑更高开放'</b>的辩证法。但辩证法的落地需要真实改革支撑，否则'内循环'可能退化为保护主义。",
+  time:[
+    {t:"2020 年",d:"双循环战略正式提出，翟东升随即进行学术阐释"},
+    {t:"2021—2022",d:"结合内需提振、科技攻关持续分析双循环路径"},
+    {t:"2023 年后",d:"对接'新质生产力'概念，升级双循环的驱动力分析——从'防御性自保'到'进取性升级'"}
+  ],
+  scholar:{
+    summary:"作为官方战略的学术阐释，接受度较高但落地质疑多。方向判断普遍认同，关键分歧在'内循环'是否会退化为低效保护主义。西方学者警惕'封闭化'风险，国内改革派强调内循环需配合市场化改革。",
+    cn:[
+      {name:"林毅夫",info:"北大国发院",view:"更侧重比较优势与外需——认为中国仍应发挥比较优势参与国际分工，对'以内循环为主'的表述有保留"},
+      {name:"郑永年",info:"港中文(深圳)",view:"强调<b>'制度型开放'</b>——内循环不能成为封闭借口，关键是用开放倒逼制度改革"},
+      {name:"黄益平",info:"北大国发院",view:"认同韧性建设但强调'统一大市场'需打破地方保护——内循环的前提是国内市场真正统一"}
+    ],
+    en:[
+      {name:"Yukon Huang",info:"卡内基",view:"认为关键在<b>改革而非战略口号</b>——双循环成败取决于能否真正激活内需与民营经济，而非简单的国产替代"},
+      {name:"Nicholas Lardy",info:"Peterson研究所",view:"警惕'内循环'退化为<b>保护主义与国进民退</b>——担忧民营经济空间被压缩"},
+      {name:"Pieter Bottelier",info:"约翰霍普金斯",view:"相对中性，认为双循环是合理的风险对冲，但执行中需避免低效国产替代挤占创新资源"}
+    ],
+    oppose:[
+      {name:"张维迎",info:"北大国发院",tag:"🕊️",view:"强调市场开放与民营企业，担忧内循环<b>削弱竞争与创新活力</b>——保护下的'自立'往往导致低效"},
+      {name:"许小年",info:"中欧国际工商学院",tag:"⚠️",view:"警惕内循环退化为<b>保护主义</b>，市场化改革才是正道——'以内循环为主'可能为低效国产替代提供借口"},
+      {name:"田国强",info:"上海财大",tag:"🏛️",view:"<b>制度环境比战略口号重要</b>，内循环成败取决于市场化改革深度——法治、产权、公平竞争是内功的真正内涵"},
+      {name:"余永定",info:"社科院",tag:"💰",view:"内需提振不能靠口号，需<b>结构性改革</b>（收入分配、社保、户籍），双循环落地难度被低估——消费不振是体制问题"}
+    ],
+    divergence:"核心分歧在于<strong>'内循环的性质'</strong>：改革派与西方学者担心内循环=保护主义+国进民退+低效国产替代；翟东升与官方强调内循环=做强内功+更高水平开放。同一战略，不同执行路径导致截然不同的结果——分歧不在战略而在落地。"
+  },
+  value:60,
+  valueText:"方向判断合理：外部脱钩压力确实存在，内需与科技自立是必答题。但实践层面挑战巨大——消费提振受制于收入分配与信心不足，科技自立在高端芯片等领域仍有瓶颈。'双循环'作为框架正确，但落地速度与效果存在不确定性，内循环不应成为低效保护的借口。2023年消费复苏不及预期暴露了内需端的深层结构性问题。",
+  valuePros:"战略方向判断合理，韧性建设必要性成立",
+  valueCons:"落地挑战大，内循环有低效保护风险，内需提振困难",
+  chinaImpact:{
+    macro:[
+      "<strong>政策落地：</strong>影响内需提振、科技攻关、统一大市场建设的优先级与资源配置",
+      "<strong>产业布局：</strong>影响国产替代与自主可控的推进力度——'卡脖子'清单与攻关路径",
+      "<strong>民营经济：</strong>双循环成败取决于能否真正激活民营经济——内需与创新的主力军",
+      "<strong>风险层面：</strong>内循环可能异化为低效保护——国产替代若不以市场竞争力为标准，将挤占创新资源"
+    ],
+    groups:[
+      {who:"民营企业家",icon:"💼",impact:"影响对内需市场与国产替代的判断——双循环既是机遇（内需市场）也是挑战（政策导向的不确定性）"},
+      {who:"科技企业",icon:"🔬",impact:"理解科技自立的市场预期——'卡脖子'攻关带来政策红利但也需面对技术真实差距"},
+      {who:"消费者",icon:"🛒",impact:"双循环下的消费环境变化——国产替代带来更多选择但也需警惕'低质国产'的保护"},
+      {who:"外贸转型企业",icon:"🔄",impact:"内外销并举的转型参考——从'纯出口'转向'内外双线'布局，降低单一市场依赖"}
+    ],
+    risk:"双循环最大的落地风险是<strong>'内循环异化'</strong>——若国产替代不以市场竞争力为标准、若统一大市场被地方保护割裂、若民营经济空间被压缩，则内循环将退化为低效保护主义，反而削弱而非增强竞争力。"
+  },
+  newView:"强调<strong>'新质生产力'作为双循环的核心驱动力</strong>，认为科技创新是新格局的内生引擎。原因：官方提出新质生产力概念，强调以科技创新推动产业创新，这与双循环中'科技自立'环节高度对接，使双循环从'防御性自保'升级为'进取性升级'——新质生产力是内循环从'保护'走向'进化'的关键变量。"
+}
+];
+
+/* ============================================================
+   RENDER CHAPTER CARDS
+   ============================================================ */
+const grid = document.getElementById('chapter-grid');
+CHAPTERS.forEach((ch,i)=>{
+  const card = document.createElement('article');
+  card.className='chapter-card reveal';
+  card.style.setProperty('--c1',ch.c1);
+  card.style.setProperty('--c2',ch.c2);
+  card.innerHTML = `
+    <div class="ch-accent" style="--c1:${ch.c1};--c2:${ch.c2}"></div>
+    <div class="ch-num">CHAPTER ${ch.n}</div>
+    <div class="ch-title">${ch.title}</div>
+    <div class="ch-desc">${ch.desc}</div>
+    <div class="ch-tags">${ch.tags.map(t=>`<span class="ch-tag">${t}</span>`).join('')}</div>
+    <div class="ch-enter">进入独立成章 <span class="arr">→</span></div>
+  `;
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+  card.addEventListener('click',()=>openChapter(i));
+  grid.appendChild(card);
+});
+
+/* ============================================================
+   CHAPTER DETAIL VIEW
+   ============================================================ */
+const cvView = document.getElementById('chapter-view');
+const cvInner = document.getElementById('cv-inner');
+let currentIdx = 0;
+
+function buildChainSVG(ch){
+  const nodes = ch.chain;
+  const n = nodes.length;
+  const boxW=148, boxH=56, gap=30;
+  const totalW = n*boxW + (n-1)*gap + 40;
+  const totalH = 100;
+  const y=22;
+  let svg = `<svg viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g${ch.n}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="${ch.c1}"/>
+        <stop offset="1" stop-color="${ch.c2}"/>
+      </linearGradient>
+      <filter id="glow${ch.n}"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>`;
+  for(let i=0;i<n;i++){
+    const x = 20 + i*(boxW+gap);
+    const cx = x+boxW/2;
+    svg += `<g class="chain-node">
+      <rect x="${x}" y="${y}" width="${boxW}" height="${boxH}" rx="12" fill="rgba(20,32,58,0.7)" stroke="url(#g${ch.n})" stroke-width="1.5" filter="url(#glow${ch.n})"/>`;
+    const lines = nodes[i].split('<br/>');
+    const startDy = y+boxH/2 - (lines.length-1)*9;
+    lines.forEach((ln,li)=>{
+      svg += `<text x="${cx}" y="${startDy + li*18}" text-anchor="middle" dominant-baseline="middle">${ln.replace(/<[^>]+>/g,'')}</text>`;
+    });
+    svg += `</g>`;
+    if(i<n-1){
+      const ax1=x+boxW, ax2=x+boxW+gap;
+      const ay=y+boxH/2;
+      svg += `<line class="chain-edge" x1="${ax1}" y1="${ay}" x2="${ax2-6}" y2="${ay}" stroke="${ch.c1}" stroke-width="2" opacity="0.8"/>`;
+      svg += `<polygon points="${ax2-6},${ay-4} ${ax2},${ay} ${ax2-6},${ay+4}" fill="${ch.c1}"/>`;
+    }
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+function openChapter(i){
+  currentIdx=i;
+  const ch=CHAPTERS[i];
+  cvInner.style.setProperty('--c1',ch.c1);
+  cvInner.style.setProperty('--c2',ch.c2);
+  cvInner.innerHTML = `
+    <div class="cv-topbar">
+      <div class="back-btn" id="back-btn">← 返回总览</div>
+      <div class="cv-progress">${ch.n} / 08</div>
+    </div>
+    <div class="cv-header" style="--c1:${ch.c1}">
+      <div class="cv-cat" style="--c1:${ch.c1}">CHAPTER ${ch.n} · ${ch.tags[0]}</div>
+      <h1 class="cv-title" style="--c1:${ch.c1}">${ch.title}</h1>
+      <p class="cv-lead">${ch.lead}</p>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">1</div>
+        <div><h3>论点是什么</h3><div class="sub">WHAT · 核心主张</div></div>
+      </div>
+      ${ch.what.map(p=>`<p>${p}</p>`).join('')}
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">2</div>
+        <div><h3>理论依据</h3><div class="sub">THEORY · 学术根基与渊源</div></div>
+      </div>
+      <div class="theory-list">
+        ${ch.theory.map(t=>`<div class="theory-item" style="--c1:${ch.c1}"><div class="src" style="--c1:${ch.c1}">${t.src}</div><div class="exp">${t.exp}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">3</div>
+        <div><h3>核心逻辑链条</h3><div class="sub">LOGIC CHAIN · 因果推演可视化</div></div>
+      </div>
+      <div class="chain-wrap">${buildChainSVG(ch)}</div>
+      <div class="chain-note" style="--c1:${ch.c1}">${ch.chainNote}</div>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">4</div>
+        <div><h3>提出时间与语境</h3><div class="sub">TIMELINE · 演进脉络</div></div>
+      </div>
+      <div class="timeline" style="--c1:${ch.c1};--c2:${ch.c2}">
+        ${ch.time.map(t=>`<div class="tl-item"><div class="tl-time" style="--c1:${ch.c1}">${t.t}</div><div class="tl-text">${t.d}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">5</div>
+        <div><h3>学者态度与中西对比</h3><div class="sub">SCHOLAR · 同源观点 / 对立观点 / 核心分歧</div></div>
+      </div>
+      <div class="scholar-summary" style="--c1:${ch.c1}">
+        <div class="ss-label" style="--c1:${ch.c1}">▸ OVERALL ATTITUDE · 整体态度总结</div>
+        <p>${ch.scholar.summary}</p>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col cn">
+          <h4><span class="flag">🇨🇳</span> 中方类似观点</h4>
+          ${ch.scholar.cn.map(s=>`<div class="scholar-entry"><div class="name">${s.name}<span>${s.info}</span></div><div class="view">${s.view}</div></div>`).join('')}
+        </div>
+        <div class="compare-col en">
+          <h4><span class="flag">🌍</span> 西方类似观点</h4>
+          ${ch.scholar.en.map(s=>`<div class="scholar-entry"><div class="name">${s.name}<span>${s.info}</span></div><div class="view">${s.view}</div></div>`).join('')}
+        </div>
+      </div>
+      <div class="oppose-section">
+        <div class="os-head"><span class="flag">⚡</span> 异见与对立观点 <span class="sub">DISSENTING VIEWS · 同样有大量支持者</span></div>
+        ${ch.scholar.oppose.map(s=>`<div class="oppose-entry"><div class="oe-icon">${s.tag||'✕'}</div><div class="oe-body"><div class="name">${s.name}<span>${s.info}</span></div><div class="view">${s.view}</div></div></div>`).join('')}
+      </div>
+      <div class="divergence-box">
+        <div class="dl">▸ KEY DIVERGENCE · 核心分歧</div>
+        <p>${ch.scholar.divergence}</p>
+      </div>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">6</div>
+        <div><h3>今日视角下的观点价值</h3><div class="sub">VALUE · 2026 回溯评估</div></div>
+      </div>
+      <p>${ch.valueText}</p>
+      <div class="value-meter">
+        <div class="meter-bar"><div class="meter-fill" style="--c1:${ch.c1};--c2:${ch.c2};width:${ch.value}%"></div></div>
+        <div class="meter-label">验证度 ${ch.value}%</div>
+      </div>
+      <ul>
+        <li><strong>优势：</strong>${ch.valuePros}</li>
+        <li><strong>局限：</strong>${ch.valueCons}</li>
+      </ul>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">7</div>
+        <div><h3>对中国及不同人群的影响</h3><div class="sub">IMPACT · 现实投射分析</div></div>
+      </div>
+      <div class="impact-macro">
+        ${ch.chinaImpact.macro.map(m=>`<p>${m}</p>`).join('')}
+      </div>
+      <div class="impact-groups">
+        ${ch.chinaImpact.groups.map(g=>`<div class="impact-card" style="--c1:${ch.c1}"><div class="ic-head"><span class="ic-icon">${g.icon}</span><span class="ic-who" style="--c1:${ch.c1}">${g.who}</span></div><div class="ic-text">${g.impact}</div></div>`).join('')}
+      </div>
+      <div class="impact-risk">
+        <div class="rl">▸ RISK · 风险提示</div>
+        <p>${ch.chinaImpact.risk}</p>
+      </div>
+    </div>
+
+    <div class="block" style="--c1:${ch.c1};--c2:${ch.c2}">
+      <div class="block-head">
+        <div class="block-icon" style="--c1:${ch.c1};--c2:${ch.c2}">8</div>
+        <div><h3>最新观点演变及原因</h3><div class="sub">EVOLUTION · 新近发展</div></div>
+      </div>
+      <div class="new-view">
+        <div class="nv-label">▸ NEW PERSPECTIVE</div>
+        <p>${ch.newView}</p>
+      </div>
+    </div>
+
+    <div class="cv-nav">
+      <button class="prev" ${i===0?'disabled style="opacity:0.3;pointer-events:none"':''}>
+        <div class="dir">← 上一章 ${i>0?'CHAPTER '+CHAPTERS[i-1].n:''}</div>
+        <div class="nt">${i>0?CHAPTERS[i-1].title:'已是首章'}</div>
+      </button>
+      <button class="next" ${i===CHAPTERS.length-1?'disabled style="opacity:0.3;pointer-events:none"':''}>
+        <div class="dir">${i<CHAPTERS.length-1?'CHAPTER '+CHAPTERS[i+1].n+' 下一章 →':'已是末章'}</div>
+        <div class="nt">${i<CHAPTERS.length-1?CHAPTERS[i+1].title:'已是末章'}</div>
+      </button>
+    </div>
+  `;
+  cvView.classList.add('active');
+  document.body.style.overflow='hidden';
+  cvView.scrollTop=0;
+  document.getElementById('back-btn').addEventListener('click',closeChapter);
+  cvInner.querySelector('.cv-nav .prev').addEventListener('click',()=>{if(currentIdx>0)openChapter(currentIdx-1)});
+  cvInner.querySelector('.cv-nav .next').addEventListener('click',()=>{if(currentIdx<CHAPTERS.length-1)openChapter(currentIdx+1)});
+}
+
+function closeChapter(){
+  cvView.classList.remove('active');
+  document.body.style.overflow='';
+}
+
+document.addEventListener('keydown',e=>{
+  if(!cvView.classList.contains('active'))return;
+  if(e.key==='Escape')closeChapter();
+  if(e.key==='ArrowLeft'&&currentIdx>0)openChapter(currentIdx-1);
+  if(e.key==='ArrowRight'&&currentIdx<CHAPTERS.length-1)openChapter(currentIdx+1);
+});
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ============================================================
+   PARTICLE BACKGROUND
+   ============================================================ */
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let W,H,particles;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initP();}
+function initP(){
+  const count=Math.min(70,Math.floor(W*H/22000));
+  particles=[];
+  for(let i=0;i<count;i++){
+    particles.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,
+      r:Math.random()*1.6+0.4,
+      c:Math.random()<0.5?'54,226,255':Math.random()<0.5?'155,109,255':'77,124,255'
+    });
+  }
+}
+function drawP(){
+  ctx.clearRect(0,0,W,H);
+  for(let i=0;i<particles.length;i++){
+    const p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.c},0.5)`;ctx.fill();
+    for(let j=i+1;j<particles.length;j++){
+      const q=particles[j];const dx=p.x-q.x,dy=p.y-q.y;const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<120){
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle=`rgba(${p.c},${0.12*(1-d/120)})`;ctx.lineWidth=0.6;ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawP);
+}
+resize();drawP();addEventListener('resize',resize);
+</script>
+</body>
+</html>
