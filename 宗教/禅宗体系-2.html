@@ -1,0 +1,1412 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>禅宗体系 · 源流·理念·比较·反思</title>
+<style>
+:root{
+  --bg-0:#03060f; --bg-1:#070d1f;
+  --cyan:#36e2ff; --blue:#4d7cff; --purple:#9b6dff; --pink:#ff5fa8;
+  --gold:#ffc24d; --green:#3dffa6; --red:#ff5d5d;
+  --text:#e8f1ff; --text-dim:#8ea3c7; --text-faint:#5a6b8a;
+  --glass:rgba(20,32,58,0.45);
+  --glass-border:rgba(110,160,255,0.18);
+  --glass-hi:rgba(120,180,255,0.35);
+  --radius:12px; --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",-apple-system,"Helvetica Neue",sans-serif;
+  background:var(--bg-0);color:var(--text);
+  height:100vh;overflow:hidden;
+  line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{
+  background-image:linear-gradient(rgba(70,120,220,0.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(70,120,220,0.06) 1px,transparent 1px);
+  background-size:54px 54px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 90%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 30%,transparent 90%);
+}
+.bg-glow-1{position:fixed;width:60vw;height:60vw;left:-15vw;top:-15vw;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(54,226,255,0.10),transparent 60%);filter:blur(20px);
+  animation:drift1 24s ease-in-out infinite}
+.bg-glow-2{position:fixed;width:55vw;height:55vw;right:-12vw;bottom:-12vw;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(100,80,255,0.10),transparent 60%);filter:blur(20px);
+  animation:drift2 30s ease-in-out infinite}
+.bg-glow-3{position:fixed;width:40vw;height:40vw;left:30vw;bottom:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,95,168,0.06),transparent 60%);filter:blur(20px);
+  animation:drift3 28s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(8vw,6vh)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-6vw,-4vh)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(4vw,-8vh)}}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  position:fixed;top:0;left:0;
+  width:var(--sidebar-w);height:100vh;
+  background:rgba(3,6,15,0.88);
+  backdrop-filter:blur(24px) saturate(1.2);
+  -webkit-backdrop-filter:blur(24px) saturate(1.2);
+  border-right:1px solid rgba(110,160,255,0.08);
+  z-index:100;
+  display:flex;flex-direction:column;
+  padding:28px 0;
+}
+.sidebar-brand{text-align:center;padding:0 16px 24px;border-bottom:1px solid rgba(110,160,255,0.06);margin-bottom:12px}
+.sidebar-brand h1{font-size:1.3rem;font-weight:900;letter-spacing:0.2em;color:#fff;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-brand .sub{font-family:"SF Mono","Fira Code",monospace;font-size:0.5rem;letter-spacing:0.3em;color:var(--text-faint);margin-top:6px;font-weight:300}
+.sidebar-nav{flex:1;padding:0 10px;overflow-y:auto}
+.sidebar-nav a{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;color:var(--text-dim);
+  text-decoration:none;font-size:0.75rem;
+  border-radius:8px;transition:all 0.25s ease;
+  border:1px solid transparent;letter-spacing:0.02em;
+  cursor:pointer;margin-bottom:2px;
+}
+.sidebar-nav a .sn{font-family:"SF Mono","Fira Code",monospace;font-size:0.55rem;color:rgba(110,160,255,0.3);min-width:18px;font-weight:400;transition:color 0.25s}
+.sidebar-nav a:hover{color:#fff;background:rgba(110,160,255,0.06);border-color:rgba(110,160,255,0.10)}
+.sidebar-nav a.active{color:var(--cyan);background:rgba(54,226,255,0.06);border-color:rgba(54,226,255,0.12)}
+.sidebar-nav a.active .sn{color:var(--cyan)}
+.sidebar-divider{height:1px;background:rgba(110,160,255,0.06);margin:8px 14px}
+.sidebar-footer{padding:16px 16px 0;border-top:1px solid rgba(110,160,255,0.06);margin-top:8px;
+  text-align:center;font-family:"SF Mono","Fira Code",monospace;font-size:0.45rem;color:rgba(110,160,255,0.25);letter-spacing:0.15em;line-height:1.8}
+
+/* ===== Main ===== */
+.main{margin-left:var(--sidebar-w);height:100vh;position:relative;z-index:2;overflow:hidden}
+
+/* ===== Pages ===== */
+.page{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  padding:36px 44px;overflow-y:auto;
+  opacity:0;visibility:hidden;
+  transition:opacity 0.45s ease,visibility 0.45s;
+}
+.page.active{opacity:1;visibility:visible}
+.page-inner{max-width:800px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+
+/* ===== Hero ===== */
+#page-hero{display:flex;align-items:center;justify-content:center;text-align:center}
+#page-hero .hero-inner{max-width:600px}
+#page-hero .sub-top{font-family:"SF Mono","Fira Code",monospace;font-size:0.55rem;letter-spacing:0.4em;color:var(--text-faint);font-weight:300;margin-bottom:20px}
+#page-hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;letter-spacing:0.3em;color:#fff;text-shadow:0 0 80px rgba(54,160,220,0.08);margin-bottom:6px;background:linear-gradient(120deg,#fff,var(--cyan) 30%,var(--blue) 60%,var(--purple) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#page-hero .hero-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(54,226,255,0.25),transparent);margin:22px auto}
+#page-hero .hero-verse{font-size:0.9rem;color:rgba(100,160,200,0.35);letter-spacing:0.2em;line-height:2.2}
+#page-hero .hero-hint{font-family:"SF Mono","Fira Code",monospace;font-size:0.5rem;color:rgba(110,160,255,0.2);letter-spacing:0.2em}
+#page-hero .hero-hint span{display:inline-block;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.25}50%{opacity:0.6}}
+
+/* ===== Page Header ===== */
+.page-header{padding:12px 0 16px;margin-bottom:10px;border-bottom:1px solid rgba(110,160,255,0.06)}
+.page-header .ch-number{font-family:"SF Mono","Fira Code",monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--text-faint);margin-bottom:2px}
+.page-header h2{font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:0.04em;background:linear-gradient(90deg,#fff,var(--text-dim));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ===== Content ===== */
+.page-body{padding:10px 0;flex:1}
+.page-body h3{font-size:1.15rem;font-weight:700;color:var(--cyan);margin:30px 0 14px;padding-left:0;letter-spacing:0.02em}
+.page-body h3:first-child{margin-top:4px}
+.page-body p{font-size:0.88rem;color:var(--text-dim);margin-bottom:14px;line-height:1.85}
+.page-body p strong{color:#fff}
+.page-body ul{list-style:none;padding:0;margin:8px 0 16px}
+.page-body ul li{color:var(--text-dim);font-size:0.85rem;padding:5px 0 5px 20px;position:relative;line-height:1.7}
+.page-body ul li::before{content:"▸";position:absolute;left:0;color:var(--cyan)}
+.page-body blockquote{
+  margin:18px 0;padding:18px 22px;border-radius:12px;
+  background:rgba(54,226,255,0.04);border:1px solid rgba(54,226,255,0.10);
+  font-size:0.88rem;color:var(--text);line-height:1.8;
+  font-style:normal;
+}
+.page-body blockquote .src{display:block;margin-top:8px;font-family:"SF Mono","Fira Code",monospace;font-size:0.65rem;color:var(--text-faint);letter-spacing:0.05em}
+
+/* detail-wrap */
+.detail-wrap{margin:8px 0 14px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.02);border:1px solid rgba(110,160,255,0.08)}
+.detail-trigger{cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;padding:12px 16px;
+  background:rgba(54,226,255,0.04);border:none;color:var(--cyan);font-size:0.8rem;font-family:inherit;
+  transition:background 0.25s;text-align:left}
+.detail-trigger:hover{background:rgba(54,226,255,0.08)}
+.detail-trigger .arrow{transition:transform 0.25s;display:inline-block}
+.detail-wrap.open .detail-trigger .arrow{transform:rotate(90deg)}
+.detail-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.detail-wrap.open .detail-body{max-height:2000px}
+.detail-content{padding:4px 16px 16px}
+.detail-content p{font-size:0.82rem;color:var(--text-dim);margin-bottom:10px}
+.detail-content p strong{color:#fff}
+
+/* grid-2, grid-3 */
+.grid-2,.grid-3{display:grid;gap:14px;margin:14px 0}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.card{padding:16px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(110,160,255,0.08);transition:all 0.3s}
+.card:hover{border-color:rgba(110,160,255,0.2);background:rgba(255,255,255,0.05)}
+.card .label{font-size:0.85rem;font-weight:700;color:var(--cyan);margin-bottom:6px}
+.card .val{font-size:0.8rem;color:var(--text-dim);line-height:1.7}
+
+/* compare-table */
+.compare-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.78rem;border-radius:12px;overflow:hidden;border:1px solid rgba(110,160,255,0.08)}
+.compare-table th{background:rgba(54,226,255,0.06);padding:12px 14px;text-align:left;color:var(--cyan);font-weight:600;border-bottom:1px solid rgba(110,160,255,0.1)}
+.compare-table td{padding:10px 14px;border-bottom:1px solid rgba(110,160,255,0.04);color:var(--text-dim);vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap}
+
+.page-footer{display:flex;justify-content:space-between;padding:20px 0 10px;border-top:1px solid rgba(110,160,255,0.05);margin-top:20px}
+.nav-btn{cursor:pointer;font-family:"SF Mono","Fira Code",monospace;font-size:0.7rem;color:var(--text-faint);padding:8px 14px;border-radius:8px;transition:all 0.3s;border:1px solid transparent}
+.nav-btn:hover{color:var(--cyan);border-color:rgba(54,226,255,0.2);background:rgba(54,226,255,0.04)}
+
+/* ===== Timeline ===== */
+.tl-app{display:flex;height:100%;gap:0}
+.tl-zone{flex:1;display:flex;flex-direction:column;min-width:0}
+.tl-topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid rgba(110,160,255,0.06);background:rgba(3,6,15,0.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:relative;z-index:100;overflow:visible}
+.tl-filter-box{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:8px;background:rgba(110,160,255,0.03);border:1px solid rgba(110,160,255,0.06);overflow:visible}
+.tl-filter-label{font-family:"SF Mono","Fira Code",monospace;font-size:0.55rem;color:var(--text-faint);letter-spacing:0.08em}
+.tl-dd{position:relative;z-index:10000;overflow:visible}
+.tl-dd-btn,.tl-pill{cursor:pointer;font-size:0.75rem;color:var(--text-dim);background:rgba(110,160,255,0.04);border:1px solid rgba(110,160,255,0.08);border-radius:6px;padding:5px 12px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.25s;font-family:inherit}
+.tl-dd-btn:hover,.tl-pill:hover{background:rgba(110,160,255,0.08);border-color:rgba(110,160,255,0.2)}
+.tl-pill.active{background:rgba(54,226,255,0.10);border-color:rgba(54,226,255,0.25);color:var(--cyan)}
+.tl-dd-menu{position:absolute;top:100%;left:0;min-width:160px;z-index:99999;background:rgba(3,6,15,0.96);border:1px solid rgba(110,160,255,0.12);border-radius:8px;padding:4px;box-shadow:0 12px 40px rgba(0,0,0,0.5);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.tl-dd-menu div{padding:7px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;color:var(--text-dim);transition:0.2s}
+.tl-dd-menu div:hover{background:rgba(54,226,255,0.06);color:#fff}
+.tl-scroll{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;height:0}
+.tl-track-header{position:sticky;top:0;z-index:5;height:40px;border-bottom:1px solid rgba(110,160,255,0.06);background:rgba(3,6,15,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tl-th{position:absolute;top:6px;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.tl-th-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.tl-th-name{font-size:0.8rem;font-weight:600;color:var(--text)}
+.tl-th-sub{display:block;font-size:0.55rem;color:var(--text-faint)}
+.tl-era{border-bottom:1px solid rgba(110,160,255,0.04)}
+.tl-era-head{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;cursor:pointer;background:rgba(110,160,255,0.015);font-size:0.8rem;transition:0.25s}
+.tl-era-head:hover{background:rgba(110,160,255,0.035)}
+.tl-era.collapsed .tl-era-head{border-bottom:1px solid rgba(110,160,255,0.04)}
+.tl-era-name{font-weight:600;color:var(--text-dim)}
+.tl-era-range{font-family:"SF Mono","Fira Code",monospace;font-size:0.65rem;color:var(--text-faint)}
+.tl-era-body{position:relative;width:100%}
+.tl-era.collapsed .tl-era-body{display:none}
+.tl-track-line{position:absolute;top:0;bottom:0;width:1px;transform:translateX(-50%);opacity:0.15}
+.tl-tick{position:absolute;left:4px;font-family:"SF Mono","Fira Code",monospace;font-size:0.6rem;color:var(--text-faint);transform:translateY(-50%)}
+.tl-grid-line{position:absolute;left:60px;right:0;height:1px;background:rgba(110,160,255,0.04)}
+.tl-event{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:2;transition:filter 0.2s,opacity 0.2s}
+.tl-event .tl-dot{display:block;border-radius:50%;transition:transform 0.25s}
+.tl-event:hover .tl-dot{transform:scale(1.3)}
+.tl-event::after{content:attr(data-title);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);white-space:nowrap;font-size:0.7rem;color:var(--text-faint);max-width:150px;overflow:hidden;text-overflow:ellipsis;pointer-events:none;transition:color 0.25s}
+.tl-event.side-l::after{left:auto;right:calc(100% + 10px);text-align:right}
+.tl-event.lvl1 .tl-dot{width:14px;height:14px;background:rgba(111,168,214,0.85);box-shadow:0 0 8px rgba(111,168,214,0.35)}
+.tl-event.lvl2 .tl-dot{width:22px;height:22px;background:rgba(224,164,90,0.85);box-shadow:0 0 12px rgba(224,164,90,0.4)}
+.tl-event.lvl3 .tl-dot{width:32px;height:32px;background:rgba(229,122,138,0.85);box-shadow:0 0 18px rgba(229,122,138,0.5)}
+.tl-event:hover::after{color:var(--text)}
+.tl-event.selected .tl-dot{outline:2px solid #fff;outline-offset:2px}
+.tl-event.selected::after{color:var(--cyan);font-weight:600}
+.tl-detail{width:340px;flex:none;padding:18px;overflow-y:auto;border-left:1px solid rgba(110,160,255,0.06);background:rgba(3,6,15,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.tl-d-eyebrow{font-family:"SF Mono","Fira Code",monospace;font-size:0.6rem;letter-spacing:0.16em;color:var(--text-faint)}
+.tl-d-title{font-size:1.15rem;font-weight:700;margin:4px 0 10px;line-height:1.3;color:#fff;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tl-d-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tl-badge{font-size:0.65rem;color:var(--text-dim);background:rgba(110,160,255,0.04);border:1px solid rgba(110,160,255,0.08);border-radius:5px;padding:3px 8px}
+.tl-badge.l1{color:rgb(111,168,214)}.tl-badge.l2{color:rgb(224,164,90)}.tl-badge.l3{color:rgb(229,122,138)}
+.tl-d-desc{font-size:0.8rem;line-height:1.7;padding-left:10px;border-left:2px solid var(--cyan);color:var(--text-dim);margin-bottom:8px}
+.tl-d-h{font-size:0.8rem;color:var(--cyan);margin:10px 0 6px;font-weight:600}
+.tl-d-p{font-size:0.75rem;color:var(--text-dim);line-height:1.7;margin-bottom:6px}
+.tl-d-src{margin-top:10px;font-size:0.65rem;color:var(--text-faint);padding-top:8px;border-top:1px solid rgba(110,160,255,0.05)}
+.tl-close{cursor:pointer;font-size:0.75rem;color:var(--cyan);display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;transition:all 0.25s;font-family:"SF Mono","Fira Code",monospace}
+.tl-close:hover{background:rgba(54,226,255,0.08);gap:8px}
+
+/* ===== Flow Detail Panel ===== */
+.flow-page-body{display:flex;gap:0;height:calc(100vh - 180px);min-height:0}
+.flow-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 16px 0 20px;min-width:0}
+#page-10 .page-inner{max-width:none}
+.flow-detail{width:320px;flex:none;padding:16px 18px;overflow-y:auto;border-left:1px solid rgba(110,160,255,0.06);background:rgba(3,6,15,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;margin-left:16px}
+.flow-detail .fd-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:180px;text-align:center;color:var(--text-faint);font-size:0.7rem;gap:8px}
+.flow-detail .fd-empty .fd-icon{font-size:1.5rem;opacity:0.3}
+.flow-detail .fd-title{font-size:1rem;font-weight:700;margin:0 0 4px;line-height:1.3;color:#fff;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.flow-detail .fd-sub{font-family:"SF Mono","Fira Code",monospace;font-size:0.55rem;color:var(--text-faint);letter-spacing:0.08em;margin-bottom:8px}
+.flow-detail .fd-desc{font-size:0.78rem;color:var(--text-dim);line-height:1.7;margin-bottom:8px}
+.flow-detail .fd-desc strong{color:#fff}
+.flow-detail .fd-block{padding:12px 14px;border-radius:10px;background:rgba(110,160,255,0.04);border:1px solid rgba(110,160,255,0.08);margin-bottom:10px}
+.flow-detail .fd-block .fdb-label{font-size:0.6rem;color:var(--cyan);font-weight:600;letter-spacing:0.08em;margin-bottom:4px}
+.flow-detail .fd-block p{font-size:0.75rem;color:var(--text-dim);line-height:1.7;margin:0}
+.flow-detail .fd-block p strong{color:#fff}
+.flow-card{cursor:pointer}
+
+@media(max-width:1100px){
+  .flow-page-body{flex-direction:column;height:auto}
+  .flow-detail{width:100%;margin-left:0;margin-top:16px;border-left:none;border-top:1px solid rgba(110,160,255,0.06)}
+  .flow-scroll{padding:0 0 0 12px}
+}
+.flow-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding:10px 0 30px;position:relative}
+.flow-node{position:relative;display:flex;flex-direction:column;align-items:center;z-index:2}
+.flow-card{
+  padding:10px 18px;border-radius:10px;text-align:center;min-width:100px;
+  background:rgba(110,160,255,0.06);border:1px solid rgba(110,160,255,0.12);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:all 0.3s;cursor:pointer;
+}
+.flow-card:hover{background:rgba(110,160,255,0.10);border-color:rgba(110,160,255,0.25);transform:translateY(-2px)}
+.flow-card .fc-name{font-size:0.95rem;font-weight:700;color:#fff}
+.flow-card .fc-sub{font-size:0.7rem;color:var(--text-faint);margin-top:3px}
+.flow-card .fc-tag{font-size:0.6rem;padding:2px 8px;border-radius:4px;background:rgba(54,226,255,0.12);color:var(--cyan);margin-top:5px;display:inline-block}
+.flow-card.highlight{background:rgba(54,226,255,0.10);border-color:rgba(54,226,255,0.25);box-shadow:0 0 16px rgba(54,226,255,0.10)}
+.flow-card.core{background:rgba(229,122,138,0.12);border-color:rgba(229,122,138,0.25)}
+.flow-card.core .fc-name{color:#e57a8a}
+.flow-card.branch{background:rgba(155,109,255,0.08);border-color:rgba(155,109,255,0.15)}
+.flow-card.global{background:rgba(61,255,166,0.06);border-color:rgba(61,255,166,0.12)}
+.flow-card.global .fc-name{color:var(--green)}
+.flow-conn{width:2px;height:22px;background:linear-gradient(var(--cyan),rgba(110,160,255,0.2));flex:none;position:relative;z-index:1}
+.flow-conn-s{width:2px;height:14px;background:rgba(110,160,255,0.15);flex:none}
+.flow-row{position:relative;display:flex;align-items:flex-start;justify-content:center;width:100%;max-width:700px;gap:30px}
+.flow-row::before{content:"";position:absolute;top:0;left:10%;right:10%;height:2px;background:rgba(110,160,255,0.10)}
+.flow-row .flow-branch{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.flow-row .flow-branch::before{content:"";position:absolute;top:0;left:50%;width:2px;height:14px;background:rgba(110,160,255,0.10);transform:translateX(-50%)}
+.flow-fork{position:relative;display:flex;align-items:flex-start;justify-content:center;width:100%;gap:0}
+.flow-fork::before{content:"";position:absolute;top:0;left:20%;right:20%;height:2px;background:rgba(110,160,255,0.15)}
+.flow-fork .flow-col{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.flow-fork .flow-col::before{content:"";position:absolute;top:0;left:50%;width:2px;height:14px;background:rgba(110,160,255,0.15);transform:translateX(-50%)}
+.flow-label{font-size:0.7rem;color:var(--text-faint);margin:8px 0 0;letter-spacing:0.1em;font-family:"SF Mono","Fira Code",monospace}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(110,160,255,0.15);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(110,160,255,0.3)}
+
+@media(max-width:1100px){
+  .sidebar{width:56px}
+  .sidebar-brand h1{font-size:0.8rem}
+  .sidebar-brand .sub{display:none}
+  .sidebar-nav a .sn{display:none}
+  .sidebar-nav a{justify-content:center;padding:9px 4px;font-size:0.5rem}
+  .main{margin-left:56px}
+  .page{padding:24px 20px}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .tl-detail{width:240px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+<div class="bg-glow-3"></div>
+<div class="bg-layer bg-grid"></div>
+<canvas id="particles"></canvas>
+
+<!-- ===== Sidebar ===== -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>禅 宗</h1>
+    <div class="sub">体系 · 源流</div>
+  </div>
+  <div class="sidebar-nav">
+    <a data-page="page-hero" class="active"><span class="sn">00</span> 首页</a>
+    <a data-page="page-1"><span class="sn">01</span> 禅宗发展史</a>
+    <a data-page="page-2"><span class="sn">02</span> 核心理念</a>
+    <a data-page="page-3"><span class="sn">03</span> 实践法门</a>
+    <a data-page="page-4"><span class="sn">04</span> 各国禅宗</a>
+    <a data-page="page-5"><span class="sn">05</span> 五家七宗</a>
+    <a data-page="page-6"><span class="sn">06</span> 核心经典</a>
+    <a data-page="page-7"><span class="sn">07</span> 哲学对话</a>
+    <a data-page="page-8"><span class="sn">08</span> 当代转型</a>
+    <a data-page="page-9"><span class="sn">09</span> 概念速查</a>
+    <a data-page="page-10"><span class="sn">10</span> 禅宗流转图</a>
+    <div class="sidebar-divider"></div>
+    <a data-page="page-timeline"><span class="sn">⌛</span> 时间轴</a>
+  </div>
+  <div class="sidebar-footer">禅宗体系</div>
+</nav>
+
+<!-- ===== Main ===== -->
+<div class="main" id="main">
+
+  <!-- ===== PAGE 0: Hero ===== -->
+  <div class="page active" id="page-hero">
+    <div class="hero-inner">
+      <div class="sub-top">教外别传 · 不立文字</div>
+      <h1>禅 宗</h1>
+      <div class="hero-divider"></div>
+      <div class="hero-verse">直指人心 · 见性成佛</div>
+      <div class="hero-hint"><span>← 点击左侧目录开始探索</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 1: 源流 ===== -->
+  <div class="page" id="page-1">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">01 · HISTORY</div><h2>源流 · 禅宗发展史</h2></div>
+      <div class="page-body">
+        <p>禅宗，梵语 <em>dhyāna</em>（禅那）意为"静虑"，是大乘佛教中最具中国特色的宗派。发端于公元6世纪菩提达摩东渡中土，经由唐宋鼎盛，传播至朝鲜半岛、日本、越南乃至欧美，成为具有全球影响力的精神传统。</p>
+
+        <h3>印度之源 · 拈花微笑</h3>
+        <p>禅宗追溯其源头至释迦牟尼在灵山会上"拈花示众"的著名公案——大迦叶"破颜微笑"，佛陀遂以"正法眼藏、涅槃妙心、实相无相、微妙法门，不立文字、教外别传"付嘱迦叶。这一传说定义了禅宗"以心传心"的根本特质。此后在印度历经二十八代祖师相传，至菩提达摩为第二十八代。</p>
+
+        <h3>达摩东渡 · 中土初祖</h3>
+        <p>菩提达摩于梁武帝普通年间（约520年）泛海来华，与梁武帝对话不契，"廓然无圣"之答令帝不悟。达摩遂北上嵩山少林寺，面壁九年以待机缘。传法于慧可（二祖），留下"二入四行"为修行纲领。达摩以《楞伽经》印心，奠定了中国禅宗的理论根基。</p>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 详：达摩与梁武帝对话</button>
+          <div class="detail-body"><div class="detail-content">
+            <p>帝问："朕即位以来，造寺写经度僧，不可胜计，有何功德？"达摩答："并无功德。"帝问："何以无功德？"答："此但人天小果，有漏之因，如影随形，虽有非实。"帝问："如何是真功德？"答："净智妙圆，体自空寂，如是功德，不以世求。"帝问："如何是圣谛第一义？"答："廓然无圣。"帝问："对朕者谁？"答："不识。"</p>
+            <p>这段对话揭示了禅宗的核心精神：真正的功德不在外在形式，而在自性的觉悟。梁武帝执着于"有相功德"，达摩以"空性"破之。"廓然无圣"则表明圣谛本身也不可执着——这正是"不二"思想的具体运用。</p>
+          </div></div>
+        </div>
+
+        <h3>从二祖到五祖 · 法脉初成</h3>
+        <p>二祖慧可断臂求法，得达摩衣钵。三祖僧璨著《信心铭》，开禅宗以诗偈说法的先河："至道无难，唯嫌拣择。"四祖道信在黄梅双峰山聚众修禅，首开农禅并重之风。五祖弘忍门下弟子千余人，形成"东山法门"，此时禅宗已具备独立的宗派规模。</p>
+
+        <h3>六祖慧能 · 革命性的顿悟</h3>
+        <p><strong>六祖慧能</strong>（638—713）的出现是禅宗史上最重大的转折。慧能本为岭南新州樵夫，闻《金刚经》"应无所住而生其心"而悟，北上黄梅礼拜弘忍。以"本来无一物"的示法偈获得衣钵，其后在南方隐居十五载，后在广州法性寺以"不是风动，不是幡动，仁者心动"一语惊四座，正式出家弘法。</p>
+        <p>慧能的根本革新在于<strong>"顿悟成佛"</strong>——将成佛从遥远的三大阿僧祇劫压缩到当下一念。其思想被记录在<strong>《六祖坛经》</strong>中，这是唯一一部被尊为"经"的中国佛教典籍。慧能提出"无念、无相、无住"为修行三纲领，确立了南宗禅的千年基业。</p>
+
+        <blockquote>菩提本无树，明镜亦非台。本来无一物，何处惹尘埃。<span class="src">—— 六祖慧能示法偈</span></blockquote>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 详：顿悟与渐悟之争</button>
+          <div class="detail-body"><div class="detail-content">
+            <p>禅宗史上有著名的"顿渐之争"。神秀（606？—706）作为弘忍的上座弟子，主张"时时勤拂拭，莫使惹尘埃"的渐修法门，其教法被称为北宗。慧能则主张"本来无一物"的顿悟法门，其教法被称为南宗。</p>
+            <p>公元701年，神秀被武则天迎请入京，"北宗"盛极一时。慧能的弟子神会（684—758）在滑台大云寺设无遮大会，公开抨击北宗"师承是傍，法门是渐"，力证慧能为弘忍正统传人。安史之乱后，南宗凭借神会为朝廷筹募军饷之功确立正统地位。</p>
+            <p>但后世禅宗的实际发展并非顿渐截然对立。永嘉玄觉在《证道歌》中已提出"顿悟渐修"的融合路线。至宋代，大慧宗杲的看话禅强调"大疑大悟"，宏智正觉的默照禅注重渐修默照，二者并行不悖。明末四大高僧之一的憨山德清更明确主张"顿悟渐修"不可偏废。</p>
+          </div></div>
+        </div>
+
+        <h3>五家七宗 · 黄金时代</h3>
+        <p>慧能门下青原行思与南岳怀让两支法脉大盛。从行思出曹洞、云门、法眼三家，从怀让出临济、沩仰二家，合称"五家"。宋代临济下又分出杨岐、黄龙二派，合称"七宗"。此时禅宗进入文学、艺术、哲学全面繁荣的黄金时代。禅宗语录、公案的大量编纂，孕育了中国思想史上独特的"公案文学"传统。</p>
+
+        <h3>东传与全球化</h3>
+        <p>宋代以后，禅宗东传朝鲜半岛成为<strong>Seon</strong>（知讷整合为曹溪宗），经荣西（临济）、道元（曹洞）传入日本成为<strong>Zen</strong>，传入越南成为<strong>Thiền</strong>。20世纪，铃木大拙以英文著述向西方介绍禅宗，铃木俊隆在美建立禅修中心，一行禅师创立梅村倡导"入世佛教"，禅宗遂成全球性精神运动。</p>
+      </div>
+      <div class="page-footer"><span></span><span class="nav-btn" onclick="goTo('page-2')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 2: 核心理念 ===== -->
+  <div class="page" id="page-2">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">02 · PHILOSOPHY</div><h2>核心理念 · 哲学体系</h2></div>
+      <div class="page-body">
+        <p>禅宗虽标榜"不立文字"，却拥有极为严密而深刻的哲学体系。其思想资源主要来自<strong>如来藏（佛性）</strong>思想、<strong>般若（空性）</strong>思想以及<strong>华严（法界缘起）</strong>思想的融合，形成了"即心即佛"的本体论、"不二"的认识论和"顿悟"的实践论三位一体的完整体系。</p>
+
+        <h3>即心即佛 · 本体论转向</h3>
+        <p>禅宗的逻辑起点是<strong>"自心即佛"</strong>。这并非简单的信念，而是具有深刻哲学意涵的本体论命题。马祖道一（709—788）明确说："即心即佛"——此"心"非肉团心，亦非意识心，而是<strong>本心</strong>、<strong>自性清净心</strong>、<strong>如来藏心</strong>。</p>
+        <ul>
+          <li><strong>非空非有</strong>：超越一切概念规定，不能以"存在"或"不存在"来界定</li>
+          <li><strong>不生不灭</strong>：不是因缘和合而生之物，而是法尔如是的本来状态</li>
+          <li><strong>不垢不净</strong>：烦恼不能染、修行不能净，它本来如此</li>
+          <li><strong>含摄万法</strong>：一切法皆从此心流出，又回归此心</li>
+        </ul>
+        <p>这一命题的革命性在于：将成佛从遥远的彼岸拉回到当下的此岸。成佛不再需要经历三大阿僧祇劫的漫长修行，而只在于当下一念的回光返照。</p>
+
+        <blockquote>汝等诸人，各信自心是佛，此心即是佛心。<span class="src">—— 马祖道一</span></blockquote>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 详："即心即佛"与"非心非佛"的辩证</button>
+          <div class="detail-body"><div class="detail-content">
+            <p>马祖道一在提出"即心即佛"之后，又提出"非心非佛"。有僧问："如何是佛？"答："即心即佛。"僧再问，答："非心非佛。"这不是自相矛盾，而是一种教学策略——"即心即佛"是针对向外求佛者的对治性说法，但如果学人执着于"即心即佛"的概念，则又成为障碍，故以"非心非佛"破之。</p>
+            <p>黄檗希运在《传心法要》中进一步阐释："此心即佛，更无别佛，亦无别心。此心明净，犹如虚空，无一点相貌。举心动念，即乖法体，即为着相。"</p>
+          </div></div>
+        </div>
+
+        <h3>无念·无相·无住 · 修证三纲领</h3>
+        <p>慧能在《坛经》中提出了三个核心概念，构成了禅宗修证的方法论总纲：</p>
+        <div class="grid-3">
+          <div class="card"><div class="label">无念</div><div class="val">"于念而无念"——并非断除所有念头，而是于念起时不执着、不攀缘、不延续。</div></div>
+          <div class="card"><div class="label">无相</div><div class="val">"于相而离相"——生活在现象世界中但不被现象所缚。见一切相而知其空性。</div></div>
+          <div class="card"><div class="label">无住</div><div class="val">"于诸法上念念不住"——心念如流水，不滞留于任何一境。这是最根本的。</div></div>
+        </div>
+
+        <h3>空性 · 佛性 · 顿悟 · 三要</h3>
+        <p><strong>空性（Śūnyatā）</strong>：继承龙树中观"缘起性空"思想。禅宗的空不是虚无主义的空，而是"真空妙有"——一切法因缘而生，无独立自性，正因为"空"，才能"有"。</p>
+        <p><strong>佛性（Buddha-dhātu）</strong>：源自《涅槃经》"一切众生悉有佛性"。禅宗将佛性从抽象概念转化为可验证的生命体验。所谓"见性成佛"，是指在当下一念中亲证自性与佛无二。</p>
+        <p><strong>顿悟</strong>：这是禅宗区别于其他佛教宗派的根本特征。顿悟不是修行的结果，而是修行的基础和起点——因为众生本来成佛，只是妄念遮蔽，一旦放下妄念，佛性自然显现。</p>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 详：空性与佛性的张力与统一</button>
+          <div class="detail-body"><div class="detail-content">
+            <p>空性与佛性之间存在着深刻的哲学张力。空性强调"无"——一切法空、无自性、不可得；佛性强调"有"——一切众生有成佛的内在根据。但禅宗的卓越之处在于超越了这种对立。宗密在《禅源诸诠集都序》中调和二者：佛性不是实体性的"有"，而是灵明不昧的"觉性"——它"空"而不无，"有"而不常。</p>
+          </div></div>
+        </div>
+
+        <h3>不二法门 · 认识论核心</h3>
+        <p>禅宗认识论的核心是<strong>"不二"</strong>逻辑。禅宗认为一切苦恼源于二元分别（善恶、美丑、生死、自他），觉悟就是摆脱二元束缚、回归"不二"的本来状态。</p>
+        <p>青原惟信禅师的"见山三阶段"是这一逻辑最经典的表达：</p>
+        <blockquote>老僧三十年前未参禅时，见山是山，见水是水。及至后来亲见知识，有个入处，见山不是山，见水不是水。而今得个休歇处，依旧见山只是山，见水只是水。<span class="src">—— 青原惟信</span></blockquote>
+
+        <h3>平常心是道 · 禅宗的终极境界</h3>
+        <p>南泉普愿对赵州从谂说："平常心是道。"赵州问："还可趣向否？"南泉答："拟向即乖。"——当你想要去"成为"平常时，就已经失去了平常。"平常心"不是一种特别的心理状态，而是<strong>不造作、不取舍</strong>的本来状态。饥来吃饭、困来即眠。</p>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-1')">← 上一章</span><span class="nav-btn" onclick="goTo('page-3')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 3: 实践法门 ===== -->
+  <div class="page" id="page-3">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">03 · PRACTICE</div><h2>实践法门 · 修证体系</h2></div>
+      <div class="page-body">
+        <p>禅宗的实践法门不是远离世间的苦行，而是将觉悟落实于行住坐卧、搬柴运水之中。其修行体系以"定慧一体"为原则，以"顿悟渐修"为路径。</p>
+
+        <h3>坐禅（Zazen）· 定慧一体</h3>
+        <p>坐禅是禅宗最基本也是最具代表性的修行方式。但禅宗的坐禅与传统的禅定有很大区别。慧能批评执着于坐相的修行法："生来坐不卧，死去卧不坐，一具臭骨头，何为立功课？"他主张的正确坐禅是："外离相为禅，内不乱为定。"</p>
+        <p>曹洞宗强调<strong>"只管打坐"（shikantaza）</strong>——坐本身就是觉悟的呈现和证明。临济宗则注重在坐禅中<strong>参究话头</strong>，以疑情逼迫妄念脱落。</p>
+
+        <blockquote>坐禅非习禅也，唯是安乐之法门也。<span class="src">—— 道元《普劝坐禅仪》</span></blockquote>
+
+        <h3>公案（Koan）· 逻辑的短路</h3>
+        <p><strong>公案</strong>是禅宗最独特的教学方法。著名的公案包括赵州"狗子有无佛性"、南泉"斩猫"、俱胝"竖一指"等。公案的功能不是提供哲学思辨的素材，而是<strong>迫使理性思维短路</strong>，在逻辑无法运作之处打开觉悟的通道。</p>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 详：公案的结构与方法论</button>
+          <div class="detail-body"><div class="detail-content">
+            <p>以赵州"无"字公案为例：僧问赵州："狗子还有佛性也无？"赵州答："无！"从佛教教义来看，一切众生皆有佛性，赵州却说"无"——这不是否定佛性的教义，而是斩断学人的分别思维。<p>
+            <p>大慧宗杲将参究"无"字发展为系统的"看话禅"方法：将全身心投入这个"无"字，如老鼠啃棺材，不破不休。在疑情的不断深入中，理性思维最终"爆裂"。</p>
+          </div></div>
+        </div>
+
+        <h3>默照禅 vs 看话禅 · 宋代"禅法之争"</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">默照禅 · 曹洞宗</div><div class="val">宏智正觉（1091—1157）主张。默然澄照，心如明镜，不思量而自然明。"默默忘言，昭昭现前。"</div></div>
+          <div class="card"><div class="label">看话禅 · 临济宗</div><div class="val">大慧宗杲（1089—1163）主张。参究公案中的"话头"，在猛烈疑情中爆发大悟。"疑以信为体，悟以疑为用。"</div></div>
+        </div>
+
+        <h3>农禅 · 一日不作，一日不食</h3>
+        <p>百丈怀海（720—814）确立《百丈清规》，立下"一日不作，一日不食"的规矩，将劳动正式纳入禅修体系。这一传统奠定了禅宗"生活禅"的物质基础和制度保障。</p>
+
+        <h3>生活禅 · 平常心是道</h3>
+        <p>赵州从谂的"吃茶去"三字公案将禅宗"平常心是道"的精神表现得淋漓尽致——就在你正在做的事中觉悟，无需别处寻觅。</p>
+
+        <blockquote>神通并妙用，运水及搬柴。<span class="src">—— 庞蕴居士</span></blockquote>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-2')">← 上一章</span><span class="nav-btn" onclick="goTo('page-4')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 4: 各国禅宗 ===== -->
+  <div class="page" id="page-4">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">04 · COMPARATIVE</div><h2>各国禅宗 · 比较与核心论点</h2></div>
+      <div class="page-body">
+        <p>禅宗在东亚各国落地生根，形成各具特色的传统。20世纪后又向西方传播，产生了深远影响。</p>
+
+        <h3>中国 · 根源与传承</h3>
+        <p>中国是禅宗的发源地。近代禅宗泰斗<strong>虚云大师</strong>（1840—1959）以一人之力兼挑五宗法脉。台湾法鼓山（圣严法师）、佛光山（星云大师）等传承禅宗法脉。净慧长老倡导"生活禅"在知识界颇具影响。</p>
+        <p><strong>核心论点</strong>：中国禅宗强调"顿悟"与"渐修"的统一。当代呈现"学术化"和"生活化"双重趋向。</p>
+
+        <h3>日本 · 美学与武士道</h3>
+        <p>日本禅宗三大主流：临济宗（荣西传入）、曹洞宗（道元传入）、黄檗宗（隐元传入）。禅宗对日本文化的渗透远超宗教范畴——<strong>茶道</strong>（千利休"和敬清寂"）、<strong>枯山水</strong>（龙安寺石庭）、<strong>俳句</strong>（松尾芭蕉）、<strong>武士道</strong>无一不渗透着禅的精神。</p>
+        <p><strong>核心论点</strong>：日本禅将禅的美学化和生活化推向极致。"一期一会"的当下珍重、"侘寂"在残缺中发现美的精神。</p>
+
+        <h3>韩国 · 顿悟渐修与团队精神</h3>
+        <p>韩国禅（Seon）由新罗时期入唐求法僧人传入。高丽<strong>知讷禅师</strong>（1158—1210）创立"定慧社"，倡导"顿悟渐修"。现今<strong>曹溪宗</strong>为韩国最大佛教宗派。</p>
+        <p><strong>核心论点</strong>：强调僧团集体性和纪律性，大规模"安居"修行传统保持了强大的实修力量。</p>
+
+        <h3>越南 · 入世与慈悲</h3>
+        <p>越南禅（Thiền）最具影响力的代表是<strong>一行禅师</strong>（1926—2022），创立"梅村"修习中心，提出"入世佛教"，将禅修与和平运动、社会关怀有机融合。</p>
+
+        <h3>西方 · 现代化与心理化</h3>
+        <p>乔恩·卡巴金创立<strong>正念减压（MBSR）</strong>，使禅修进入主流医学与心理学。铃木大拙（D.T. Suzuki）以英文著述向西方介绍禅宗，被誉为"世界的禅者"。</p>
+        <p><strong>核心论点</strong>：西方禅宗呈现"去宗教化的实用主义"特征——剥离佛教信仰体系，将冥想技术、心理学洞见和生活哲学作为核心。</p>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-3')">← 上一章</span><span class="nav-btn" onclick="goTo('page-5')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 5: 五家七宗 ===== -->
+  <div class="page" id="page-5">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">05 · LINEAGE</div><h2>五家七宗 · 宗派谱系</h2></div>
+      <div class="page-body">
+        <p>从六祖慧能以下，唐宋之间形成"五家七宗"的繁荣格局：</p>
+        <div class="grid-2">
+          <div class="card"><div class="label">临济宗</div><div class="val">义玄禅师（？—867）。棒喝著称，宗风严峻刚猛。宋分出杨岐、黄龙二派。至今最昌盛，传日本。</div></div>
+          <div class="card"><div class="label">曹洞宗</div><div class="val">洞山良价（807—869）、曹山本寂（840—901）。"偏正五位"阐述理事关系。宗风绵密温厚。</div></div>
+          <div class="card"><div class="label">沩仰宗</div><div class="val">沩山灵祐、仰山慧寂。以"九十六圆相"接引。宋后法脉不显。</div></div>
+          <div class="card"><div class="label">云门宗</div><div class="val">云门文偃（864—949）。"云门三句"：函盖乾坤、截断众流、随波逐浪。</div></div>
+          <div class="card"><div class="label">法眼宗</div><div class="val">法眼文益（885—958）。重禅教一致，融华严。宋中期后绝。</div></div>
+          <div class="card"><div class="label">全球传承</div><div class="val">临济、曹洞为国际两大主流。日本增黄檗宗。韩国曹溪宗为临济变体。</div></div>
+        </div>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-4')">← 上一章</span><span class="nav-btn" onclick="goTo('page-6')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 6: 核心经典 ===== -->
+  <div class="page" id="page-6">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">06 · TEXTS</div><h2>核心经典 · 文字之外的文字</h2></div>
+      <div class="page-body">
+        <p>禅宗虽标榜"不立文字"，却留下了汗牛充栋的宝贵文献。这些经典不是供人研读思辨的哲学著作，而是<strong>悟道的"敲门砖"</strong>——借指以观月，得月而忘指。</p>
+
+        <h3>《六祖坛经》</h3>
+        <p>唯一被尊称为"经"的中国佛教典籍，是六祖慧能的说法记录，由弟子法海集录。确立"顿悟成佛"的核心理念，系统阐述了"无念、无相、无住"的修证纲领。其思想影响远及宋明理学（特别是陆王心学）。</p>
+
+        <div class="detail-wrap">
+          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 讲解：《坛经》核心思想</button>
+          <div class="detail-body"><div class="detail-content">
+            <p><strong>1. 自成佛论</strong>："菩提只向心觅，何劳向外求玄"——"不悟即佛是众生，一念悟时众生是佛。"</p>
+            <p><strong>2. 无念为宗</strong>："我此法门，从上以来，先立无念为宗，无相为体，无住为本。"</p>
+            <p><strong>3. 世间觉</strong>："佛法在世间，不离世间觉，出世觅菩提，恰如求兔角。"</p>
+            <p><strong>4. 三十六对</strong>：慧能临终教授三十六"相对法"，破除学人对一切二元概念的执着。</p>
+          </div></div>
+        </div>
+
+        <h3>《金刚经》</h3>
+        <p>六祖慧能因闻"应无所住而生其心"而豁然大悟。全经以"破相"为宗——"凡所有相，皆是虚妄。若见诸相非相，即见如来。"</p>
+
+        <h3>《楞伽经》</h3>
+        <p>达摩以此经印心。此经融合如来藏与唯识思想，"佛语心为宗"的思想直接奠定了禅宗"以心传心"的理念。</p>
+
+        <h3>《维摩诘经》</h3>
+        <p>对禅宗影响极大的在家修行典范。"心净则佛土净"——不必远离世间另求净土。</p>
+
+        <h3>语录·灯录·公案集</h3>
+        <ul>
+          <li><strong>《景德传灯录》</strong>：第一部系统灯录，确立禅宗传法谱系</li>
+          <li><strong>《五灯会元》</strong>：五部灯录汇编，保存大量祖师言行</li>
+          <li><strong>《碧岩录》</strong>（圆悟克勤）："宗门第一书"，代表文字禅的巅峰</li>
+          <li><strong>《无门关》</strong>（无门慧开）：选编四十八则公案，以"无"字为枢机</li>
+          <li><strong>《正法眼藏》</strong>（道元）：日本曹洞宗哲学巨著</li>
+        </ul>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-5')">← 上一章</span><span class="nav-btn" onclick="goTo('page-7')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 7: 哲学对话 ===== -->
+  <div class="page" id="page-7">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">07 · DIALOGUE</div><h2>哲学对话 · 东西方思想比较</h2></div>
+      <div class="page-body">
+        <p>禅宗对西方思想界产生了深刻而持久的影响。以下是比较哲学视野下的核心对话。</p>
+
+        <h3>禅与存在主义 · Heidegger 与 无自性</h3>
+        <p>海德格尔的"此在"（Dasein）与禅宗的"缘起"思想有着惊人的家族相似。其后期思想中的"敞开性"和"让-在"（Gelassenheit）与禅宗的"无心"、"放下"境界高度呼应。</p>
+        <p><strong>根本差异</strong>：海德格尔终其一生在思想的领域内工作；禅宗则以坐禅、公案等实修手段追求存在性的转化。</p>
+
+        <h3>禅与维特根斯坦 · 语言的界眼</h3>
+        <p>维特根斯坦"凡不可言说的，应当保持沉默"与禅宗"不立文字"形成跨文化映照。其后期"语言游戏"理论揭示了语言意义的语境依赖性。</p>
+
+        <h3>禅与精神分析 · 打破幻象</h3>
+        <p>荣格认为禅宗"开悟"与个体化的"自性化"过程相通。弗洛姆指出，禅与精神分析共享同一目标：<strong>打破幻象，回归真实</strong>。</p>
+
+        <h3>禅与京都学派 · 日本哲学的圆成</h3>
+        <p>西田几多郎的"场所"（Basho）逻辑——"绝对无"的场所中一切对立的消失——直接源于禅宗"不二"思想与西方哲学对话的产物。京都学派表明禅宗可以与西方最艰深的哲学传统进行平等的对话。</p>
+
+        <h3>核心差异汇总</h3>
+        <table class="compare-table">
+          <tr><th>维度</th><th>西方哲学传统</th><th>禅宗</th></tr>
+          <tr><td>出发点</td><td>理性思辨 / 逻辑推理</td><td>实修实证 / 亲身体验</td></tr>
+          <tr><td>自我观</td><td>主体性 / 自我意识</td><td>无我 / 缘起假名</td></tr>
+          <tr><td>语言观</td><td>语言为认识工具</td><td>语言为方便施设</td></tr>
+          <tr><td>终极目标</td><td>真理符合 / 理性澄明</td><td>解脱自在 / 觉悟利他</td></tr>
+          <tr><td>时间观</td><td>线性时间 / 历史进步</td><td>当下即永恒 / 有时</td></tr>
+          <tr><td>方法</td><td>分析 · 论证 · 批判</td><td>参究 · 放下 · 直指</td></tr>
+        </table>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-6')">← 上一章</span><span class="nav-btn" onclick="goTo('page-8')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 8: 当代转型 ===== -->
+  <div class="page" id="page-8">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">08 · MODERNITY</div><h2>当代转型 · 机遇与反思</h2></div>
+      <div class="page-body">
+        <p>禅宗在21世纪面临前所未有的机遇与挑战——禅修全球升温，同时也面临世俗化、商业化、碎片化的深层困境。</p>
+
+        <h3>全球禅修热潮</h3>
+        <p>全球定期参加禅修/冥想人数已超5亿。MBSR、MBCT等基于禅修的疗法已纳入英国NHS、美国医保等医疗体系。Google、Apple、NASA等机构引入正念培训。</p>
+
+        <h3>学术研究转型</h3>
+        <p>fMRI研究证实长期禅修改变大脑结构（神经可塑性），增强前额叶皮层功能。麻省总医院、哈佛、斯坦福、牛津等均设有专门的正念与禅修研究项目。</p>
+
+        <h3>数字时代的新形态</h3>
+        <p>Headspace、Calm等使禅修空前便捷。在线禅修社区、虚拟僧团、AI禅修导师正重新定义"师徒传承"。</p>
+
+        <h3>当代挑战与深层反思</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">祛魅 vs 返魅</div><div class="val">西方禅修剥离宗教性，是否使其丧失灵魂？抑或这正是"不立文字"精神在当代的必然表达？</div></div>
+          <div class="card"><div class="label">传承之危</div><div class="val">全球化是否消解了"以心印心"的严苛师承？谁有资格"传灯"？</div></div>
+          <div class="card"><div class="label">文化挪用</div><div class="val">"禅"成为营销标签，其本来面目是否被消费主义彻底遮蔽？</div></div>
+          <div class="card"><div class="label">AI与心印</div><div class="val">AI能传递"以心传心"吗？这正是技术无法替代的最后疆域？</div></div>
+        </div>
+
+        <p>禅宗向来具有因时变革的生命力。从拈花微笑到丛林清规，从茶禅一味到正念运动——禅在每个时代都以不同面貌呈现。这正是"应无所住而生其心"的真义——不执着于任何固定形态，但永远不失觉悟的本质。</p>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-7')">← 上一章</span><span class="nav-btn" onclick="goTo('page-9')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 9: 关键词 ===== -->
+  <div class="page" id="page-9">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">09 · GLOSSARY</div><h2>关键词 · 概念速查</h2></div>
+      <div class="page-body">
+        <div class="grid-2">
+          <div class="card"><div class="label">空性 Śūnyatā</div><div class="val">一切法无独立自性，因缘而生。非虚无，而是超越有无的中道实相。</div></div>
+          <div class="card"><div class="label">佛性 Buddha-nature</div><div class="val">一切众生本具觉悟潜能。即此心即是佛，不假外求。</div></div>
+          <div class="card"><div class="label">顿悟 Sudden Awakening</div><div class="val">不经次第，当下直接觉悟自性。慧能南宗之根本特色。</div></div>
+          <div class="card"><div class="label">公案 Koan</div><div class="val">祖师言行录。非逻辑可解，旨在超越理性思维局限。</div></div>
+          <div class="card"><div class="label">坐禅 Zazen</div><div class="val">端坐静修。曹洞"只管打坐"，临济含参话头。</div></div>
+          <div class="card"><div class="label">不二 Non-duality</div><div class="val">超越一切二元对立的平等智慧。禅宗认识论核心。</div></div>
+          <div class="card"><div class="label">平常心 Ordinary Mind</div><div class="val">不造作、不取舍的本来状态。"平常心是道"。</div></div>
+          <div class="card"><div class="label">无念 No-thought</div><div class="val">于念而离念，不执着于念。六祖慧能核心教法。</div></div>
+          <div class="card"><div class="label">正念 Mindfulness</div><div class="val">源于四念处，经一行禅师与卡巴金发扬，全球盛行。</div></div>
+          <div class="card"><div class="label">以心传心</div><div class="val">禅宗传承根本方式。以觉悟印觉悟，如灯传灯。</div></div>
+          <div class="card"><div class="label">只管打坐 Shikantaza</div><div class="val">曹洞宗核心修行。坐即觉悟，非工具性手段。</div></div>
+          <div class="card"><div class="label">侘寂 Wabi-sabi</div><div class="val">日本禅美学核心。在残缺、无常、朴素中发现美。</div></div>
+        </div>
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-8')">← 上一章</span><span class="nav-btn" onclick="goTo('page-10')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 10: 禅宗流转图 ===== -->
+  <div class="page" id="page-10">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">10 · LINEAGE FLOW</div><h2>禅宗流转图 · 法脉传承脉络</h2></div>
+      <div class="page-body flow-page-body">
+
+        <div class="flow-scroll">
+          <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:14px">从灵山拈花到全球正念运动——点击任意祖师查看其著名事件。</p>
+
+          <div class="flow-wrap">
+
+            <div class="flow-node"><div class="flow-card" data-key="shakya"><div class="fc-name">释迦牟尼佛</div><div class="fc-sub">灵山拈花 · 约前5世纪</div><div class="fc-tag">正法眼藏</div></div></div>
+            <div class="flow-conn"></div>
+            <div class="flow-node"><div class="flow-card" data-key="kasyapa"><div class="fc-name">摩诃迦叶</div><div class="fc-sub">西天初祖 · 破颜微笑</div></div></div>
+            <div class="flow-conn-s"></div>
+            <div class="flow-node"><div class="flow-card" data-key="indian28" style="background:transparent;border:1px dashed rgba(110,160,255,0.1)"><div class="fc-name" style="font-size:0.8rem;color:var(--text-faint)">西天二十八祖递传</div><div class="fc-sub" style="font-size:0.65rem">印度法脉 · 以心传心</div></div></div>
+            <div class="flow-conn"></div>
+            <div class="flow-node"><div class="flow-card core" data-key="bodhidharma"><div class="fc-name">菩提达摩</div><div class="fc-sub">西天二十八祖 · 中土初祖 · 520年</div><div class="fc-tag">一苇渡江</div></div></div>
+
+            <div class="flow-conn"></div>
+            <div class="flow-node"><div class="flow-card" data-key="huike"><div class="fc-name">慧可</div><div class="fc-sub">二祖 · 487-593 · 断臂求法</div></div></div>
+            <div class="flow-conn-s"></div>
+            <div class="flow-node"><div class="flow-card" data-key="sengcan"><div class="fc-name">僧璨</div><div class="fc-sub">三祖 · 约510-606 · 《信心铭》</div></div></div>
+            <div class="flow-conn-s"></div>
+            <div class="flow-node"><div class="flow-card" data-key="daoxin"><div class="fc-name">道信</div><div class="fc-sub">四祖 · 580-651 · 农禅并重</div></div></div>
+            <div class="flow-conn-s"></div>
+            <div class="flow-node"><div class="flow-card" data-key="hongren"><div class="fc-name">弘忍</div><div class="fc-sub">五祖 · 601-674 · 东山法门</div></div></div>
+
+            <div class="flow-conn"></div>
+            <div class="flow-fork">
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="shenxiu"><div class="fc-name">神秀</div><div class="fc-sub">606-706 · 北宗渐悟</div><div class="fc-tag">两京法主</div></div></div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card core" data-key="huineng"><div class="fc-name">慧能</div><div class="fc-sub">六祖 · 南宗顿悟 · 638-713</div><div class="fc-tag">本来无一物</div></div></div>
+              </div>
+            </div>
+
+            <div class="flow-conn"></div>
+            <div class="flow-fork">
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="huairang"><div class="fc-name">南岳怀让</div><div class="fc-sub">677-744 · 南岳一系</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="mazu"><div class="fc-name">马祖道一</div><div class="fc-sub">709-788 · 即心即佛</div></div></div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="xingsi"><div class="fc-name">青原行思</div><div class="fc-sub">671-740 · 青原一系</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="shiqian"><div class="fc-name">石头希迁</div><div class="fc-sub">700-790 · 《参同契》</div></div></div>
+              </div>
+            </div>
+
+            <div class="flow-conn"></div>
+            <div class="flow-fork" style="gap:8px">
+              <div class="flow-col" style="flex:1.5">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card highlight" data-key="linji"><div class="fc-name">临济宗</div><div class="fc-sub">义玄 815-867 · 棒喝</div><div class="fc-tag">最盛</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-fork" style="gap:20px">
+                  <div class="flow-col"><div class="flow-conn-s"></div><div class="flow-node"><div class="flow-card branch" data-key="yangqi"><div class="fc-name" style="font-size:0.8rem">杨岐派</div><div class="fc-sub">方会 992-1049</div></div></div></div>
+                  <div class="flow-col"><div class="flow-conn-s"></div><div class="flow-node"><div class="flow-card branch" data-key="huanglong"><div class="fc-name" style="font-size:0.8rem">黄龙派</div><div class="fc-sub">慧南 1002-1069</div></div></div></div>
+                </div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="weiyang"><div class="fc-name">沩仰宗</div><div class="fc-sub">灵祐771-853 · 慧寂807-883</div><div class="fc-tag">圆相</div></div></div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card highlight" data-key="caodong"><div class="fc-name">曹洞宗</div><div class="fc-sub">良价807-869 · 本寂840-901</div><div class="fc-tag">默照</div></div></div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="yunmen"><div class="fc-name">云门宗</div><div class="fc-sub">文偃 864-949 · 云门三句</div></div></div>
+              </div>
+              <div class="flow-col">
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card" data-key="fayan"><div class="fc-name">法眼宗</div><div class="fc-sub">文益 885-958 · 融华严</div></div></div>
+              </div>
+            </div>
+
+            <div style="position:relative;width:100%;max-width:700px;margin:8px 0">
+              <div style="position:absolute;left:25%;right:25%;height:2px;background:rgba(110,160,255,0.08)"></div>
+            </div>
+            <div class="flow-label">┄ 宋元 · 三家绝脉 ┄</div>
+
+            <div class="flow-conn" style="height:16px"></div>
+            <div class="flow-row">
+              <div class="flow-branch" style="flex:1.4">
+                <div class="flow-node"><div class="flow-card global" data-key="rongxi"><div class="fc-name" style="font-size:0.85rem">临济 → 日本</div><div class="fc-sub">荣西 1141-1215 · 1191东传</div><div class="fc-tag">禅</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card branch" data-key="zhina"><div class="fc-name" style="font-size:0.8rem">临济 → 韩国</div><div class="fc-sub">知讷 1158-1210 · 曹溪宗</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card branch" data-key="yinyuan"><div class="fc-name" style="font-size:0.8rem">黄檗宗</div><div class="fc-sub">隐元 1592-1673 · 临济东传</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card global" data-key="suzuki"><div class="fc-name" style="font-size:0.85rem">铃木大拙</div><div class="fc-sub">1870-1966 · 临济→西方</div></div></div>
+              </div>
+              <div class="flow-branch" style="flex:1">
+                <div class="flow-node"><div class="flow-card global" data-key="daoyuan"><div class="fc-name" style="font-size:0.85rem">曹洞 → 日本</div><div class="fc-sub">道元 1200-1253 · 1223东传</div><div class="fc-tag">只管打坐</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card branch" data-key="thien"><div class="fc-name" style="font-size:0.8rem">禅 → 越南</div><div class="fc-sub">无言通 → Thiền</div></div></div>
+                <div class="flow-conn-s"></div>
+                <div class="flow-node"><div class="flow-card global" data-key="nhat_hanh"><div class="fc-name" style="font-size:0.85rem">一行禅师</div><div class="fc-sub">1926-2022 · 越南→世界</div></div></div>
+              </div>
+              <div class="flow-branch" style="flex:0.8">
+                <div class="flow-node"><div class="flow-card core" data-key="xuyun"><div class="fc-name">虚云大师</div><div class="fc-sub">1840-1959 · 兼挑五宗</div><div class="fc-tag">复兴</div></div></div>
+              </div>
+            </div>
+
+            <div class="flow-conn" style="height:16px"></div>
+            <div class="flow-row">
+              <div class="flow-branch">
+                <div class="flow-node"><div class="flow-card global" data-key="mbsr"><div class="fc-name">正念减压 MBSR</div><div class="fc-sub">卡巴金 · 1975</div><div class="fc-tag">医学化</div></div></div>
+              </div>
+              <div class="flow-branch">
+                <div class="flow-node"><div class="flow-card global" data-key="app"><div class="fc-name">冥想 App</div><div class="fc-sub">Headspace / Calm</div></div></div>
+              </div>
+              <div class="flow-branch">
+                <div class="flow-node"><div class="flow-card global" data-key="global_mind"><div class="fc-name">全球正念运动</div><div class="fc-sub">5亿+ 实践者</div></div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <aside class="flow-detail" id="flowDetail">
+          <div id="flowDetailDefault">
+            <div class="fd-empty"><div class="fd-icon">☸</div><div>点击左侧祖师<br/>查看著名事件</div></div>
+          </div>
+          <div id="flowDetailContent" style="display:none"></div>
+        </aside>
+
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-9')">← 上一章</span><span class="nav-btn" onclick="goTo('page-timeline')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 11: 时间轴 ===== -->
+  <div class="page" id="page-timeline">
+    <div class="tl-app">
+      <section class="tl-zone" style="border:none">
+        <div class="tl-topbar">
+          <div class="tl-filter-box">
+            <span class="tl-filter-label">轨道</span>
+            <div class="tl-dd"><button class="tl-dd-btn" id="tl-trackBtn">全部轨道 ▾</button><div class="tl-dd-menu" id="tl-trackMenu" style="display:none"></div></div>
+            <div class="tl-dd" id="tl-subWrap" style="display:none"><button class="tl-dd-btn" id="tl-subBtn">子轨道：全部 ▾</button><div class="tl-dd-menu" id="tl-subMenu" style="display:none"></div></div>
+            <button class="tl-pill" id="tl-expandAll">展开</button>
+            <button class="tl-pill" id="tl-collapseAll">折叠</button>
+          </div>
+          <div class="tl-filter-box">
+            <span class="tl-filter-label">重要程度</span>
+            <button class="tl-pill active" data-level="0">全部</button>
+            <button class="tl-pill" data-level="1">一般</button>
+            <button class="tl-pill" data-level="2">重要</button>
+            <button class="tl-pill" data-level="3">核心</button>
+          </div>
+        </div>
+        <div class="tl-scroll" id="tl-scroll">
+          <div class="tl-track-header" id="tl-trackHeader"></div>
+          <div id="tl-eras"></div>
+        </div>
+      </section>
+      <aside class="tl-detail">
+        <div id="tl-detailDefault">
+          <div class="tl-d-eyebrow">GUIDE</div><div class="tl-d-title">使用说明</div>
+          <p class="tl-d-p">纵向为时间方向（上=早，下=近），横向为并行轨道（不同流派/领域）。</p>
+          <p class="tl-d-p">圆点大小与颜色表示重要程度：<span style="color:rgb(229,122,138)">● 核心</span> &gt; <span style="color:rgb(224,164,90)">● 重要</span> &gt; <span style="color:rgb(111,168,214)">● 一般</span></p>
+          <p class="tl-d-p">点击事件查看详情；点击纪元标题可折叠该段。</p>
+        </div>
+        <div id="tl-detailEvent" style="display:none"></div>
+      </aside>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if (target) { target.classList.add('active'); target.scrollTop = 0; }
+  document.querySelectorAll('.sidebar-nav a').forEach(function(a) {
+    a.classList.toggle('active', a.dataset.page === id);
+  });
+  if (id === 'page-timeline' && typeof tlRenderEras === 'function') {
+    setTimeout(function(){ tlRenderEras(); }, 50);
+  }
+}
+document.querySelectorAll('.sidebar-nav a').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    goTo(this.dataset.page);
+  });
+});
+
+/* ===== 粒子背景 ===== */
+(function(){
+  var c=document.getElementById('particles'),ctx=c.getContext('2d');
+  var W,H,p;
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;init();}
+  function init(){
+    var count=Math.min(60,Math.floor(W*H/24000));
+    p=[];var colors=['54,226,255','77,124,255','155,109,255','255,95,168'];
+    for(var i=0;i<count;i++){
+      p.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.2,vy:(Math.random()-0.5)*0.2,
+        r:Math.random()*1.5+0.4,c:colors[Math.floor(Math.random()*colors.length)]});
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<p.length;i++){
+      var pt=p[i];pt.x+=pt.vx;pt.y+=pt.vy;
+      if(pt.x<0)pt.x=W;if(pt.x>W)pt.x=0;if(pt.y<0)pt.y=H;if(pt.y>H)pt.y=0;
+      ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);
+      ctx.fillStyle='rgba('+pt.c+',0.45)';ctx.fill();
+      for(var j=i+1;j<p.length;j++){
+        var q=p[j],dx=pt.x-q.x,dy=pt.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<100){ctx.beginPath();ctx.moveTo(pt.x,pt.y);ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle='rgba('+pt.c+','+(0.1*(1-d/100))+')';ctx.lineWidth=0.5;ctx.stroke();}
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  resize();draw();addEventListener('resize',resize);
+})();
+
+/* ===== 时间轴引擎 ===== */
+(function(){
+  var tlEsc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var tlLvlCN=function(l){return l===3?'核心':l===2?'重要':'一般';};
+  document.documentElement.style.setProperty('--tl-lvl1','111,168,214');
+  document.documentElement.style.setProperty('--tl-lvl2','224,164,90');
+  document.documentElement.style.setProperty('--tl-lvl3','229,122,138');
+
+  var T_TRACKS=[
+    {id:'global',name:'全局',sub:'跨流派大事件',color:'#9aa7bd'},
+    {id:'damo',name:'达摩法脉',sub:'印度→中国初传',color:'#e8c96a'},
+    {id:'south',name:'南宗顿悟',sub:'慧能及其弟子',color:'#60b8e8'},
+    {id:'north',name:'北宗渐悟',sub:'神秀一系',color:'#b07cd8'},
+    {id:'linji',name:'临济宗',sub:'棒喝·疑情',color:'#ff6b6b'},
+    {id:'caodong',name:'曹洞宗',sub:'默照·只管打坐',color:'#4ecdc4'},
+    {id:'five',name:'五家余脉',sub:'沩仰·云门·法眼',color:'#f7b731'},
+    {id:'japan',name:'日本禅宗',sub:'禅·茶道·武士道',color:'#ff9f43'},
+    {id:'korea',name:'韩国禅宗',sub:'韩国禅·曹溪宗',color:'#a29bfe'},
+    {id:'west',name:'西方传播',sub:'现代正念运动',color:'#55efc4'},
+  ];
+  var T_ERAS=[
+    {id:'origin',name:'印度源流·达摩东渡',start:500,end:638,height:300},
+    {id:'nangong',name:'南宗创立·六祖革命',start:638,end:713,height:260},
+    {id:'huizong',name:'五宗分立·黄金时代',start:713,end:1000,height:380},
+    {id:'song',name:'宋代鼎盛·禅教归一',start:1000,end:1300,height:320},
+    {id:'spread',name:'东传日韩·法脉远播',start:800,end:1400,height:280},
+    {id:'late',name:'明清沉潜·近代复兴',start:1300,end:1900,height:260},
+    {id:'modern',name:'全球化·正念运动',start:1900,end:2030,height:340},
+  ];
+  var T_DATA=[
+    {value:520,track:'damo',level:3,label:'初祖',title:'菩提达摩东渡',desc:'菩提达摩泛海来华，与梁武帝对话不契，北上嵩山少林寺面壁九年。',source:'《景德传灯录》'},
+    {value:535,track:'global',level:2,label:'',title:'达摩传法慧可',desc:'二祖慧可断臂求法，达摩以《楞伽经》印心，传付衣钵。',source:'《续高僧传》'},
+    {value:600,track:'damo',level:2,label:'三祖',title:'僧璨著《信心铭》',desc:'三祖僧璨著《信心铭》，开禅宗以诗偈说法的先河。',source:'《信心铭》'},
+    {value:638,track:'south',level:3,label:'六祖',title:'六祖慧能诞生',desc:'慧能生于岭南新州，闻《金刚经》\u201C应无所住而生其心\u201D而悟。',source:'《六祖坛经》'},
+    {value:671,track:'south',level:3,label:'衣钵',title:'黄梅得法·五祖传衣',desc:'慧能以\u201C本来无一物\u201D的示法偈获得五祖弘忍衣钵，成为六祖。',source:'《六祖坛经》'},
+    {value:676,track:'south',level:2,label:'出山',title:'法性寺风幡之辩',desc:'\u201C不是风动，不是幡动，仁者心动\u201D\u2014\u2014慧能正式出家弘法。',source:'《六祖坛经》'},
+    {value:672,track:'north',level:2,label:'渐修',title:'神秀示偈',desc:'神秀呈偈\u201C时时勤拂拭，莫使惹尘埃\u201D，主张渐修法门。',source:'《六祖坛经》'},
+    {value:700,track:'north',level:3,label:'入京',title:'神秀被迎入京',desc:'武则天迎请神秀入京，\u201C北宗\u201D盛极一时，\u201C两京法主，三帝国师\u201D。',source:'《旧唐书》'},
+    {value:713,track:'south',level:3,label:'入灭',title:'慧能圆寂',desc:'六祖慧能于新州国恩寺圆寂，南宗顿悟法门大盛。',source:'《六祖坛经》'},
+    {value:740,track:'south',level:2,label:'马祖',title:'马祖道一\u201C即心即佛\u201D',desc:'马祖道一提出\u201C即心即佛\u201D，建立洪州禅，弟子千余人。',source:'《景德传灯录》'},
+    {value:750,track:'south',level:2,label:'百丈',title:'百丈怀海立清规',desc:'百丈怀海制定《百丈清规》，确立\u201C一日不作，一日不食\u201D的农禅传统。',source:'《百丈清规》'},
+    {value:780,track:'linji',level:3,label:'开创',title:'临济义玄开宗',desc:'义玄禅师在河北正定临济院开创临济宗，以棒喝著称，宗风严峻刚猛。',source:'《临济录》'},
+    {value:840,track:'caodong',level:3,label:'开创',title:'洞山良价创曹洞',desc:'良价禅师于江西洞山创立曹洞宗，以\u201C偏正五位\u201D阐释理事关系。',source:'《洞山语录》'},
+    {value:850,track:'five',level:2,label:'沩仰',title:'沩仰宗成立',desc:'沩山灵祐、仰山慧寂师徒开创沩仰宗，以\u201C九十六圆相\u201D接引学人。',source:'《景德传灯录》'},
+    {value:900,track:'five',level:2,label:'云门',title:'云门文偃创云门宗',desc:'文偃禅师在广东云门山创立云门宗，\u201C云门三句\u201D：函盖乾坤、截断众流、随波逐浪。',source:'《云门广录》'},
+    {value:950,track:'five',level:2,label:'法眼',title:'法眼文益创法眼宗',desc:'文益禅师创立法眼宗，重禅教一致，融华严思想，对病施药。',source:'《法眼禅师语录》'},
+    {value:842,track:'global',level:2,label:'会昌',title:'会昌法难',desc:'唐武宗灭佛，禅宗因\u201C农禅并重\u201D受冲击较小。',source:'《旧唐书》'},
+    {value:858,track:'south',level:2,label:'坛经',title:'《六祖坛经》流通',desc:'法海集录的《坛经》逐渐流通，成为中国佛教唯一被尊为\u201C经\u201D的典籍。',source:'《六祖坛经》'},
+    {value:701,track:'south',level:2,label:'滑台',title:'神会滑台大会',desc:'慧能弟子神会在滑台设无遮大会，公开抨击北宗，力证南宗正统。',source:'《宋高僧传》'},
+    {value:1004,track:'global',level:2,label:'灯录',title:'《景德传灯录》编成',desc:'道原编撰第一部系统灯录，确立禅宗传法谱系。',source:'《景德传灯录》'},
+    {value:1060,track:'global',level:2,label:'五灯',title:'《五灯会元》编纂',desc:'五部灯录汇编，成为禅宗最重要的史料文献之一。',source:'《五灯会元》'},
+    {value:1100,track:'linji',level:3,label:'碧岩',title:'圆悟克勤著《碧岩录》',desc:'评唱百则公案，被誉为\u201C宗门第一书\u201D，代表文字禅的巅峰。',source:'《碧岩录》'},
+    {value:1130,track:'linji',level:3,label:'看话',title:'大慧宗杲倡导看话禅',desc:'大慧宗杲烧毁《碧岩录》刻版，倡导\u201C看话禅\u201D\u2014\u2014参究\u201C无\u201D字话头。',source:'《大慧语录》'},
+    {value:1140,track:'caodong',level:3,label:'默照',title:'宏智正觉倡默照禅',desc:'宏智正觉著《默照铭》，主张默然澄照，与看话禅并行为宋代两大禅法。',source:'《默照铭》'},
+    {value:1200,track:'global',level:2,label:'无门',title:'无门慧开著《无门关》',desc:'选编四十八则公案，以\u201C无\u201D字为枢机，成为禅门必读经典。',source:'《无门关》'},
+    {value:820,track:'korea',level:2,label:'入韩',title:'禅宗传入新罗',desc:'新罗僧人入唐求法，禅宗传入朝鲜半岛。',source:'《朝鲜佛教通史》'},
+    {value:1164,track:'korea',level:3,label:'知讷',title:'知讷创立定慧社',desc:'高丽知讷禅师创立\u201C定慧社\u201D，倡导\u201C顿悟渐修\u201D，成为韩国禅宗集大成者。',source:'《知讷禅师语录》'},
+    {value:1191,track:'japan',level:3,label:'临济',title:'荣西传临济禅入日本',desc:'荣西禅师从南宋归国，传临济禅法，著《兴禅护国论》。',source:'《兴禅护国论》'},
+    {value:1223,track:'japan',level:3,label:'曹洞',title:'道元入宋求法',desc:'道元禅师入宋学习曹洞禅法，归国后著《正法眼藏》。',source:'《正法眼藏》'},
+    {value:1227,track:'japan',level:2,label:'只管打坐',title:'道元著《普劝坐禅仪》',desc:'道元提出\u201C只管打坐\u201D（shikantaza）为曹洞宗核心修行。',source:'《普劝坐禅仪》'},
+    {value:1250,track:'japan',level:2,label:'临济兴盛',title:'日本临济宗繁盛',desc:'临济宗在日本武士阶层中广泛传播，影响茶道、能剧等文化领域。',source:'日本禅宗史'},
+    {value:1290,track:'korea',level:2,label:'曹溪兴盛',title:'高丽曹溪宗兴盛',desc:'曹溪宗成为韩国最大佛教宗派。',source:'《韩国佛教史》'},
+    {value:1350,track:'five',level:2,label:'衰微',title:'五家中三家法脉断绝',desc:'沩仰、云门、法眼三家在宋元之际法脉渐绝，仅临济、曹洞两宗传承至今。',source:'禅宗史'},
+    {value:1600,track:'japan',level:2,label:'黄檗',title:'隐元传黄檗宗入日本',desc:'中国隐元隆琦禅师东渡日本，创立黄檗宗，为日本禅宗第三大派。',source:'《黄檗宗史》'},
+    {value:1840,track:'global',level:2,label:'虚云',title:'虚云老和尚诞生',desc:'虚云大师（1840\u20141959）以一人之力兼挑五宗法脉。',source:'《虚云年谱》'},
+    {value:1860,track:'global',level:2,label:'太虚',title:'太虚大师推动佛教改革',desc:'太虚大师倡导\u201C人生佛教\u201D，推动禅宗与现代社会融合。',source:'《太虚全书》'},
+    {value:1900,track:'west',level:3,label:'铃木',title:'铃木大拙向西方介绍禅宗',desc:'铃木大拙以英文著述向西方系统介绍禅宗，被誉为\u201C世界的禅者\u201D。',source:'《禅与日本文化》'},
+    {value:1950,track:'west',level:2,label:'铃木俊隆',title:'铃木俊隆在美传法',desc:'铃木俊隆在旧金山建立禅修中心，著《禅者的初心》。',source:'《禅者的初心》'},
+    {value:1959,track:'global',level:2,label:'虚云入灭',title:'虚云老和尚圆寂',desc:'虚云大师以120岁高龄圆寂，留下五宗法脉传续至今。',source:'《虚云年谱》'},
+    {value:1965,track:'west',level:2,label:'垮掉',title:'垮掉一代与禅',desc:'凯鲁亚克《达摩流浪者》等作品将禅宗引入美国反主流文化。',source:'《达摩流浪者》'},
+    {value:1975,track:'west',level:3,label:'正念减压',title:'乔恩·卡巴金创立MBSR',desc:'卡巴金创立正念减压疗法（MBSR），使禅修进入主流医学与心理学。',source:'《正念之道》'},
+    {value:1990,track:'west',level:2,label:'梅村',title:'一行禅师创立梅村',desc:'一行禅师（1926\u20142022）创立梅村修习中心，提出\u201C入世佛教\u201D。',source:'《正念的奇迹》'},
+    {value:2000,track:'west',level:2,label:'正念认知',title:'正念认知疗法纳入NHS',desc:'正念认知疗法（MBCT）被英国NHS纳入医疗体系。',source:'NHS官方指南'},
+    {value:2010,track:'west',level:2,label:'数字',title:'冥想App兴起',desc:'Headspace、Calm等应用使禅修空前便捷。',source:'当代数据'},
+    {value:2022,track:'global',level:2,label:'一行入灭',title:'一行禅师圆寂',desc:'一行禅师在越南顺化圆寂，其\u201C互即互入\u201D理念影响全球正念运动。',source:'梅村官方'},
+  ];
+  var T_DETAIL={
+    '520-damo':{basics:['时间·约520年（南朝梁）','主体·菩提达摩','地点·广州登岸→嵩山少林寺','重要程度·核心事件'],bg:'南北朝乱世，梁武帝疯狂进行佛教建设，但达摩认为梁武帝并未真正理解佛法。',core:['梁武帝问：我做了这么多好事，有无功德？达摩答：没有。场面一度尴尬。','达摩转身北上少林，面壁九年，以"二入四行"自我修行。"理入"向内看，"行入"包含报冤行、随缘行、无所求行、称法行。'],value:'达摩东渡是禅宗0到1的突破。他带来的"不立文字、教外别传"，成为禅宗一千五百年的基因密码。',impact:'祖庭少林寺、"面壁九年"的典故、以心传心的法脉——全都始于这老兄的一苇渡江。',ext:['关联·慧可断臂求法（535年）','出处·《景德传灯录》卷三']},
+    '671-south':{basics:['时间·约671年（唐高宗时期）','主体·慧能（638—713）','地点·黄梅东山寺','重要程度·核心事件'],bg:'五祖弘忍要传衣钵，大弟子神秀是公认接班人——没人想到半路杀出个岭南砍柴的。',core:['神秀题偈：身是菩提树，心如明镜台，时时勤拂拭，莫使惹尘埃。慧能请人代书：菩提本无树，明镜亦非台，本来无一物，何处惹尘埃。','弘忍半夜密召慧能，传《金刚经》和衣钵，嘱其南下隐居。'],value:'禅宗史上最戏剧性的逆袭。"顿悟"对"渐悟"，慧能完胜，南宗从此立住。',impact:'南宗成为禅宗主流，传遍东亚乃至全球。',ext:['关联·神秀示偈（672年）','出处·《六祖坛经》']},
+    '780-linji':{basics:['时间·约780—867年','人物·义玄禅师','地点·河北正定临济院','重要程度·核心事件'],bg:'中晚唐，禅宗各路门派纷纷登场。',core:['临济的教学法：棒和喝。你问问题？先打三十棒再说。不是暴力，是让你别瞎想。','"逢佛杀佛，逢祖杀祖"——不是让你去杀佛祖，而是让你别迷信任何权威。'],value:'临济宗是五家中影响最大的。刚猛、直接、暴力——但也最有效。',impact:'传日本后成了武士道的精神核心。至今仍为日本第一大禅宗流派。',ext:['关联·黄檗希运《传心法要》','出处·《临济录》']},
+    '840-caodong':{basics:['时间·约840—901年','人物·洞山良价、曹山本寂','地点·江西洞山→曹山','重要程度·核心事件'],bg:'临济宗走刚猛路线，曹洞则走温厚路线——一个打天下，一个守天下。',core:['洞山良价创立"偏正五位"——一个用"正/偏、君/臣"讲宇宙人生的哲学体系。','修行上曹洞讲究"只管打坐"——不打话头、不参公案，坐就是全部。'],value:'曹洞是五家中最哲学的。',impact:'道元把曹洞带到日本，至今为日本第二大禅宗。',ext:['关联·《宝镜三昧》','出处·《洞山语录》']},
+    '1130-linji':{basics:['时间·1089—1163年（南宋）','人物·大慧宗杲','地点·浙江径山','重要程度·核心事件'],bg:'北宋大家都在研究文字禅，圆悟克勤《碧岩录》把公案分析得明明白白——但大慧觉得：你们全搞错了。',core:['宗杲一把火烧了《碧岩录》刻版——"文字禅"是看月亮的手指，不是月亮本身。','他创"看话禅"：死死盯住一个话头（如赵州"无"字），吃饭睡觉都在参。'],value:'看话禅是禅宗修行方法论的最大革新。"参话头"成了禅修的标准操作。',impact:'影响了日本临济宗至今。',ext:['关联·宏智正觉默照禅（1140年）','出处·《大慧语录》']},
+    '1140-caodong':{basics:['时间·1091—1157年','人物·宏智正觉','地点·宁波天童寺','重要程度·核心事件'],bg:'大慧宗杲在搞话头的时候，曹洞宗的宏智正觉走了完全相反的路——不疑、不参、不说话。',core:['《默照铭》开篇："默默忘言，昭昭现前。"——不说话，但心里明镜似的。','默照就是安静地坐着，让心像镜子一样照见万物。'],value:'默照禅代表禅宗的另一种极致：不是猛攻，而是放下。',impact:'影响了日本曹洞宗，是当代正念冥想的祖先之一。',ext:['关联·大慧宗杲看话禅（1130年）','出处·《默照铭》']},
+    '1191-japan':{basics:['时间·1191年','人物·荣西禅师','地点·日本镰仓','重要程度·核心事件'],bg:'日本12世纪武士打架很凶，天台宗和真言宗太复杂了——武士们需要简单直接的东西。',core:['荣西两次渡海去宋朝学临济禅，回来后写了《兴禅护国论》。','日本武士超爱临济宗的"不惧生死"。'],value:'荣西是日本禅宗的开拓者。',impact:'茶道、枯山水、俳句、能剧——日本所有"禅意"的东西都能追溯到荣西。',ext:['关联·道元传曹洞宗（1223年）','出处·《兴禅护国论》']},
+    '1900-west':{basics:['时间·1900年代','人物·铃木大拙','地点·日本→美国','重要程度·核心事件'],bg:'20世纪初，西方人开始对东方发生兴趣。',core:['铃木大拙用英语写了四十多本书，把禅宗介绍给西方。他的文笔优美，是完美的文化翻译官。','海德格尔说"这就是我想说的"，荣格写序，凯鲁亚克把他写进了《达摩流浪者》。'],value:'铃木让禅宗成为全球文化现象。',impact:'垮掉派、嬉皮士、正念运动——都受到铃木大拙的间接影响。',ext:['关联·卡巴金的MBSR（1975年）','出处·《禅与日本文化》']},
+    '1975-west':{basics:['时间·1975年','人物·乔恩·卡巴金','地点·麻省大学医学中心','重要程度·核心事件'],bg:'一个学生物的、同时又练禅修的人，觉得禅修不能只给和尚用——应该进医院。',core:['卡巴金把禅修中的"正念"抽出来，变成8周的标准化课程——MBSR。','不打坐、不念佛、不信教——只做身体扫描和呼吸练习。科学验证有效。'],value:'MBSR让禅修从宗教变成了医学。',impact:'全球700+医院在用，冥想App下载量过亿。Google、Apple、NASA全在搞正念培训。',ext:['关联·铃木大拙传禅（1900年）','出处·《正念之道》']},
+  };
+  var T_NAV=[{type:'super',id:'overview',name:'禅宗发展史',tag:'CURRENT'}];
+
+  var _C={tracks:[],eras:[],data:[],map:{},label:function(e){return'';}};
+  var tlState={levelFilter:0,visibleTracks:new Set(),track:'all',sub:'all',selected:null};
+
+  function tlSetModule(){
+    _C.tracks=T_TRACKS;_C.eras=T_ERAS;_C.data=T_DATA;_C.map=T_DETAIL;
+    _C.label=function(e){return e.label||'';};
+    tlState.visibleTracks=new Set(_C.tracks.map(function(t){return t.id;}));
+  }
+  function tlEraOf(v){
+    for(var i=0;i<_C.eras.length;i++){var er=_C.eras[i];if(v>=er.start&&v<er.end)return er;}
+    var last=_C.eras[_C.eras.length-1];
+    return (last&&v>=last.start)?last:_C.eras[0];
+  }
+  function tlEraTop(era,v){
+    var h=era.height;
+    return(v-era.start)/(era.end-era.start)*h;
+  }
+  function tlFmtValue(v){return''+v;}
+  function tlNiceStep(span,target){var raw=span/Math.max(1,target);var mag=Math.pow(10,Math.floor(Math.log10(raw)));var n=raw/mag;return(n<1.5?1:n<3?2:n<7?5:10)*mag;}
+  function tlRenderTicks(era,body){
+    function add(top,txt){if(top<-2||top>era.height+2)return;var ln=document.createElement('div');ln.className='tl-grid-line';ln.style.top=top+'px';body.appendChild(ln);var tk=document.createElement('div');tk.className='tl-tick';tk.style.top=top+'px';tk.textContent=txt;body.appendChild(tk);}
+    var lo=Math.min(era.start,era.end),hi=Math.max(era.start,era.end);var step=tlNiceStep(hi-lo,5);for(var v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step)add(tlEraTop(era,v),tlFmtValue(v));
+  }
+  function tlEventVisible(e){
+    if(!tlState.visibleTracks.has(e.track))return false;
+    if(tlState.levelFilter!==0&&e.level!==tlState.levelFilter)return false;
+    return true;
+  }
+  function tlVisibleTracks(){return _C.tracks.filter(function(t){return tlState.visibleTracks.has(t.id);});}
+  function tlColLeft(idx,N){return'calc(64px + (100% - 64px) * '+((idx+0.5)/N)+')';}
+  function tlRenderHeader(){
+    var host=document.getElementById('tl-trackHeader');host.innerHTML='';
+    var vt=tlVisibleTracks(),N=vt.length;
+    vt.forEach(function(t,idx){var c=document.createElement('div');c.className='tl-th';c.style.left=tlColLeft(idx,N);
+      c.innerHTML='<span class="tl-th-dot" style="background:'+t.color+'"></span><span class="tl-th-name">'+tlEsc(t.name)+'</span><span class="tl-th-sub">'+tlEsc(t.sub||'')+'</span>';
+      host.appendChild(c);});
+  }
+  function tlRenderEras(){
+    tlRenderHeader();
+    var root=document.getElementById('tl-eras');root.innerHTML='';
+    var vt=tlVisibleTracks(),N=vt.length;
+    _C.eras.forEach(function(era){
+      var block=document.createElement('div');block.className='tl-era';
+      var head=document.createElement('div');head.className='tl-era-head';
+      head.innerHTML='<span class="tl-era-name">'+tlEsc(era.name)+'</span><span class="tl-era-range">'+tlEsc(tlFmtValue(era.start))+' – '+tlEsc(tlFmtValue(era.end))+'</span>';
+      head.onclick=function(){block.classList.toggle('collapsed');};
+      var body=document.createElement('div');body.className='tl-era-body';body.style.height=era.height+'px';
+      vt.forEach(function(t,idx){var ln=document.createElement('div');ln.className='tl-track-line';ln.style.left=tlColLeft(idx,N);ln.style.background=t.color;body.appendChild(ln);});
+      tlRenderTicks(era,body);
+      var evs=_C.data.filter(function(e){return tlEventVisible(e)&&tlEraOf(e.value)===era;}).sort(function(x,y){return x.value-y.value;});
+      var lastTop={};
+      evs.forEach(function(e){
+        var idx=-1;for(var i=0;i<vt.length;i++){if(vt[i].id===e.track){idx=i;break;}}if(idx<0)return;
+        var top=tlEraTop(era,e.value);
+        var node=document.createElement('div');node.className='tl-event lvl'+e.level;
+        if(lastTop[e.track]!=null&&Math.abs(top-lastTop[e.track])<14)node.classList.add('side-l');
+        lastTop[e.track]=top;
+        node.style.top=top+'px';node.style.left=tlColLeft(idx,N);
+        node.innerHTML='<span class="tl-dot"></span>';
+        node.setAttribute('data-title',tlEsc(e.title));
+        node.onclick=function(){tlSelectEvent(e,node);};
+        body.appendChild(node);
+      });
+      block.appendChild(head);block.appendChild(body);root.appendChild(block);
+    });
+  }
+  function tlRenderSec(title,val){
+    if(!val)return'';var parts=(Array.isArray(val)?val:[val]).filter(Boolean);if(!parts.length)return'';
+    return'<h3 class="tl-d-h">'+tlEsc(title)+'</h3>'+parts.map(function(p){return'<p class="tl-d-p">'+tlEsc(p)+'</p>';}).join('');
+  }
+  function tlSelectEvent(e,node){
+    tlState.selected=e;
+    document.querySelectorAll('.tl-event.selected').forEach(function(x){x.classList.remove('selected');});
+    if(node)node.classList.add('selected');
+    document.getElementById('tl-detailDefault').style.display='none';
+    var box=document.getElementById('tl-detailEvent');box.style.display='block';
+    var tr=null;for(var i=0;i<_C.tracks.length;i++){if(_C.tracks[i].id===e.track){tr=_C.tracks[i];break;}}if(!tr)tr={name:'',color:'#888'};
+    var lab=_C.label(e);var secs;
+    if(e.level===1){secs='<h3 class="tl-d-h">简介</h3><p class="tl-d-p">'+tlEsc(tlFmtValue(e.value)+'年前后：'+e.desc)+'</p>';
+    }else{
+      var era=tlEraOf(e.value),lv=tlLvlCN(e.level);
+      var gen={basics:['时间·'+tlFmtValue(e.value)+'年（'+era.name+'）','领域·'+tr.name+'（'+lab+'）','重要程度·'+lv+'事件'],bg:era.name+'阶段。',core:tlFmtValue(e.value)+'年前后：'+e.desc,value:'在「'+tr.name+'」中属'+lv+'级节点。',impact:'其影响沿时间轴向后传导。',ext:['来源·'+e.source]};
+      var m=_C.map[e.value+'-'+e.track];
+      var r;if(m&&(m.core||m.bg||m.basics||m.value||m.impact)){r={basics:m.basics||gen.basics,bg:m.bg||gen.bg,core:m.core||gen.core,value:m.value||gen.value,impact:m.impact||gen.impact,ext:m.ext||gen.ext};}else{r=gen;}
+      secs=tlRenderSec('基础信息',r.basics)+tlRenderSec('历史背景',r.bg)+tlRenderSec('核心内容',r.core)+tlRenderSec('价值与意义',r.value)+tlRenderSec('深远影响',r.impact)+tlRenderSec('延伸·关联',r.ext);
+    }
+    box.innerHTML='<span class="tl-close" id="tl-dclose">← 返回说明</span>'
+      +'<div class="tl-d-eyebrow">EVENT</div><div class="tl-d-title">'+tlEsc(e.title)+'</div>'
+      +'<div class="tl-d-meta"><span class="tl-badge">'+tlEsc(tlFmtValue(e.value))+'</span>'
+      +'<span class="tl-badge"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+tr.color+';margin-right:4px"></span>'+tlEsc(tr.name)+'</span>'
+      +(lab?'<span class="tl-badge">'+tlEsc(lab)+'</span>':'')
+      +'<span class="tl-badge l'+e.level+'">● '+tlEsc(tlLvlCN(e.level))+'</span></div>'
+      +'<div class="tl-d-desc">'+tlEsc(e.desc)+'</div>'+secs
+      +'<div class="tl-d-src">来源：'+tlEsc(e.source)+'</div>';
+    document.getElementById('tl-dclose').onclick=function(){box.style.display='none';document.getElementById('tl-detailDefault').style.display='block';
+      document.querySelectorAll('.tl-event.selected').forEach(function(x){x.classList.remove('selected');});};
+  }
+  function tlCloseAllMenus(){document.querySelectorAll('.tl-dd-menu').forEach(function(m){m.style.display='none';});}
+  function tlToggleMenu(menu,renderFn){var open=menu.style.display!=='none';tlCloseAllMenus();if(!open){renderFn&&renderFn();menu.style.display='block';}}
+  function tlRenderTrackMenu(){
+    var menu=document.getElementById('tl-trackMenu');
+    var opts=[{id:'__all',name:'全部轨道'}].concat(_C.tracks.filter(function(t){return t.id!=='global';}));
+    menu.innerHTML=opts.map(function(o){return'<div data-tk="'+o.id+'">'+tlEsc(o.name)+'</div>';}).join('');
+    menu.querySelectorAll('div').forEach(function(d){d.onclick=function(){
+      var tk=d.dataset.tk,subWrap=document.getElementById('tl-subWrap');
+      tlState.sub='all';document.getElementById('tl-subBtn').textContent='子轨道：全部 ▾';
+      if(tk==='__all'){tlState.track='all';tlState.visibleTracks=new Set(_C.tracks.map(function(t){return t.id;}));
+        document.getElementById('tl-trackBtn').textContent='全部轨道 ▾';subWrap.style.display='none';
+      }else{tlState.track=tk;tlState.visibleTracks=new Set(['global',tk]);
+        document.getElementById('tl-trackBtn').textContent=d.textContent+' ▾';
+        subWrap.style.display='none';}
+      tlRenderEras();
+    };});}
+  function tlBindUI(){
+    function bind(id,menuId,fn){var b=document.getElementById(id),m=document.getElementById(menuId);
+      b.onclick=function(ev){ev.stopPropagation();tlToggleMenu(m,fn);};}
+    bind('tl-trackBtn','tl-trackMenu',tlRenderTrackMenu);
+    document.addEventListener('click',tlCloseAllMenus);
+    document.querySelectorAll('.tl-pill[data-level]').forEach(function(b){b.onclick=function(){
+      document.querySelectorAll('.tl-pill[data-level]').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');tlState.levelFilter=parseInt(b.dataset.level,10);tlRenderEras();};});
+    document.getElementById('tl-expandAll').onclick=function(){document.querySelectorAll('.tl-era').forEach(function(s){s.classList.remove('collapsed');});};
+    document.getElementById('tl-collapseAll').onclick=function(){document.querySelectorAll('.tl-era').forEach(function(s){s.classList.add('collapsed');});};
+  }
+
+  window.tlRenderEras = tlRenderEras;
+  tlSetModule();
+  tlRenderEras();
+  tlBindUI();
+})();
+
+/* ===== 禅宗流转图 · 详情面板 ===== */
+(function(){
+  var flowEsc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var flowRenderSec=function(title,val){
+    if(!val)return'';
+    var parts=(Array.isArray(val)?val:[val]).filter(Boolean);
+    if(!parts.length)return'';
+    return'<h3 class="tl-d-h">'+flowEsc(title)+'</h3>'+parts.map(function(p){return'<p class="tl-d-p">'+flowEsc(p)+'</p>';}).join('');
+  };
+
+  var FD_DATA = {
+    shakya: {
+      basics:['时间·约前5世纪（古印度）','人物·释迦牟尼佛','地点·灵鹫山（王舍城）','重要程度·源起事件'],
+      bg:'佛陀涅槃前最后一次在灵山说法，座下千二百五十比丘。众人皆等待佛陀说无上大法，但佛陀却沉默不语。',
+      core:'佛陀从座上拈起一朵金色波罗花，示诸大众。众人皆茫然不解其意，唯摩诃迦叶破颜微笑。佛陀便道："吾有正法眼藏，涅槃妙心，实相无相，微妙法门，不立文字，教外别传，付嘱摩诃迦叶。""拈花一笑"这段故事并非出自早期佛经，而是大约12世纪《五灯会元》中首次出现。',
+      value:'拈花一笑从根本上界定了禅宗的核心方法论：真理不在语言里，而在心与心之间直接的、不需要中介的传递。这就是"以心传心"的源头。',
+      impact:'这一公案塑造了禅宗一千五百年的基本性格——直接、反文字、反系统化。也是"禅"与"教"（以经论为中心的佛教）的分水岭。',
+      ext:['此公案最早见于《五灯会元》卷一·迦叶尊者','后成为禅门第一公案，被称为"正法眼藏"']
+    },
+    kasyapa: {
+      basics:['时间·约前5—4世纪','人物·摩诃迦叶尊者','地点·灵鹫山 / 王舍城七叶窟','重要程度·源头人物'],
+      bg:'摩诃迦叶是佛陀十大弟子中"头陀第一"，以苦行精进闻名。佛陀涅槃后，他成为了佛教僧团的领袖。',
+      core:'迦叶在灵山会上因"破颜微笑"被佛陀指定为禅宗西天初祖，并获得"正法眼藏"的付嘱。他不仅是一位修行的榜样，而且是佛教第一次结集的召集人和主持者——在王舍城七叶窟组织了五百阿罗汉的经典结集。',
+      value:'迦叶确立了禅宗传承的两大基石：一是"以心传心"的教外别传法脉；二是确保佛陀言教被准确记录和传承的结集制度。',
+      impact:'从迦叶到达摩的"西天二十八祖"谱系，是禅宗塑造自身历史合法性的核心叙事。',
+      ext:['迦叶入定于鸡足山，等待弥勒佛出世']
+    },
+    indian28: {
+      basics:['时间·约前4世纪—6世纪','人物·西天二十八位祖师','地点·古印度','重要程度·过渡时期'],
+      bg:'禅宗宣称在佛陀与达摩之间有一条不间断的传承链——从摩诃迦叶（初祖）到菩提达摩（二十八祖），历经八百余年。',
+      core:'二十一代祖师依次递传，每一代都有"付法偈"记载。最关键的中间人物是第十七祖僧伽难提、第二十一祖婆修盘头、第二十六祖不如密多、第二十七祖般若多罗（达摩之师）。般若多罗曾为达摩授记："汝将于震旦（中国）大兴佛法。"',
+      value:'二十八祖谱系未必全部历史可靠，但对禅宗而言，它的价值不在历史精确性，而在于它提供了"我们的法来自佛陀"的身份认同。它让禅宗在佛教各宗派中获得了最高的合法性。',
+      impact:'这个谱系至今仍是禅宗自我理解的基础框架。每一代祖师的法脉续灯都被郑重记录在"传法偈"中。',
+      ext:['谱系定型于唐代《宝林传》（801年）','在敦煌文献发现之前，这部分内容有较多法脉缺环']
+    },
+    bodhidharma: {
+      basics:['时间·约520年（南朝梁）','人物·菩提达摩（南印度人）','地点·广州登岸 → 嵩山少林寺','重要程度·核心事件'],
+      bg:'南北朝时期，中国佛教重义理研究（成实、三论、涅槃诸宗），"禅"被理解为一种禅定修习，而非独立宗派。达摩的到来创造了"禅宗"这个实体。',
+      core:'达摩泛海抵达广州被梁武帝迎见。武帝问："朕建寺写经度僧，功德几何？"达摩答："并无功德。"武帝不解。达摩北上少林寺面壁九年，终日默然静坐。他传授"二入四行"：理入（藉教悟宗）和行入（报冤行、随缘行、无所求行、称法行）。以《楞伽经》印心。',
+      value:'达摩是整个禅宗谱系的枢纽：西天二十八祖兼中土初祖。他带来的"不立文字、教外别传"理念是禅宗基因里的根本设定。',
+      impact:'少林寺成为禅宗祖庭。"面壁九年"成为中国最深入人心的修行意象。达摩传下来的"二入四行"预表了后来禅宗"定慧等学"的路线。',
+      ext:['达摩传法慧可后，曾示寂葬于熊耳山，后传说只履归西','《续高僧传》卷十六为最早也是最可靠的达摩传记来源']
+    },
+    huike: {
+      basics:['时间·约535—536年','人物·慧可（487—593），原名神光','地点·嵩山','重要程度·标志性事件'],
+      bg:'慧可年轻时精通儒道经典，后来投入佛法，在达摩面壁的少林寺外求法。那时达摩威望极高，很多人想拜师但被拒。',
+      core:'慧可伫立雪中一夜，天明时雪没膝盖。他自断左臂以示求道决心，血染积雪。达摩感其至诚，收为弟子，赐法名"慧可"。慧可问："诸佛法印，可得闻乎？"达摩答："诸佛法印，非从人得。"',
+      value:'断臂求法是禅宗最具画面感的故事之一。它传达了禅宗的核心理念：法门是无上珍贵的，必须极度真诚才能获得。慧可的牺牲塑造了"为法忘躯"的精神。',
+      impact:'慧可作为二祖，完成了从达摩到中国禅宗的第一代传承。没有慧可，达摩的法脉可能就此断绝。',
+      ext:['慧可后来在邺都传法，被辩和法师诬告，遭迫害圆寂','"断臂"说在早期文献中存疑：《续高僧传》说是"遭贼断臂"，后世演绎为"自断"']
+    },
+    sengcan: {
+      basics:['时间·约560—606年','人物·僧璨（约510—606）','地点·舒州司空山','重要程度·理论奠定'],
+      bg:'慧可在晚年历经政治迫害，在隐居状态下找到了年轻的僧璨。僧璨当时年约四十，患有风疾（麻风？），但慧可见其根器不凡。',
+      core:'僧璨向慧可求法问："弟子身缠风疾，请和尚忏罪。"慧可道："将罪来，与汝忏。"僧璨良久道："觅罪了不可得。"慧可答："与汝忏罪竟。宜依佛法僧住。"僧璨即悟。僧璨后来著《信心铭》——仅584字的四言诗偈："至道无难，唯嫌拣择。但莫憎爱，洞然明白。"',
+      value:'《信心铭》是禅宗最早的独立理论文本。它将"不二"哲学浓缩为诗：超越一切分别心——善/恶、是/非、得/失——就是"道"。',
+      impact:'《信心铭》影响了后世所有禅宗文献的创作风格。其"至道无难，唯嫌拣择"一语，成为禅修者的基本指南。',
+      ext:['《信心铭》对牛头宗、石头宗的理论均有影响']
+    },
+    daoxin: {
+      basics:['时间·约592—651年','人物·道信（580—651）','地点·湖北黄梅破头山','重要程度·制度奠基'],
+      bg:'僧璨在世时禅宗仍是个体传承，没有固定道场和僧团。道信改变了这一切。',
+      core:'道信13岁出家，随僧璨9年得法。他在黄梅破头山建立道场，开垦荒地，僧众达500余人。他制定"坐作并重"（即禅修和体力劳动同样重要）的生活纪律，形成禅宗最早的僧团制度。著有《入道安心要方便法门》。',
+      value:'道信是禅宗制度的奠基人。"农禅并重"使禅宗在经济上不再依赖朝廷和贵族的供养，这是禅宗在后来的"会昌法难"（845年）中唯一能生存下来的根本原因。',
+      impact:'道信的门下出了弘忍，弘忍又出了神秀和慧能——没有道信的制度创新，就没有后来禅宗的全面兴盛。',
+      ext:['道信的僧团模式直接影响了百丈怀海的《百丈清规》']
+    },
+    hongren: {
+      basics:['时间·约624—674年','人物·弘忍（601—674）','地点·湖北黄梅东山','重要程度·承前启后'],
+      bg:'道信圆寂后，弘忍接班。他在东山建立禅宗史上第一个大规模教学中心，僧众达千余人。',
+      core:'弘忍7岁随道信出家，在东山领导僧团展开系统性的禅修教学。他改革了教学方式，鼓励弟子独立思考和表达自己的见解——这直接催生了后来的"呈偈"传统。弘忍座下出了两大弟子：神秀和慧能。他最终的传法选择——将衣钵秘密付给目不识丁的慧能而非大弟子神秀——成为禅宗史上最戏剧性的一幕。',
+      value:'东山法门是禅宗从秘密单传到公开教学、从少数人修行到大规模僧团的关键转折。弘忍的"不拘一格选人才"直接导致了南宗革命。',
+      impact:'弘忍的传衣事件直接导致了南北分宗，为中国禅宗史提供了最持久的戏剧冲突。',
+      ext:['弘忍无著作传世，但其思想通过《最上乘论》体现','神秀和慧能在弘忍门下的表现，是对中国"勤奋守规"与"天才顿悟"两种价值观的原型展现']
+    },
+    shenxiu: {
+      basics:['时间·约700—706年','人物·神秀（606—706）','地点·洛阳 / 长安','重要程度·北宗领袖'],
+      bg:'弘忍圆寂后，神秀成为大众公认的法嗣。他在北方弘法数十年，门庭广大，声望如日中天。',
+      core:'神秀的示法偈为"身是菩提树，心如明镜台，时时勤拂拭，莫使惹尘埃"。武则天于700年迎请神秀入京，亲加跪礼，封为"两京法主，三帝国师"。神秀的门庭极盛，但也埋下了与慧能南宗的对立。后来神会（慧能弟子）在滑台大会上公开抨击神秀的北宗为"旁出"，引发了南宗正统性的公开辩论。',
+      value:'神秀是禅宗第一个获得国家正式承认的大师。北宗是禅宗"渐悟"路线的最完整表达——修行需要长期的规范和努力。',
+      impact:'北宗虽在后来的历史叙事中被南宗击败，但其"渐修"传统从未消失。事实上，今天绝大多数修禅者——包括正念冥想——都走的是一条"渐修渐悟"的路，而非慧能的"顿悟顿修"。',
+      ext:['神秀/北宗后来被南宗压制，历史文献中多被贬低','南宗胜利后，很多北宗寺院转而声称自己是南宗正传']
+    },
+    huineng: {
+      basics:['时间·约671—713年','人物·慧能（638—713）','地点·黄梅东山 → 广州法性寺','重要程度·划时代事件'],
+      bg:'慧能是一个不识字的岭南砍柴人，在集市听闻《金刚经》而悟。他孤身北上黄梅求法，被弘忍安排到后院碓房舂米。出身和地位都极低，但最终成为禅宗史上最重要的人物。',
+      core:'弘忍为选择衣钵传人，命各人呈偈。大弟子神秀的偈"身是菩提树…"获普遍赞誉。慧能请人代书偈子："菩提本无树，明镜亦非台，本来无一物，何处惹尘埃。"弘忍看后知慧能已悟，但为保护他，用鞋擦去偈子。深夜密召慧能，传《金刚经》至"应无所住而生其心"，慧能大悟。传衣钵后嘱其南下隐居15年。最终在法性寺以"不是风动，不是幡动，仁者心动"震撼学界，正式出家。',
+      value:'慧能的革命在于他将佛教从寺院和经典中解放出来，宣布"直指人心，见性成佛"——成佛不需要漫长的修行和深奥的知识，只需要认得自己的本来面目。他的《六祖坛经》是中国佛教中唯一被尊为"经"的著作。',
+      impact:'南宗后来全面压倒北宗，成为中国禅宗的绝对主流。慧能的思想影响了整个东亚文化——日本的禅、韩国的禅、越南的禅都直接追溯到慧能。',
+      ext:['毛泽东评价慧能"把印度佛教中国化了"','《六祖坛经》现存最早版本是敦煌本（约830年），约1.2万字']
+    },
+    huairang: {
+      basics:['时间·约713—744年','人物·南岳怀让（677—744）','地点·南岳衡山','重要程度·南宗传承'],
+      bg:'慧能门下最杰出的弟子之一。怀让受慧能印可后，到南岳衡山隐居传法。他的著名弟子马祖道一是禅宗史上最伟大的禅师之一。',
+      core:'怀让的经典教学：见马祖道一终日坐禅，便取砖在石上磨。道一问磨砖作甚，答"磨作镜"。道一奇"磨砖岂能成镜？"怀让答："磨砖不能成镜，坐禅岂能成佛？"又道："汝学坐禅，为学坐佛？若学坐禅，禅非坐卧；若学坐佛，佛非定相。于无住法，不应取舍。"道一当下大悟。',
+      value:'"磨砖作镜"是禅宗反对形式主义的经典公案。怀让的教学法代表了南宗的基本风格：不正面回答问题，而是用生活中的行动来截断学人的思维执着。',
+      impact:'怀让一系出了马祖道一，马祖又出了临济宗——后者成了禅宗五家中影响最大的一派。',
+      ext:['怀让本人不立文字，无著作传世']
+    },
+    mazu: {
+      basics:['时间·约740—788年','人物·马祖道一（709—788）','地点·江西洪州开元寺','重要程度·思想突破'],
+      bg:'马祖道一从怀让处悟道后，在江西洪州（南昌）建立道场。他的门下有八十余位得法弟子，是禅宗历史上最大规模的教学团队。',
+      core:'马祖提出"即心即佛"——你当下的心本身就是佛，不需要向外寻找。后来更推进为"非心非佛""平常心是道"。"道不用修，但莫污染。何为污染？但有生死心、造作趋向，皆是污染。"马祖的教学手段极为自由：打、喝、踢、竖拂子，一切皆可成为教学工具。',
+      value:'马祖将慧能的"即心即佛"从口号发展为一套完整的修行哲学。"平常心是道"让禅修从特殊的行为回归日常生活——吃饭时吃饭，睡觉时睡觉。',
+      impact:'马祖的洪州宗直接孕育了临济宗和沩仰宗。其"活泼泼"的教学风格成为后世禅宗的典型形象。',
+      ext:['马祖的"即心即佛"与后世禅宗的"见性成佛"一脉相承']
+    },
+    xingsi: {
+      basics:['时间·约671—740年','人物·青原行思（671—740）','地点·江西青原山','重要程度·南宗别脉'],
+      bg:'行思是慧能座下首座弟子，地位极高。据《坛经》载，慧能曾对行思说："从上衣法双行，师资递授。今为天下多难，衣以表信，汝当传法，莫付衣。"',
+      core:'行思在广东吉州青原山弘法，门风极简，不立文字，不著书立说。他最重要的贡献是教导了石头希迁（700—790）。希迁后来成为青原一系的核心人物，行思因此成为曹洞、云门、法眼三宗的共同祖源。',
+      value:'行思一系代表了禅宗中偏重理性与哲学的一端。如果说怀让—马祖—临济代表直觉、实践、刚猛，那么行思—希迁—曹洞则代表思辨、哲理、沉静。',
+      impact:'行思的远见在于他培养了一个人来承载青原的法脉——石头希迁。由希迁分出曹洞、云门、法眼三宗，与怀让系的临济、沩仰共同构成"五家"。',
+      ext:['行思号"青原行思"，青原山是江西禅宗的早期中心之一']
+    },
+    shiqian: {
+      basics:['时间·约740—790年','人物·石头希迁（700—790）','地点·湖南衡山石头庵','重要程度·哲学奠基'],
+      bg:'希迁34岁时到青原山参访行思，得法后回衡山，在巨石上结庵而居，世称"石头和尚"。青原一系能成为与洪州宗并立的南宗两脉，全靠希迁的威望和著作。',
+      core:'希迁著《参同契》（200余字），以"回互"（互相含摄）为核心概念："门门一切境，回互不回互。事存函盖合，理应箭锋拄。"意思是：万事万物既相互关联又各自独立，理和事的关系如箭和靶。他的《草庵歌》简洁优美，广为流传。',
+      value:'《参同契》是禅宗最具哲学深度的文献之一。它将华严的"理事无碍"转化成禅宗的可操作哲学。希迁的"回互"思想成为曹洞宗"偏正五位"的理论基础。',
+      impact:'从希迁的门下分出了云门、曹洞、法眼三宗。他的哲学对日本曹洞宗的影响尤为深远。',
+      ext:['希迁曾对基咄主张药山惟俨、天皇道悟两位巨匠']
+    },
+    linji: {
+      basics:['时间·约850—867年','人物·临济义玄（815—867）','地点·河北正定临济院','重要程度·最盛宗派'],
+      bg:'中晚唐禅宗已经从南方普及到北方。义玄在黄檗希运（百丈怀海的法孙）门下学禅，后来到河北镇州（今正定）建立临济院开宗。',
+      core:'临济宗的教学以"棒喝"闻名。"上堂：有僧问如何是佛法大意，义玄便打。""逢佛杀佛，逢祖杀祖，逢罗汉杀罗汉"——不是真的杀，而是破除一切执着。"四料简"（夺人不夺境、夺境不夺人、人境两俱夺、人境俱不夺）是其方法论体系。义玄主张"随缘消旧业，任运着衣裳"，生活中自由的禅。',
+      value:'临济宗是五家七宗中规模最大、影响最广的一派。其"棒喝"教学法暴力而直接，被认为是在不立文字的前提下最能迅速截断学人思维惯性的手段。',
+      impact:'临济宗至今是中国和日本佛教的主流禅宗流派。东传日本后成为武士道的精神依靠，深远影响了剑道、茶道、能剧等日本文化。',
+      ext:['临济宗的"四料简"和"三玄三要"构成了系统的教学法','《临济录》是义玄的语录集，为禅门必读经典']
+    },
+    yangqi: {
+      basics:['时间·北宋11世纪','人物·方会禅师（992—1049）','地点·江西杨岐山','重要程度·禅宗分支'],
+      bg:'临济宗发展到北宋中期，内部出现了分化。方会在杨岐山开法，创立杨岐派——后来成为临济宗的最大分支。',
+      core:'方会得了慈明楚圆的法脉，在杨岐山弘扬临济禅法。其法脉最了不起的贡献是出了圆悟克勤（1063—1135），他编纂了《碧岩录》——评唱百则公案，被誉为"宗门第一书"。圆悟的再传弟子大慧宗杲（1089—1163）创"看话禅"——专参一个话头（如赵州"无"字），彻底改变了禅宗的修行方法。',
+      value:'杨岐派将临济宗的活力延续了数百年。从杨岐派走出的圆悟和大慧是宋代最伟大的禅宗人物。《碧岩录》和"看话禅"影响了中日禅宗至今。',
+      impact:'临济宗之所以在五家中压倒曹洞成为最大宗派，杨岐派的创造力功不可没。今日中日的临济宗多数都属于杨岐法脉。',
+      ext:['大慧宗杲晚年烧毁《碧岩录》木版——因为弟子们搞文字禅去了']
+    },
+    huanglong: {
+      basics:['时间·北宋11—12世纪','人物·慧南禅师（1002—1069）','地点·江西黄龙山','重要程度·禅宗分支'],
+      bg:'与杨岐同时期的另一位楚圆法嗣——慧南在黄龙山开法，创立黄龙派。黄龙派在北宋中后期一度非常兴盛。',
+      core:'慧南创设"黄龙三关"接引学人：第一问"如何是汝生缘处？"（你的生命根源是什么？）；第二问"如何是汝本来面目？"（真正的你是什么？）；第三问"将谓别有？"（你以为还有什么别的？）。三问层层递进，意在破除学人的一切分别执着。',
+      value:'黄龙派是临济宗北宋时期的重要支派。"黄龙三关"代表着禅宗公案教学法从随机接引到系统化、程式化的演变。',
+      impact:'黄龙派在日本镰仓时期一度兴盛，对日本临济宗的"公案禅"产生了直接影响。',
+      ext:['黄龙派后来逐渐衰退，被杨岐派完全超越']
+    },
+    weiyang: {
+      basics:['时间·约9世纪中—10世纪','人物·沩山灵祐（771—853）/ 仰山慧寂（807—883）','地点·湖南沩山 → 江西仰山','重要程度·五家之一'],
+      bg:'灵祐是百丈怀海的法嗣，在湖南沩山开创道场。其弟子慧寂在江西仰山弘法。师徒合称"沩仰宗"。',
+      core:'灵祐最著名的是"无情说法"公案：问"如何是祖师西来意？"灵祐指灯笼答"大德！灯笼是灯笼。"后问"如何是道？"答"无心是道。"慧寂善用"圆相"——画圆形符号来表达禅理，据说有九十六种圆相，每一种代表一个不同的禅境界。',
+      value:'沩仰宗是五家中最早成立也是最早断绝的一宗。虽然只传了四世约150年，但其"圆相"教学法是禅宗中最神秘、最具艺术感的一支。',
+      impact:'沩仰在宋代绝脉，但其"圆相"传到了朝鲜和日本。今天的韩国佛教中仍能看到圆相传统的影响。',
+      ext:['沩仰宗在唐武宗"会昌法难"后艰难恢复，未能再复兴']
+    },
+    caodong: {
+      basics:['时间·约9世纪中—10世纪','人物·洞山良价（807—869）/ 曹山本寂（840—901）','地点·江西洞山 → 曹山','重要程度·五家之一'],
+      bg:'良价在云岩昙晟处得法，后于江西洞山开法。其法嗣本寂在曹山完成宗派的体系化。师徒二人合称"曹洞宗"。',
+      core:'曹洞宗的核心是"偏正五位"——以「正」代表本体界（空、理），「偏」代表现象界（有、事），二者以正偏、君臣、父子、主宾、兼带五重关系相互含摄。修行上提倡"默照禅"——不参话头、不念经咒，只是安静地坐着，如镜照物，默而常照。宏智正觉（1091—1157）著《默照铭》，使默照禅臻于极致。',
+      value:'曹洞宗是五家中最具哲学深度的一宗。"偏正五位"构建了一套完整的禅修认知框架——如何在日常生活同时安住于空的本体和有的现象。',
+      impact:'日本曹洞宗是由道元从中国学去的，至今为日本第二大禅宗流派。"只管打坐"的修行方法吸引了大量现代西方实践者。',
+      ext:['曹洞宗对日本美学的影响巨大——枯山水、茶道的"寂"都源于曹洞的默照精神']
+    },
+    yunmen: {
+      basics:['时间·约10世纪','人物·云门文偃（864—949）','地点·广东韶州云门山','重要程度·五家之一'],
+      bg:'文偃是雪峰义存的法嗣，在云门山光泰禅院开法。云门宗在五代和北宋初期极其兴盛。',
+      core:'文偃的"云门三句"高度概括了云门禅法。"函盖乾坤"——真心包含宇宙万有；"截断众流"——一念顿断所有思维分别；"随波逐浪"——自由无碍地应机接物。云门教学以"险峻"著名，常用一两个字截断学人的问题和思路。',
+      value:'云门三句是中国禅宗哲学最精炼的表达之一。云门宗的接引手段被称为"云门一字禅"——往往用最简单的回应（一个"你"字、一个"着"字）来打破学人的思维定势。',
+      impact:'云门宗在北宋中期以后逐渐式微，南宋时绝脉。但其精神遗产渗透到了临济宗的公案教学中。',
+      ext:['历史上著名的"云门一曲"故事：有人问"如何是云门剑？"答"祖。"']
+    },
+    fayan: {
+      basics:['时间·约10世纪','人物·法眼文益（885—958）','地点·南京清凉院','重要程度·五家之一'],
+      bg:'文益是罗汉桂琛的法嗣，在南京清凉院开法。他经历了五代十国的政治动荡，南唐中主李璟尊他为国师。',
+      core:'文益的最大特点是"禅教一致"——他着力将华严宗的哲学贯通到禅宗实践中。"一切现成"是他的核心主张：真心本来圆满，不需要特别的修行和追求。他精通《华严经》的"六相"（总、别、同、异、成、坏）和"十玄门"，用来解释禅宗的"理事"关系。',
+      value:'法眼宗在五家之中最重经教。"禅教一致"为宋代的"禅教合一"潮流铺了路。文益也因此被称为禅宗史上最博学的宗师之一。',
+      impact:'法眼宗传入高丽，对韩国曹溪宗的定型产生了重要影响。其"一切现成"的思想在韩国至今仍被广泛引用。',
+      ext:['法眼宗在宋初绝脉（约百年），是最短命的一家']
+    },
+    rongxi: {
+      basics:['时间·1191年','人物·荣西禅师（1141—1215）','地点·日本镰仓 / 京都','重要程度·日本禅宗开创'],
+      bg:'日本平安时代末期到镰仓时代初期，天台宗和真言宗垄断了佛教。武士阶层需要更直接、更简洁的修行方式。荣西两次入宋（1168、1187），从师于天台山万年寺的虚庵怀敞（临济宗法嗣）。',
+      core:'荣西在1191年从杭州回国，开始在九州和镰仓传临济禅。著《兴禅护国论》回应天台宗的迫害——论证禅宗对国家兴隆有直接帮助。获得幕府将军源赖朝的支持，在镰仓建立寿福寺，在京都建立建仁寺。',
+      value:'荣西是日本禅宗的奠基人。他不仅带来了禅法，还带回了宋朝的茶籽，种植于宇治，奠定了日本茶道的基础。他的《兴禅护国论》立下了日本禅宗与国家权力合作的模式。',
+      impact:'临济宗在日本迅速获得武士阶级的拥护。临济禅影响了茶道（千利休）、枯山水、俳句、剑道、能剧——几乎所有日本文化中最具"禅意"的方面。',
+      ext:['荣西曾与天台宗展开大辩论，其护禅精神影响了后来的日莲宗']
+    },
+    zhina: {
+      basics:['时间·约12—13世纪','人物·知讷禅师（1158—1210）','地点·高丽松广山','重要程度·韩国禅宗奠基'],
+      bg:'禅宗在新罗末期（9世纪）传入朝鲜半岛，但一直是小众修行。知讷在高丽中期进行了制度化和本土化的改革。',
+      core:'知讷年轻时在中国禅学的影响下创立"定慧社"——一个结合修行（定）和教理研究（慧）的僧团。他主张"顿悟渐修"——先一次悟透本心，然后以日常修行磨砺。其著作《真心直说》《修心诀》等影响深远。',
+      value:'知讷创建的曹溪宗（Jogye Order）将禅宗在朝鲜半岛彻底本土化。曹溪宗至今仍是韩国最大的佛教宗派，占有65%以上的佛教寺庙。',
+      impact:'曹溪宗的"城市禅修中心"运动让数千万韩国民众在日常生活中接触禅修。韩国的"百丈清规"传统至今仍在维持——僧人"一日不作，一日不食"。',
+      ext:['曹溪宗名称来自曹洞宗的"曹溪"（慧能的道场），体现了韩国禅宗以慧能南宗为正统的自我定位']
+    },
+    daoyuan: {
+      basics:['时间·1223—1253年','人物·道元（1200—1253）','地点·日本京都永平寺','重要程度·日本曹洞宗始祖'],
+      bg:'道元是荣西的再传弟子，他在宋代天童寺随如净禅师学习曹洞默照禅。当时南宋禅宗已高度发达，道元对宋朝禅林的繁文缛节感到失望。从如净那里，他学到了最纯粹的"默照"禅法。',
+      core:'道元认定"只管打坐"（Shikantaza）是修行的全部——不是达到开悟的手段，坐本身就是开悟。"修证一如"——修行和证悟不是两件事。他留下巨著《正法眼藏》（95卷），被公认为日本佛教史上最伟大的哲学著作。',
+      value:'道元是日本最深厚的禅宗哲学家。他的"修证一如""有时""无常常"等哲学观念对20世纪西方哲学产生了震撼性影响。海德格尔对"空"和"时间"的思考被指出与道元有深度共鸣。',
+      impact:'道元的曹洞宗成为日本第二大禅宗流派。永平寺至今以严格的修行规矩著称。"只管打坐"在现代西方禅修中心极为流行。',
+      ext:['道元批判当时南宋禅林的"文字禅"，认为自己继承了真正的佛陀心法']
+    },
+    thien: {
+      basics:['时间·约9—13世纪','人物·无言通禅师（？—826）等','地点·越南北部','重要程度·越南禅宗'],
+      bg:'禅宗在唐代即传入了越南。最早有毗尼多流支（6世纪）和法顺（7世纪），但真正的开创性人物是中国无言通禅师，于820年赴越南传法，开创了"无言通派"。',
+      core:'越南禅宗（Thiền Tông）融合了中国禅宗的南宗体系（特别是百丈和临济的影响）、越南本土的祖先崇拜、以及儒学元素。十三世纪陈朝时期，禅宗被确立为国教。陈太宗、陈仁宗等皇帝都曾出家为禅僧，创"竹林安子派"。',
+      value:'越南禅宗是东亚禅宗体系中独特的一支——它将禅修与民族主义紧密结合。20世纪的"入世佛教"运动发轫于越南禅宗。',
+      impact:'全球最有影响力的越南禅僧是一行禅师。他的梅村修习中心在全世界有上千个分支，将越南禅修传统推向了全球。',
+      ext:['越南禅后来也受到净土宗的影响，形成"禅净双修"的特色']
+    },
+    yinyuan: {
+      basics:['时间·1654年','人物·隐元隆琦（1592—1673）','地点·日本京都宇治黄檗山','重要程度·中日禅宗最后一次大交流'],
+      bg:'明末清初，社会动荡。隐元是福建黄檗山万福寺的住持，受日本长崎华侨之邀，在1654年东渡日本。',
+      core:'隐元在日本的传法受到幕府的重视，在京都宇治赐地建立了黄檗山万福寺——完全按照明朝建筑风格建造。隐元建立的"黄檗宗"成为日本禅宗第三大派（与临济、曹洞并立）。黄檗宗保留了大量明朝的佛教仪轨，包括梵呗、诵经方式、建筑样式等，在日本佛教中独树一帜。',
+      value:'隐元是中日佛教交流的最后一座丰碑。他不仅传法，还带去了明朝的医术、书法、饮食和茶文化。日本今天的"隐元豆"（四季豆）就是以他命名的。',
+      impact:'黄檗宗至今在日本约有500座寺院。其独特的明朝仪轨已成为日本文化中珍贵的"活态传统"。隐元也是中日文化交流的最高象征之一。',
+      ext:['隐元其实是临济宗法嗣（黄檗派），东传后形成了独立的"黄檗宗"','黄檗宗对日本近世书法和煎茶道影响深远']
+    },
+    xuyun: {
+      basics:['时间·1840—1959年','人物·虚云大师','地点·中国六大祖庭','重要程度·近代禅宗复兴'],
+      bg:'清末民初，中国社会经历了有史以来最大规模的变革与动荡。太平天国、辛亥革命、抗日战争等事件使大量寺院被毁、僧人流散。禅宗五家法脉濒临断裂。',
+      core:'虚云以120年高龄走遍天下，重建了六大禅宗祖庭——鼓山涌泉寺、云南鸡足山祝圣寺、广东南华寺（六祖道场）、云门山大觉禅寺（文偃道场）、江西云居山真如寺、福建崇福寺。他最大的贡献是一人继承临济、曹洞、沩仰、云门、法眼五宗法脉——这在整个禅宗史上是绝无仅有的。',
+      value:'没有虚云，禅宗五家可能在20世纪彻底断裂。他不仅是一个修缮者，更是一个生命的传承者——让五宗的法脉通过他的弟子延续至今。',
+      impact:'今天中国大陆、台湾、香港、东南亚的所有临济、曹洞、沩仰、云门、法眼的传人，几乎都可以追溯到虚云的法脉。他的弟子本焕、佛源、净慧等人在当代继续发扬禅宗。',
+      ext:['虚云最后的20年（1940—1959）在新中国成立后度过，经历了严酷的宗教政策']
+    },
+    suzuki: {
+      basics:['时间·1900—1960年代','人物·铃木大拙（1870—1966）','地点·日本→美国→全球','重要程度·禅宗全球化开端'],
+      bg:'19世纪末，西方通过传教士和殖民者开始接触东方宗教。但系统性地向西方介绍禅宗始于铃木大拙。铃木是临济宗在家居士，师从今北洪川和释宗演。',
+      core:'铃木大拙用英文撰写了40多部著作，最著名的是《禅与日本文化》《禅宗入门》《禅僧的修行》。他在哥伦比亚大学、哈佛大学、剑桥大学等世界顶级学府讲学。他的读者包括心理学家荣格（为他的书写序）、海德格尔、垮掉派作家凯鲁亚克、音乐家约翰·凯奇等。',
+      value:'铃木大拙是禅宗全球化的第一推动者。他用西方人能理解的语汇——心理学、哲学、艺术——来解释禅宗。他的翻译和阐释使"Zen"成为全球文化词汇。',
+      impact:'铃木间接影响了垮掉的一代、嬉皮士运动、人本主义心理学、现代艺术和音乐。卡巴金的正念减压运动也直接继承了他开启的"#禅宗去宗教化"路线。',
+      ext:['批评者认为铃木对禅宗的阐释过度"日本化"——将临济宗的"公案禅"视为禅宗的全部']
+    },
+    nhat_hanh: {
+      basics:['时间·1926—2022年','人物·一行禅师（Thich Nhat Hanh）','地点·法国梅村（全球）','重要程度·入世佛教典范'],
+      bg:'一行禅师16岁出家于越南顺化慈孝寺。越战期间（1955—1975），他目睹战争对平民的摧残，感到传统山林佛教在战争面前无能为力。他提出"入世佛教"——僧侣不能独善其身，必须介入社会苦难。',
+      core:'一行禅师创造了"正念"（Mindfulness）这个英文词的最早普及版本——虽然这个词后来由卡巴金医学化，但大众对"正念"的最初认知来自一行。《正念的奇迹》（1975）和《佛陀之心》等著作在全球卖出了数百万册。"吸进来，我平静；呼出去，我微笑"——这是最广为流传的正念呼吸引导语。',
+      value:'一行是"和平与正念"的最杰出代表。他让"正念呼吸"成为数千万人的日常实践。他的"互即互入"（Interbeing）哲学——万物互相依存——对当代环境主义和生态哲学有重要影响。',
+      impact:'梅村在全球有超过1000个正念修习团体。他的入世佛教理念影响了无数社会活动家。他被马丁·路德·金提名诺贝尔和平奖。',
+      ext:['一行禅师1966年被越南政府流放，此后39年不得回国。2005年才首次获准返回。']
+    },
+    mbsr: {
+      basics:['时间·1975年','人物·乔恩·卡巴金（Jon Kabat-Zinn，1944—）','地点·麻省大学医学中心','重要程度·范式转换'],
+      bg:'卡巴金在麻省理工学院学习分子生物学时接触了禅修。他感到禅修中某些成分——特别是"注意力的训练"和"对当下的觉察"——可以脱离宗教框架，在医学领域发挥作用。',
+      core:'卡巴金将禅修中的"正念"抽离出来，标准化为8周的MBSR（正念减压）课程：每周2.5小时课程+1天静修。内容包含身体扫描、静坐、瑜伽、行走冥想。不做任何宗教仪式，不念经咒。科学验证显示对慢性疼痛、焦虑、抑郁复发、失眠有显著疗效。论文发表在《新英格兰医学杂志》《柳叶刀》等顶尖学术期刊。',
+      value:'MBSR将禅修从"宗教修行"转化为"科学干预"。这是两千五百年来禅修史上最重大的范式转换——禅修第一次在现代医学中获得合法地位。',
+      impact:'全球超过700家医院引入MBSR。英国NHS将正念认知疗法（MBCT，由MBSR改编）纳入标准治疗方案。Google的SIY（Search Inside Yourself）课程、Apple的健康功能、NASA的宇航员培训中都包含正念练习。',
+      ext:['卡巴金多次强调MBSR并非禅宗的"简化版"，而是"佛法在现代医学语境中的全新表达"']
+    },
+    app: {
+      basics:['时间·2010年代至今','人物·Headspace / Calm 等','地点·全球互联网','重要程度·数字禅修普及'],
+      bg:'智能手机普及后，几乎所有生活领域都被Apps重构。2010年，前佛教僧侣Andy Puddicombe创立Headspace；2012年，Alex Tew和Michael Acton Smith创立Calm。',
+      core:'这些App将正念练习标准化为3-15分钟的引导音频。用户可以随时随地进行一次练习。Headspace以卡通风格和科学感著称，Calm以自然音景和睡眠故事闻名。全球下载量合计超过1.5亿次。企业用户包括Google、Nike、Starbucks等。',
+      value:'冥想App使正念的入门门槛降为零——任何人只要打开手机就可以开始。这是禅修传播历史上最具民主化的时刻。',
+      impact:'但这也引发了深刻担忧：当"禅修"被简化为"减压工具"，其哲学根基（缘起、无我、慈悲）被抽离后，"正念减压"是否只是"平静版的资本主义"？这一批判正在引发学者和实践者的反思。',
+      ext:['2015年《时代》杂志封面故事："正念革命"','批评学者见《Mindful America》和《McMindfulness》等著作']
+    },
+    global_mind: {
+      basics:['时间·21世纪至今','人物·全球实践者约5亿+','地点·全球','重要程度·当代身心实践浪潮'],
+      bg:'从铃木大拙的学术化推广，到卡巴金的医学化转型，再到数字时代的App化普及——正念已经演变为一场全球性的文化实践运动。',
+      core:'据估计，全球有超过5亿人定期进行某种形式的正念或冥想练习。正念进入了教育体系（美国的正念教育项目如MindUP）、企业管理（Google的SIY课程）、军队训练（美国海军陆战队的"正念射击"）、运动训练（NBA球队的正念练习）、以及医疗体系（NHS的正念处方）。禅宗的核心技术——坐禅、觉察、观呼吸——已经完全嵌入当代生活。',
+      value:'这场运动的本质是：禅宗最精华的修行技术，正在失去其宗教外壳，变成一种普世的身心训练。这是佛教历史上从未发生过的事情。',
+      impact:'当前最大的挑战是：当禅宗的伦理和哲学基础被剥离后，"正念"还剩什么？2010年代以来的"McMindfulness"批判认为正念被工具化为效率工具。但与此同时，越来越多人在接触正念后反向探索禅宗，重新发现《坛经》《正法眼藏》等经典——这是一条"从正念回禅宗"的新路。',
+      ext:['核心参考文献：Robert Sharf《Buddhist Modernism》、David McMahan《The Making of Buddhist Modernism》']
+    },
+  };
+
+  function flowPopulate(key) {
+    var d = FD_DATA[key];
+    if (!d) return;
+    var box = document.getElementById('flowDetailDefault');
+    var content = document.getElementById('flowDetailContent');
+    box.style.display = 'none';
+    content.style.display = 'block';
+    content.innerHTML = '<span class="tl-close" id="fdClose">← 返回</span>'
+      + '<div class="tl-d-eyebrow">FLOW · 著名事件</div>'
+      + '<div class="tl-d-title">' + flowEsc(d.basics && d.basics[1] && d.basics[1].replace(/^人物·/,'') || '') + '</div>'
+      + flowRenderSec('基础信息', d.basics)
+      + flowRenderSec('历史背景', d.bg)
+      + flowRenderSec('核心内容', d.core)
+      + flowRenderSec('价值与意义', d.value)
+      + flowRenderSec('深远影响', d.impact)
+      + flowRenderSec('延伸·关联', d.ext);
+    document.getElementById('fdClose').onclick = function() {
+      content.style.display = 'none';
+      box.style.display = 'block';
+    };
+  }
+
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.flow-card');
+    if (card && card.dataset.key) {
+      flowPopulate(card.dataset.key);
+    }
+  });
+})();
+</script>
+</body>
+</html>
