@@ -61,7 +61,8 @@ body{
 .sidebar-brand{text-align:center;padding:0 16px 24px;border-bottom:1px solid rgba(110,160,255,0.06);margin-bottom:12px}
 .sidebar-brand h1{font-size:1.3rem;font-weight:900;letter-spacing:0.2em;color:#fff;background:linear-gradient(120deg,#fff,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sidebar-brand .sub{font-family:"SF Mono","Fira Code",monospace;font-size:0.5rem;letter-spacing:0.3em;color:var(--text-faint);margin-top:6px;font-weight:300}
-.sidebar-nav{flex:1;padding:0 10px;overflow-y:auto}
+.sidebar-nav{flex:1;padding:0 10px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none}
+.sidebar-nav::-webkit-scrollbar{display:none}
 .sidebar-nav a{
   display:flex;align-items:center;gap:8px;
   padding:9px 12px;color:var(--text-dim);
@@ -147,6 +148,35 @@ body{
 .card .label{font-size:0.85rem;font-weight:700;color:var(--cyan);margin-bottom:6px}
 .card .val{font-size:0.8rem;color:var(--text-dim);line-height:1.7}
 
+/* concept-flow */
+.concept-flow{background:rgba(110,160,255,0.02);border:1px solid rgba(110,160,255,0.06);border-radius:16px;padding:24px 20px;margin:18px 0}
+.concept-flow .cf-row{display:flex;align-items:flex-start;justify-content:center;gap:18px;position:relative}
+.concept-flow .cf-row + .cf-row{margin-top:12px}
+.concept-flow .cf-arrow-row{display:flex;justify-content:center;height:24px;position:relative}
+.concept-flow .cf-arrow-row::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:linear-gradient(rgba(110,160,255,0.3),rgba(110,160,255,0.1))}
+.concept-flow .cf-arrow-row::after{content:"";position:absolute;bottom:0;left:50%;margin-left:-4px;width:8px;height:8px;border-right:2px solid rgba(110,160,255,0.3);border-bottom:2px solid rgba(110,160,255,0.3);transform:rotate(45deg)}
+.concept-flow .cf-fork-row{display:flex;justify-content:center;height:20px;position:relative;margin-top:4px}
+.concept-flow .cf-fork-row::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:rgba(110,160,255,0.10)}
+.cf-card{padding:12px 18px;border-radius:10px;text-align:center;min-width:80px;flex:1;max-width:200px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all 0.3s;position:relative}
+.cf-card .cf-name{font-size:0.85rem;font-weight:700;color:#fff;margin-bottom:2px}
+.cf-card .cf-sub{font-size:0.65rem;color:var(--text-faint);line-height:1.5}
+.cf-card.src{background:rgba(247,183,49,0.08);border:1px solid rgba(247,183,49,0.15)}
+.cf-card.src .cf-name{color:#f7b731}
+.cf-card.onto{background:rgba(54,226,255,0.08);border:1px solid rgba(54,226,255,0.15)}
+.cf-card.onto .cf-name{color:var(--cyan)}
+.cf-card.prac{background:rgba(155,109,255,0.08);border:1px solid rgba(155,109,255,0.15)}
+.cf-card.prac .cf-name{color:#9b6dff}
+.cf-card.epis{background:rgba(229,122,138,0.08);border:1px solid rgba(229,122,138,0.15)}
+.cf-card.epis .cf-name{color:#e57a8a}
+.cf-card.ulti{background:rgba(61,255,166,0.08);border:1px solid rgba(61,255,166,0.15)}
+.cf-card.ulti .cf-name{color:var(--green)}
+.cf-card .cf-tag{font-size:0.55rem;padding:1px 8px;border-radius:4px;display:inline-block;margin-top:4px;letter-spacing:0.06em}
+.cf-card.src .cf-tag{background:rgba(247,183,49,0.12);color:#f7b731}
+.cf-card.onto .cf-tag{background:rgba(54,226,255,0.10);color:var(--cyan)}
+.cf-card.prac .cf-tag{background:rgba(155,109,255,0.10);color:#9b6dff}
+.cf-card.epis .cf-tag{background:rgba(229,122,138,0.10);color:#e57a8a}
+.cf-card.ulti .cf-tag{background:rgba(61,255,166,0.10);color:var(--green)}
+
 /* compare-table */
 .compare-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.78rem;border-radius:12px;overflow:hidden;border:1px solid rgba(110,160,255,0.08)}
 .compare-table th{background:rgba(54,226,255,0.06);padding:12px 14px;text-align:left;color:var(--cyan);font-weight:600;border-bottom:1px solid rgba(110,160,255,0.1)}
@@ -171,7 +201,8 @@ body{
 .tl-dd-menu{position:absolute;top:100%;left:0;min-width:160px;z-index:99999;background:rgba(3,6,15,0.96);border:1px solid rgba(110,160,255,0.12);border-radius:8px;padding:4px;box-shadow:0 12px 40px rgba(0,0,0,0.5);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .tl-dd-menu div{padding:7px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;color:var(--text-dim);transition:0.2s}
 .tl-dd-menu div:hover{background:rgba(54,226,255,0.06);color:#fff}
-.tl-scroll{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;height:0}
+.tl-scroll{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;height:0;scrollbar-width:none;-ms-overflow-style:none}
+.tl-scroll::-webkit-scrollbar{display:none}
 .tl-track-header{position:sticky;top:0;z-index:5;height:40px;border-bottom:1px solid rgba(110,160,255,0.06);background:rgba(3,6,15,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .tl-th{position:absolute;top:6px;transform:translateX(-50%);text-align:center;white-space:nowrap}
 .tl-th-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle}
@@ -264,11 +295,90 @@ body{
 .flow-fork .flow-col::before{content:"";position:absolute;top:0;left:50%;width:2px;height:14px;background:rgba(110,160,255,0.15);transform:translateX(-50%)}
 .flow-label{font-size:0.7rem;color:var(--text-faint);margin:8px 0 0;letter-spacing:0.1em;font-family:"SF Mono","Fira Code",monospace}
 
+/* ===== Sidebar Subnav ===== */
+.sidebar-subnav{padding:0 0 4px 18px;max-height:500px;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease}
+.sidebar-subnav.collapsed{max-height:0;padding-top:0;padding-bottom:0}
+.sidebar-subnav a{display:flex;align-items:center;gap:6px;padding:4px 10px;color:var(--text-faint);text-decoration:none;font-size:0.62rem;border-radius:5px;transition:all 0.25s;cursor:pointer;border:none;margin-bottom:1px}
+.sidebar-subnav a:hover{color:#fff;background:rgba(110,160,255,0.05)}
+.sidebar-subnav a.active{color:var(--cyan);background:rgba(54,226,255,0.05)}
+.sidebar-subnav .ss-dot{font-size:0.4rem;color:rgba(110,160,255,0.15);min-width:10px}
+
+/* ===== Subpage ===== */
+.subpage{display:none}
+.subpage.active{display:block}
+.subpage>.subpage-inner{animation:fadeUp 0.35s ease}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+
+/* ===== Quote Module ===== */
+.quote-module{margin:16px 0;border-radius:14px;background:rgba(255,200,60,0.02);border:1px solid rgba(255,200,60,0.10);overflow:hidden}
+.quote-module .qm-header{padding:14px 18px;background:rgba(255,200,60,0.04);font-size:0.85rem;font-weight:700;color:var(--gold);line-height:1.6;border-bottom:1px solid rgba(255,200,60,0.06)}
+.quote-module .qm-header .qm-src{display:block;font-size:0.6rem;color:var(--text-faint);font-weight:400;margin-top:4px;letter-spacing:0.05em}
+.quote-module .qm-body{padding:14px 18px}
+.quote-module .qm-section{margin-bottom:12px}
+.quote-module .qm-section:last-child{margin-bottom:0}
+.quote-module .qm-label{font-size:0.6rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:4px;text-transform:uppercase}
+.quote-module .qm-body p{font-size:0.8rem;color:var(--text-dim);line-height:1.75;margin:0}
+
+/* ===== Insight Box ===== */
+.insight-box{margin:14px 0;padding:14px 18px;border-radius:12px;background:rgba(100,80,255,0.04);border:1px solid rgba(100,80,255,0.10);border-left:3px solid var(--purple)}
+.insight-box .ib-label{font-size:0.6rem;font-weight:700;color:var(--purple);letter-spacing:0.08em;margin-bottom:4px}
+.insight-box p{font-size:0.8rem;color:var(--text-dim);line-height:1.75;margin:0}
+.insight-box p strong{color:#fff}
+
+/* ===== Classic Structure Diagram ===== */
+.cs-flow{margin:16px 0;border-radius:14px;background:rgba(61,255,166,0.02);border:1px solid rgba(61,255,166,0.06);padding:18px 14px}
+.cs-flow .cs-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.cs-flow .cs-row + .cs-row{margin-top:8px}
+.cs-flow .cs-arr{color:var(--text-faint);font-size:0.7rem;padding:0 2px}
+.cs-flow .cs-tag{padding:6px 14px;border-radius:8px;font-size:0.75rem;text-align:center;transition:all 0.25s;background:rgba(61,255,166,0.06);border:1px solid rgba(61,255,166,0.10);color:var(--text-dim)}
+.cs-flow .cs-tag .cs-em{display:block;font-weight:700;color:var(--green);margin-bottom:2px}
+.cs-flow .cs-tag.cs-cyan{background:rgba(54,226,255,0.06);border-color:rgba(54,226,255,0.10)}
+.cs-flow .cs-tag.cs-cyan .cs-em{color:var(--cyan)}
+.cs-flow .cs-tag.cs-gold{background:rgba(255,200,60,0.06);border-color:rgba(255,200,60,0.10)}
+.cs-flow .cs-tag.cs-gold .cs-em{color:var(--gold)}
+.cs-flow .cs-tag.cs-purple{background:rgba(155,109,255,0.06);border-color:rgba(155,109,255,0.10)}
+.cs-flow .cs-tag.cs-purple .cs-em{color:var(--purple)}
+.cs-flow .cs-tag.cs-pink{background:rgba(255,95,168,0.06);border-color:rgba(255,95,168,0.10)}
+.cs-flow .cs-tag.cs-pink .cs-em{color:var(--pink)}
+.cs-flow .cs-sep{width:100%;height:1px;background:rgba(61,255,166,0.06);margin:4px 0}
+
+/* ===== Classic Detail Card ===== */
+.cl-card{padding:16px 18px;border-radius:12px;background:rgba(110,160,255,0.02);border:1px solid rgba(110,160,255,0.06);margin:12px 0}
+.cl-card .cl-title{font-size:0.75rem;font-weight:700;color:var(--cyan);margin-bottom:6px}
+.cl-card p{font-size:0.8rem;color:var(--text-dim);line-height:1.75;margin:0 0 8px}
+.cl-card p:last-child{margin-bottom:0}
+.cl-card p strong{color:#fff}
+.cl-card .cl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.cl-card .cl-grid .cl-item{padding:8px 12px;border-radius:8px;background:rgba(110,160,255,0.04);font-size:0.72rem;color:var(--text-dim);line-height:1.5}
+.cl-card .cl-grid .cl-item .cl-i-label{font-size:0.55rem;color:var(--cyan);font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+
+@media(max-width:1100px){
+  .cl-card .cl-grid{grid-template-columns:1fr}
+  .sidebar-subnav a{font-size:0.5rem;padding:3px 6px}
+  .sidebar-subnav{display:none}
+}
+
+/* ===== Sutra Reader ===== */
+.sutra-wrap{margin:10px 0}
+.sutra-section{border-radius:12px;margin:12px 0;overflow:hidden;border:1px solid rgba(110,160,255,0.06);background:rgba(255,255,255,0.02)}
+.sutra-head{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(54,226,255,0.04);border-bottom:1px solid rgba(54,226,255,0.06);cursor:pointer;transition:0.25s;user-select:none}
+.sutra-head:hover{background:rgba(54,226,255,0.07)}
+.sutra-head .sh-num{font-family:"SF Mono","Fira Code",monospace;font-size:0.6rem;color:var(--text-faint);min-width:28px}
+.sutra-head .sh-name{font-size:0.85rem;font-weight:700;color:var(--cyan);letter-spacing:0.03em}
+.sutra-head .sh-toggle{font-size:0.5rem;color:var(--text-faint);margin-left:auto;transition:transform 0.3s}
+.sutra-section.collapsed .sutra-head .sh-toggle{transform:rotate(-90deg)}
+.sutra-body{padding:14px 18px;transition:max-height 0.4s ease;overflow:hidden;max-height:10000px}
+.sutra-section.collapsed .sutra-body{max-height:0;padding:0 18px}
+.sutra-text{padding:12px 16px;border-radius:8px;background:rgba(247,183,49,0.03);border:1px solid rgba(247,183,49,0.08);border-left:3px solid var(--gold);margin-bottom:10px}
+.sutra-text p{font-size:0.88rem;color:var(--text);line-height:1.9;margin:0;font-family:"Noto Serif SC","Source Han Serif SC",serif;letter-spacing:0.03em}
+.sutra-annot{padding:8px 4px}
+.sutra-annot .sa-label{font-size:0.55rem;font-weight:700;color:var(--gold);letter-spacing:0.1em;margin-bottom:4px;text-transform:uppercase}
+.sutra-annot p{font-size:0.78rem;color:var(--text-dim);line-height:1.75;margin:0}
+.sutra-annot p strong{color:#fff}
+.sutra-annot p + p{margin-top:6px}
+.sutra-spacer{text-align:center;padding:10px 0;color:rgba(110,160,255,0.08);font-size:0.7rem;letter-spacing:0.2em}
+
 /* ===== Scrollbar ===== */
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(110,160,255,0.15);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(110,160,255,0.3)}
 
 @media(max-width:1100px){
   .sidebar{width:56px}
@@ -280,6 +390,9 @@ body{
   .page{padding:24px 20px}
   .grid-2,.grid-3{grid-template-columns:1fr}
   .tl-detail{width:240px}
+  .concept-flow .cf-row{flex-direction:column;align-items:center}
+  .concept-flow .cf-row .cf-card{max-width:none!important;width:100%}
+  .concept-flow .cf-fork-row{display:none}
 }
 </style>
 </head>
@@ -303,14 +416,53 @@ body{
     <a data-page="page-2"><span class="sn">02</span> 核心理念</a>
     <a data-page="page-3"><span class="sn">03</span> 实践法门</a>
     <a data-page="page-4"><span class="sn">04</span> 各国禅宗</a>
-    <a data-page="page-5"><span class="sn">05</span> 五家七宗</a>
-    <a data-page="page-6"><span class="sn">06</span> 核心经典</a>
-    <a data-page="page-7"><span class="sn">07</span> 哲学对话</a>
-    <a data-page="page-8"><span class="sn">08</span> 当代转型</a>
-    <a data-page="page-9"><span class="sn">09</span> 概念速查</a>
-    <a data-page="page-10"><span class="sn">10</span> 禅宗流转图</a>
-    <div class="sidebar-divider"></div>
-    <a data-page="page-timeline"><span class="sn">⌛</span> 时间轴</a>
+     <a data-page="page-5"><span class="sn">05</span> 五家七宗</a>
+     <div class="sidebar-subnav">
+       <a data-page="page-5" data-subpage="sub-5-0"><span class="ss-dot">▸</span> 总览</a>
+       <a data-page="page-5" data-subpage="sub-5-1"><span class="ss-dot">▸</span> 临济宗 · 棒喝</a>
+       <a data-page="page-5" data-subpage="sub-5-2"><span class="ss-dot">▸</span> 曹洞宗 · 默照</a>
+       <a data-page="page-5" data-subpage="sub-5-3"><span class="ss-dot">▸</span> 沩仰宗 · 圆相</a>
+       <a data-page="page-5" data-subpage="sub-5-4"><span class="ss-dot">▸</span> 云门宗 · 险峻</a>
+       <a data-page="page-5" data-subpage="sub-5-5"><span class="ss-dot">▸</span> 法眼宗 · 禅教</a>
+     </div>
+     <a data-page="page-6"><span class="sn">06</span> 经典概要</a>
+     <div class="sidebar-subnav">
+       <a data-page="page-6" data-subpage="sub-6-0"><span class="ss-dot">▸</span> 总览</a>
+       <a data-page="page-6" data-subpage="sub-6-1"><span class="ss-dot">▸</span> 《六祖坛经》</a>
+       <a data-page="page-6" data-subpage="sub-6-2"><span class="ss-dot">▸</span> 《金刚经》</a>
+       <a data-page="page-6" data-subpage="sub-6-3"><span class="ss-dot">▸</span> 《楞伽经》</a>
+       <a data-page="page-6" data-subpage="sub-6-4"><span class="ss-dot">▸</span> 《维摩诘经》</a>
+       <a data-page="page-6" data-subpage="sub-6-5"><span class="ss-dot">▸</span> 传灯·语录体系</a>
+       <a data-page="page-6" data-subpage="sub-6-6"><span class="ss-dot">▸</span> 《碧岩录》</a>
+       <a data-page="page-6" data-subpage="sub-6-7"><span class="ss-dot">▸</span> 《无门关》</a>
+       <a data-page="page-6" data-subpage="sub-6-8"><span class="ss-dot">▸</span> 《正法眼藏》</a>
+     </div>
+     <a data-page="page-7"><span class="sn">07</span> 哲学对话</a>
+     <div class="sidebar-subnav">
+       <a data-page="page-7" data-subpage="sub-7-0"><span class="ss-dot">▸</span> 总览</a>
+       <a data-page="page-7" data-subpage="sub-7-1"><span class="ss-dot">▸</span> 现象学·存在主义</a>
+       <a data-page="page-7" data-subpage="sub-7-2"><span class="ss-dot">▸</span> 语言分析哲学</a>
+       <a data-page="page-7" data-subpage="sub-7-3"><span class="ss-dot">▸</span> 深度心理学</a>
+       <a data-page="page-7" data-subpage="sub-7-4"><span class="ss-dot">▸</span> 德国观念论</a>
+       <a data-page="page-7" data-subpage="sub-7-5"><span class="ss-dot">▸</span> 京都学派</a>
+     </div>
+     <a data-page="page-8"><span class="sn">08</span> 当代转型</a>
+     <a data-page="page-10"><span class="sn">09</span> 禅宗流转图</a>
+     <div class="sidebar-divider"></div>
+     <a data-page="page-timeline"><span class="sn">⌛</span> 时间轴</a>
+     <div class="sidebar-divider"></div>
+     <a data-page="page-11"><span class="sn">10</span> 原典附录</a>
+     <div class="sidebar-subnav">
+       <a data-page="page-11" data-subpage="sub-11-1"><span class="ss-dot">▸</span> 《金刚经》</a>
+       <a data-page="page-11" data-subpage="sub-11-2"><span class="ss-dot">▸</span> 《六祖坛经》</a>
+       <a data-page="page-11" data-subpage="sub-11-3"><span class="ss-dot">▸</span> 《涅槃经》</a>
+       <a data-page="page-11" data-subpage="sub-11-4"><span class="ss-dot">▸</span> 《华严经》</a>
+       <a data-page="page-11" data-subpage="sub-11-5"><span class="ss-dot">▸</span> 《楞伽经》</a>
+       <a data-page="page-11" data-subpage="sub-11-6"><span class="ss-dot">▸</span> 《中论》</a>
+       <a data-page="page-11" data-subpage="sub-11-7"><span class="ss-dot">▸</span> 《维摩诘经》</a>
+     </div>
+     <div class="sidebar-divider"></div>
+     <a data-page="page-9"><span class="sn">11</span> 概念速查</a>
   </div>
   <div class="sidebar-footer">禅宗体系</div>
 </nav>
@@ -384,6 +536,81 @@ body{
       <div class="page-header"><div class="ch-number">02 · PHILOSOPHY</div><h2>核心理念 · 哲学体系</h2></div>
       <div class="page-body">
         <p>禅宗虽标榜"不立文字"，却拥有极为严密而深刻的哲学体系。其思想资源主要来自<strong>如来藏（佛性）</strong>思想、<strong>般若（空性）</strong>思想以及<strong>华严（法界缘起）</strong>思想的融合，形成了"即心即佛"的本体论、"不二"的认识论和"顿悟"的实践论三位一体的完整体系。</p>
+
+        <div class="concept-flow">
+          <div class="cf-row">
+            <div class="cf-card src">
+              <div class="cf-name">如来藏 佛性</div>
+              <div class="cf-sub">《涅槃经》一切众生悉有佛性</div>
+              <span class="cf-tag">有</span>
+            </div>
+            <div class="cf-card src">
+              <div class="cf-name">般若 空性</div>
+              <div class="cf-sub">龙树中观·缘起性空</div>
+              <span class="cf-tag">无</span>
+            </div>
+            <div class="cf-card src">
+              <div class="cf-name">华严 法界缘起</div>
+              <div class="cf-sub">理事无碍·事事无碍</div>
+              <span class="cf-tag">中道</span>
+            </div>
+          </div>
+
+          <div class="cf-arrow-row" style="height:28px"></div>
+
+          <div class="cf-row">
+            <div class="cf-card onto" style="max-width:280px">
+              <div class="cf-name">即心即佛 · 本体论</div>
+              <div class="cf-sub">此心即是佛 — 非空非有、不生不灭、不垢不净、含摄万法</div>
+              <span class="cf-tag">本心 · 自性清净心</span>
+            </div>
+          </div>
+
+          <div class="cf-arrow-row"></div>
+
+          <div class="cf-row">
+            <div class="cf-card epis" style="max-width:160px">
+              <div class="cf-name">不二法门</div>
+              <div class="cf-sub">认识论核心</div>
+              <span class="cf-tag">超越二元</span>
+            </div>
+            <div class="cf-card onto" style="max-width:160px">
+              <div class="cf-name">顿悟</div>
+              <div class="cf-sub">实践转化枢纽</div>
+              <span class="cf-tag">当下一念</span>
+            </div>
+          </div>
+
+          <div class="cf-fork-row"></div>
+
+          <div class="cf-row">
+            <div class="cf-card prac">
+              <div class="cf-name">无念</div>
+              <div class="cf-sub">于念而离念</div>
+              <span class="cf-tag">修证三纲领</span>
+            </div>
+            <div class="cf-card prac">
+              <div class="cf-name">无相</div>
+              <div class="cf-sub">于相而离相</div>
+              <span class="cf-tag">修证三纲领</span>
+            </div>
+            <div class="cf-card prac">
+              <div class="cf-name">无住</div>
+              <div class="cf-sub">念念不滞留</div>
+              <span class="cf-tag">最根本</span>
+            </div>
+          </div>
+
+          <div class="cf-arrow-row"></div>
+
+          <div class="cf-row">
+            <div class="cf-card ulti" style="max-width:240px">
+              <div class="cf-name">平常心是道</div>
+              <div class="cf-sub">不造作·不取舍·饥来吃饭困来眠</div>
+              <span class="cf-tag">终极境界</span>
+            </div>
+          </div>
+        </div>
 
         <h3>即心即佛 · 本体论转向</h3>
         <p>禅宗的逻辑起点是<strong>"自心即佛"</strong>。这并非简单的信念，而是具有深刻哲学意涵的本体论命题。马祖道一（709—788）明确说："即心即佛"——此"心"非肉团心，亦非意识心，而是<strong>本心</strong>、<strong>自性清净心</strong>、<strong>如来藏心</strong>。</p>
@@ -514,15 +741,268 @@ body{
     <div class="page-inner">
       <div class="page-header"><div class="ch-number">05 · LINEAGE</div><h2>五家七宗 · 宗派谱系</h2></div>
       <div class="page-body">
-        <p>从六祖慧能以下，唐宋之间形成"五家七宗"的繁荣格局：</p>
-        <div class="grid-2">
-          <div class="card"><div class="label">临济宗</div><div class="val">义玄禅师（？—867）。棒喝著称，宗风严峻刚猛。宋分出杨岐、黄龙二派。至今最昌盛，传日本。</div></div>
-          <div class="card"><div class="label">曹洞宗</div><div class="val">洞山良价（807—869）、曹山本寂（840—901）。"偏正五位"阐述理事关系。宗风绵密温厚。</div></div>
-          <div class="card"><div class="label">沩仰宗</div><div class="val">沩山灵祐、仰山慧寂。以"九十六圆相"接引。宋后法脉不显。</div></div>
-          <div class="card"><div class="label">云门宗</div><div class="val">云门文偃（864—949）。"云门三句"：函盖乾坤、截断众流、随波逐浪。</div></div>
-          <div class="card"><div class="label">法眼宗</div><div class="val">法眼文益（885—958）。重禅教一致，融华严。宋中期后绝。</div></div>
-          <div class="card"><div class="label">全球传承</div><div class="val">临济、曹洞为国际两大主流。日本增黄檗宗。韩国曹溪宗为临济变体。</div></div>
+
+        <!-- SUBPAGE 0: 总览 -->
+        <div class="subpage active" id="sub-5-0">
+          <div class="subpage-inner">
+            <p>从六祖慧能以下，禅宗在唐宋之间不断分化融合，形成了"五家七宗"的繁荣格局。各家在根本宗旨上一致（"即心即佛"、"顿悟成佛"），但在教学风格、接引方法、哲学侧重点上各具特色。以下为五家七宗的总览谱系。</p>
+
+            <div class="concept-flow" style="margin-top:20px">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">六祖慧能</div><div class="cf-sub">南宗顿悟禅</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card" style="max-width:260px"><div class="cf-name">青原行思</div><div class="cf-sub">→ 石头希迁 → 曹洞·云门·法眼</div></div>
+                <div class="cf-card" style="max-width:260px"><div class="cf-name">南岳怀让</div><div class="cf-sub">→ 马祖道一 → 临济·沩仰</div></div>
+              </div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card prac"><div class="cf-name">沩仰宗</div><div class="cf-sub">最早成立 · 最早绝脉</div></div>
+                <div class="cf-card"><div class="cf-name">临济宗</div><div class="cf-sub">棒喝 · 最盛 · 传日本</div></div>
+                <div class="cf-card prac"><div class="cf-name">曹洞宗</div><div class="cf-sub">默照 · 绵密 · 传日本</div></div>
+                <div class="cf-card"><div class="cf-name">云门宗</div><div class="cf-sub">险峻 · 三句 · 宋绝</div></div>
+                <div class="cf-card prac"><div class="cf-name">法眼宗</div><div class="cf-sub">禅教一致 · 宋绝</div></div>
+              </div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card" style="max-width:180px"><div class="cf-name">杨岐派</div><div class="cf-sub">方会 · 临济支</div></div>
+                <div class="cf-card" style="max-width:180px"><div class="cf-name">黄龙派</div><div class="cf-sub">慧南 · 临济支</div></div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:16px">
+              <div class="card" style="cursor:pointer" onclick="goTo('page-5','sub-5-1')"><div class="label">临济宗 · 义玄</div><div class="val">棒喝教学，四料简。宋代分出杨岐、黄龙二派。至今最昌盛。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-5','sub-5-2')"><div class="label">曹洞宗 · 良价·本寂</div><div class="val">偏正五位，默照禅。宗风绵密。传日本，道元开创日本曹洞。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-5','sub-5-3')"><div class="label">沩仰宗 · 灵祐·慧寂</div><div class="val">九十六圆相接引。五家中最早成立也最早绝脉。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-5','sub-5-4')"><div class="label">云门宗 · 文偃</div><div class="val">云门三句：函盖乾坤、截断众流、随波逐浪。险峻宗风。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-5','sub-5-5')"><div class="label">法眼宗 · 文益</div><div class="val">禅教一致，融华严。传高丽，影响韩国曹溪宗。→</div></div>
+            </div>
+          </div>
         </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 1: 临济宗               -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-5-1">
+          <div class="subpage-inner">
+            <p><strong>临济宗</strong>是五家七宗中规模最大、影响最广的一派。创始人为临济义玄（815—867），河北正定临济院开宗。其"棒喝"教学法暴力而直接，被认为是在不立文字的前提下最能迅速截断学人思维惯性的手段。</p>
+
+            <div class="insight-box"><div class="ib-label">基本数据</div><p>时间：约850—867年开宗 · 人物：临济义玄（黄檗希运法嗣） · 地点：河北镇州临济院 · 传承：南岳怀让→马祖道一→百丈怀海→黄檗希运→临济义玄</p></div>
+
+            <h3>教学法体系</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card src" style="max-width:200px"><div class="cf-name">棒喝</div><div class="cf-sub">"上堂：有僧问如何是佛法大意，义玄便打。"</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">四料简</div><div class="cf-sub">夺人不夺境、夺境不夺人、人境俱夺、人境俱不夺</div></div>
+                <div class="cf-card onto" style="max-width:200px"><div class="cf-name">四照用</div><div class="cf-sub">先照后用、先用后照、照用同时、照用不同时</div></div>
+              </div>
+              <div class="cf-row" style="margin-top:8px">
+                <div class="cf-card prac"><div class="cf-name">三玄三要</div><div class="cf-sub">句中玄、体中玄、玄中玄——义玄的哲学层次论</div></div>
+                <div class="cf-card"><div class="cf-name">四宾主</div><div class="cf-sub">客看主、主看客、主看主、客看客——师徒交锋的心印判定</div></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">逢佛杀佛，逢祖杀祖，逢罗汉杀罗汉</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典出处</div><p>《临济录》记载义玄上堂语："道流！尔欲得如法见解，但莫受人惑。向里向外，逢着便杀。逢佛杀佛，逢祖杀祖，逢罗汉杀罗汉，始得解脱。"</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>这不是暴力煽动，而是极端的"破相"主张——连"佛"和"祖师"这些最神圣的概念都不能执着。禅宗发展到临济，已经将"无相为体"的原则推至极端：任何概念、任何偶像、任何权威，只要成为心灵的执着对象，就必须"杀"掉。这是"大死一番"之后的"大活"——只有将所有外在的依傍全部斩断，才能获得真正的自由。</p></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">四料简详解</div>
+              <p>临济义玄的教学法核心。"料简"意为"简别"——根据不同根器采取不同的教学方法。</p>
+              <div class="cl-grid">
+                <div class="cl-item"><div class="cl-i-label">夺人不夺境</div>针对执着"我"的学人——破除对"我"的执着，保留对"境"（外部世界）的认知。适合我执深重者。</div>
+                <div class="cl-item"><div class="cl-i-label">夺境不夺人</div>针对执着"境"的学人——破除对外境的执着，保留对"我"的认知。适合法执深重者。</div>
+                <div class="cl-item"><div class="cl-i-label">人境两俱夺</div>针对我执和法执都深重的学人——同时破"我"和"境"，令学人一念顿空。</div>
+                <div class="cl-item"><div class="cl-i-label">人境俱不夺</div>针对根器成熟的学人——不破任何，随缘接引。"我"和"境"本来空，无须破除。</div>
+              </div>
+            </div>
+
+            <h3>宋代分支</h3>
+            <div class="grid-2">
+              <div class="card"><div class="label">杨岐派 · 方会（992—1049）</div><div class="val">江西杨岐山开法。法脉出了圆悟克勤（编《碧岩录》）和大慧宗杲（创"看话禅"）。杨岐派后来成为临济宗的最大分支，今日中日临济宗多属杨岐法脉。</div></div>
+              <div class="card"><div class="label">黄龙派 · 慧南（1002—1069）</div><div class="val">江西黄龙山开法。创"黄龙三关"接引学人：一问"如何是汝生缘处？"二问"如何是汝本来面目？"三问"将谓别有？"黄龙派在北宋中后期兴盛，后渐被杨岐超越。</div></div>
+            </div>
+
+            <div class="insight-box"><div class="ib-label">全球影响</div><p>临济宗至今是中国和日本佛教的主流禅宗流派。荣西将临济禅传入日本后，迅速获得武士阶级拥护，深远影响了剑道、茶道、能剧等日本文化。临济的"棒喝"精神与武士道的"即决"气质深度契合。</p></div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 2: 曹洞宗               -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-5-2">
+          <div class="subpage-inner">
+            <p><strong>曹洞宗</strong>是五家中最具哲学深度的一宗。由洞山良价（807—869）和曹山本寂（840—901）师徒创立，以"偏正五位"的哲学体系和"默照禅"的修行方法著称。宗风绵密温厚，与临济的刚猛形成鲜明对比。</p>
+
+            <div class="insight-box"><div class="ib-label">基本数据</div><p>时间：约9世纪中—10世纪 · 人物：洞山良价（云岩昙晟法嗣）、曹山本寂 · 地点：江西洞山 → 曹山 · 传承：青原行思→石头希迁→药山惟俨→云岩昙晟→洞山良价→曹山本寂</p></div>
+
+            <h3>偏正五位 · 哲学体系</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto" style="max-width:160px"><div class="cf-name">正</div><div class="cf-sub">本体 · 空 · 理<br>绝对 · 无相</div></div>
+                <div class="cf-card src" style="max-width:160px"><div class="cf-name">偏</div><div class="cf-sub">现象 · 有 · 事<br>相对 · 有相</div></div>
+              </div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card prac"><div class="cf-name">正中偏</div><div class="cf-sub">从空入有 · 本体显现为现象<br>→ 初悟境界</div></div>
+                <div class="cf-card"><div class="cf-name">偏中正</div><div class="cf-sub">从有归空 · 现象中见本体<br>→ 日常修行</div></div>
+                <div class="cf-card"><div class="cf-name">正中来</div><div class="cf-sub">本体直接显现<br>→ 顿悟时刻</div></div>
+                <div class="cf-card prac"><div class="cf-name">兼中至</div><div class="cf-sub">空有双照 · 中道<br>→ 悟后起修</div></div>
+                <div class="cf-card ulti"><div class="cf-name">兼中到</div><div class="cf-sub">空有一如 · 究竟<br>→ 圆满境界</div></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">偏正五位详解</div>
+              <p>曹洞宗的核心哲学框架，以「正」（本体界：空、理、真如）和「偏」（现象界：有、事、色法）的五种关系来描述觉悟的五个阶段。</p>
+              <div class="cl-grid">
+                <div class="cl-item"><div class="cl-i-label">正中偏</div>初悟阶段——从空性中看到现象的生起。犹如"午夜一轮明月"——在完全黑暗中忽然见到明月（空性中显现世界）。</div>
+                <div class="cl-item"><div class="cl-i-label">偏中正</div>修行阶段——在纷繁的现象中看到空性本质。犹如"天晓日头"——天亮后日光普照万物，但知道日光不是万物本身。</div>
+                <div class="cl-item"><div class="cl-i-label">正中来</div>顿悟时刻——空性本身突然呈现。如同"本来无一物"——在一切现象消融的瞬间亲证本体。</div>
+                <div class="cl-item"><div class="cl-i-label">兼中至</div>悟后起修——觉悟后回到日常生活，在一切行为中保持空有的平衡。</div>
+                <div class="cl-item"><div class="cl-i-label">兼中到</div>究竟圆满——空有完全融合，无二无别。最高境界是"一切现成"——茶是茶、饭是饭，但茶饭之中具足全体法界。</div>
+              </div>
+            </div>
+
+            <h3>默照禅 · 修行方法</h3>
+            <p>曹洞宗提倡"默照禅"——不参话头、不念经咒，只是安静地坐着，如镜照物，默而常照。宏智正觉（1091—1157）著《默照铭》，使默照禅臻于极致。大慧宗杲曾激烈批评默照禅为"枯木禅"，曹洞宗回应称"默照"不是"死寂"，而是"默中有照、照中有默"的生动统一。</p>
+
+            <div class="insight-box"><div class="ib-label">日本传承</div><p>道元（1200—1253）入宋从天童如净学曹洞默照禅，回国创日本曹洞宗。永平寺至今以严格修行著称。道元的"只管打坐"——坐禅不是达到开悟的手段，坐本身就是开悟——将默照禅的哲学推向了极致。"修证一如"：修行与证悟不是两件事，打坐本身就是佛的行履。</p></div>
+
+            <div class="insight-box" style="border-left-color:var(--cyan)"><div class="ib-label">美学影响</div><p>曹洞宗对日本美学的渗透远超宗教范畴——"枯山水"（龙安寺石庭）、茶道中的"侘寂"（wabi-sabi）、松尾芭蕉的俳句——都体现了"偏中正"的精神：在最细微的现象中见出无限的真理。"一沙一世界"不是比喻，而是曹洞"事事无碍"的世界观的如实描述。</p></div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 3: 沩仰宗               -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-5-3">
+          <div class="subpage-inner">
+            <p><strong>沩仰宗</strong>是五家中最早成立也是最早绝脉的一宗。沩山灵祐（771—853）在湖南沩山开创，其弟子仰山慧寂（807—883）在江西仰山弘扬，师徒合称"沩仰宗"。虽然只传了四世约150年（约850—1000年），但其独特的"圆相"教学法在禅宗史上独树一帜。</p>
+
+            <div class="insight-box"><div class="ib-label">基本数据</div><p>时间：约9世纪中—10世纪 · 人物：沩山灵祐（百丈怀海法嗣）、仰山慧寂 · 地点：湖南沩山 → 江西仰山 · 传承：南岳怀让→马祖道一→百丈怀海→沩山灵祐→仰山慧寂</p></div>
+
+            <h3>圆相教学 · 九十六种圆相</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card src" style="max-width:350px"><div class="cf-name">◎ 圆相教学法</div><div class="cf-sub">仰山慧寂善用圆形符号表达禅理，据说有九十六种圆相，每一种代表一个不同的禅境界。</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">○ 一圆相</div><div class="cf-sub">本来面目 · 佛性全体</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">◎ 重圆相</div><div class="cf-sub">大用现前 · 体用一如</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">⊙ 点圆相</div><div class="cf-sub">中心一点 · 一即一切</div></div>
+              </div>
+              <div class="cf-row" style="margin-top:6px">
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">() 半月相</div><div class="cf-sub">偏正回互 · 理事交涉</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">卍 回互相</div><div class="cf-sub">理事圆融 · 无尽法界</div></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">如何是道？<br>——无心是道</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典背景</div><p>僧问沩山灵祐："如何是道？"灵祐答："无心是道。"僧问："某甲不会。"灵祐答："会取不会的好。"僧问："如何是不会的？"灵祐答："只是汝，不是别人。"——"无心"不是没有心，而是心不执着于任何东西。当心不再执着于"道"的概念时，道自然地呈现。</p></div>
+                <div class="qm-section"><div class="qm-label">"无情说法"公案</div><p>灵祐最著名的公案是"无情说法"——有人问"如何是祖师西来意？"灵祐指灯笼答："大德！灯笼是灯笼。"——无情之物（灯笼）也在说法。万物本身就是佛法的显现，不需要另外去"说"什么。这与华严"事事无碍"和禅宗"青青翠竹尽是法身"一脉相承。</p></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">沩仰宗的历史意义</div>
+              <p>沩仰宗是五家中最短命的——约150年即绝脉，但其精神遗产并未消失。"圆相"教学法是禅宗中最神秘、最具艺术感的一支。虽然在中国本土绝脉，但圆相传到了朝鲜和日本。今天的韩国佛教中仍能看到圆相传统的影响。沩仰宗的迅速衰落也从反面说明：过于神秘化和艺术化的教学法虽然有极高的审美价值，但在"传灯"（传承）方面缺乏可持续性。</p>
+              <div class="insight-box"><div class="ib-label">会昌法难</div><p>沩仰宗的衰落与唐武宗会昌法难（845年）直接相关。灵祐在法难中被强迫还俗，法难后虽然获准回归沩山重建道场，但禅宗元气大伤。沩仰宗作为最早的支派，受到的影响也最严重。</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 4: 云门宗               -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-5-4">
+          <div class="subpage-inner">
+            <p><strong>云门宗</strong>以"云门三句"和"险峻"宗风著称。云门文偃（864—949）是雪峰义存的法嗣，在广东韶州云门山光泰禅院开法。其教学以简洁、锋利、险峻为特征——往往用一两个字（"云门一字禅"）截断学人的思维惯性，将其逼到绝境。</p>
+
+            <div class="insight-box"><div class="ib-label">基本数据</div><p>时间：约10世纪 · 人物：云门文偃（雪峰义存法嗣） · 地点：广东韶州云门山 · 传承：青原行思→石头希迁→天皇道悟→龙潭崇信→德山宣鉴→雪峰义存→云门文偃  · 重要程度：北宋极盛，南宋绝脉</p></div>
+
+            <h3>云门三句 · 哲学的高度浓缩</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">函盖乾坤</div><div class="cf-sub">真心包含宇宙万有。<br>本体论：一切万法不离自性。</div></div>
+                <div class="cf-card src"><div class="cf-name">截断众流</div><div class="cf-sub">一念顿断所有思维分别。<br>方法论：不立文字，直指人心。</div></div>
+                <div class="cf-card prac"><div class="cf-name">随波逐浪</div><div class="cf-sub">自由无碍地应机接物。<br>实践论：随缘放旷，任性逍遥。</div></div>
+              </div>
+            </div>
+            <div class="insight-box"><div class="ib-label">三句的逻辑关系</div><p>第一句"函盖乾坤"是体（真理全体）、第二句"截断众流"是相（截断妄念）、第三句"随波逐浪"是用（自在运用）。三者不是并列的三个命题，而是体相用的统一——在一次接引中同时具足。云门宗的教学，就是在"一喝"或"一字"之中同时具足这三句的全部功能。</p></div>
+
+            <div class="quote-module">
+              <div class="qm-header">云门一字禅 · 对朕者谁？</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">公案原文</div><p>僧问云门文偃："如何是佛？"文偃答："干屎橛。"又问："如何是祖师西来意？"答："山。"又问："如何是佛法大意？"答："春。"——用一个字斩断所有概念思维。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>"干屎橛"（古代厕所中用来擦屁股的木片）作为对"如何是佛"的回答，是禅宗史上最惊世骇俗的答复之一。这不是亵渎，而是极端的"破相"——将"佛"这个最高概念拉低到最卑微的事物中。如果佛连"干屎橛"都是，那么何处不是佛？此即"函盖乾坤"——佛充满一切处，甚至在最污秽处。"截断众流"——用"干屎橛"三个字截断学人的一切概念化理解。</p></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">云门宗的历史与影响</div>
+              <p>文偃在五代十国的乱世中建立了云门宗。其教学风格——简洁、直接、锋利——与当时的时代精神有一种奇妙的契合。云门宗在北宋中期达到鼎盛，与临济、曹洞并列为当时最大的禅宗流派。南宋以后逐渐式微并绝脉。但其精神遗产——"云门三句"——成为中国禅宗哲学最精炼的表达之一。"一字禅"的教学方法也渗透到了临济宗后续的公案教学中。</p>
+              <div class="insight-box"><div class="ib-label">云门一曲</div><p>历史上著名的"云门一曲"故事：有人问"如何是云门剑？"文偃答："祖。"——这一字答复包含了全部云门宗的精髓。文偃临终前说："我有一宝，秘在形山。拈来示汝，汝亦不识。"——这个"宝"就是"函盖乾坤"的"自性"。</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 5: 法眼宗               -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-5-5">
+          <div class="subpage-inner">
+            <p><strong>法眼宗</strong>是五家中最重经教的一宗。法眼文益（885—958）在南京清凉院开法，经历了五代十国的政治动荡，被南唐中主李璟尊为国师。他着力将华严宗的哲学贯通到禅宗实践中，主张"禅教一致"——禅宗的修行不能脱离经教的研习。</p>
+
+            <div class="insight-box"><div class="ib-label">基本数据</div><p>时间：约10世纪 · 人物：法眼文益（罗汉桂琛法嗣） · 地点：南京清凉院 · 传承：青原行思→石头希迁→天皇道悟→龙潭崇信→德山宣鉴→雪峰义存→玄沙师备→罗汉桂琛→法眼文益 · 重要程度：宋初即绝脉（约百年），是最短命的一家</p></div>
+
+            <h3>核心主张 · 一切现成</h3>
+            <div class="quote-module">
+              <div class="qm-header">一切现成</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典出处</div><p>文益的核心主张："一切现成"——真心本来圆满，不需要特别的修行和追求。"何须更觅，一切现成。"</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>"一切现成"是法眼宗最凝练的哲学公式。它既不同于临济的"棒喝"（强势破除），也不同于曹洞的"偏正五位"（系统建构），而是指出：真理不是被"造"出来的，也不是被"修"出来的，它本来就在那里，只是没有被认识到。"现成"——当下即是、本来圆满。这一思想直接影响了后来的"平常心是道"（马祖）和慧能的"何期自性本自清净"。</p></div>
+                <div class="qm-section"><div class="qm-label">修行论意义</div><p>"一切现成"不是懒惰的借口。它意味着：修行不是"制造"觉悟，而是"发现"本来具足的智慧。这与慧能的"菩提只向心觅"和《涅槃经》"一切众生悉有佛性"一脉相承。文益的独特贡献在于：他用华严的"六相"和"十玄门"系统地解释了"现成"的哲学依据。</p></div>
+              </div>
+            </div>
+
+            <h3>禅教一致 · 华严与禅的融合</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card src" style="max-width:200px"><div class="cf-name">华严六相</div><div class="cf-sub">总·别·同·异·成·坏<br>以此六相解释禅宗的"理事"关系</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">十玄门</div><div class="cf-sub">华严宗"十玄门"体系<br>一切现成的哲学基础</div></div>
+                <div class="cf-card" style="max-width:200px"><div class="cf-name">禅教一致</div><div class="cf-sub">禅宗修行不能脱离经教<br>为宋代"禅教合一"潮流铺路</div></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">法眼宗的历史地位</div>
+              <p>文益是禅宗史上最博学的宗师之一。他精通《华严经》的"六相"（总、别、同、异、成、坏）和"十玄门"（同时具足相应门、广狭自在无碍门、一多相容不同门……），将其与禅宗的"明心见性"贯通。"禅教一致"的主张在宋代发展为一股强大的潮流——永明延寿（904—975）的《宗镜录》百卷巨著，就是"禅教一致"的集大成之作。</p>
+              <div class="insight-box"><div class="ib-label">国际影响</div><p>法眼宗虽然在中国宋初即绝脉，但其法脉传入了高丽。高丽僧侣智光等人从法眼宗学习了"禅教一致"理念，影响了韩国曹溪宗的定型。"一切现成"的思想在韩国至今仍被广泛引用。法眼宗的"禅教一致"传统也是当代中国佛教"人间佛教"运动的重要思想资源。</p></div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">五家宗风对比</div>
+              <div class="cl-grid">
+                <div class="cl-item"><div class="cl-i-label">临济 · 棒喝</div>严峻刚猛，如将军。"逢佛杀佛"的大解脱</div>
+                <div class="cl-item"><div class="cl-i-label">曹洞 · 默照</div>绵密温厚，如农夫。"默照"中安住本心</div>
+                <div class="cl-item"><div class="cl-i-label">沩仰 · 圆相</div>神秘艺术，如画师。用符号传递不可言说</div>
+                <div class="cl-item"><div class="cl-i-label">云门 · 险峻</div>简洁锋利，如剑客。一字之中斩断思维</div>
+                <div class="cl-item"><div class="cl-i-label">法眼 · 圆融</div>博学融通，如学者。禅教一致、理事圆融</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
       <div class="page-footer"><span class="nav-btn" onclick="goTo('page-4')">← 上一章</span><span class="nav-btn" onclick="goTo('page-6')">下一章 →</span></div>
     </div>
@@ -531,40 +1011,545 @@ body{
   <!-- ===== PAGE 6: 核心经典 ===== -->
   <div class="page" id="page-6">
     <div class="page-inner">
-      <div class="page-header"><div class="ch-number">06 · TEXTS</div><h2>核心经典 · 文字之外的文字</h2></div>
+      <div class="page-header"><div class="ch-number">06 · TEXTS</div><h2>经典概要 · 文字之外的文字</h2></div>
       <div class="page-body">
-        <p>禅宗虽标榜"不立文字"，却留下了汗牛充栋的宝贵文献。这些经典不是供人研读思辨的哲学著作，而是<strong>悟道的"敲门砖"</strong>——借指以观月，得月而忘指。</p>
 
-        <h3>《六祖坛经》</h3>
-        <p>唯一被尊称为"经"的中国佛教典籍，是六祖慧能的说法记录，由弟子法海集录。确立"顿悟成佛"的核心理念，系统阐述了"无念、无相、无住"的修证纲领。其思想影响远及宋明理学（特别是陆王心学）。</p>
+        <!-- ================================ -->
+        <!-- SUBPAGE 0: 总览 / OVERVIEW        -->
+        <!-- ================================ -->
+        <div class="subpage active" id="sub-6-0">
+          <div class="subpage-inner">
+            <p>禅宗虽标榜"不立文字"，却留下了汗牛充栋的宝贵文献。这些经典不是供人研读思辨的哲学著作，而是<span>悟道的"敲门砖"</span>——借指以观月，得月而忘指。左侧子章节可逐篇深入。</p>
 
-        <div class="detail-wrap">
-          <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 讲解：《坛经》核心思想</button>
-          <div class="detail-body"><div class="detail-content">
-            <p><strong>1. 自成佛论</strong>："菩提只向心觅，何劳向外求玄"——"不悟即佛是众生，一念悟时众生是佛。"</p>
-            <p><strong>2. 无念为宗</strong>："我此法门，从上以来，先立无念为宗，无相为体，无住为本。"</p>
-            <p><strong>3. 世间觉</strong>："佛法在世间，不离世间觉，出世觅菩提，恰如求兔角。"</p>
-            <p><strong>4. 三十六对</strong>：慧能临终教授三十六"相对法"，破除学人对一切二元概念的执着。</p>
-          </div></div>
+            <div class="grid-3" style="margin-top:22px">
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-1')"><div class="label">《六祖坛经》</div><div class="val">唯一称"经"的中国佛教典籍。慧能说法录，奠定顿悟体系。<span style="display:block;color:var(--cyan);font-size:0.65rem;margin-top:6px">核心 · 必读 →</span></div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-2')"><div class="label">《金刚经》</div><div class="val">"应无所住而生其心"——慧能开悟之缘。以破相为宗。<span style="display:block;color:var(--cyan);font-size:0.65rem;margin-top:6px">核心 · 必读 →</span></div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-3')"><div class="label">《楞伽经》</div><div class="val">达摩以此经印心。融合如来藏与唯识，"佛语心为宗"。</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-4')"><div class="label">《维摩诘经》</div><div class="val">在家修行典范。"心净则佛土净"——不必远离世间另求净土。</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-5')"><div class="label">传灯·语录体系</div><div class="val">从《景德传灯录》到《五灯会元》——禅宗谱系的文字化。</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-6')"><div class="label">《碧岩录》</div><div class="val">"宗门第一书"。百则公案评唱，文字禅之巅峰。</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-7')"><div class="label">《无门关》</div><div class="val">四十八则公案精选，以"无"字为枢机。</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-6','sub-6-8')"><div class="label">《正法眼藏》</div><div class="val">道元巨著，日本曹洞宗哲学的最高峰。</div></div>
+              <div class="card" style="cursor:pointer;opacity:0.5"><div class="label">更多经典</div><div class="val">《信心铭》《证道歌》《宗镜录》《禅林僧宝传》……</div></div>
+            </div>
+          </div>
         </div>
 
-        <h3>《金刚经》</h3>
-        <p>六祖慧能因闻"应无所住而生其心"而豁然大悟。全经以"破相"为宗——"凡所有相，皆是虚妄。若见诸相非相，即见如来。"</p>
+        <!-- ================================ -->
+        <!-- SUBPAGE 1: 《六祖坛经》            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-1">
+          <div class="subpage-inner">
+            <p><strong>《六祖坛经》</strong>是唯一被尊称为"经"的中国佛教典籍（佛教传统中只有佛说为"经"），是六祖慧能（638-713）在韶州大梵寺等地的说法记录，由弟子法海集录。全经约1.2万字，分为十品（行由、般若、决疑、定慧、坐禅、忏悔、机缘、顿渐、护法、付嘱），是禅宗思想体系的终极文本。</p>
 
-        <h3>《楞伽经》</h3>
-        <p>达摩以此经印心。此经融合如来藏与唯识思想，"佛语心为宗"的思想直接奠定了禅宗"以心传心"的理念。</p>
+            <h3>《坛经》十品体系</h3>
+            <div class="cs-flow">
+              <div class="cs-row">
+                <div class="cs-tag"><span class="cs-em">行由品第一</span>慧能自述身世与得法因缘</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">般若品第二</span>"摩诃般若波罗蜜"——大智慧到彼岸</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag cs-gold"><span class="cs-em">决疑品第三</span>问答决疑：功德与福德之辨</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">定慧品第四</span>"无念为宗，无相为体，无住为本"</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag cs-cyan"><span class="cs-em">坐禅品第五</span>"外于一切善恶境界心念不起"</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-cyan"><span class="cs-em">忏悔品第六</span>无相忏悔与自性戒定慧</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag cs-purple"><span class="cs-em">机缘品第七</span>接引弟子的机缘对话</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-purple"><span class="cs-em">顿渐品第八</span>顿悟与渐悟之辨</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag cs-pink"><span class="cs-em">护法品第九</span>与朝廷的关系</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-pink"><span class="cs-em">付嘱品第十</span>临终付嘱与三十六对法</div>
+              </div>
+            </div>
 
-        <h3>《维摩诘经》</h3>
-        <p>对禅宗影响极大的在家修行典范。"心净则佛土净"——不必远离世间另求净土。</p>
+            <h3>思想体系总图</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">一切众生皆有佛性</div><div class="cf-sub">本体论基础 · 如来藏思想</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card src"><div class="cf-name">菩提只向心觅</div><div class="cf-sub">自成佛论 · 不假外求</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card"><div class="cf-name">无念为宗</div><div class="cf-sub">于念而不念</div></div>
+                <div class="cf-card prac"><div class="cf-name">无相为体</div><div class="cf-sub">于相而离相</div></div>
+                <div class="cf-card"><div class="cf-name">无住为本</div><div class="cf-sub">于一切法上无住</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card ulti"><div class="cf-name">顿悟成佛</div><div class="cf-sub">一念悟时 · 众生即佛</div></div>
+                <div class="cf-card"><div class="cf-name">平常心是道</div><div class="cf-sub">佛法在世间 · 不离世间觉</div></div>
+              </div>
+            </div>
 
-        <h3>语录·灯录·公案集</h3>
-        <ul>
-          <li><strong>《景德传灯录》</strong>：第一部系统灯录，确立禅宗传法谱系</li>
-          <li><strong>《五灯会元》</strong>：五部灯录汇编，保存大量祖师言行</li>
-          <li><strong>《碧岩录》</strong>（圆悟克勤）："宗门第一书"，代表文字禅的巅峰</li>
-          <li><strong>《无门关》</strong>（无门慧开）：选编四十八则公案，以"无"字为枢机</li>
-          <li><strong>《正法眼藏》</strong>（道元）：日本曹洞宗哲学巨著</li>
-        </ul>
+            <h3>核心论断 · 逐条解析</h3>
+
+            <div class="quote-module">
+              <div class="qm-header">菩提本无树，明镜亦非台<br>本来无一物，何处惹尘埃</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典背景</div><p>慧能所作示法偈。禅宗史上最著名的偈颂。五祖弘忍令门人各作一偈以呈见解，神秀作"身是菩提树，心如明镜台，时时勤拂拭，勿使惹尘埃"，慧能闻而和此偈，五祖遂传衣钵。</p></div>
+                <div class="qm-section"><div class="qm-label">各家解读</div><p><strong>传统解释</strong>：神秀之偈为"渐修"路向——需时时打扫心地；慧能之偈为"顿悟"路向——佛性本来清净，何来尘埃可染。<strong>现代批判</strong>（胡适）：敦煌本《坛经》中慧能原偈为"佛性常清净，何处惹尘埃"，今传"本来无一物"是后人修改。这一修改标志着禅宗从"佛性实有"向"般若性空"的转向。<strong>哲学阐释</strong>：神秀之偈预设"能所二分"——有主体（心）、有客体（尘埃）；慧能之偈消解了能所二元，直显绝对本体。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学史意义</div><p>这组偈颂定义了宋明理学中"程朱理学"（渐修——格物穷理）与"陆王心学"（顿悟——致良知）的对立模式。钱穆称慧能此偈为中国思想史上"第一次真正的革命"。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">不是风动，不是幡动，仁者心动</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典背景</div><p>慧能初至广州法性寺，遇二僧争论风动还是幡动，慧能出此言。印宗法师闻之，知是禅宗传人，为之剃度。此即慧能正式出家的因缘。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>此公案直指现象世界的运动来源于"心"的分别活动。不是否认物理运动，而是指出：若无"心"的认知参与，"动"与"不动"的二元区分无从建立。这并非西方意义上的"唯心主义"（否定外部世界存在），而是一种"认识论反转"——将问题从"世界是什么"转向"世界的意义如何生成"。</p></div>
+                <div class="qm-section"><div class="qm-label">跨文化映照</div><p>与贝克莱"存在即被感知"有表面相似，但本质不同：贝克莱是在认识论上论证上帝的存在；慧能则是在修行论上开示"心"的能动性——心若不动，万法皆寂。海德格尔的"在世之在"（In-der-Welt-sein）与此更为接近：此在与世界不可分，世界的意义在此在中绽出。</p></div>
+              </div>
+            </div>
+
+            <h3>核心教义 · 系统梳理</h3>
+
+            <div class="cl-card">
+              <div class="cl-title">一、无念为宗 · 无相为体 · 无住为本</div>
+              <p>慧能提出的三大修行纲领，是《坛经》体系中最为凝练的哲学公式。</p>
+              <div class="cl-grid">
+                <div class="cl-item"><div class="cl-i-label">无念</div>"于念而不念"——不是没有念头，而是念起时不执着、不攀缘、不系缚。这是对治"有念"（执着念头）的偏执。</div>
+                <div class="cl-item"><div class="cl-i-label">无相</div>"于相而离相"——面对万象而不被形相所缚。不是否定现象世界，而是不执着于相。这是对治"着相"（执着外境）的偏执。</div>
+                <div class="cl-item"><div class="cl-i-label">无住</div>"于一切法上无住"——心念如流水，不滞留于任何一物。"念念不住"才是心的本来状态。这是对治"住着"（停滞执着）的偏执。</div>
+                <div class="cl-item"><div class="cl-i-label">三位一体</div>无念是体、无相是相、无住是用——三者不是三个独立的法门，而是同一"无心"境界的三个面向。</div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">二、顿悟成佛 · 迷悟一念间</div>
+              <p>"不悟即佛是众生，一念悟时众生是佛。"这是禅宗最核心的实践论命题。顿悟不是渐修在量上的积累，而是质的飞跃。但慧能并未完全否定渐修："法无顿渐，人有利钝。"顿渐是教学方法之分，不是真理层次之别。</p>
+              <div class="insight-box"><div class="ib-label">哲学辨析</div><p>顿悟论与中国传统思维方式深度契合——道家"得意忘言"、儒家"一旦豁然贯通"（朱熹）、"致良知"（王阳明）皆是同一思维模式。这种思维认为终极真理不能通过逻辑推理逐步逼近，而需在某一"契机"中整体显现。这与西方哲学从柏拉图到黑格尔的"辩证法"路径形成鲜明对比。</p></div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">三、三十六对法 · 超越二元</div>
+              <p>慧能临终教授三十六对法（天地、日月、暗明、阴阳、水火、有无、色空、动静、清浊、凡圣、大小、长短……），教导学人"出没即离两边"。"问有将无对，问无将有对，问凡将圣对，问圣将凡对"——通过使用对立概念来破除对任何单一概念的执着。</p>
+              <div class="insight-box"><div class="ib-label">思想史意义</div><p>三十六对法是禅宗"不二"思想最具体的教学技术。它使中观哲学中"缘起性空"的抽象原则变成可以在具体问答中操作的教学工具。这直接影响了后来的公案教学法和宋明理学的"两轮"思维。</p></div>
+            </div>
+
+            <div class="detail-wrap">
+              <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 延伸：《坛经》与陆王心学的渊源</button>
+              <div class="detail-body"><div class="detail-content">
+                <p>宋明理学中"程朱理学"与"陆王心学"的对立，思想根源可追溯到《坛经》。陆九渊（1139-1193）的"宇宙便是吾心"直承慧能"一切万法不离自性"；王阳明（1472-1529）的"致良知"——人人都有良知，只需"一念反转"即可成圣——几乎是《坛经》"顿悟成佛"的儒学版本。</p>
+                <p>王阳明的"无善无恶心之体"与慧能的"本来无一物"之间的对应关系更为直接。事实上，王阳明及其后学（王龙溪、罗汝芳等）的"现成良知"说，几乎就是将《坛经》"众生即佛"的命题置入儒家的伦理框架中。</p>
+              </div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 2: 《金刚经》              -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-2">
+          <div class="subpage-inner">
+            <p><strong>《金刚般若波罗蜜经》</strong>（简称《金刚经》）属于大乘般若经类，是六百卷《大般若经》的精要浓缩本。全经共三十二品，约五千余字，以佛与须菩提的问答展开。此经是禅宗的核心理论来源——六祖慧能因闻"应无所住而生其心"而豁然大悟。</p>
+
+            <div class="insight-box"><div class="ib-label">历史地位</div><p>《金刚经》是中国佛教流通最广、持诵最多的经典。禅宗自五祖弘忍始以《金刚经》代替《楞伽经》作为印心经典，标志着禅宗从"如来藏"思想向"般若"思想的转折。</p></div>
+
+            <h3>破相逻辑 · 经典的三段式结构</h3>
+            <div class="cs-flow">
+              <div class="cs-row">
+                <div class="cs-tag cs-cyan"><span class="cs-em">立</span>佛说某某（如"庄严佛土"）</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">破</span>即非某某（"即非庄严"）</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">合</span>是名某某（"是名庄严"）</div>
+              </div>
+              <div class="cs-sep"></div>
+              <div class="cs-row">
+                <div class="cs-tag"><span class="cs-em">例1</span>"如来说三十二相"</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">"即是非相"</span></div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">"是名三十二相"</span></div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag"><span class="cs-em">例2</span>"佛说般若波罗蜜"</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">"即非般若波罗蜜"</span></div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">"是名般若波罗蜜"</span></div>
+              </div>
+              <div class="cs-sep"></div>
+              <div class="cs-row" style="justify-content:center">
+                <div class="cs-tag cs-pink" style="max-width:500px"><span class="cs-em">哲学逻辑</span>肯定（世俗谛）→ 否定（胜义谛）→ 再次肯定（方便施设）——龙树中观"三是偈"在经典中的具体运用</div>
+              </div>
+            </div>
+
+            <h3>核心论断 · 逐条解析</h3>
+
+            <div class="quote-module">
+              <div class="qm-header">凡所有相，皆是虚妄。若见诸相非相，即见如来。</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">文本定位</div><p>《金刚经》第五品（如理实见分）。这是全经最核心的"破相"总纲。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>"相"（lakṣaṇa）指一切可以被认知所把握的形相、特征、属性。世间万象皆因缘和合而成，没有独立自存的本体，故"皆是虚妄"。"虚妄"不等于"不存在"，而是指它们缺乏"自性"（独立实在性）。"见诸相非相"——看透现象的本质为空，但这"空"并非虚无，而是"空性"本身——即"见如来"。</p></div>
+                <div class="qm-section"><div class="qm-label">禅宗的运用</div><p>慧能将其转化为"无相为体"的修行原则：不否定日常经验中的"相"，但不执着于"相"。"见一切法，不著一切法"——在现象中照见本质，在本质中不废现象。这就是"色即是空，空即是色"在禅修中的具体化。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">应无所住而生其心</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">文本定位</div><p>《金刚经》第十品（庄严净土分）。慧能正是在听闻此句时豁然大悟。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>"无所住"——心不执着、不停留在任何对象（色、声、香、味、触、法）上。"而生其心"——不是不生心，而是生"无住之心"。禅宗将此发展为"无念"法门：心念如流水，念念不停留。当代德国哲学家奥特（Heinrich Ott）称此句为"世界上最深刻的自由定义"——自由不是为所欲为，而是不系于任何一物，同时又不失生命的全体活泼。</p></div>
+                <div class="qm-section"><div class="qm-label">慧能开悟</div><p>据《坛经》记载，慧能在卖柴途中闻客诵《金刚经》，至"应无所住而生其心"句，"心即开悟"。后来在五祖座下，慧能又于三更入室听五祖讲《金刚经》，至同一句时，"言下大悟"——"一切万法不离自性"。这一重复印证说明此句是《金刚经》的"眼目"所在。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">一切有为法，如梦幻泡影，如露亦如电，应作如是观</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">文本定位</div><p>《金刚经》结尾的"六如偈"，是全经修行方法的总结。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>六种比喻——梦、幻、泡、影、露、电——从不同角度说明有为法的虚妄性：梦（虚幻不实）、幻（似有非有）、泡（刹那生灭）、影（依他而起）、露（短暂易逝）、电（瞬间即灭）。但这不是虚无主义的悲观论调，而是通过"如实观照"来破除对现象世界的执着。看清世界的本来面目后，不是逃离世界，而是以更自由的心态投入世界。</p></div>
+              </div>
+            </div>
+
+            <h3>金刚经与禅宗 · 交互影响</h3>
+            <div class="cl-card">
+              <div class="cl-title">五祖弘忍的经典转换</div>
+              <p>达摩以《楞伽经》印心，至五祖弘忍始改以《金刚经》印心。这一转变标志着禅宗从"如来藏"（佛性本有）到"般若"（性空无相）的思想重心的转移。事实上，慧能《坛经》融合了这两大传统——"即心即佛"来自如来藏，"无念无相无住"来自般若。此后的禅宗一直在这两种倾向之间保持张力。</p>
+              <div class="insight-box"><div class="ib-label">文本学问题</div><p>敦煌本《坛经》记载慧能闻《金刚经》开悟，但胡适考证认为此说可能性低。然而，不论历史事实如何，"闻《金刚经》开悟"这一叙事的象征意义远大于历史事实——它标志着禅宗从《楞伽经》的"唯识"传统转向《金刚经》的"般若"传统。</p></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 3: 《楞伽经》              -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-3">
+          <div class="subpage-inner">
+            <p><strong>《楞伽阿跋多罗宝经》</strong>（简称《楞伽经》），共四卷，是融合如来藏思想与唯识学说的中期大乘经典。初祖菩提达摩以《楞伽经》印心传法，付嘱二祖慧可："吾观中土唯有此经，可依之而行。"此经在禅宗早期具有不可替代的地位。</p>
+
+            <div class="insight-box"><div class="ib-label">核心定位</div><p>"佛语心为宗"——此经以"心"为核心范畴，将"如来藏自性清净心"与"阿赖耶识"（第八识）统一起来，奠定了禅宗"即心即佛"的本体论基础。达摩选择此经，因其思想最接近禅宗"以心传心"的根本精神。</p></div>
+
+            <h3>心识结构 · 唯识与如来藏的融合</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">如来藏自性清净心</div><div class="cf-sub">一切众生本具的清净佛性</div></div>
+                <div class="cf-arr" style="color:var(--text-faint);padding:0 8px;font-size:0.7rem">↓ 客尘所染</div>
+                <div class="cf-card src"><div class="cf-name">无始虚妄分别（无明）</div><div class="cf-sub">覆盖真心的根本迷惑</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card prac" style="max-width:280px"><div class="cf-name">八识体系</div><div class="cf-sub">前五识（感觉）→ 第六意识（思维）→ 第七末那识（自我意识）→ 第八阿赖耶识（含藏种子）</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card"><div class="cf-name">转识成智</div><div class="cf-sub">转八识为四智：大圆镜智、平等性智、妙观察智、成所作智</div></div>
+                <div class="cf-card ulti"><div class="cf-name">自觉圣智</div><div class="cf-sub">如来藏在圣者心中的直接呈现</div></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">核心命题 · 五种法、三自性、八识、二无我</div>
+              <p>《楞伽经》以"五法、三性、八识、二无我"概括全部佛法。</p>
+              <div class="cl-grid">
+                <div class="cl-item"><div class="cl-i-label">五种法</div>相（现象）、名（概念）、分别（认识活动）、正智（如实认知）、如如（真如境界）——从迷到悟的五个层次。</div>
+                <div class="cl-item"><div class="cl-i-label">三自性</div>遍计所执性（虚妄分别）、依他起性（缘起）、圆成实性（真如）——"三性"说。</div>
+                <div class="cl-item"><div class="cl-i-label">八识</div>前五、第六、第七、第八——全部心识活动。</div>
+                <div class="cl-item"><div class="cl-i-label">二无我</div>人无我（个体没有永恒自我）、法无我（一切法没有独立自性）。</div>
+              </div>
+            </div>
+
+            <h3>达摩与《楞伽经》</h3>
+            <div class="quote-module">
+              <div class="qm-header">吾观中土唯有此经，可依之而行</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">历史记载</div><p>据《续高僧传》，达摩以四卷《楞伽经》付嘱慧可，并说"此经是我心要"。此后数代禅宗祖庭均以《楞伽经》为印证心要的依准。道宣（596-667）记载达摩弟子"常赍此经以为心要"。</p></div>
+                <div class="qm-section"><div class="qm-label">思想原因</div><p>达摩选择《楞伽经》而非其他经典，因其最契合"不立文字、教外别传"的宗旨。此经处处强调"自觉圣智"超越语言、文字、思维——"真实者，离文字故"。"佛语心为宗"——"心"（citta）是核心，"宗"（yāna）是归趣——一切教法归于"心"。</p></div>
+                <div class="qm-section"><div class="qm-label">历史转折</div><p>五祖弘忍之后，《金刚经》取代《楞伽经》成为禅宗印心首选。道信（580-651）和弘忍（601-674）创立的"东山法门"开始融合般若思想。这一转变使禅宗从"唯识系统"转向"般若系统"——从"万法唯识"的分析路径转向"即心即佛"的直接路径。</p></div>
+              </div>
+            </div>
+
+            <div class="detail-wrap">
+              <button class="detail-trigger" onclick="this.parentElement.classList.toggle('open')"><span class="arrow">▸</span> 延伸："如来藏"与"空性"的张力</button>
+              <div class="detail-body"><div class="detail-content">
+                <p>《楞伽经》的核心哲学张力在于"如来藏"（佛性本有、清净自性）与"空性"（一切法无自性）之间的矛盾。如果一切法空，如来藏是否也空？如果如来藏是实有，岂非落入"常见"？</p>
+                <p>《楞伽经》的解决方法是将"如来藏"界定为"空性"的异名——"如来藏是善不善因，能遍兴造一切众生，但非以'我'为自性。"如来藏不是实体性的"灵魂"或"神我"，而是"空性"被积极表述时的名称。这一微妙的非实体化使得《楞伽经》既能作为"安心"的教法（肯定佛性的存在），又不会堕入"实有"的执着。后来的禅宗正是继承了这个"非有非无"的中道立场。</p>
+              </div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 4: 《维摩诘经》            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-4">
+          <div class="subpage-inner">
+            <p><strong>《维摩诘所说经》</strong>（简称《维摩诘经》），三卷十四品，是禅宗最推崇的在家修行典范。主角维摩诘（Vimalakīrti）是一位在家居士，却以不可思议的智慧和辩才折服了包括文殊师利菩萨在内的全部佛弟子。此经对禅宗的"生活禅"和"不二"思想产生了决定性影响。</p>
+
+            <h3>全经结构 · 十四品脉络</h3>
+            <div class="cs-flow">
+              <div class="cs-row">
+                <div class="cs-tag cs-cyan"><span class="cs-em">佛国品第一</span>"心净则佛土净"——经眼所在</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">菩萨品</span>诸大弟子不敢问疾</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">文殊问疾</span>两大智慧者巅峰对话</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag"><span class="cs-em">不二法门品</span>维摩诘默然无言</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-purple"><span class="cs-em">不可思议品</span>请香饭、借座灯王</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-pink"><span class="cs-em">法供养品</span>最上供养是法供养</div>
+              </div>
+            </div>
+
+            <h3>核心论断</h3>
+
+            <div class="quote-module">
+              <div class="qm-header">心净则佛土净</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典背景</div><p>《维摩诘经·佛国品》开头即提出此命题。舍利弗怀疑"释迦牟尼成佛的世界为何有众多不净"时，佛以足趾按地，刹那间世界变得庄严清净。"若菩萨欲得净土，当净其心，随其心净，则佛土净。"</p></div>
+                <div class="qm-section"><div class="qm-label">禅宗阐释</div><p>慧能完全吸收了这一思想。慧能明确指出"东方人造罪，念佛求生西方；西方人造罪，念佛求生何国？"——极乐世界不在西方，而在"净心"的当下。"佛法在世间，不离世间觉"——不必离开此世另求净土，此心净则此土净。</p></div>
+                <div class="qm-section"><div class="qm-label">跨文化比较</div><p>这与康德的"哥白尼革命"有类似的结构：不是物决定心的认识，而是心的认识方式决定了现象世界的组织方式。但康德仍是在认识论的"知性"层面讨论，维摩诘则是在修行论的"心净"层面展开——净心不仅仅是认识方式的转变，更是存在方式的根本转化。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">维摩诘默然 · 真入不二法门</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典场景</div><p>文殊师利问维摩诘："何等是菩萨入不二法门？"维摩诘默然无言。文殊赞叹："善哉善哉！乃至无有文字语言，是真入不二法门。"这是《维摩诘经》最著名的场景，也是禅宗"不立文字"最直接的经典依据。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>诸菩萨各说不二——如生灭不二、善恶不二、我无我不二——但维摩诘的沉默超越了所有语言表达。因为一旦开口说"不二"，就已经落入"二"（不二 vs 二）的分别中。沉默不是不说话，而是"默如雷"——在彻底的沉默中，对立的概念框架自然消融。这个场景堪称东方哲学中对语言界限最深刻的自觉：真理不是被谈论的对象，而是被活出来的实存状态。</p></div>
+                <div class="qm-section"><div class="qm-label">禅宗影响</div><p>此场景直接启发了禅宗的"不立文字"主张和"以心传心"的教学法。维摩诘的沉默在公案中被反复引用——"维摩诘默然"本身就是一则公案。大慧宗杲说："若有人问老僧不二法门，便与一喝。"——喝就是"现代版"的维摩诘沉默。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">不舍道法而现凡夫事</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原典背景</div><p>维摩诘虽是在家居士，却"有妻子、眷属、资产、田宅"，但"常修梵行"。"不舍道法而现凡夫事"——这是大乘佛教"烦恼即菩提"的生活化表达。</p></div>
+                <div class="qm-section"><div class="qm-label">禅宗转化</div><p>此经直接奠定了禅宗"生活禅"的理论基础。"平常心是道"（马祖道一）、"运水搬柴无非妙道"（庞蕴）——皆是从此经"不舍道法而现凡夫事"思想而来。赵州从谂的"吃茶去"三字公案——就在日常生活的喝茶动作中体会佛法——是对维摩诘精神的极致发挥。</p></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 5: 传灯·语录体系            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-5">
+          <div class="subpage-inner">
+            <p>禅宗的"文字记录"传统——包括<span>语录</span>（祖师生前言行的即时记录）、<span>灯录</span>（传法谱系的历史编纂）和<span>公案集</span>（教学案例的汇编）——构成了禅宗文献最独特的部分。这些文献不是系统的哲学著作，而是活的、情境化的教学记录。</p>
+
+            <h3>灯录体系 · 传法谱系的确立</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">《景德传灯录》</div><div class="cf-sub">道原 著 · 1004年<br>30卷 · 1701人</div></div>
+                <div class="cf-card src"><div class="cf-name">《天圣广灯录》</div><div class="cf-sub">李遵勗 编 · 1036年<br>30卷</div></div>
+              </div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card prac"><div class="cf-name">《建中靖国续灯录》</div><div class="cf-sub">惟白 编 · 1101年</div></div>
+                <div class="cf-card"><div class="cf-name">《联灯会要》</div><div class="cf-sub">悟明 编 · 1183年</div></div>
+                <div class="cf-card prac"><div class="cf-name">《嘉泰普灯录》</div><div class="cf-sub">正受 编 · 1204年</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card ulti"><div class="cf-name">《五灯会元》</div><div class="cf-sub">普济 编 · 1252年<br>以上五灯汇为一书 · 20卷</div></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">灯录的结构与功能</div>
+              <p>每则灯录条目通常包含：祖师传记（籍贯、出家、得法因缘）→ 师承关系 → 主要法语（机缘语句）→ 传法弟子名录 → 临终遗言。灯录不是客观的"历史记录"，而是一种"法统叙事"——通过谱系的连续性证明禅宗"以心传心"的正统性。</p>
+              <div class="insight-box"><div class="ib-label">史料价值</div><p>《景德传灯录》是中国第一部系统的禅宗史。虽然其早期传承（西天二十八祖、达摩至慧能）的记载多有传说成分，但唐宋部分的记载是研究禅宗思想史和制度史的核心史料。胡适的禅宗史研究很大程度上就是对《景德传灯录》与敦煌文献的批评性对照。</p></div>
+            </div>
+
+            <h3>语录体 · 活的哲学记录</h3>
+            <p>与传统的佛教经论不同，禅宗语录不是系统论述，而是具体教学场景的即时记录。每个语录都有特定的时空和人物背景——某人在某个问题情境中问，祖师在某时某地答。这种体裁本身即体现了禅宗的"应机接物"精神。</p>
+
+            <div class="grid-2">
+              <div class="card"><div class="label">《马祖道一语录》</div><div class="val">"即心即佛"、"非心非佛"、"平常心是道"——马祖的教学层层翻转，破除学人一切执着。</div></div>
+              <div class="card"><div class="label">《临济录》</div><div class="val">义玄的"棒喝"记录。"逢佛杀佛，逢祖杀祖"——彻底的大解脱精神。</div></div>
+              <div class="card"><div class="label">《赵州录》</div><div class="val">赵州从谂的"吃茶去"、"洗钵盂去"——平凡中的大智慧。</div></div>
+              <div class="card"><div class="label">《云门录》</div><div class="val">文偃"云门三句"——"函盖乾坤、截断众流、随波逐浪"。</div></div>
+            </div>
+
+            <h3>公案集 · 参究的文本化</h3>
+            <div class="cl-card">
+              <div class="cl-title">从语录到公案：教学法的演变</div>
+              <p>早期禅宗以师徒直接问答为主（语录）。宋代以后，禅师开始从前人语录中精选典型案例，加上评唱、颂古形成公案集。公案不再是具体的教学记录，而成为"参究对象"——这标志着禅宗教学从"现场施设"到"文本参究"的重大转变。</p>
+            </div>
+            <div class="grid-3">
+              <div class="card"><div class="label">《碧岩录》</div><div class="val">圆悟克勤 · 百则公案 · 评唱+颂古+着语</div></div>
+              <div class="card"><div class="label">《无门关》</div><div class="val">无门慧开 · 四十八则 · 评+颂</div></div>
+              <div class="card"><div class="label">《从容录》</div><div class="val">万松行秀 · 百则 · 曹洞宗立场</div></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 6: 《碧岩录》              -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-6">
+          <div class="subpage-inner">
+            <p><strong>《碧岩录》</strong>全称《佛果圆悟禅师碧岩录》，十卷，由临济宗杨岐派传人圆悟克勤（1063-1135）编纂。此书精选百则公案，每则包含：垂示（总纲提示）→ 公案原文 → 雪窦重显的颂古诗 → 圆悟的评唱（逐句分析）→ 着语（简短点评）。此书被尊为"宗门第一书"。</p>
+
+            <div class="insight-box"><div class="ib-label">书名的来历</div><p>圆悟克勤在湖南夹山灵泉院编纂此书，夹山是唐末善会禅师的道场，善会曾引《宝藏论》"猿抱子归青嶂后，鸟衔花落碧岩前"，故以"碧岩"名其居。圆悟在此"碧岩"中完成了这部不朽之作。</p></div>
+
+            <h3>一则公案的结构分解</h3>
+            <div class="cs-flow">
+              <div class="cs-row">
+                <div class="cs-tag cs-cyan"><span class="cs-em">垂示</span>圆悟的序言 / 教学提示</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">公案原文</span>唐代禅师的机锋对话</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">雪窦颂古</span>七言古诗重述公案精神</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag" style="max-width:none"><span class="cs-em">圆悟评唱</span>对公案和颂古逐句分析、引证经典、揭示禅理——这是《碧岩录》最有价值的部分</div>
+              </div>
+              <div class="cs-row">
+                <div class="cs-tag cs-purple" style="max-width:none"><span class="cs-em">着语</span>简短而精辟的点评穿插在公案和颂古的句子之间，如"好！"、"毒！"、"错！"——读《碧岩录》不可忽略这些"副文本"</div>
+              </div>
+            </div>
+
+            <h3>名案赏析：第一则 · 达摩廓然无圣</h3>
+            <div class="quote-module">
+              <div class="qm-header">梁武帝问达摩："如何是圣谛第一义？"<br>达摩云："廓然无圣！"</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">公案背景</div><p>梁武帝是中国最崇佛的皇帝之一，建寺度僧无数。他问达摩"我做了这些功德有没有功德"，达摩答"实无功德"。再问"什么是圣谛第一义"（佛法最高真理），达摩答"廓然无圣"——没有圣者，没有真理。</p></div>
+                <div class="qm-section"><div class="qm-label">圆悟评唱精要</div><p>"武帝被他一问，直得如桶底脱相似。"圆悟指出：武帝的发问是在"圣"与"凡"的二元框架中，达摩的"廓然无圣"不是否定佛法，而是消解这个框架本身。"若透过这个关，方知无佛可成，无众生可度。"——这是禅宗"无所得"精神的极致表达。</p></div>
+                <div class="qm-section"><div class="qm-label">雪窦颂古赏析</div><p>"圣谛廓然，何当辨的？对朕者谁，还云不识。"雪窦的颂简练而锋利——"圣谛廓然"点出达摩的回答；"对朕者谁"回指达摩不认梁武帝的典故；"还云不识"——不识才是真识。颂古不是解释公案，而是以诗意的语言重新激活公案的精神。</p></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">《碧岩录》的历史命运</div>
+              <p>圆悟克勤的弟子大慧宗杲（1089-1163）曾将《碧岩录》的木版全部烧毁。大慧认为当时禅林的"文字禅"风气过盛，学人沉迷于评唱和颂古的文字游戏，将公案当成文学赏析的对象，忘记了参究的实修目的。"烧版"事件是禅宗史上"文字禅"与"看话禅"激烈对立的标志性事件。但《碧岩录》早已流传民间，所以并未因此失传。</p>
+              <div class="insight-box"><div class="ib-label">评价 · "宗门第一书"</div><p>《碧岩录》是禅宗"文字禅"的最高成就。圆悟的评唱是禅宗史上最伟大的教学文献之一——它既保留了公案原始的锐利，又通过详尽的评唱使公案中的哲学意蕴充分展开。如果说公案是"诗"，圆悟的评唱就是"诗的诗"（元评论）。</p></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 7: 《无门关》              -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-7">
+          <div class="subpage-inner">
+            <p><strong>《无门关》</strong>，一卷，宋代临济宗杨岐派禅僧无门慧开（1183-1260）于1229年编撰。选取四十八则公案，每则配以评语和颂诗。此书是禅宗公案集中影响最广、流通最广的选本——在日本尤其受欢迎。</p>
+
+            <div class="insight-box"><div class="ib-label">书名的含义</div><p>"无门"出自第一则"赵州狗子"公案中的"无"字。"无门"即"无"之门——通过"无"字进入禅悟的通道。"佛语心为宗，无门为法门"——无门就是"不二法门"，因为真正的门不是一扇门，而是没有门。</p></div>
+
+            <h3>核心之"无" · 赵州狗子公案</h3>
+            <div class="quote-module">
+              <div class="qm-header">赵州狗子 · 无</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">公案原文</div><p>赵州从谂禅师。僧问："狗子还有佛性也无？"州云："无！"</p></div>
+                <div class="qm-section"><div class="qm-label">无门慧开的评语</div><p>"参禅须透祖师关，妙悟要穷心路绝。祖关不透，心路不绝，尽是依草附木精灵。且道如何是祖师关？只这一个'无'字，乃宗门一关也。遂目之曰：禅宗无门关。透得过者，非但亲见赵州，便可与历代祖师把手共行，眉毛厮结，同一眼见，同一耳闻，岂不庆快！"</p></div>
+                <div class="qm-section"><div class="qm-label">参究方法</div><p>大慧宗杲的"看话禅"以此公案为根本话头。方法：将身心全部投入这个"无"字——不是思考"为什么是无？"，不是理解"无的含义"，而是像老鼠啃棺材一样咬着这个"无"字不放，在疑情中持续参究。"三百六十骨节，八万四千毫窍，一似个火相似。"——全身心燃烧在这个"无"字上。突然在某一个瞬间，疑情"爆裂"，"无"字脱落。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>从教义上看，一切众生皆有佛性，赵州却说"无"。这不是否定佛性，而是用"无"字斩断学人的概念思维。当学人执着"有佛性"时，赵州说"无"；如果学人执着"无佛性"，赵州又会说"有"。赵州的"无"不是"有"的对立面，而是对所有概念化的"有/无"二元对立的超越。这个"无"是一个"无底箩筐"——它吞噬所有概念和解释，使人不得不直接面对语言的界限。</p></div>
+              </div>
+            </div>
+
+            <h3>《无门关》的结构</h3>
+            <div class="cs-flow">
+              <div class="cs-row">
+                <div class="cs-tag cs-cyan"><span class="cs-em">公案原文</span>简洁的禅师机锋对话</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag cs-gold"><span class="cs-em">无门评语</span>揭示公案的"眼目"所在</div>
+                <div class="cs-arr">→</div>
+                <div class="cs-tag"><span class="cs-em">颂诗</span>四句偈总结公案精神</div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card"><div class="label">第一则 · 赵州狗子</div><div class="val">参"无"字，为全书枢机</div></div>
+              <div class="card"><div class="label">第十四则 · 南泉斩猫</div><div class="val">南泉普愿斩猫以息二僧之争——"斩"的象征意义</div></div>
+              <div class="card"><div class="label">第二九则 · 风动幡动</div><div class="val">慧能"仁者心动"——六祖的开示</div></div>
+              <div class="card"><div class="label">第三八则 · 庭前柏树子</div><div class="val">赵州答"如何是祖师西来意？"——"庭前柏树子"</div></div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">颂 · 无门慧开</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">全诗</div><p>大道无门，千差有路。<br>透得此关，乾坤独步。</p></div>
+                <div class="qm-section"><div class="qm-label">赏析</div><p>四句十六字，是全书的精髓所在。"大道无门"——终极真理没有固定的入口；"千差有路"——千差万别的修行路径都有各自的入门方式；"透得此关"——一旦通过了这个"无门之关"；"乾坤独步"——就可以独占天地、自由无碍。这个颂直接呼应了"无门为法门"的宗旨。</p></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 8: 《正法眼藏》            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-6-8">
+          <div class="subpage-inner">
+            <p><strong>《正法眼藏》</strong>（日文：Shōbōgenzō），九十五卷，是日本曹洞宗始祖道元（1200-1253）毕生著述的汇编，也是日本佛教史上最伟大的哲学著作。全书采用"法语"体裁——每卷独立论述一个核心概念（如"有时"、"修证"、"佛性"、"诸法实相"），文风兼具哲学的精密和诗意的深邃。</p>
+
+            <div class="insight-box"><div class="ib-label">书名的含义</div><p>"正法眼藏"（Saddharma-cakṣu）是禅宗传承的核心用语——释迦牟尼在"拈花微笑"公案中以"正法眼藏"付嘱迦叶。道元以此为题，表明此书是"真佛法的眼睛和宝藏"。</p></div>
+
+            <h3>核心概念体系</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto" style="max-width:300px"><div class="cf-name">修证一如</div><div class="cf-sub">修行不是达到开悟的手段，修行本身就是开悟。"修"与"证"不是两件事。</div></div>
+                <div class="cf-card src" style="max-width:300px"><div class="cf-name">只管打坐（Shikantaza）</div><div class="cf-sub">坐禅不是工具，而是目的的自身呈现。打坐本身就是佛陀的"正法眼藏"。</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-fork-row"></div>
+              <div class="cf-row">
+                <div class="cf-card prac"><div class="cf-name">有时</div><div class="cf-sub">存在就是时间。不是"存在"在时间中存在，而是"存在"本身就是"时"。"时"即是"佛"。</div></div>
+                <div class="cf-card"><div class="cf-name">无常常</div><div class="cf-sub">"无常"本身不是恒常不变的——连"无常"都不是"常"。这是对"无常"概念的彻底消解。</div></div>
+                <div class="cf-card"><div class="cf-name">三昧王三昧</div><div class="cf-sub">一切三昧之王——坐禅本身就是最圆满的三昧，包含一切三昧。</div></div>
+              </div>
+              <div class="cf-arrow-row"></div>
+              <div class="cf-row">
+                <div class="cf-card ulti" style="max-width:350px"><div class="cf-name">有时之而今 · 豁然贯通</div><div class="cf-sub">"有时"的意思是"存在即时间"，而"而今"是时间的真实状态——不是过去、现在、未来的线性序列，而是每一个"当下"都完整包含整个"存在"。</div></div>
+              </div>
+            </div>
+
+            <h3>核心篇章精读</h3>
+
+            <div class="quote-module">
+              <div class="qm-header">有时（Uji）</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原文精要</div><p>"诸法即是时。如是我有时，物非时移。春不必然是春，而春已尽春时。"道元的"有时"论从根本上解构了线性的时间观。不是"我在时间中存在"，而是"我就是时间"。"青山有时站起来，成为山"——存在物的存在方式本身就是时间的呈现。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学阐释</div><p>道元的时间论被认为是20世纪以前东方哲学中最深刻的时间哲学。他提出"有时"（Uji）——"有"（存在）和"时"（时间）不是两个不同的范畴，而是一个不可分割的现实。时间不是存在物的"容器"或"背景"，存在物本身就是时间的显现方式。因此，每一刻都是"全存在"的完全呈现——"山是时间，海是时间"。</p></div>
+                <div class="qm-section"><div class="qm-label">跨文化对话</div><p>海德格尔在《存在与时间》中提出的"此在的时间性"——此在的存在方式就是时间本身——与道元的"有时"有着惊人的相似性。京都学派的西谷启治将道元与海德格尔进行了系统的比较。德勒兹的"时间-影像"和"生成"哲学也与道元的"有时"产生了跨时空的共鸣。</p></div>
+              </div>
+            </div>
+
+            <div class="quote-module">
+              <div class="qm-header">修证一如（Shushō-ittō）</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">原文精要</div><p>"修证一如，非修在证前，也非证在修前。修与证，同时而起。譬如月与水，月非水外，水非月外。"道元批判了"先修行→后证悟"的线性模式，提出"修即证、证即修"的圆环结构。</p></div>
+                <div class="qm-section"><div class="qm-label">哲学革命</div><p>这是禅宗修行论中最大胆的革命。传统佛教（包括中国禅宗的大部分流派）都隐含着一个目的论假设：修行是为了达到开悟（证）。道元斩断了这个手段-目的的联结：如果修行只是手段、开悟只是目的，那么修行本身就是"没有价值"的。道元说：不是！打坐本身就是佛的"正法眼藏"，在打坐的这一瞬间，证悟已经完全实现——不需要等待任何"未来"的开悟。"只管打坐"不是"为了开悟而打坐"，而是"打坐即开悟"。</p></div>
+                <div class="qm-section"><div class="qm-label">对现代禅修的启示</div><p>道元的"修证一如"对当代正念运动产生了深远影响。当"正念"被普遍理解为"减压"或"提升效率"的工具时，道元的观点提出了一个尖锐的挑战：如果正念只是工具，那么它就不是正念。真正的"修"本身就是目标——在每一刻的觉察中，"修"与"所修"、主体与客体已经同时消融。</p></div>
+              </div>
+            </div>
+
+            <div class="cl-card">
+              <div class="cl-title">《正法眼藏》的文体与翻译</div>
+              <p>道元的日文非常独特——他大量使用汉语词汇和汉文文法，但按照日语的语序来组织。这使得《正法眼藏》对日语母语者来说也极为难读。英文译本中最著名的是Kazuaki Tanahashi（棚橋一晃）主编的《正法眼藏》英译本（与众多合作者完成）。近年来中国学者何燕生等开始进行中文翻译工作。《正法眼藏》是当今国际佛教学术界最受关注的大乘佛教哲学文本之一。</p>
+              <div class="insight-box"><div class="ib-label">全球影响</div><p>道元的思想在海德格尔之后的两方哲学界引起了强烈反响。法国哲学家巴塔耶、德勒兹、南希都对道元表示过浓厚兴趣。西谷启治、阿部正雄等京都学派哲学家将道元与海德格尔、黑格尔、尼采进行了系统比较。"修证一如"、"有时"、"即心是佛"等概念正在成为全球哲学对话的重要资源。</p></div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
       <div class="page-footer"><span class="nav-btn" onclick="goTo('page-5')">← 上一章</span><span class="nav-btn" onclick="goTo('page-7')">下一章 →</span></div>
     </div>
@@ -573,33 +1558,219 @@ body{
   <!-- ===== PAGE 7: 哲学对话 ===== -->
   <div class="page" id="page-7">
     <div class="page-inner">
-      <div class="page-header"><div class="ch-number">07 · DIALOGUE</div><h2>哲学对话 · 东西方思想比较</h2></div>
+      <div class="page-header"><div class="ch-number">07 · DIALOGUE</div><h2>哲学对话 · 东西方思想深层比较</h2></div>
       <div class="page-body">
-        <p>禅宗对西方思想界产生了深刻而持久的影响。以下是比较哲学视野下的核心对话。</p>
 
-        <h3>禅与存在主义 · Heidegger 与 无自性</h3>
-        <p>海德格尔的"此在"（Dasein）与禅宗的"缘起"思想有着惊人的家族相似。其后期思想中的"敞开性"和"让-在"（Gelassenheit）与禅宗的"无心"、"放下"境界高度呼应。</p>
-        <p><strong>根本差异</strong>：海德格尔终其一生在思想的领域内工作；禅宗则以坐禅、公案等实修手段追求存在性的转化。</p>
+        <!-- SUBPAGE 0: 总览 -->
+        <div class="subpage active" id="sub-7-0">
+          <div class="subpage-inner">
+            <p>禅宗自20世纪初经铃木大拙、久松真一等译介至西方以来，与西方哲学各主要传统展开了持续而深入的对话。以下并非简单的"比较"，而是尝试在概念辨析的基础上，揭示禅宗与西方思想之间更深层的结构性的"家族相似"与根本差异。</p>
 
-        <h3>禅与维特根斯坦 · 语言的界眼</h3>
-        <p>维特根斯坦"凡不可言说的，应当保持沉默"与禅宗"不立文字"形成跨文化映照。其后期"语言游戏"理论揭示了语言意义的语境依赖性。</p>
+            <div class="grid-2" style="margin-top:18px">
+              <div class="card" style="cursor:pointer" onclick="goTo('page-7','sub-7-1')"><div class="label">现象学 · 存在主义</div><div class="val">胡塞尔"回到事物本身"、海德格尔"在世之在"、梅洛-庞蒂"身体"——与禅宗"直指人心""平常心是道"的深度对话。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-7','sub-7-2')"><div class="label">语言分析哲学</div><div class="val">维特根斯坦"不可说的"与禅"不立文字"——语言界限的两种态度。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-7','sub-7-3')"><div class="label">深度心理学</div><div class="val">弗洛伊德无意识、荣格个体化、弗洛姆社会无意识——"打破幻象"的共同事业。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-7','sub-7-4')"><div class="label">德国观念论</div><div class="val">康德"物自体"、黑格尔"绝对精神"、叔本华"意志"、尼采"永恒轮回"——与禅宗"不二"的系统比较。→</div></div>
+              <div class="card" style="cursor:pointer" onclick="goTo('page-7','sub-7-5')"><div class="label">京都学派</div><div class="val">西田几多郎、西谷启治、阿部正雄——唯一真正完成了"东西方哲学融合"的思想运动。→</div></div>
+            </div>
 
-        <h3>禅与精神分析 · 打破幻象</h3>
-        <p>荣格认为禅宗"开悟"与个体化的"自性化"过程相通。弗洛姆指出，禅与精神分析共享同一目标：<strong>打破幻象，回归真实</strong>。</p>
+            <h3>核心差异 · 总览对照</h3>
+            <table class="compare-table">
+              <tr><th>维度</th><th>西方哲学传统</th><th>禅宗</th></tr>
+              <tr><td>出发点</td><td>理性思辨 / 逻辑推理<br>"惊奇"（Aristotle）是哲学的开端</td><td>实修实证 / 亲身体验<br>"疑情"是参究的起点</td></tr>
+              <tr><td>自我观</td><td>主体性 / 自我意识 / 人格同一性<br>（Descartes→Kant→Husserl）</td><td>无我 / 缘起假名<br>"无我相、人相、众生相"</td></tr>
+              <tr><td>语言观</td><td>语言为认识工具 / 逻辑的载体<br>（Frege→Russell→早期Wittgenstein）</td><td>语言为方便施设 / 指月之指<br>"真实者，离文字故"</td></tr>
+              <tr><td>真理观</td><td>符合论 / 融贯论 / 实用论</td><td>亲证 / 现量 / "如人饮水冷暖自知"</td></tr>
+              <tr><td>时间观</td><td>线性时间 / 历史进步<br>（Augustine→Hegel→Bergson）</td><td>当下即永恒 / 有时<br>"一念万年、万年一念"</td></tr>
+              <tr><td>伦理学</td><td>义务论 / 功利论 / 德性伦理</td><td>无相戒 / 慈悲 / "自性自度"</td></tr>
+              <tr><td>终极目标</td><td>真理符合 / 理性澄明</td><td>解脱自在 / 觉悟利他</td></tr>
+              <tr><td>方法</td><td>分析 · 论证 · 批判</td><td>参究 · 放下 · 直指</td></tr>
+            </table>
+          </div>
+        </div>
 
-        <h3>禅与京都学派 · 日本哲学的圆成</h3>
-        <p>西田几多郎的"场所"（Basho）逻辑——"绝对无"的场所中一切对立的消失——直接源于禅宗"不二"思想与西方哲学对话的产物。京都学派表明禅宗可以与西方最艰深的哲学传统进行平等的对话。</p>
+        <!-- ================================ -->
+        <!-- SUBPAGE 1: 现象学·存在主义       -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-7-1">
+          <div class="subpage-inner">
+            <p>现象学与存在主义是20世纪西方哲学与禅宗产生最深度共鸣的领域。两者的核心关切惊人地一致：<strong>回到"事物本身"</strong>（胡塞尔）、<strong>"在世之在"</strong>（海德格尔）、<strong>"身体主体"</strong>（梅洛-庞蒂）——这些概念与禅宗的"直指人心"、"平常心是道"、"即心即佛"之间，存在着结构性的而非表面性的亲缘关系。</p>
 
-        <h3>核心差异汇总</h3>
-        <table class="compare-table">
-          <tr><th>维度</th><th>西方哲学传统</th><th>禅宗</th></tr>
-          <tr><td>出发点</td><td>理性思辨 / 逻辑推理</td><td>实修实证 / 亲身体验</td></tr>
-          <tr><td>自我观</td><td>主体性 / 自我意识</td><td>无我 / 缘起假名</td></tr>
-          <tr><td>语言观</td><td>语言为认识工具</td><td>语言为方便施设</td></tr>
-          <tr><td>终极目标</td><td>真理符合 / 理性澄明</td><td>解脱自在 / 觉悟利他</td></tr>
-          <tr><td>时间观</td><td>线性时间 / 历史进步</td><td>当下即永恒 / 有时</td></tr>
-          <tr><td>方法</td><td>分析 · 论证 · 批判</td><td>参究 · 放下 · 直指</td></tr>
-        </table>
+            <h3>胡塞尔 · 回到事物本身 · 与禅宗"直指"</h3>
+            <p>胡塞尔（1859—1938）的现象学口号"回到事物本身"（Zu den Sachen selbst）与禅宗"直指人心"之间有着方法论上的惊人相似。胡塞尔要求悬置一切未经检验的预设（epoche），回到意识的意向性活动本身。禅宗则要求放下一切概念执着，回到"自性"的当下呈现。两者都拒绝理论的中介——不是通过概念去认识事物，而是让事物自身显现。</p>
+            <div class="insight-box"><div class="ib-label">关键差异</div><p>胡塞尔的"回到事物本身"最终回到了"先验自我"——一个超越的、纯粹的意识结构。而禅宗的"直指"最终发现的是"无自性"——连"自我"这个最终的参考点也消解了。胡塞尔保留了"意识"作为哲学的最后支点，禅宗则连"意识"都放下了。用龙树的话说：胡塞尔停在了"识"的层次，禅宗要转识成智。</p></div>
+
+            <h3>海德格尔 · 在世之在 · 与禅宗"平常心"</h3>
+            <div class="quote-module">
+              <div class="qm-header">此在（Dasein）与世界不是两个现成的东西然后拼合起来的<br>——海德格尔《存在与时间》§12</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">结构性的家族相似</div><p>海德格尔的"在世之在"（In-der-Welt-sein）与禅宗的"平常心是道"之间存在着令人震惊的结构性对应。海德格尔的核心发现是：此在（人）与世界不是"主体"和"客体"两个现成物之间的关系，而是一个不可分割的原始统一。此在在世界中，不是一个主体在一个容器中，而是此在的"存在方式"就是"在世界之中"。这与禅宗"佛法在世间，不离世间觉"、"运水搬柴无非妙道"之间——不是"我想"故我在，而是"我在世界中"本身就是"道"的显现。</p></div>
+                <div class="qm-section"><div class="qm-label">后期海德格尔：敞开性 · 与禅"无心"</div><p>海德格尔后期的核心概念"敞开性"（Offenheit）和"让-在"（Gelassenheit）与禅宗的"无心"、"放下"高度呼应。"Gelassenheit"——让存在者如其所是地存在——几乎就是"无所住而生其心"的德文翻译。海德格尔说"语言是存在之家"，而禅宗说"直心是道场"——都是在寻找一个比"主客二分"更原始的存在维度。</p></div>
+                <div class="qm-section"><div class="qm-label">根本差异</div><p>海德格尔终其一生在思想的领域内工作——他的"此在"虽然打破了主客二分，但仍然在"存在之思"的层面。禅宗的"平常心"则不仅是"思"的转变，更是整个生存方式的转化——不仅是思想的革命，更是实存的革命。海德格尔的"不安"（Angst）是一种形而上学的情调；禅宗的"放下"则是一种生命实存的解脱。海德格尔从未"成佛"，赵州则"吃茶去"。</p></div>
+              </div>
+            </div>
+
+            <h3>梅洛-庞蒂 · 身体主体 · 与禅"不二"</h3>
+            <div class="cl-card">
+              <div class="cl-title">"身体"作为主客统一的原初场域</div>
+              <p>梅洛-庞蒂（1908—1961）的"身体现象学"是西方哲学中最接近禅宗"即心即佛"的学说。梅洛-庞蒂证明了：身体不是意识的对象（客体），也不是意识本身（主体），而是"主体-客体"的原初统一——身体是"在世之在"的直接媒介。知觉不是"心"对"物"的认识活动，而是身体在世界中的"交织"（chiasme）。这与禅宗的"运水搬柴"哲学惊人地吻合——在担水的身体活动中，"心"与"物"、"内"与"外"的对立消融了。赵州"吃茶去"——端起茶杯、啜饮、放下——这个身体动作本身就是"道"。</p>
+              <div class="insight-box"><div class="ib-label">差异</div><p>梅洛-庞蒂的"身体"仍然是一个哲学概念——他用现象学的方法描述身体，但身体的"转化"不是他的主题。禅宗的"平常心"则不仅是描述性的，更是转化性的——不是"知道"身体是主体-客体的统一，而是"活"在这个统一中。</p></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 2: 语言分析哲学          -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-7-2">
+          <div class="subpage-inner">
+            <p>语言分析哲学与禅宗的关系是最常被讨论、也最容易被误解的比较领域。"凡不可言说的，应当保持沉默"与"不立文字"之间的表面相似性，往往掩盖了二者之间更深层的差异。</p>
+
+            <h3>早期维特根斯坦 · "凡不可说的，应当沉默"</h3>
+            <div class="quote-module">
+              <div class="qm-header">对于不可说的东西，必须保持沉默。<br>——维特根斯坦《逻辑哲学论》命题7</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">表面相似</div><p>维特根斯坦在《逻辑哲学论》中以命题7作结——在经过全部逻辑分析之后，他承认有一个"不可说"的领域（伦理、美学、宗教、形而上学）。这个领域不能成为有意义的命题，但它是"显示"出来的。禅宗的"不立文字"同样认为终极真理不能被语言所把握。两者似乎都划定了语言的界限。</p></div>
+                <div class="qm-section"><div class="qm-label">深层差异</div><p>这是一个表面的、容易误导的相似性。对维特根斯坦来说，语言的界限是<strong>逻辑的</strong>界限——"可说的"是逻辑上有真值的命题；"不可说的"是伦理/美学/形而上学的领域。这个界限是由语言的逻辑结构先天地决定的。对禅宗来说，"不立文字"不是<strong>不能</strong>说，而是<strong>不必</strong>执着于说。维特根斯坦说沉默是因为"说不出来"（逻辑上不可能），禅宗说沉默是因为"不需要说"（超越了语言的必要性）。前者是逻辑的界限，后者是方便施设的超越。</p></div>
+              </div>
+            </div>
+
+            <h3>后期维特根斯坦 · 语言游戏 · 与禅宗"机锋"</h3>
+            <div class="cl-card">
+              <div class="cl-title">"意义即使用"与"应机接物"</div>
+              <p>后期维特根斯坦在《哲学研究》中彻底放弃了《逻辑哲学论》的语言观。他不再认为语言有一个固定的"逻辑结构"，而是提出"语言游戏"——语言的意义在于它在具体生活形式中的使用。"一个词的意义就是它在语言中的使用。"</p>
+              <p>这一转变使维特根斯坦出人意料地接近了禅宗的"机锋"教学法。禅宗祖师的回答从来不给一个固定的"定义"——"如何是佛？"——"干屎橛"、"麻三斤"、"庭前柏树子"。这些回答不是"没有意义"，而是在具体的对话情境中发挥"截断众流"的功能。意义不在于回答的"内容"，而在于回答在情境中的"使用"——这正是维特根斯坦"意义即使用"的典型例证。</p>
+              <div class="insight-box"><div class="ib-label">深层汇合点</div><p>维特根斯坦与禅宗在一点上汇合了：两者都认为哲学/禅宗的"问题"不是等待解答的谜题，而是需要"消解"的幻觉。维特根斯坦说："哲学是一场对抗我们的语言的理智着魔的战斗。"禅宗说："不用求真，唯须息见。"——不是去寻找正确的答案，而是放下"寻找"本身。维特根斯坦的"苍蝇飞出捕蝇瓶"与禅宗的"放下"——都是在"无问题"中获得的自由。</p></div>
+            </div>
+
+            <h3>日常语言学派 · 言语行为 · 与禅"喝"</h3>
+            <p>奥斯汀（J.L.Austin）的"言语行为理论"（Speech Act Theory）区分了"表述性言语"（constative，陈述事实）和"施为性言语"（performative，做事情的话）。这一区分对理解禅宗的"棒喝"有重要启示。当临济义玄"喝"一声时，这不是一个"陈述"（描述世界），而是一个"施为"——这一喝本身就在"做"事情：它打断了学人的思维惯性、创造了一个被逼到墙角的"疑情"、打开了一个对话的缺口。"喝"不是一句"话"，而是一个"事件"。西方语言哲学在20世纪才通过"言语行为"理论达到了这个认识，禅宗祖师在9世纪就已经在日常教学中运用自如。</p>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 3: 深度心理学            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-7-3">
+          <div class="subpage-inner">
+            <p>禅宗与深度心理学的关系是东西方对话中最富有成果的领域之一。从荣格到弗洛姆再到当代的"正念革命"——禅宗在心理学领域找到了最广泛的共鸣和实践平台。</p>
+
+            <h3>弗洛伊德 · 无意识 · 与禅"无念"</h3>
+            <div class="cl-card">
+              <div class="cl-title">压抑与放下 · 两种方法</div>
+              <p>弗洛伊德（1856—1939）发现了"无意识"——那些被意识压抑的欲望、记忆和冲突构成了心灵的隐秘底层。精神分析的目标是"让无意识成为意识"——通过自由联想、梦的解析等方法，将被压抑的内容带到意识的阳光下。</p>
+              <p>禅宗的"无念"表面上与弗洛伊德的"无意识"可以类比，但实质完全不同。弗洛伊德的无意识是"被压抑的内容"的仓库，是一个有待被"挖掘"的深层领域。禅宗的"无念"则不是"没有念头"（那只是意识的空白），而是"于念而不念"——念头来了不跟着跑、不执着、不压抑。禅宗不认为"解放"的方法是"挖掘"和"表达"（如精神分析所做），而是"不执着"。</p>
+              <div class="insight-box"><div class="ib-label">根本差异</div><p>弗洛伊德的方法是"考古学式"的——往深处挖掘，找到被掩埋的真相。禅宗的方法是"现象学式"的——回到当下，不再追加任何追溯。精神分析需要五年的疗程"回忆"童年；禅宗说"一念放下"就全部解决了。两者要解决的问题相同（痛苦、束缚），但解决路径截然不同。</p></div>
+            </div>
+
+            <h3>荣格 · 个体化 · 与禅"自性"</h3>
+            <div class="quote-module">
+              <div class="qm-header">禅宗开悟是一种"个体化"的过程——人成为他自己本来的样子。<br>——荣格为铃木大拙《禅宗入门》所作序言</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">个体化 vs 见性</div><p>荣格（1875—1961）的"个体化"（individuation）——人从社会面具（ persona）和集体无意识的束缚中解放出来，成为"真正的自己"——与禅宗的"见性"有明显的亲和性。荣格将禅宗的"开悟"解读为一种深度心理学的转化过程：意识与无意识的整合、自性（Selbst）的实现。</p></div>
+                <div class="qm-section"><div class="qm-label">误解与批评</div><p>荣格的解读是"心理学化"的——他把禅宗的开悟解释为一种心理发展过程。但批评者（尤其是京都学派的久松真一）指出：禅宗的开悟不是"自我实现"（即使是以集体的"自性"为目标的），而是"无我"——连"自性"这个概念本身都要放下。荣格的"自性"是一个"有"（尽管是象征性的有），禅宗的"空"则不是任何一种"有"。荣格读禅宗时看到的是一个"关于心灵的理论"，而禅宗不是理论——它是超越理论和心理的救度。</p></div>
+              </div>
+            </div>
+
+            <h3>弗洛姆 · 打破幻象 · 禅与精神分析的共同事业</h3>
+            <div class="cl-card">
+              <div class="cl-title">弗洛姆《禅与精神分析》——经典对话</div>
+              <p>新精神分析学家埃里希·弗洛姆（1900—1980）在1960年与铃木大拙共同出版了《禅与精神分析》，是东西方对话史上最重要的著作之一。</p>
+              <p>弗洛姆的核心论点：禅与精神分析是"同一事业的两种版本"。它们共享一个基本目标——<strong>打破幻象，回归真实</strong>。精神分析要打破的是"个体无意识的压抑"造成的幻象；禅宗要打破的是"分别意识"造成的幻象。两者都是"解放"的实践——不是"获得"某种东西，而是"去除"遮蔽。精神分析的终点是"自我认识"（self-knowledge），禅宗的终点是"见性"（seeing one's true nature）。</p>
+              <div class="insight-box"><div class="ib-label">弗洛姆的批评</div><p>弗洛姆对当代社会提出了尖锐的批评——人处于"异化"状态中，失去了与自我、与他人、与自然的真实联系。禅宗和马克思主义在这一点上是同盟：两者都致力于把人从异化中解放出来。但弗洛姆也承认，禅宗提供的"解放"比马克思主义更深刻——因为它不只是社会结构的变革，更是人"存在方式"的根本转变。弗洛姆在此已经超越了一般的精神分析，走向了一种"存在主义的人本主义"。</p></div>
+            </div>
+
+            <h3>当代 · 正念与认知疗法</h3>
+            <p>当代的"正念减压"（MBSR，卡巴金，1979）和"正念认知疗法"（MBCT，Segal/Williams/Teasdale，2002）是禅与心理学对话的最新成果。MBCT的核心机制——"去中心化"（decentering）——指人从"与念头认同"（"我就是这个焦虑的人"）转向"旁观念头"（"我注意到我有一个焦虑的念头"）。这一机制几乎就是禅宗"于念而不念"（有念头但不被念头带走）的心理学术语表达。"去中心化"不是"消灭念头"，而是改变与念头的关系——这正是慧能"无念"（不是没有念头，而是不执着于念头）的跨文化翻译。</p>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 4: 德国观念论            -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-7-4">
+          <div class="subpage-inner">
+            <p>德国观念论（German Idealism）是西方哲学最艰深、最系统化的形而上学传统。它与禅宗之间看似相隔遥远，但在一些根本问题上存在着意外的交汇点——以及对同一问题的完全不同的解决方式。</p>
+
+            <h3>康德 · 物自体 · 与禅"不可说"</h3>
+            <div class="cl-card">
+              <div class="cl-title">两种不可知论</div>
+              <p>康德（1724—1804）区分了"现象"（phenomena，我们能认识的事物）和"物自体"（noumena，事物自身的本来面目）。人类只能认识"现象"——由感官形式和知性范畴构成的经验世界，而"物自体"永远不可知。这一区分在西方哲学中划出了一条不可逾越的认识论界限。</p>
+              <p>禅宗的"不可说"与此表面相似，但实质截然不同。对禅宗来说，"自性"（事物的本来面目）不是"不可知"的，而是不需要通过概念认识的——它是可以直接"亲证"的。康德认为"物自体"超越人类的认识能力（认识论的谦卑）；禅宗认为"自性"超越概念认识但可以被直观把握（"如人饮水冷暖自知"）。康德说"我们永远无法知道事物本身"；禅宗说"你可以直接见到它——但不是用你的眼睛"。康德是"认识论的悲观主义"，禅宗是"直观的乐观主义"。</p>
+            </div>
+
+            <h3>黑格尔 · 辩证法 · 与禅"不二"</h3>
+            <div class="quote-module">
+              <div class="qm-header">真理是全体<br>——黑格尔《精神现象学》</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">结构性的对应</div><p>黑格尔（1770—1831）的辩证法——正题→反题→合题——与禅宗的"不二"思想之间存在一种结构性的可比性。两者都试图超越"非此即彼"的二元对立。黑格尔的"合题"不是简单的中和，而是"扬弃"（Aufhebung）——既取消又保存——使对立双方在更高的统一中得到"中介"（mediation）。</p></div>
+                <div class="qm-section"><div class="qm-label">根本差异</div><p>差异是根本性的。黑格尔的辩证法是一个<strong>线性推进</strong>的过程——正题→反题→合题→新的正题→……真理在"终点"实现，它是一个"体系"（System），是绝对精神的自我认识过程。禅宗的"不二"则不是"合题"——不是对立的扬弃和综合，而是对"对立"本身的消解。不二不是"第三项"，而是"双方同时放下"。</p></div>
+                <div class="qm-section"><div class="qm-label">禅宗对黑格尔的批评——如果黑格尔读慧能</div><p>如果慧能遇到了黑格尔，他会说："真理不在全体中，真理不在部分中。"——"全体"和"部分"这对概念本身就是"二"。慧能的"无念"不是"正题→反题→合题"的思维运动，而是停止这个思维运动本身。黑格尔的体系是哲学史上最后一次伟大的"概念建构"，而禅宗则是"解构一切建构"——两者正好形成了一正一反的对照。在此意义上，禅宗不是一种"理论的替代"，而是对"理论活动"本身的批判。</p></div>
+              </div>
+            </div>
+
+            <h3>叔本华 · 意志 · 与禅"无求"</h3>
+            <p>叔本华（1788—1860）是西方哲学家中最接近东方思想的一位。他认为世界的本质是"意志"（Wille）——一种盲目的、永不满足的生命冲动。人的痛苦来源于意志的永不满足——满足了会产生空虚，不满足会产生痛苦。解脱的方法是通过"审美直观"和"宗教禁欲"来"否定意志"。</p>
+            <p>叔本华的"否定意志"与禅宗的"放下"之间有表面相似。但差异是决定性的：叔本华的"否定意志"仍然建立在"意志存在"的前提上——意志是一个"东西"，然后我去否定它。这仍然是一种"二元对立"（意志 vs 意志的否定）。禅宗的"无求"则不是"否定"什么——"本来无一物"，哪里来的意志需要否定？叔本华是"悲观的苦行主义"，禅宗是"中道的自在"。</p>
+
+            <h3>尼采 · 永恒轮回 · 与禅"当下"</h3>
+            <div class="cl-card">
+              <div class="cl-title">查拉图斯特拉的"当下"与赵州的"吃茶去"</div>
+              <p>尼采（1844—1900）的"永恒轮回"（Ewige Wiederkunft）——一切发生过的事情都将无限重复——提出了一个极端的生命肯定命题：你愿意以全部的意志接受"此刻"的无限重复吗？"永恒轮回"的考验：如果你对生命说"Yes"，那么你不仅要接受过去的全部，还要以全部的意志渴望这一秒的无限回归。</p>
+              <div class="insight-box"><div class="ib-label">比较</div><p>尼采的"永恒轮回"与禅宗的"当下一念"有表面相似——两者都将焦点集中在"当下"。但尼采的"当下"是一个英雄式的肯定——需要巨大的意志力量去"想要"这个时刻的永恒回归。禅宗的"当下"则不需要"意志的力量"——它不在"想要/不想要"的二元中。"吃茶去"——赵州没有说"我要以全部的意志肯定这杯茶"，他只是端起来喝了。尼采的肯定是一个"有"（Yes to life），禅宗的平常心是一个"无"（不落有无）。尼采的英雄"想要永恒轮回"；赵州的僧人只是"吃茶"——在"吃茶"中，轮回与涅槃都是多余的词。</p></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 5: 京都学派             -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-7-5">
+          <div class="subpage-inner">
+            <p>京都学派（Kyoto School）是20世纪日本最富原创性的哲学运动，也是迄今为止唯一真正完成了"东西方哲学系统融合"的思想运动。它以禅宗的"空"为根基，与西方哲学（尤其是德国观念论和存在主义）进行了对等的、创造性的对话，产出了具有世界哲学水准的成果。</p>
+
+            <h3>西田几多郎 · 场所逻辑 · "绝对无"</h3>
+            <div class="concept-flow">
+              <div class="cf-row">
+                <div class="cf-card onto"><div class="cf-name">场所</div><div class="cf-sub">Basho · 对立的双方在其中"成其所是"的终极场域</div></div>
+                <div class="cf-card src"><div class="cf-name">无的场所</div><div class="cf-sub">范畴判断的"地平线"——知识成立的条件</div></div>
+                <div class="cf-card prac"><div class="cf-name">绝对无的场所</div><div class="cf-sub">超越"有/无"对立的终极场所——禅宗"空"的哲学化</div></div>
+              </div>
+            </div>
+            <div class="cl-card">
+              <div class="cl-title">西田哲学的核心洞见</div>
+              <p>西田几多郎（1870—1945）的"场所"（Basho）逻辑——不是"主体"认识"客体"，而是主体与客体都存在于一个更原始的"场所"中。用西田的话说："不是有个'我'然后有世界，而是'我即世界'"。这一洞见与海德格尔的"在世之在"几乎同时产生，但西田的出发点不是存在主义，而是禅宗的"空"——"无的场所"对应黑格尔的"无"（没有规定性），"绝对无的场所"则超越了"有/无"的对立本身。</p>
+              <p>西田对禅宗"即心即佛"的哲学表达：心与佛不是两个独立实体之间的"同一"关系，而是"绝对无的场所中"的相互包含——"心"不是主体标，"佛"不是客体——两者在"场所"中同时呈现。禅宗的"不二"在西田这里被表述为"绝对矛盾的自我同一"——对立双方在绝对无的场所中达成了一种不是"综合"（黑格尔）也不是"同一"（斯宾诺莎）的"即"（soku，即心即佛的"即"）。</p>
+            </div>
+
+            <h3>西谷启治 · 空的哲学 · 虚无主义的克服</h3>
+            <div class="quote-module">
+              <div class="qm-header">空（śūnyatā）不是虚无主义——它是对虚无主义的彻底克服</div>
+              <div class="qm-body">
+                <div class="qm-section"><div class="qm-label">西谷启治（1900—1990）的核心问题</div><p>西谷启治的《宗教与虚无》（1961）是京都学派最系统、最深刻的著作。他的核心论题是：西方哲学从古希腊到尼采的发展走向了"虚无主义"——从苏格拉底的"理性"到康德的"物自体"到尼采的"上帝死了"，西方人一步步失去了世界的精神根基。尼采的"虚无主义"既是最深的危机，也是转化的契机。</p></div>
+                <div class="qm-section"><div class="qm-label">空的场域</div><p>西谷提出"空的场域"（Field of Emptiness）——不是虚无主义式的"什么都没有"，而是让一切存在者得以"如其本来地"显现的终极场域。空的场域不是一个"东西"，也不是"虚无"——它超越了"有/无"的对立。在空的场域中，"我"与"世界"、"主体"与"客体"、"生"与"死"的对立都被消解了——不是被"综合"了，而是被"空掉了"。</p></div>
+                <div class="qm-section"><div class="qm-label">对海德格尔的批判</div><p>西谷对海德格尔的"存在"（Sein）概念提出了尖锐批评：海德格尔的"存在"虽然超越了"存在者"（Seiende），但仍然没有摆脱"有"（即使是最高的"有"）。海德格尔的"存在之思"仍然是一种"执著"——对"存在"本身的执著。而禅宗的"空"是比"存在"更根本的——它消解了"存在"与"虚无"的对立本身。这一批评代表了京都学派对西方形而上学的终极批判：西方哲学即使走到了海德格尔，仍然没有走出"有"的框架。</p></div>
+              </div>
+            </div>
+
+            <h3>阿部正雄 · 禅与西方哲学的全球对话</h3>
+            <div class="cl-card">
+              <div class="cl-title">阿部正雄（1915—2006）：禅宗的"全球哲学化"</div>
+              <p>阿部正雄是京都学派在英语世界的代言人。他在《禅与西方思想》（1975）等著作中，将禅宗的"不二"、"空"、"即非逻辑"等概念与西方哲学的主要议题进行了系统的对话。阿部最著名的贡献是提出了"即非逻辑"（logic of soku-hi）——"即"（soku，A即是B）和"非"（hi，A不是B）的同时成立。"即心即佛"——心就是佛，同时心又不是佛——阿部用"即非"逻辑化解了这个看似悖论的命题。</p>
+              <div class="insight-box"><div class="ib-label">对"过程神学"的挑战</div><p>阿部与美国过程神学家哈特肖恩（Charles Hartshorne）进行了长期的论辩。阿部指出，西方神学即使在最进步的"过程神学"形式中，仍然预设了一个"有"（即使是一个动态的、过程性的"有"）。禅宗的"空"则要求彻底放下任何对"最后实在"的执著——即使这个实在被描述为"动态的"、"关系性的"。这一对话的深刻意义在于：它表明禅宗不是要"补充"或"修正"西方哲学的一个概念，而是要挑战西方哲学最根本的"有"的预设。</p></div>
+            </div>
+
+            <h3>京都学派的当代意义</h3>
+            <div class="insight-box"><div class="ib-label">为什么京都学派仍然重要</div><p>京都学派是迄今为止唯一实现了"以禅宗为核心方法论进行全球哲学对话"的思想运动。它不是将禅宗当作比较研究的"对象"，而是将禅宗的"空"作为哲学思考的方法本身。这意味着：不是"我站在西方哲学的立场上分析禅宗"，也不是"我站在禅宗的立场上批评西方"——而是在"空"的场域中，让东方和西方都"如其本来"地显现。京都学派的工作表明：禅宗可以与西方最艰深的哲学传统（黑格尔、尼采、海德格尔）进行对等的、创造性的对话——不是"比较"（compare），而是"对话"（dialogue）——两种不同的思维方式在相互碰撞中共同推进了对根本问题的理解。</p></div>
+            <p>对当代读者来说，京都学派的启示在于：禅宗的"不立文字"不是反智主义的口号，而是哲学思考的最高可能性——在不执著于任何概念的前提下进行概念的极致运用。禅宗的"空"不是虚无主义，而是哲学对话的无限可能性——只有在"空"中，真正的对话才可能发生。</p>
+
+          </div>
+        </div>
+
       </div>
       <div class="page-footer"><span class="nav-btn" onclick="goTo('page-6')">← 上一章</span><span class="nav-btn" onclick="goTo('page-8')">下一章 →</span></div>
     </div>
@@ -631,34 +1802,11 @@ body{
 
         <p>禅宗向来具有因时变革的生命力。从拈花微笑到丛林清规，从茶禅一味到正念运动——禅在每个时代都以不同面貌呈现。这正是"应无所住而生其心"的真义——不执着于任何固定形态，但永远不失觉悟的本质。</p>
       </div>
-      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-7')">← 上一章</span><span class="nav-btn" onclick="goTo('page-9')">下一章 →</span></div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-7')">← 上一章</span><span class="nav-btn" onclick="goTo('page-10')">下一章 →</span></div>
     </div>
   </div>
 
-  <!-- ===== PAGE 9: 关键词 ===== -->
-  <div class="page" id="page-9">
-    <div class="page-inner">
-      <div class="page-header"><div class="ch-number">09 · GLOSSARY</div><h2>关键词 · 概念速查</h2></div>
-      <div class="page-body">
-        <div class="grid-2">
-          <div class="card"><div class="label">空性 Śūnyatā</div><div class="val">一切法无独立自性，因缘而生。非虚无，而是超越有无的中道实相。</div></div>
-          <div class="card"><div class="label">佛性 Buddha-nature</div><div class="val">一切众生本具觉悟潜能。即此心即是佛，不假外求。</div></div>
-          <div class="card"><div class="label">顿悟 Sudden Awakening</div><div class="val">不经次第，当下直接觉悟自性。慧能南宗之根本特色。</div></div>
-          <div class="card"><div class="label">公案 Koan</div><div class="val">祖师言行录。非逻辑可解，旨在超越理性思维局限。</div></div>
-          <div class="card"><div class="label">坐禅 Zazen</div><div class="val">端坐静修。曹洞"只管打坐"，临济含参话头。</div></div>
-          <div class="card"><div class="label">不二 Non-duality</div><div class="val">超越一切二元对立的平等智慧。禅宗认识论核心。</div></div>
-          <div class="card"><div class="label">平常心 Ordinary Mind</div><div class="val">不造作、不取舍的本来状态。"平常心是道"。</div></div>
-          <div class="card"><div class="label">无念 No-thought</div><div class="val">于念而离念，不执着于念。六祖慧能核心教法。</div></div>
-          <div class="card"><div class="label">正念 Mindfulness</div><div class="val">源于四念处，经一行禅师与卡巴金发扬，全球盛行。</div></div>
-          <div class="card"><div class="label">以心传心</div><div class="val">禅宗传承根本方式。以觉悟印觉悟，如灯传灯。</div></div>
-          <div class="card"><div class="label">只管打坐 Shikantaza</div><div class="val">曹洞宗核心修行。坐即觉悟，非工具性手段。</div></div>
-          <div class="card"><div class="label">侘寂 Wabi-sabi</div><div class="val">日本禅美学核心。在残缺、无常、朴素中发现美。</div></div>
-        </div>
-      </div>
-      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-8')">← 上一章</span><span class="nav-btn" onclick="goTo('page-10')">下一章 →</span></div>
-    </div>
-  </div>
-
+  <!-- ===== PAGE 10: 禅宗流转图 ===== -->
   <!-- ===== PAGE 10: 禅宗流转图 ===== -->
   <div class="page" id="page-10">
     <div class="page-inner">
@@ -796,7 +1944,7 @@ body{
         </aside>
 
       </div>
-      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-9')">← 上一章</span><span class="nav-btn" onclick="goTo('page-timeline')">下一章 →</span></div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-8')">← 上一章</span><span class="nav-btn" onclick="goTo('page-11')">下一章 →</span></div>
     </div>
   </div>
 
@@ -837,24 +1985,981 @@ body{
     </div>
   </div>
 
-</div>
+  <!-- ===== PAGE 11: 原典附录 ===== -->
+  <div class="page" id="page-11">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">10 · APPENDIX</div><h2>原典附录 · 七部原典选读</h2></div>
+      <div class="page-body">
 
-<script>
-function goTo(id) {
+        <!-- ================================ -->
+        <!-- SUBPAGE 1: 金刚经                -->
+        <!-- ================================ -->
+        <div class="subpage active" id="sub-11-1">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《金刚般若波罗蜜经》</strong>· 姚秦三藏鸠摩罗什译。全经三十二分，以"破相"为宗。以下逐分呈现原文与解读。</p>
+
+            <div class="sutra-wrap">
+
+              <!-- 第一分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">法会因由分第一</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>如是我闻。一时，佛在舍卫国祇树给孤独园，与大比丘众千二百五十人俱。尔时，世尊食时，着衣持钵，入舍卫大城乞食。于其城中，次第乞已，还至本处。饭食讫，收衣钵，洗足已，敷座而坐。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>经首点明禅宗根本精神——佛也是寻常人，吃饭、乞食、洗足、打坐。禅宗"平常心是道"的理念在此已有伏笔。注意"次第乞"——不选择贫富，平等行乞，这是大乘菩萨行的日常实践。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">善现启请分第二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>时长老须菩提在大众中，即从座起，偏袒右肩，右膝着地，合掌恭敬而白佛言："希有世尊！如来善护念诸菩萨，善付嘱诸菩萨。世尊！善男子、善女人发阿耨多罗三藐三菩提心，云何应住？云何降伏其心？"佛言："善哉善哉！须菩提！如汝所说，如来善护念诸菩萨，善付嘱诸菩萨。汝今谛听，当为汝说。善男子、善女人发阿耨多罗三藐三菩提心，应如是住，如是降伏其心。""唯然，世尊！愿乐欲闻。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>须菩提的问题是全经的纲领："云何应住？云何降伏其心？"——心应安住在什么状态？如何降伏纷乱的妄心？禅宗的"无住"与"无念"法门，正是对此问题的回应。"阿耨多罗三藐三菩提"意为"无上正等正觉"——最高的觉悟。</p></div>
+                </div>
+              </div>
+
+              <!-- 第三分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">大乘正宗分第三</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告须菩提："诸菩萨摩诃萨应如是降伏其心：所有一切众生之类——若卵生、若胎生、若湿生、若化生；若有色、若无色；若有想、若无想、若非有想非无想——我皆令入无余涅槃而灭度之。如是灭度无量无数无边众生，实无众生得灭度者。何以故？须菩提！若菩萨有我相、人相、众生相、寿者相，即非菩萨。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这里提出了"无相"的核心命题。"灭度无量众生，实无众生得灭度者"——度化了所有众生，却不认为有一个"自我"在度化、"众生"被度化。一旦执着于"我相、人相、众生相、寿者相"，就不是真正的菩萨。禅宗"无相为体"的思想直接源于此。</p></div>
+                </div>
+              </div>
+
+              <!-- 第四分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">妙行无住分第四</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"复次，须菩提！菩萨于法，应无所住行于布施。所谓不住色布施，不住声、香、味、触、法布施。须菩提！菩萨应如是布施，不住于相。何以故？若菩萨不住相布施，其福德不可思量。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"应无所住行于布施"——在行善时，不执着于"我在行善"、"对方是受助者"、"我做了什么好事"。彻底的"三轮体空"：施者空、受者空、施物空。这是慧能"无住为本"的直接经典来源。</p></div>
+                </div>
+              </div>
+
+              <!-- 第五分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">如理实见分第五</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？可以身相见如来不？" "不也，世尊！不可以身相得见如来。何以故？如来所说身相，即非身相。"佛告须菩提："凡所有相，皆是虚妄。若见诸相非相，即见如来。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>全经最著名的句子。"凡所有相，皆是虚妄"——不是否定现象世界，而是看透一切现象没有独立自存的本体。"若见诸相非相，即见如来"——在现象中看到本质为空，就是见到真理本身。《坛经》"无相为体"即从此出。</p></div>
+                </div>
+              </div>
+
+              <!-- 第六分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">正信希有分第六</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>须菩提白佛言："世尊！颇有众生得闻如是言说章句，生实信不？"佛告须菩提："莫作是说！如来灭后后五百岁，有持戒修福者，于此章句能生信心，以此为实。当知是人，不于一佛二佛三四五佛而种善根，已于无量千万佛所种诸善根。闻是章句，乃至一念生净信者。须菩提！如来悉知悉见，是诸众生得如是无量福德。何以故？是诸众生无复我相、人相、众生相、寿者相，无法相，亦无非法相。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"正信"不是盲信，而是通过"无相"的智慧产生的信心。"无法相，亦无非法相"——既不执着于"有"（法相），也不执着于"空"（非法相）。禅宗"不落两边"的中道，正是此义。</p></div>
+                </div>
+              </div>
+
+              <!-- 第七分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">07</span><span class="sh-name">无得无说分第七</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？如来得阿耨多罗三藐三菩提耶？如来有所说法耶？"须菩提言："如我解佛所说义，无有定法名阿耨多罗三藐三菩提，亦无有定法如来可说。何以故？如来所说法，皆不可取、不可说；非法、非非法。所以者何？一切贤圣，皆以无为法而有差别。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"无有定法名阿耨多罗三藐三菩提"——没有固定不变的真理叫做"无上正等正觉"。真理不是可以被抓住的"东西"。禅宗"不立文字"的经典依据在此。"一切贤圣，皆以无为法而有差别"——圣者们不是掌握了不同的真理，而是对同一"无为法"的领悟深度不同。</p></div>
+                </div>
+              </div>
+
+              <!-- 第八分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">08</span><span class="sh-name">依法出生分第八</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？若人满三千大千世界七宝以用布施，是人所得福德，宁为多不？"须菩提言："甚多，世尊！何以故？是福德即非福德性，是故如来说福德多。""若复有人，于此经中受持乃至四句偈等，为他人说，其福胜彼。何以故？须菩提！一切诸佛，及诸佛阿耨多罗三藐三菩提法，皆从此经出。须菩提！所谓佛法者，即非佛法。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>关键在最後一句："所谓佛法者，即非佛法。"——一旦把"佛法"当作一个固定的实体来把握，它就不再是佛法了。这是"佛"与"法"的彻底非实体化。禅宗"逢佛杀佛、逢祖杀祖"的精神源头在此。</p></div>
+                </div>
+              </div>
+
+              <!-- 第九分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">09</span><span class="sh-name">一相无相分第九</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？须陀洹能作是念：我得须陀洹果不？"须菩提言："不也，世尊！何以故？须陀洹名为入流，而无所入，不入色、声、香、味、触、法，是名须陀洹。……"佛告须菩提："于意云何？阿罗汉能作是念：我得阿罗汉道不？"须菩提言："不也，世尊！何以故？实无有法名阿罗汉。世尊！若阿罗汉作是念：我得阿罗汉道，即为着我、人、众生、寿者。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>从初果到四果，如果认为自己"证得了什么"，就已经落在"相"中。"实无有法名阿罗汉"——就连阿罗汉果位也只是假名安立。禅宗对此的发挥是："无佛可成，无众生可度"——甚至连"开悟"这个概念都不应该执着。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">10</span><span class="sh-name">庄严净土分第十</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告须菩提："于意云何？如来昔在然灯佛所，于法有所得不？" "不也，世尊！如来在然灯佛所，于法实无所得。""须菩提！于意云何？菩萨庄严佛土不？" "不也，世尊！何以故？庄严佛土者，即非庄严，是名庄严。""是故，须菩提！诸菩萨摩诃萨应如是生清净心——不应住色生心，不应住声、香、味、触、法生心，应无所住而生其心。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能正是在此句开悟！"应无所住而生其心"——十个字浓缩了全部禅宗修行论。"无所住"是心的自由状态，"生其心"不是不生心，而是生起清净的、无执着的心。"庄严佛土者，即非庄严，是名庄严"——三段式破立，是龙树中观最经典的表达。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十一分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">11</span><span class="sh-name">无为福胜分第十一</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！如恒河中所有沙数，如是沙等恒河。于意云何？是诸恒河沙，宁为多不？"须菩提言："甚多，世尊！但诸恒河尚多无数，何况其沙。""须菩提！我今实言告汝：若有善男子、善女人，以七宝满尔所恒河沙数三千大千世界，以用布施，得福多不？"须菩提言："甚多，世尊！"佛告须菩提："若善男子、善女人于此经中，乃至受持四句偈等，为他人说，而此福德胜前福德。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>用恒河沙数的大千世界珍宝布施，不如受持本经中一个四句偈。这不是夸张修辞，而是强调"智慧"（般若）的不可比拟性——法布施（传播智慧）远胜财布施（物质帮助）。禅宗"一悟即至佛地"的顿悟论，也体现了这种对智慧转化的绝对信心。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十二分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">12</span><span class="sh-name">尊重正教分第十二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"复次，须菩提！随说是经乃至四句偈等，当知此处一切世间天、人、阿修罗皆应供养，如佛塔庙。何况有人尽能受持、读诵？须菩提！当知是人成就最上第一希有之法。若是经典所在之处，即为有佛，若尊重弟子。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>经典的真正尊严不在于文字本身，而在于它所指代的"般若智慧"。禅宗虽然"不立文字"，但尊重经典作为"指月之指"的功能——文字不是月亮本身，但手指指向月亮。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十三分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">13</span><span class="sh-name">如法受持分第十三</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时，须菩提白佛言："世尊！当何名此经？我等云何奉持？"佛告须菩提："是经名为《金刚般若波罗蜜》，以是名字，汝当奉持。所以者何？须菩提！佛说般若波罗蜜，即非般若波罗蜜，是名般若波罗蜜。……须菩提！如来所说三千大千世界，即非世界，是名世界。何以故？若世界实有者，即是一合相。如来说一合相，即非一合相，是名一合相。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>本段密集运用"说A，即非A，是名A"的三段式。这不是文字游戏，而是一种彻底的"去实体化"思维训练：每一个概念在使用的同时被消解，消解之后又方便地重新使用。禅宗"不落两边"的教学方法，就是这种思维在实践中的运用。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十四分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">14</span><span class="sh-name">离相寂灭分第十四</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时，须菩提闻说是经，深解义趣，涕泪悲泣而白佛言："希有世尊！佛说如是甚深经典，我从昔来所得慧眼，未曾得闻如是之经。……我今得闻如是经典，信解受持，不足为难。若当来世后五百岁，其有众生得闻是经，信解受持，是人即为第一希有。何以故？此人无我相、无人相、无众生相、无寿者相。所以者何？我相即是非相，人相、众生相、寿者相即是非相。何以故？离一切诸相，即名诸佛。"佛告须菩提："如是如是！若复有人得闻是经，不惊、不怖、不畏，当知是人甚为希有。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"离一切诸相，即名诸佛"——离开一切执着于"相"的思维习惯，就是成佛。《坛经》"无相为体"的直接理论来源。"不惊、不怖、不畏"——听到"一切皆空"而不恐惧的人，是真正有智慧的人。禅宗"大死一番"的勇气即源于此——敢于彻底放下对"有"的执着。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十五分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">15</span><span class="sh-name">持经功德分第十五</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若有善男子、善女人，初日分以恒河沙等身布施，中日分复以恒河沙等身布施，后日分亦以恒河沙等身布施，如是无量百千万亿劫以身布施。若复有人闻此经典，信心不逆，其福胜彼。何况书写、受持、读诵、为人解说？……须菩提！以要言之，是经有不可思议、不可称量、无边功德。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>以生命（身布施）布施亿万劫，不如"信心不逆"地接受此经的智慧。这不是反理性信仰，而是强调：真正的转变不在于外在行为的数量，而在于内在认知结构的根本改变——这正是"顿悟"的逻辑基础。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十六分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">16</span><span class="sh-name">能净业障分第十六</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"复次，须菩提！若善男子、善女人受持读诵此经，若为人轻贱，是人先世罪业应堕恶道，以今世人轻贱故，先世罪业即为消灭，当得阿耨多罗三藐三菩提。……须菩提！我念过去无量阿僧祇劫，于然灯佛前，得值八百四千万亿那由他诸佛，悉皆供养承事，无空过者。若复有人于后末世，能受持读诵此经，所得功德，于我所供养诸佛功德，百分不及一，千万亿分乃至算数譬喻所不能及。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>一个著名的说法：受持此经反而被人轻贱，这其实是消业。"重罪轻报"——过去的重业因为今世受持般若而转为较轻的果报。这在修行心理学上可以理解为：智慧的觉悟使过去的心理创伤失去了继续作祟的力量。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十七分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">17</span><span class="sh-name">究竟无我分第十七</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时，须菩提白佛言："世尊！善男子、善女人发阿耨多罗三藐三菩提心，云何应住？云何降伏其心？"佛告须菩提："善男子、善女人发阿耨多罗三藐三菩提心者，当生如是心：我应灭度一切众生，灭度一切众生已，而无有一众生实灭度者。何以故？须菩提！若菩萨有我相、人相、众生相、寿者相，即非菩萨。所以者何？须菩提！实无有法发阿耨多罗三藐三菩提心者。……如来说：'有我者，即非有我。而凡夫之人，以为有我。'"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这一段与第三分呼应，是"无我"的最深论证。"实无有法发阿耨多罗三藐三菩提心者"——连"发心的人"本身也是空。凡夫把"我"当作实有，而圣者知道"我"只是五蕴和合的假名。禅宗参"念佛是谁"的话头，正是追问"谁"——这个看似实有的主体到底是什么。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十八分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">18</span><span class="sh-name">一体同观分第十八</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？如来有肉眼不？""如是，世尊！如来有肉眼。""须菩提！于意云何？如来有天眼不？""如是，世尊！如来有天眼。""须菩提！于意云何？如来有慧眼不？""如是，世尊！如来有慧眼。""须菩提！于意云何？如来有法眼不？""如是，世尊！如来有法眼。""须菩提！于意云何？如来有佛眼不？""如是，世尊！如来有佛眼。"……"须菩提！过去心不可得，现在心不可得，未来心不可得。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"三心不可得"——禅宗最常引用的句子之一。过去的心已经过去，无法抓住；未来的心尚未到来，无法把握；现在的心刹那变迁，无法停驻。三心都"不可得"。"不可得"不是消极的"得不到"，而是积极的——正因为心不可得，所以不必执着于心的任何状态，这正是"无住"的基础。</p></div>
+                </div>
+              </div>
+
+              <!-- 第十九分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">19</span><span class="sh-name">法界通化分第十九</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？若有人满三千大千世界七宝以用布施，是人以是因缘得福多不？""如是，世尊！此人以是因缘得福甚多。""须菩提！若福德有实，如来不说得福德多。以福德无故，如来说得福德多。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"若福德有实，如来不说得福德多"——如果福德是一个"实在的东西"，它反而是有限的。"以福德无故，如来说得福德多"——正因为福德"没有实体"（空的），它才能无限。这是般若哲学中"空即无限"的深刻命题。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">20</span><span class="sh-name">离色离相分第二十</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？佛可以具足色身见不？""不也，世尊！如来不应以具足色身见。何以故？如来说具足色身，即非具足色身，是名具足色身。""须菩提！于意云何？如来可以具足诸相见不？""不也，世尊！如来不应以具足诸相见。何以故？如来说诸相具足，即非具足，是名诸相具足。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>佛的"三十二相"是佛教艺术中佛的形象特征，但这里明确指出：不能以身体的完美形相来认识佛。禅宗对这一点发挥到极致——"丹霞烧佛"的极端公案就是"离色离相"的实践：佛不在木雕泥塑中，佛在你自己的心中。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十一分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">21</span><span class="sh-name">非说所说分第二十一</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！汝勿谓如来作是念：我当有所说法。莫作是念！何以故？若人言如来有所说法，即为谤佛，不能解我所说故。须菩提！说法者，无法可说，是名说法。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"说法者，无法可说，是名说法"——禅宗"不立文字"最直接的经典依据。佛说"我在说法"就是谤佛。为什么？因为真理不是可以被"说出来的东西"。禅宗的"以心传心"——超越语言的直接传递——正是这一精神的极致发挥。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十二分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">22</span><span class="sh-name">无法可得分第二十二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>须菩提白佛言："世尊！佛得阿耨多罗三藐三菩提，为无所得耶？"佛言："如是如是！须菩提！我于阿耨多罗三藐三菩提，乃至无有少法可得，是名阿耨多罗三藐三菩提。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"无有少法可得"——最高的觉悟恰恰是"什么也没得到"。这不是虚无主义，而是彻底的放下：连"觉悟"这个概念都不抓住。禅宗说"无佛可成、无众生可度"——成佛不是获得了某种东西，而是放下了所有执着。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十三分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">23</span><span class="sh-name">净心行善分第二十三</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"复次，须菩提！是法平等，无有高下，是名阿耨多罗三藐三菩提。以无我、无人、无众生、无寿者，修一切善法，即得阿耨多罗三藐三菩提。须菩提！所言善法者，如来说即非善法，是名善法。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"是法平等，无有高下"——真理面前一切众生平等，没有高低贵贱之分。这是大乘佛法最平等主义的宣言。"修一切善法"——不只是空谈理论，还要落实到具体的善行中。禅宗"一日不作一日不食"的农禅传统，就是这种"空有不二"精神的体现。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十四分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">24</span><span class="sh-name">福智无比分第二十四</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若三千大千世界中所有诸须弥山王，如是等七宝聚，有人持用布施。若人以此般若波罗蜜经乃至四句偈等，受持读诵，为他人说，于前福德百分不及一，百千万亿分乃至算数譬喻所不能及。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>全经多次出现的"比较"修辞——物质的布施与智慧的传播相比，后者的价值不可比拟。这不是轻视物质帮助，而是指出：解除人类痛苦的最终力量不是物质的丰裕，而是智慧的觉醒。禅宗的"明心见性"——从根源上解决痛苦——正是这一信念的体现。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十五分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">25</span><span class="sh-name">化无所化分第二十五</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？汝等勿谓如来作是念：我当度众生。须菩提！莫作是念。何以故？实无有众生如来度者。若有众生如来度者，如来即有我、人、众生、寿者。须菩提！如来说有我者，即非有我。而凡夫之人，以为有我。须菩提！凡夫者，如来说即非凡夫，是名凡夫。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"实无有众生如来度者"——如果佛认为"我在度众生"，那就落入了"我相、人相、众生相"。度与被度是二元对立的，真正的觉悟超越了这种二元。禅宗的教学法正是如此：老师与学生之间，没有"教"与"学"的固定关系——"师资相契"才是最高的教学。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十六分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">26</span><span class="sh-name">法身非相分第二十六</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！于意云何？可以三十二相观如来不？"须菩提言："如是如是，以三十二相观如来。"佛言："须菩提！若以三十二相观如来者，转轮圣王即是如来。"须菩提白佛言："世尊！如我解佛所说义，不应以三十二相观如来。"尔时，世尊而说偈言："若以色见我，以音声求我，是人行邪道，不能见如来。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"若以色见我，以音声求我，是人行邪道，不能见如来"——这是禅宗最常引用的偈颂之一。佛不是可以通过感官对象（色、声）来认识的。禅宗"即心即佛"——佛不是外在的对象，而是内心的觉醒。参"什么是佛？"——不是去外面找一个佛，而是回头认清自己的本心。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十七分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">27</span><span class="sh-name">无断无灭分第二十七</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！汝若作是念：如来不以具足相故，得阿耨多罗三藐三菩提。须菩提！莫作是念：如来不以具足相故得阿耨多罗三藐三菩提。须菩提！若作是念：发阿耨多罗三藐三菩提心者，说诸法断灭。莫作是念！何以故？发阿耨多罗三藐三菩提心者，于法不说断灭相。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这里纠正了一个可能产生的误解：说空不等于"什么都没有"（断灭空）。如果以为"一切皆空"所以"什么都不存在"，那是"恶取空"。"于法不说断灭相"——空不是虚无，而是"缘起"——万物因缘而生，所以没有自性，但缘起的现象仍然存在。禅宗"即心即佛"正是"空有不二"——心不是实体，但心的作用真实不虚。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十八分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">28</span><span class="sh-name">不受不贪分第二十八</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若菩萨以满恒河沙等世界七宝持用布施，若复有人知一切法无我，得成于忍，此菩萨胜前菩萨所得功德。何以故？须菩提！以诸菩萨不受福德故。"须菩提白佛言："世尊！云何菩萨不受福德？""须菩提！菩萨所作福德，不应贪着，是故说不受福德。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"不受福德"——做了善事但不执着于"我做了善事"、"我获得了福报"。禅宗的"三轮体空"：布施者空、接受者空、布施物空。赵州"吃茶去"——做了就做了，不留下任何痕迹。这就是"无心"的境界。</p></div>
+                </div>
+              </div>
+
+              <!-- 第二十九分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">29</span><span class="sh-name">威仪寂净分第二十九</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若有人言：如来若来若去、若坐若卧，是人不解我所说义。何以故？如来者，无所从来，亦无所去，故名如来。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"如来"（Tathāgata）——"如其所是地到来"——字面意思就是"无所从来，亦无所去"。佛不是从某处"来"到这个世界，也不是"去"到某个地方。佛的法身遍在一切处，不来不去。禅宗将此转化为"心性"的描述：自性本来不动，不因生死而来去。</p></div>
+                </div>
+              </div>
+
+              <!-- 第三十分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">30</span><span class="sh-name">一合理相分第三十</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若善男子、善女人，以三千大千世界碎为微尘，于意云何？是微尘众，宁为多不？"须菩提言："甚多，世尊！何以故？若是微尘众实有者，佛即不说是微尘众。所以者何？佛说微尘众，即非微尘众，是名微尘众。世尊！如来所说三千大千世界，即非世界，是名世界。何以故？若世界实有者，即是一合相。如来说一合相，即非一合相，是名一合相。""须菩提！一合相者，即是不可说。但凡夫之人，贪着其事。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"一合相"——一个由众多部分聚合而成的整体（如世界、身体、国家）。凡夫把"整体"当作实有的东西执着，而圣者知道"整体"只是部分的和合，没有独立自存的实体。"但凡夫之人，贪着其事"——凡夫执着于这些"假相"以为实在。禅宗的"看破放下"——看破就是看见"一合相即非一合相"。</p></div>
+                </div>
+              </div>
+
+              <!-- 第三十一分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">31</span><span class="sh-name">知见不生分第三十一</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若人言：佛说我见、人见、众生见、寿者见。须菩提！于意云何？是人解我所说义不？""不也，世尊！是人不解如来所说义。何以故？世尊说：我见、人见、众生见、寿者见，即非我见、人见、众生见、寿者见，是名我见、人见、众生见、寿者见。""须菩提！发阿耨多罗三藐三菩提心者，于一切法，应如是知、如是见、如是信解，不生法相。须菩提！所言法相者，如来说即非法相，是名法相。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"不生法相"——对一切"法"（事物、概念、理论）不产生"这就是实相"的执着。即使是佛法本身，也只是"筏"（渡河之舟），到达彼岸后不应再背着船走。禅宗"逢佛杀佛"——连佛的概念都要打破——正是"不生法相"的极致。</p></div>
+                </div>
+              </div>
+
+              <!-- 第三十二分 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">32</span><span class="sh-name">应化非真分第三十二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"须菩提！若有人以满无量阿僧祇世界七宝持用布施，若有善男子、善女人发菩提心者，持于此经乃至四句偈等，受持读诵，为人演说，其福胜彼。云何为人演说？不取于相，如如不动。何以故？一切有为法，如梦幻泡影，如露亦如电，应作如是观。"佛说是经已，长老须菩提，及诸比丘、比丘尼、优婆塞、优婆夷，一切世间天、人、阿修罗，闻佛所说，皆大欢喜，信受奉行。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>全经以著名的"六如偈"作结。"一切有为法，如梦幻泡影，如露亦如电，应作如是观"——六种比喻从不同角度说明有为法的虚妄性。但最重要的是前面的"不取于相，如如不动"——这才是核心方法。全经由"云何应住？"开始，以"如如不动"结束：答案就是——"不取于相"。"如如不动"就是真理本身的面貌，不是停止不动，而是不被"相"所动的自由状态。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 2: 六祖坛经              -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-2">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《六祖大师法宝坛经》</strong>· 六祖慧能大师说，门人法海集录（宗宝本）。全经十品，以下逐品呈现原文与解读。</p>
+
+            <div class="sutra-wrap">
+
+              <!-- 品一 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">行由品第一</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>大师告众曰："善知识！菩提自性，本来清净。但用此心，直了成佛。善知识！且听慧能行由得法事意。"</p><p>慧能严父，本贯范阳，左降流于岭南，作新州百姓。此身不幸，父又早亡，老母孤遗，移来南海，艰辛贫乏，于市卖柴。时有一客买柴，使令送至客店。客收去，慧能得钱，却出门外，见一客诵经。慧能一闻经语，心即开悟。遂问："客诵何经？"客曰："《金刚经》。"复问："从何所来，持此经典？"客云："我从蕲州黄梅县东禅寺来。其寺是五祖弘忍大师在彼主化，门人一千有余。我到彼中礼拜，听受此经。大师常劝僧俗，但持《金刚经》，即自见性，直了成佛。"</p><p>慧能闻说，宿业有缘，乃蒙一客取银十两与慧能，令充老母衣粮，教便往黄梅参礼五祖。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>开篇即点出全经纲领——"菩提自性，本来清净。但用此心，直了成佛。"二十个字浓缩了六祖全部教法：觉悟的本性每个人本来就有，只需"用"这个心，直接了悟。慧能卖柴闻经开悟的经历，是禅宗"顿悟"论最生动的例证——一个不识字的樵夫，闻《金刚经》一句而悟。这不是神话，而是"直了成佛"的真实示范。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">行由品第一 · 续：得法与传承</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>慧能安置母毕，即便辞违。不经三十余日，便至黄梅，礼拜五祖。祖问曰："汝何方人？欲求何物？"慧能对曰："弟子是岭南新州百姓，远来礼师，惟求作佛，不求余物。"祖言："汝是岭南人，又是獦獠，若为堪作佛？"慧能曰："人虽有南北，佛性本无南北。獦獠身与和尚不同，佛性有何差别？"</p><p>五祖更欲与语，且见徒众总在左右，乃令随众作务。慧能曰："慧能启和尚，弟子自心常生智慧，不离自性，即是福田。未审和尚教作何务？"祖云："这獦獠根性大利！汝更勿言，着槽厂去。"慧能退至后院，有一行者，差慧能破柴踏碓。经八月余。</p><p>祖一日忽见慧能，曰："吾思汝之见可用，恐有恶人害汝，遂不与汝言。汝知之否？"慧能曰："弟子亦知师意，不敢行至堂前，令人不觉。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这段对话是禅宗史上的经典场景。"惟求作佛，不求余物"——慧能的求道之心如此纯粹，不夹杂任何世俗的目的。"人虽有南北，佛性本无南北"——慧能初出茅庐的第一句话，就已经完全把握了禅宗"佛性平等"的核心思想。五祖的"这獦獠根性大利"——第一次印证：这个"岭南蛮子"是他要找的传人。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">行由品第一 · 续：偈语得法</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>祖一日唤诸门人总来："吾向汝说，世人生死事大。汝等终日只求福田，不求出离生死苦海。自性若迷，福何可救？汝等各去自看智慧，取自本心般若之性，各作一偈，来呈吾看。若悟大意，付汝衣法，为第六代祖。"……</p><p>神秀作偈成已，数度欲呈，行至堂前，心中恍惚，遍身汗流，拟呈不得。前后经四日，一十三度呈偈不得。秀乃思惟："不如向廊下书着，从他和尚看见。"是夜三更，不使人知，自执灯，书偈于南廊壁间，呈心所见。偈曰："身是菩提树，心如明镜台，时时勤拂拭，勿使惹尘埃。"</p><p>……慧能至廊下，见一客诵偈。慧能一闻，便知此偈未见本性。……慧能曰："慧能不识字，请上人为读。"时有江州别驾张日用，便高声读。慧能闻已，遂言："亦有一偈，望别驾为书。"别驾言："汝亦作偈？其事希有！"慧能向别驾言："欲学无上菩提，不可轻于初学。下下人有上上智，上上人有没意智。"别驾言："汝但诵偈，吾为汝书。汝若得法，先须度吾，勿忘此言。"慧能偈曰："菩提本无树，明镜亦非台，本来无一物，何处惹尘埃。"</p><p>……祖知慧能已悟本性，遂告慧能曰："不识本心，学法无益。若识自本心，见自本性，即名丈夫、天人师、佛。"三更受法，人尽不知，便传顿教及衣钵。云："汝为第六代祖，善自护念，广度有情，流布将来，无令断绝。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是禅宗史上最核心的叙事。"以偈传法"成为禅宗最经典的象征性时刻。神秀的偈代表"渐修"——需要持续地打扫心地；慧能的偈代表"顿悟"——佛性本来清净，无须造作。五祖"不识本心，学法无益"——这是对一切禅修的终极判断：如果不认识到自己的本心，学任何法门都没有用。反过来说，一旦"识自本心"，一切修行都是本心的自然流露。</p></div>
+                </div>
+              </div>
+
+              <!-- 品二 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">般若品第二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>次日，韦使君请益。师升座，告大众曰："总净心念摩诃般若波罗蜜多。"复云："善知识！菩提般若之智，世人本自有之，只缘心迷，不能自悟。须假大善知识，示导见性。当知愚人智人，佛性本无差别。只缘迷悟不同，所以有愚有智。……"</p><p>"善知识！一切般若智，皆从自性而生，不从外入。莫错用意，名为真性自用。一真一切真。心量大事，不行小道。口莫终日说空，心中不修此行。恰似凡人，自称国王，终不可得。……"</p><p>"善知识！摩诃般若波罗蜜是梵语，此言大智慧到彼岸。此须心行，不在口念。口念心不行，如幻如化，如露如电。口念心行，则心口相应。本性是佛，离性无别佛。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"菩提般若之智，世人本自有之"——慧能最核心的"自性具足"论。般若智慧不是从外面学来的知识，而是每个人本来就有的内在觉悟能力。"口莫终日说空，心中不修此行"——慧能警告那些只会在口头上谈论"空"的人。禅宗不是一种口头哲学，而是"心行"——"口念心行，则心口相应"。这正是禅宗区别于纯学术研究的关键：它是需要亲身实践的。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">般若品第二 · 续：无念行</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"善知识！我此法门，从一般若，生八万四千智慧。何以故？为世人有八万四千尘劳。若无尘劳，智慧常现，不离自性。悟此法者，即是无念、无忆、无着。不起诳妄，用自真如性，以智慧观照。于一切法，不取不舍，即是见性成佛道。"</p><p>"善知识！若欲入甚深法界及般若三昧者，须修般若行，持诵《金刚般若经》，即得见性。……"</p><p>师复曰："善知识！何名般若？般若者，唐言智慧也。一切处所，一切时中，念念不愚，常行智慧，即是般若行。一念愚，即般若绝；一念智，即般若生。世人愚迷，不见般若。口说般若，心中常愚。常自言我修般若，念念说空，不识真空。般若无形相，智慧心即是。若作如是解，即名般若智。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"念念不愚，常行智慧"——慧能把般若定义为一种持续的"觉"的状态，而不是一种知识。每一念都不迷失，这就是般若行的实践。"般若无形相，智慧心即是"——般若不是可以被把握、被描述的对象，它就是觉悟的心灵活动本身。这是将《金刚经》的般若思想彻底"心学化"了。</p></div>
+                </div>
+              </div>
+
+              <!-- 品三 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">决疑品第三</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>一日，韦刺史为师设大会斋。斋讫，刺史请师升座，同官僚士庶肃容再拜，问曰："弟子闻和尚说法，实不可思议。今有少疑，愿大慈悲，特为解说。"师云："有疑即问，吾当为说。"</p><p>韦公曰："和尚所说，可不是达摩大师宗旨乎？"师曰："是。"公曰："弟子闻达摩初化梁武帝，帝问云：'朕一生造寺度僧，布施设斋，有何功德？'达摩言：'实无功德。'弟子未达此理，愿和尚为说。"师曰："实无功德，勿疑先圣之言。武帝心邪，不知正法。造寺度僧，布施设斋，名为求福，不可将福便为功德。功德在法身中，不在修福。……"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能在此区分"功德"与"福德"。"造寺度僧、布施设斋"是"求福"——求福报，不等于"功德"。"功德在法身中，不在修福"——真正的功德是见性成佛，不是外在的善行积累。这个区分对禅宗修行论至关重要：修行不只是做善事，而是要"明心见性"。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">决疑品第三 · 续：净土在自心</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>又问："弟子常见僧俗念阿弥陀佛，愿生西方。请和尚说，得生彼否？愿为破疑。"师言："使君善听！慧能与说。世尊在舍卫城中，说西方引化经文，分明去此不远。若论相说里数，有十万八千，即身中十恶八邪，便是说远。说远为其下根，说近为其上智。……佛向性中作，莫向身外求。自性迷即是众生，自性觉即是佛。慈悲即是观音，喜舍名为势至。能净即释迦，平直即弥陀。人我是须弥，贪欲是海水，烦恼是波浪。……</p><p>"善知识！若欲修行，在家亦得，不由在寺。在家能行，如东方人心善；在寺不修，如西方人心恶。但心清净，即是自性西方。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"佛向性中作，莫向身外求"——这是慧能对净土信仰的彻底革命。西方极乐世界不是外在的地理方位，而是"自心清净"的状态。"慈悲即是观音，喜舍名为势至，能净即释迦，平直即弥陀"——诸佛菩萨不是外在的神灵，而是自心的德能。"若欲修行，在家亦得，不由在寺"——这是对维摩诘"不舍道法而现凡夫事"的继承，也是禅宗"生活禅"的理论宣言。</p></div>
+                </div>
+              </div>
+
+              <!-- 品四 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">定慧品第四</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师示众云："善知识！我此法门，以定慧为本。大众勿迷，言定慧别。定慧一体，不是二。定是慧体，慧是定用。即慧之时定在慧，即定之时慧在定。若识此义，即是定慧等学。……"</p><p>"善知识！一行三昧者，于一切处行住坐卧，常行一直心是也。《净名经》云：'直心是道场'、'直心是净土'。莫心行谄曲，口但说直。口说一行三昧，不行直心。但行直心，于一切法勿有执着。迷人着法相，执一行三昧，直言常坐不动，妄不起心，即是一行三昧。作此解者，即同无情，却是障道因缘。……"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"定慧等学"——定和慧不是两件事。不是在"定"之后再产生"慧"，定本身就是慧的显现。"常住不动"不是禅——那只是"无情"（像石头一样）。真正的一行三昧是"于一切处行住坐卧，常行一直心"——在一切活动中保持正直的心。这是对"坐禅"的重新定义：禅不是枯坐，而是活在生活中。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">定慧品第四 · 续：无念为宗</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>"善知识！我此法门，从上以来，先立无念为宗，无相为体，无住为本。无相者，于相而离相。无念者，于念而不念。无住者，人之本性。于世间善恶好丑，乃至冤之与亲，言语触刺欺争之时，并将为空，不思酬害。念念之中，不思前境。若前念今念后念，念念相续不断，名为系缚。于诸法上念念不住，即无缚也。此是以无住为本。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能纲领的三句话——"无念为宗，无相为体，无住为本"——是禅宗修行论最精炼的表述。"于相而离相"：面对世界但不执着于世界。"于念而不念"：有念头但不被念头牵着走。"念念之中，不思前境"：每个念头都是新的，不把过去的念头带到当下。这三句话不是三个独立的法门，而是同一"无心"境界的三个角度。</p></div>
+                </div>
+              </div>
+
+              <!-- 品五 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">坐禅品第五</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师示众云："此门坐禅，元不着心，亦不着净，亦不是不动。若言着心，心元是妄，知心如幻，故无所着也。若言着净，人性本净，由妄念故，盖覆真如。但无妄想，性自清净。起心着净，却生净妄。妄无处所，着者是妄。净无形相，却立净相，言是工夫。作此见者，障自本性，却被净缚。"</p><p>"善知识！若修不动者，但见一切人时，不见人之是非善恶过患，即是自性不动。善知识！迷人身虽不动，开口便说他人是非长短好恶，与道违背。若着心着净，即障道也。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是对"坐禅"最革命性的重新定义。"元不着心，亦不着净，亦不是不动"——禅坐不是"观心"（因为心本来空），不是"求净"（因为净是本性），也不是"身体不动"（因为那是枯木禅）。"不见人之是非善恶过患，即是自性不动"——真正的"不动"不是身体不动，而是心中没有是非的执着。这对于那些把"禅"误解为"身体控制"的人是当头棒喝。</p></div>
+                </div>
+              </div>
+
+              <!-- 品六 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">忏悔品第六</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师曰："善知识！此事须从自性中起。于一切时，念念自净其心，自修自行，见自己法身，见自心佛，自度自戒，始得。不假到此，既从远来，一会于此，皆共有缘。今可各各胡跪，先为传自性五分法身香，次授无相忏悔。……"</p><p>师曰："善知识！何名无相忏悔？"善知识！前念、今念、后念，念念不被愚迷染。从前所有恶业、愚迷等罪，悉皆忏悔，愿一时消灭，永不复起。念念不被憍诳染，念念不被嫉妒染。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能的"无相忏悔"与传统佛教的忏悔仪式完全不同。忏悔不是对某个外在神灵承认过错，而是"念念自净其心"——每一念都不被愚迷、憍诳、嫉妒所染。"自度自戒"——自己度自己，自己持自己的戒。把外在的仪式转化为内在的自省，这是禅宗对传统佛教"仪式化"的彻底改造。</p></div>
+                </div>
+              </div>
+
+              <!-- 品七 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">07</span><span class="sh-name">机缘品第七</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师曰："此经以因缘出世为宗。纵说多种方便，毕竟以'无念'为宗。但于一切法，无念即无缚，有念即缚。但一切处无念，是故不可思议。……"师曰："汝慎勿言'解'与'不解'，皆是无常。但净自心，不着一切法，即是常。非关言语、文字、思量。"</p><p>（永嘉玄觉）……觉曰："生死事大，无常迅速。"师曰："何不体取无生，了无速乎？"曰："体即无生，了本无速。"师曰："如是如是。"玄觉方具威仪礼拜。须臾告辞。师曰："返太速乎？"曰："本自非动，岂有速耶？"师曰："谁知非动？"曰："仁者自生分别。"师曰："汝甚得无生之意。"曰："无生岂有意耶？"师曰："无意谁当分别？"曰："分别亦非意。"师曰："善哉！"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>机缘品记录了许多悟道者的对话。永嘉玄觉与慧能的交锋是其中最精彩的。玄觉本来想走（"返太速乎"），慧能一句"谁知非动"逼出了玄觉最深的领悟——"分别亦非意"：分别活动本身也不执着于"我"。这是一段密集的哲学交锋，每一句都是对"分别"与"无念"之间关系的层层深入。后来永嘉作《证道歌》，成为禅宗最重要的文献之一。</p></div>
+                </div>
+              </div>
+
+              <!-- 品八 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">08</span><span class="sh-name">顿渐品第八</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>时祖师居曹溪宝林，神秀大师在荆南玉泉寺。于时两宗盛化，人皆称南能北秀，故有南北二宗顿渐之分。而学者莫知宗趣。师谓众曰："法本一宗，人有南北。法即一种，见有迟疾。何名顿渐？法无顿渐，人有利钝，故名顿渐。"</p><p>……师曰："汝师若为示众？"对曰："常指诲大众：住心观净，长坐不卧。"师曰："住心观净，是病非禅。长坐拘身，于理何益？听吾偈曰：'生来坐不卧，死去卧不坐。一具臭骨头，何为立功课？'"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"法无顿渐，人有利钝"——慧能调和顿渐之争的经典说法。真理本身没有"快"和"慢"，只是人的根器不同。"住心观净，是病非禅"——把心固定在一个地方、追求"清净"，这不是禅，是病。"一具臭骨头，何为立功课"——对"长坐不卧"的神秘主义苦行传统的彻底否定。慧能坚持：禅不在打坐的形式中，在生活的每一刻中。</p></div>
+                </div>
+              </div>
+
+              <!-- 品九 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">09</span><span class="sh-name">护法品第九</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>神龙元年上元日，则天中宗诏云："朕请安秀二师宫中供养，万机之暇，每究一乘。二师推让云：'南方有能禅师，密授忍大师衣法，传佛心印，可请彼问。'今遣内侍薛简，驰诏迎请。愿师慈念，速赴上京。"师上表辞疾，愿终林麓。</p><p>薛简曰："京城禅德皆云：'欲得会道，必须坐禅习定。若不因禅定而得解脱者，未之有也。'未审师所说法如何？"师曰："道由心悟，岂在坐也。经云：'若言如来若坐若卧，是行邪道。'何故？无所从来，亦无所去。无生无灭，是如来清净禅。诸法空寂，是如来清净坐。究竟无证，岂况坐耶？"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>朝廷两次召请慧能入京，慧能都婉拒了。"道由心悟，岂在坐也"——这是慧能留给朝廷使者的回答，也是禅宗"顿悟"论最明确的宣言。"无生无灭，是如来清净禅；诸法空寂，是如来清净坐"——真正的禅和真正的坐，不是形式上的打坐，而是对诸法实相的领悟。慧能的这种态度奠定了禅宗"山林佛教"的独立传统——不依附于皇权，保持自身的自由。</p></div>
+                </div>
+              </div>
+
+              <!-- 品十 -->
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">10</span><span class="sh-name">付嘱品第十</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师一日唤门人法海、志诚、法达、智常、智通、志彻、志道、法珍、法如、神会，曰："汝等不同余人。吾灭度后，各为一方师。吾今教汝说法，不失本宗。先须举三科法门，动用三十六对，出没即离两边。说一切法，莫离自性。忽有人问汝法，出语尽双，皆取对法，来去相因。究竟二法尽除，更无去处。"</p><p>……师言："此三十六对法，若解用，即道贯一切经法，出入即离两边。……若有人问汝义，问有将无对，问无将有对，问凡以圣对，问圣以凡对。二道相因，生中道义。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能临终传授"三十六对法"——用对立概念来破除对任何单一概念的执着。"问有将无对，问无将有对"——如果有人执着"存在"，就告诉他"空"；如果执着"空"，就告诉他"存在"。这不是玩文字游戏，而是用"两边的对法"把学人从任何一端的执着中拉出来。"究竟二法尽除"——最后连"对"本身也要放下——"更无去处"：连"无去处"这个概念都要放下。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num" style="color:transparent">—</span><span class="sh-name" style="color:var(--text-dim);font-size:0.75rem">付嘱品第十 · 续：大师灭度</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>大师先天二年癸丑岁八月初三日，于国恩寺斋罢，谓诸徒众曰："汝等各依位坐，吾与汝别。"法海白言："和尚留何教法，令后代迷人得见佛性？"师言："汝等谛听！后代迷人，若识众生，即是佛性。若不识众生，万劫觅佛难逢。吾今教汝：识自心众生，见自心佛性。欲求见佛，但识众生。只为众生迷佛，非是佛迷众生。自性若悟，众生是佛；自性若迷，佛是众生。自性平等，众生是佛；自性邪险，佛是众生。汝等心若险曲，即佛在众生中。一念平直，即是众生成佛。我心自有佛，自佛是真佛。自若无佛心，何处求真佛？汝等自心是佛，更莫狐疑。外无一物而能建立，皆是本心生万种法。故经云：'心生种种法生，心灭种种法灭。'"</p><p>……师说偈已，端坐至三更，忽谓门人曰："吾行矣。"奄然迁化。于时异香满室，白虹属地。林木变白，禽兽哀鸣。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>慧能的临终遗言，是《坛经》最后的点睛之笔。"识自心众生，见自心佛性"——佛与众生不是两个不同的东西，而是同一颗心的迷悟状态。"自性若悟，众生是佛；自性若迷，佛是众生"——这是最彻底的"即心即佛"宣言。"汝等自心是佛，更莫狐疑"——慧能最后的嘱咐：不要怀疑自己本来是佛。禅宗的全部教诲可以浓缩为一句话：相信自己本心的觉悟能力。这就是"直指人心，见性成佛"。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 3: 涅槃经                -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-3">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《大般涅槃经》</strong>· 北凉天竺三藏昙无谶译（北本）。全经四十卷，是禅宗"一切众生悉有佛性"思想的核心经典来源。以下选录对禅宗影响最深的几个关键段落。</p>
+
+            <div class="sutra-wrap">
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">如来性品 · 一切众生悉有佛性</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>善男子！我者即是如来藏义。一切众生悉有佛性，即是我义。如是我义，从本已来，常为无量烦恼所覆，是故众生不能得见。善男子！如贫女人，舍内多有真金之藏，家人大小无有知者。时有异人，善知方便，语贫女言："我今雇汝，汝可为我耘除草秽。"女即答言："我不能也，汝若能示我子舍内金藏，然后乃当速为汝作。"是人复言："我知方便，能示汝子。"女人答言："我家大小尚自不知，况汝能知？"是人复言："我今审能。"女人答言："我亦欲见，并可示我。"是人即于其家掘出金藏，女人见已，心生欢喜，生奇特想，宗仰是人。善男子！众生佛性亦复如是，一切众生不能得见。如彼宝藏，贫人不知。善知识者，即是佛性。佛性者，即是如来。如来者，即是不共法。不共法者，即是无上菩提。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"一切众生悉有佛性"（sabbe sattā tathāgatagarbhāḥ）是《涅槃经》的核心命题，也是禅宗"即心即佛"最直接的经典依据。慧能"菩提自性本来清净"正是对这一命题的继承。宝藏喻——佛性如家中的黄金，始终在那里，只是被无明遮蔽。禅宗的修行不是"创造"觉悟，而是"发现"本有的佛性。六祖闻《金刚经》而悟，不是获得了什么新东西，而是发现了一直在的东西。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">师子吼菩萨品 · 佛性即真我</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>师子吼菩萨言："世尊！若一切众生悉有佛性，如佛所说，何故一切众生不见？"佛言："善男子！譬如虚空，一切众生之所行住，而无众生能见虚空。佛性如是，一切众生悉皆不见。……善男子！佛性者，名为第一义空。第一义空，名为智慧。所言空者，不见空与不空。……空者，一切生死。不空者，谓大涅槃。乃至无我者，即是生死。我者，谓大涅槃。见一切空，不见不空，不名中道。乃至见一切无我，不见我者，不名中道。中道者，名为佛性。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这里提出了一个极为深刻的"中道佛性"论。"空者，一切生死；不空者，谓大涅槃"——空不等于"什么都没有"，空是对"生死"（有为法）的描述，而大涅槃（佛性）超越了空与不空的对立。"中道者，名为佛性"——佛性就是中道本身。禅宗"不落两边"的理念——既不住有、也不住空——正是此义的修行化表达。慧能三十六对法的"出没即离两边"即源于此。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">师子吼菩萨品 · 佛性如乳中有酪</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>善男子！如“乳中有酪”，众生勿谓乳即是酪，亦非“因乳有酪”、亦非“离乳有酪”。佛性亦尔，众生勿谓“众生即是佛性”，亦非“因众生有佛性”、亦非“离众生有佛性”。……善男子！众生佛性，非有非无。所以者何？佛性虽有，非如虚空；佛性虽无，非如兔角。是故佛性，非有非无，亦有亦无。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>以"乳中有酪"（牛奶中有奶酪）为喻说明佛性与众生的关系。牛奶不是奶酪（众生不是佛），但奶酪的确是从牛奶而来（佛性是众生的潜能）。佛性"非有非无"——说有，但不可像实体一样抓住；说无，但它确实存在。禅宗对此的发挥是"说似一物即不中"——佛性不能被任何概念所限定。参"即心即佛"——心不是佛，佛不是心，但心就是佛——正是在"非有非无"的张力中才能体会。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">迦叶菩萨品 · 常乐我净</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："善男子！我者，即是如来藏义。一切众生悉有佛性，即是我义。……常者，如来法身；乐者，涅槃解脱；我者，如来正智；净者，大般涅槃。……善男子！是故我于诸经中说：'若有人言：如来无常、无乐、无我、无净。'当知是人，是魔眷属，非佛弟子。何以故？如是四法，即是诸佛如来法身。若有人言：'如来法身，非常、非乐、非我、非净。'亦复如是，是魔眷属，非佛弟子。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>《涅槃经》提出"常乐我净"作为涅槃的四德，与大乘佛教通常的"无常、苦、无我、不净"形成对比。这四者在禅宗中被转化为"自性"的描述：自性常（不生不灭）、自性乐（离苦自在）、自性我（自在主宰）、自性净（本来清净）。但慧能也警告不要把"自性"当作一个实体来执着——"本来无一物"——常乐我净是觉悟后的境界，不是理论上的"有"。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">如来性品 · 贫女金藏喻 · 再论佛性</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："善男子！众生佛性，亦复如是。众生虽有，不能得见。譬如有人，于大海上，乘船而没，失于方向。忽见一灯，乃知有岸。善男子！佛性亦尔，为诸烦恼之所覆蔽，众生不见。若遇善知识，闻法修学，乃得见之。佛性如灯，能破无明黑暗。佛性如船，能渡生死大海。佛性如导师，能引众生至涅槃岸。是故佛性，名为无上菩提。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>禅宗对"佛性"的理解有一个重要转化：从《涅槃经》的"如来藏性"（一种本有的潜能）到慧能的"即心即佛"（心本身就是佛）。《坛经》说"自性若悟，众生是佛"——佛性不是一个需要被"实现"的潜能，而是当下就可以"识自本心"。这个转化使禅宗成为"顿悟"的宗门——不是慢慢培养佛性，而是"一念悟时"直接认识。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">圣行品 · 如来常住</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："善男子！如来常住，无有变易。所以者何？如来法身，非是行法，无有生灭。如来非有为，非无为。非有为故，不生不灭；非无为故，而能示现生灭。……如来非生，非非生；非灭，非非灭。不生不灭，是名如来。如来非定，非不定；非心，非非心；非有，非无。是故如来，常住不变。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"如来常住"——如来（真理本身）不是一种"有"（存在物），也不是"无"（不存在）。禅宗马祖道一的"即心即佛"、百丈怀海的"灵光独耀，迥脱根尘"——都是"如来常住"思想的转化。"不生不灭"不是对"生灭"的否定，而是超越生灭二元的境界。禅宗"看话头"——如参"念佛是谁"——正是通过质疑将心从"生灭"的二元思维中解脱出来。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 4: 华严经                -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-4">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《大方广佛华严经》</strong>· 唐于阗三藏实叉难陀译（八十华严）。全经八十卷，是华严宗的根本经典，对禅宗"事事无碍"、"一即一切"的思想产生了深刻影响。以下选录与禅宗关系最密切的段落。</p>
+
+            <div class="sutra-wrap">
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">觉林菩萨偈 · 一切唯心造</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时觉林菩萨，承佛威力，遍观十方，而说颂言：</p><p>譬如工画师，分布诸彩色。虚妄取异相，大种无差别。<br>大种中无色，色中无大种。亦不离大种，而有色可得。<br>心中无彩画，彩画中无心。然不离于心，有彩画可得。<br>彼心恒不住，无量难思议。示现一切色，各各不相知。<br>譬如工画师，不能知自心。而由心故画，诸法性如是。<br>心如工画师，能画诸世间。五蕴悉从生，无法而不造。<br>如心佛亦尔，如佛众生然。应知佛与心，体性皆无尽。<br>若人知心行，普造诸世间。是人则见佛，了佛真实性。<br>心不住于身，身亦不住心。而能作佛事，自在未曾有。<br>若人欲了知，三世一切佛。应观法界性，一切唯心造。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是《华严经》中最著名的偈颂，也是禅宗引用最多的华严段落。"心如工画师，能画诸世间"——心不是被动地反映世界，而是主动地"创造"世界。"若人欲了知，三世一切佛，应观法界性，一切唯心造"——慧能"一切万法不离自性"的直接前身。但禅宗避免了将"心"实体化——"心中无彩画，彩画中无心"——心与它所创造的世界之间，是"不一不异"的关系。后期禅宗的"唯心净土"、"即心即佛"都深深根植于这一偈颂。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">夜摩天宫品 · 一即一切</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>时夜摩天王，承佛神力，观察十方，而说颂言：</p><p>佛身充满于法界，普现一切众生前。随缘赴感靡不周，而恒处此菩提座。<br>如来一一毛孔中，一切刹尘诸佛坐。菩萨众会共围绕，演说普贤之胜行。<br>……<br>一即一切，一切即一。一毛端中，现宝王刹。坐微尘里，转大法轮。<br>于一尘中，尘数佛。各处菩萨众会中。无尽法界，悉皆如。彼此无碍，悉包融。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"一即一切，一切即一"——《华严经》最凝练的哲学公式。在禅宗中，这一原则被转化为"一悟即至佛地"——在一念中具足一切万法。临济义玄的"一喝不作一喝用"——一喝之中同时具足佛、法、僧三宝的全体作用。沩仰宗的"九十六圆相"——每一个圆相都代表了重重无尽的法界。法眼文益的"一切现成"——"一"就是全体，不需要去别处寻找。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">梵行品 · 初发心时便成正觉</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："菩萨摩诃萨，初发心时，便成正觉。知一切法，以无所得故。……知一切法，即心自性。成就慧身，不由他悟。……见一切佛，皆与己身同一体性。知一切法，皆如金刚。不坏法性，入诸三昧。……于一念中，遍一切处。一切法门，悉现在前。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"初发心时，便成正觉"——刚发菩提心的那一刻，就已经成佛。这不是"修行的起点等于终点"的神秘论，而是《华严经》"因赅果海"（原因中包含着全部结果）的哲学表达。禅宗慧能的"一念悟时众生是佛"与"初发心时便成正觉"形成跨文本的呼应。"不由他悟"——不靠别人，自己的心就是老师。禅宗的"自性自度"完全继承了这一精神。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">如来出现品 · 奇哉众生具有如来智慧</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："奇哉奇哉！此诸众生，云何具有如来智慧，愚痴迷惑，不知不见？我当教以圣道，令其永离妄想执着，自于身中得见如来广大智慧与佛无异。"</p><p>佛言："如来智慧，无相智慧，无碍智慧，具足在于众生身中。但愚痴众生，颠倒想覆，不能得见。……如来以无障碍清净智眼，普观法界一切众生，而作是言：'奇哉奇哉！云何如来具足智慧，在于众生身中，而不知见？我今示导，令得开悟。'"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是整个佛教传统中最著名的"感叹"——佛陀成道时惊叹一切众生本来就具有与佛无异的智慧，只是被妄想覆盖、不能见到。这段经文直接催生了禅宗的"即心即佛"论。慧能"菩提自性本来清净"与"如来智慧具足在于众生身中"一脉相承。马祖道一更是直截了当地说："汝今各信自心是佛，此心即是佛心。"——这正是《华严经》"奇哉"感叹在禅宗中的回响。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">普贤行愿品 · 普贤十大愿</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>普贤菩萨告诸菩萨及善财言："善男子！如来功德，假使十方一切诸佛，经不可说不可说佛刹极微尘数劫，相续演说，不可穷尽。若欲成就此功德门，应修十种广大行愿。何等为十？一者礼敬诸佛，二者称赞如来，三者广修供养，四者忏悔业障，五者随喜功德，六者请转法轮，七者请佛住世，八者常随佛学，九者恒顺众生，十者普皆回向。"</p><p>"善男子！是为菩萨摩诃萨十种大愿，具足圆满。若诸菩萨，于此大愿，随顺趣入，则能成熟一切众生。则能随顺阿耨多罗三藐三菩提。则能成满普贤菩萨诸行愿海。……普贤行愿威神力，普现一切如来前。一身复现刹尘身，一一遍礼刹尘佛。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>《普贤行愿品》是八十华严的最后一品，也是对中国佛教影响最深远的文本之一。禅宗虽然在教义上主张"直指人心"，但在实际修行中从未忽视"普贤行愿"——百丈怀海的"一日不作一日不食"即是对"广修供养"和"恒顺众生"的实践。禅宗的"农禅"传统所蕴含的"利他"精神，正是普贤十大愿在禅宗寺院中的具体化。"礼敬诸佛"——禅宗的"佛"不是外在的偶像，而是"心佛"；"忏悔业障"——慧能的无相忏悔；"恒顺众生"——赵州"吃茶去"的平常心。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">十地品 · 三界唯心</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛言："菩萨摩诃萨，住此第四焰慧地已，如实知一切众生心、心所法、种种差别。……所谓：一心具足百千三昧。……此菩萨，如实知一切法，皆自心所现。知三界所有，唯是一心。如来于此，分别演说十二有支，皆依一心。……若知心如是，则与佛无异。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"三界所有，唯是一心"——这是《华严经》最极致的唯心论表述。禅宗对此的解读并非西方哲学意义上的"唯心主义"（认为物质世界是心的产物），而是一种"认识论的转化"——一切问题都回归到"心"。"一心具足百千三昧"——一个心念中就包含一切禅定。这与慧能的"定慧等学"完全一致：不是先定后慧，而是一心之中定慧俱足。"若知心如是，则与佛无异"——知道心的本来状态，就是成佛。禅宗的"识自本心，见自本性"——终极目标就是认识这个"心"。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">07</span><span class="sh-name">入法界品 · 善财童子五十三参</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时，善财童子从文殊师利菩萨所，闻佛如是种种功德，一心勤求阿耨多罗三藐三菩提。随文殊师利，教示善知识，渐次南行。……</p><p>善财童子于善知识所，不生疲厌。——如是展转经一百一十城已，至普门国，苏摩那城，住立门所，思惟文殊师利菩萨，随顺观察，周旋求觅，希欲奉觐。</p><p>是时，文殊师利遥伸右手，过一百一十由旬，按善财顶，作如是言："善哉善哉！善男子！若离信根，心劣忧悔，功行不具，退失精进。于一善根，心不住着。于诸行法，不生懈怠。心常思惟，无有退转。……则能成就普贤菩萨诸行愿海。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>善财童子五十三参的故事是禅宗"行脚"（参访善知识）的精神原型。禅宗强调"行脚"——从师父处得了个入处后，需要遍历天下丛林，在不断的问答和印证中深化悟境。善财"参访五十三位善知识"的历程正是禅宗"行脚"的文本原型。赵州八十犹行脚——善财的求法精神在禅宗中被发挥到了极致。五十三参的核心信息是：觉悟的智慧散布在一切众生之中，不是只有佛和菩萨才有——"众生即是佛"。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-10')">← 上一章</span><span class="nav-btn" onclick="goTo('page-11')">下一章 →</span></div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 5: 楞伽经                -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-5">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《楞伽阿跋多罗宝经》</strong>（简称《楞伽经》），四卷，刘宋求那跋陀罗译。此经是禅宗初祖达摩"印心"的经典依据——"吾观中土唯有此经，可依之而行"。融合如来藏与唯识思想，"佛语心为宗"奠定了禅宗"以心传心"的根本理念。以下选录关键段落。</p>
+
+            <div class="sutra-wrap">
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">卷第一 · 佛语心为宗</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>如是我闻。一时佛住南海滨楞伽山顶，种种宝华以为庄严，与大比丘僧及大菩萨众俱。……尔时大慧菩萨摩诃萨，承佛所现神通之力，而说偈言：</p><p>"世间离生灭，犹如虚空华。智不得有无，而兴大悲心。<br>一切法如幻，远离于心识。智不得有无，而兴大悲心。<br>……<br>佛慧智日月，除诸世冥暗。是故稽首礼，不思议法身。"</p><p>尔时大慧菩萨偈赞佛已，自说姓名："我名为大慧，通达于大乘。今以百八问，仰咨无上尊。"</p><p>佛告大慧："一切诸佛，皆依佛语心为宗。一切法门，皆从此经出。……若欲了知如来心者，应当听此楞伽经。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"佛语心为宗"——此经的核心命题。"心"（citta）是《楞伽经》的绝对核心，达摩选择此经正是因为其"以心传心"的旨趣与禅宗的根本精神完全一致。开篇大慧菩萨的偈颂已经点出全经要义："世间离生灭，犹如虚空华"——世间现象如同空中花，没有实体；"一切法如幻，远离于心识"——万法如幻，超越心识的分别。这正是禅宗"一切万法不离自性"的源头之一。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">卷第一 · 五法三自性八识二无我</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告大慧："善哉善哉！汝今问我如是之义，当为汝说。……大慧！所谓：五法、三自性、八识、二无我，此摄一切佛法。"</p><p>"大慧！何等五法？谓：相、名、分别、正智、如如。若修行者，如实观察，不堕外道二乘境界，渐入诸地，悉知诸地。……"</p><p>"大慧！何等三自性？谓：妄计自性、缘起自性、圆成自性。……"</p><p>"大慧！何等八识？谓：如来藏名识藏，及意、意识、五识身。……"</p><p>"大慧！何等二无我？谓：人无我、法无我。……"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"五法、三自性、八识、二无我"——这部经用四个概念组概括了全部佛法，是佛教史上最精炼的理论框架。五法（相、名、分别、正智、如如）描述了从迷到悟的五个认识层次；三自性（妄计、缘起、圆成）说明了事物的三种存在方式；八识（前五、意识、末那、阿赖耶）分析了心识的结构；二无我（人无我、法无我）是最终的证悟目标。禅宗虽然标榜"不立文字"，但其"明心见性"所说的"心"，正是此经所说的第八阿赖耶识与如来藏的合一。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">卷第二 · 如来藏与阿赖耶识</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告大慧："如来之藏，是善不善因，能遍兴造一切趣生。譬如伎儿，变现诸趣，离我我所。……为无始虚伪恶习所熏，名为识藏。……此如来藏识藏，一切声闻缘觉心想所见，虽自性净，客尘所覆故，犹见不净。"</p><p>"大慧！如来藏者，是善不善因。……若无如来藏者，一切众生，则以厌苦乐求涅槃。……然彼众生，不觉不知，以诸烦恼，而作佛事。此如来藏，本性清净，而客尘烦恼，之所染污。……"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是大乘佛教思想史上最关键的段落之一。《楞伽经》将"如来藏"（tathāgatagarbha，佛性的潜能）与"阿赖耶识"（ālayavijñāna，含藏种子的根本识）统一起来。如来藏是"性净"（本来清净），阿赖耶识是"相染"（被无明所覆），二者是同一实体的两个面向。禅宗的"即心即佛"正是建立在这个统一之上——心（阿赖耶识）的深层本质就是如来藏（佛）。修行不是"消灭"阿赖耶识，而是"转识成智"——转化它。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">卷第三 · 自觉圣智 · 离文字相</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告大慧："我乘内证智，觉悟一切。如来以自觉圣智，而证诸法。非文字、非言说、非分别。……"</p><p>"大慧！一切法自性，离于文字。……若人执着文字，是则名为，愚夫众生。……"</p><p>"大慧！是故如来，不说佛乘。所以者何？佛乘者，非言说分别所及。……"</p><p>"大慧！真实法者，离文字故。是故如来，不说文字。真实者，离心心所，不立能所。……大慧！若人执着言说，即堕外道见。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这段经文是禅宗"不立文字"最直接的经典依据。"真实者，离文字故"——真理超越语言文字；"我乘内证智，觉悟一切"——佛的教法不是可以被"说"出来的知识系统，而是内在的亲证智慧。"离文字"不是说不需要经典、不需要学习，而是说最终的真实不能通过文字来把握——文字是"指月之指"，不是月亮本身。达摩以此经印心，看中的正是其"离文字"、"自觉圣智"的旨趣与"以心传心"的完全一致。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">卷第三 · 心、意、意识 · 转识成智</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告大慧："心为一切法之根本。……大慧！略说有三种识，广说有八种相。何等为三？谓真识、现识、分别事识。……"</p><p>"大慧！譬如明镜，持诸色像。现识处现，亦复如是。……大慧！诸识有三种相：谓转相、业相、真相。……"</p><p>"大慧！是故，菩萨摩诃萨，欲得佛地一切智智，应善观察，心、意、意识。……转识成智，则能证得，如来法身。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"心为一切法之根本"——这是全经的又一个核心命题。禅宗慧能"一切万法不离自性"的说法，与"心为一切法之根本"在结构上完全相同。"转识成智"——把污染的识（分别、执着）转化为清净的智（大圆镜智、平等性智、妙观察智、成所作智），这是《楞伽经》为禅宗提供的修行转化机制。禅宗的"顿悟"不是神秘主义的突然变化，而是"转"——在当下一念中，从"识"的分别状态转到"智"的无分别状态。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">卷第四 · 涅槃与佛性 · 结语付嘱</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告大慧："大慧！涅槃者，非灭、非不灭。非有、非无。非一、非异。非断、非常。是故涅槃者，离一切分别。……"</p><p>"大慧！一切众生，从无始来，生死本际，不可得知。……但以无明，覆本觉性。……若得自觉圣智，则能证知。"</p><p>"大慧！汝等诸菩萨，于此《楞伽经》，当勤修学。若诸众生，欲得佛地，当修是经。……是故名为，禅宗印心之经。"</p><p>佛说此经已，大慧菩萨及诸菩萨、声闻、比丘、天、龙、夜叉、乾闼婆、阿修罗、迦楼罗、紧那罗、摩睺罗伽、人非人等，一切大众，闻佛所说，欢喜奉行。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"涅槃者，非灭、非不灭。非有、非无。"——《楞伽经》对涅槃的定义彻底超越了"有/无"的二元对立。涅槃不是"什么都没有"（非灭），也不是"永恒存在"（非不灭）。禅宗对此的发挥："涅槃"就是"无心"——心不再执着于"有没有涅槃"。"一切众生从无始来，生死本际不可得知"——众生本性与佛无二，只是"无明覆本觉性"。《楞伽经》的结语将"自觉圣智"作为修行的最终目标——不是从外面获得什么，而是"自觉"——自己觉醒自己的本性。这正是禅宗"直指人心，见性成佛"的奥义所在。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 6: 中论                 -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-6">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《中论》</strong>（Mūlamadhyamakakārikā），龙树菩萨（Nāgārjuna，约150—250年）造，姚秦三藏鸠摩罗什译。全经二十七品，约四百五十偈。此论是"大乘佛教哲学最高成就"（T.R.V. Murti语），也是禅宗「不二」思想、「双遣」方法论的终极哲学基础。以下选录对禅宗影响最深的偈颂与段落。</p>
+
+            <div class="insight-box"><div class="ib-label">龙树与禅宗</div><p>龙树被禅宗尊为西天第十四祖（《景德传灯录》记载）。虽然这一说法缺乏历史依据，但它反映了禅宗对龙树思想的高度认同。龙树的"中道"——超越一切二元对立的"空"——正是禅宗"不立文字、不落两边"的理论基础。慧能的三十六对法、临济的四料简、曹洞的偏正五位，都可以视为龙树中观哲学在禅宗教学中的具体运用。</p></div>
+
+            <div class="sutra-wrap">
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">归敬偈 · 八不中道</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>不生亦不灭，不常亦不断，不一亦不异，不来亦不去。<br>能说是因缘，善灭诸戏论。我稽首礼佛，诸说中第一。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是《中论》的开篇偈颂，也是整个中观哲学的宣言。八个否定（八不）排除了对实在的一切可能言说方式——存在/不存在、永恒/断灭、同一/差异、来/去。这八种"戏论"（prapañca，概念化的虚构）覆盖了人类思维的一切二元范畴。龙树不是在提出一种新的哲学理论，而是在"清除"所有的理论建构——"善灭诸戏论"。禅宗对此的回应是"说似一物即不中"——任何关于终极实在的言说都是不充分的。八不中道是禅宗"不立文字"最彻底的理论根基。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">观因缘品 · 缘起性空</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>诸法不自生，亦不从他生，不共不无因，是故知无生。<br>如诸法自性，不在于缘中。以无自性故，他性亦复无。<br>因缘所生法，我说即是空，亦为是假名，亦是中道义。<br>未曾有一法，不从因缘生。是故一切法，无不是空者。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是整个中观哲学最核心的偈颂。"因缘所生法，我说即是空，亦为是假名，亦是中道义"——嘉祥吉藏将此偈概括为"三谛"：空（真谛）、假名（俗谛）、中道（中谛）。万法因缘而生（缘起），所以没有独立自性（空），但空不等于不存在，只是"假名"存在（假名）。空与有的统一就是"中道"。禅宗对此的实践化反应——"即心即佛"——心不是实体（空），但心的作用真实不虚（假名），心就是佛（中道）。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">观去来品 · 动静不二</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>已去无有去，未去亦无去，离已去未去，去时亦无去。<br>动处则有去，此中有去时。非已去未去，是故去时去。<br>去者则不去，不去者不去，离去不去者，无第三去者。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>龙树对"运动"（去）的经典分析。如果"去"（运动）已经完成（已去），就没有"正在去"的活动；如果尚未开始（未去），也没有"去"的活动；如果正在"去"（去时），但这个"去时"又无法被分割为过去和未来。龙树的结论是："去"（运动）这个概念的背后没有一个独立的实体。慧能"不是风动、不是幡动、仁者心动"——以及《坛经》"念念之中不思前境"——都是对"动静不二"的实践运用。龙树用逻辑证明了运动的虚幻性，慧能则在生命体验中直接超越了动与静的二元。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">观本际品 · 生死无始</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>大圣之所說，本际不可得。生死无有始，亦复无有终。<br>若无有始终，中当云何有？是故于此中，先后共亦无。<br>若使初后共，是皆不然者。何故而戏论，谓有生老死？</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"本际不可得"——生死没有起点（无始）、没有终点（无终）。如果没有"始"和"终"，那么"中间"从哪里来？"始—中—终"这个时间框架本身就是一种概念建构。禅宗对"当下"的重视——"一念万年、万年一念"——不是否定时间，而是超越"过去—现在—未来"的线性时间观，回到"当下"的本来面貌。道元在《正法眼藏·有时》卷中对此做了最深刻的发挥。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">观如来品 · 如来无自性</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>非阴不离阴，此彼不相在。如来不有阴，何处有如来？<br>若于本来中，无有如来者。云何因五阴，而更生如来？<br>若此五是佛，尔则有多佛。云何为一佛，而说为五阴？<br>如来所有性，即是世间性。如来无有性，世间亦无性。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"如来所有性，即是世间性。如来无有性，世间亦无性"——这是全论最惊世骇俗的结论之一：如来（佛）的本质与世间（众生）的本质是完全相同的——都没有自性（无性）。佛不是一种特殊的存在物，佛与众生的区别不在于"有没有佛性"，而在于是否觉悟了这个"无性"的真相。禅宗"即心即佛"和"无心是道"的悖论式统一，正源于此——说"即心即佛"是方便施设（假名），说"非心非佛"是破除执着（空），二者统一即是中道。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">观涅槃品 · 涅槃即世间</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>涅槃与世间，无有少分别。世间与涅槃，亦无少分别。<br>涅槃之实际，及与世间际，如是二际者，无毫厘差别。<br>不取于涅槃，亦不依于有。不破于世间，不立于涅槃。<br>诸法实相者，心行言语断。无生亦无灭，寂灭如涅槃。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"涅槃与世间，无有少分别"——龙树对"世间"和"涅槃"的彻底统一，是禅宗"生活禅"的最高哲学根据。如果涅槃和世间没有区别，那么就不需要离开世间去追求另一个"神圣"的世界。禅宗赵州的"吃茶去"、庞蕴的"运水搬柴无非妙道"——都是在"世间"的日常活动中体会"涅槃"。"诸法实相者，心行言语断"——实相超越心念和语言。这八个字可以看作是对"不立文字"最精确的哲学定义。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">07</span><span class="sh-name">观四谛品 · 空为解脱门</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>若一切不空，则无有生灭。如是则无有，四圣谛之法。<br>若见因缘法，则为能见佛。若见因缘法，则见无上法。<br>空则不可说，非空不可说，共不共叵说，但以假名说。<br>诸佛或说我，或说于无我。诸法实相中，非我非无我。<br>若人见有无，见自性他性。如是则不见，佛法真实义。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"若见因缘法，则为能见佛"——见到缘起就是见到佛。这不是比喻，而是龙树的"见佛"定义：佛不是一个人格化的存在者，佛就是"缘起"的真理本身。禅宗对此的实践化——"见性成佛"——"见性"就是见到"缘起性空"的实相，就是见到"佛"。"空则不可说，非空不可说"——空也不是一个可以被说出来的概念。禅宗对"空"的态度：不执着于"空"的概念，而是直接活在空之中——这就是"无心"。"若人见有无，不见佛法真实义"——执着"有"或"无"的人，都没有把握佛法的真义。禅宗的"双遣"——既不执有、也不执空——是龙树中道最彻底的修行化表达。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">08</span><span class="sh-name">观邪见品 · 中道结归</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>一切实非实，亦实亦非实，非实非非实，是名诸佛法。<br>若我有少宗，则我有彼过。由我全无宗，故我唯无失。<br>我无宗无執，是故我无过。若人见有無，见自性他性，<br>如是则不见，佛法真实义。诸法实相者，心行言语断，<br>无生亦无灭，寂灭如涅槃。我稽首礼佛，诸说中第一。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>《中论》以"无宗"作结——龙树宣称自己没有"宗"（哲学立场）。"若我有少宗，则我有彼过。由我全无宗，故我唯无失。"——如果我有一个主张，就会被批判；正因为我没有主张，所以无法被反驳。这不是诡辩，而是"空"的彻底贯彻：连"空"本身也不能被当作一个主张。禅宗对此的继承——"说似一物即不中"、"佛法无你用心处"——正是"无宗无执"的实践形态。最后的"诸法实相者，心行言语断"与归敬偈的"善灭诸戏论"首尾呼应，构成了中观哲学最完美的圆环结构。禅宗的"不立文字"——即在"心行言语断"处体会实相。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================ -->
+        <!-- SUBPAGE 7: 维摩诘经             -->
+        <!-- ================================ -->
+        <div class="subpage" id="sub-11-7">
+          <div class="subpage-inner">
+            <p style="margin-bottom:16px"><strong>《维摩诘所说经》</strong>（Vimalakīrti Nirdeśa Sūtra），三卷十四品，姚秦三藏鸠摩罗什译。此经以在家居士维摩诘为中心主角，是禅宗"生活禅"、"不二法门"、"即心即佛"思想最重要的经典来源之一。以下选录对禅宗影响最深的段落。</p>
+
+            <div class="sutra-wrap">
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">01</span><span class="sh-name">佛国品 · 心净则佛土净</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时舍利弗，承佛威神，作是念："若菩萨心净，则佛土净者。我世尊本行菩萨道时，意岂不净？而是佛土不净若此？"佛知其念，即告舍利弗："于意云何？日月岂不净耶？而盲者不见。"对曰："不也，世尊！是盲者过，非日月咎。""舍利弗！众生罪故，不见如来佛土严净，非如来咎。舍利弗！我此土净，而汝不见。"</p><p>尔时螺髻梵王语舍利弗："勿作是意，谓此佛土以为不净。所以者何？我见释迦牟尼佛土清净，譬如自在天宫。"舍利弗言："我见此土，丘陵坑坎，荆棘沙砾，土石诸山，秽恶充满。"螺髻梵王言："仁者心有高下，不依佛慧，故见此土为不净耳。舍利弗！菩萨于一切众生，悉皆平等，深心清净，依佛智慧，则能见此佛土清净。"</p><p>于是佛以足指按地，即时三千大千世界，若干百千珍宝严饰，譬如宝庄严佛，无量功德宝庄严土。一切大众，叹未曾有，而皆自见坐宝莲华。佛告舍利弗："汝且观是佛土严净。"舍利弗言："唯然，世尊！本所不见，本所不闻，今佛国土严净悉现。"佛语舍利弗："我佛国土，常净若此，为欲度斯下劣人故，示是众恶不净土耳。……若菩萨欲得净土，当净其心，随其心净，则佛土净。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"随其心净，则佛土净"——全经最核心的命题。佛陀用足趾按地，揭示世界本来的清净面目，但常人因心有"高下"（分别执着）而看不到。这不是说客观世界不存在，而是说：世界的意义由心的状态决定。禅宗慧能对此的回应更为激进："东方人造罪，念佛求生西方；西方人造罪，念佛求生何国？"——如果心不净，去到哪里都不净；如果心净，当下就是净土。赵州"吃茶去"——就在喝茶的这个动作中，土已经净了。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">02</span><span class="sh-name">方便品 · 维摩诘示疾 · 不舍道法而现凡夫事</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时毗耶离大城中，有长者名维摩诘。已曾供养无量诸佛，深植善本，得无生忍。辩才无碍，游戏神通，逮诸总持。获无所畏，降魔劳怨。入深法门，善于智度。通达方便，大愿成就。明了众生心之所趣，又能分别诸根利钝。</p><p>久于佛道，心已纯淑，决定大乘。诸有所作，能善思量。住佛威仪，心大如海。诸佛咨嗟，弟子释梵世主所敬。欲度人故，以善方便，居毗耶离。资财无量，摄诸贫民。奉戒清净，摄诸毁禁。以忍调行，摄诸恚怒。以大精进，摄诸懈怠。一心禅寂，摄诸乱意。以决定慧，摄诸无智。</p><p>虽为白衣，奉持沙门清净律行。虽处居家，不着三界。示有妻子，常修梵行。现有眷属，常乐远离。虽服宝饰，而以相好严身。虽复饮食，而以禅悦为味。若至博弈戏处，辄以度人。受诸异道，不毁正信。虽明世典，常乐佛法。一切见敬，为供养中最。执持正法，摄诸长幼。一切治生谐偶，虽获俗利，不以喜悦。游诸四衢，饶益众生。入治政法，救护一切。入讲论处，导以大乘。入诸学堂，诱开童蒙。入诸淫舍，示欲之过。入诸酒肆，能立其志。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>维摩诘的形象是对"在家修行"可能性的最高肯定。"虽为白衣，奉持沙门清净律行"——在家而持出家之戒；"虽处居家，不着三界"——在世而不被世染；"示有妻子，常修梵行"——有家庭而超越家庭。维摩诘不是"出离"世界，而是"转化"世界——"入诸淫舍，示欲之过；入诸酒肆，能立其志"。禅宗对此的继承——百丈"一日不作一日不食"、庞蕴"神通并妙用，运水及搬柴"——都是"不舍道法而现凡夫事"的具体化。维摩诘是禅宗"生活禅"的终极原型。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">03</span><span class="sh-name">文殊师利问疾品 · 空病亦空</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>文殊师利既入其舍，见其室空，无诸所有，独寝一床。时维摩诘言："善来，文殊师利！不来相而来，不见相而见。"</p><p>文殊师利言："如是，居士！若来已，更不来；若去已，更不去。所以者何？来者无所从来，去者无所至。所可见者，更不可见。"</p><p>文殊师利问言："居士！所疾，宁有可否？"维摩诘言："从痴有爱，则我病生。以一切众生病，是故我病。若一切众生病愈，则我病愈。……菩萨为众生故，入生死。有生死，则有病。若众生得离病者，则菩萨无复病。"</p><p>文殊师利言："居士！此室何以空无侍者？"维摩诘言："诸佛国土，亦复皆空。"又问："以何为空？"答曰："以空空。"又问："空何用空？"答曰："以无分别空故空。"又问："空可分别耶？"答曰："分别亦空。"又问："空当于何求？"答曰："当于六十二见中求。"又问："六十二见当于何求？"答曰："当于诸佛解脱中求。"又问："诸佛解脱当于何求？"答曰："当于一切众生心行中求。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"以空空"——三个字浓缩了中观哲学的精髓。空不是一种"有"（不是某种东西），也不是"无"（不是虚无）。空本身也要被空掉。"分别亦空"——连"分别"（认识活动）本身也是空的。这是对"能所双亡"的最精确描述。"当于一切众生心行中求"——佛的解脱不在别处，就在众生的日常心行中。禅宗"即心即佛"——解脱不是离开众生的心去另找一个"佛心"，众生的心行就是佛的解脱所在。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">04</span><span class="sh-name">观众生品 · 天女散花 · 无分别心</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>时维摩诘室，有一天女，见诸大人闻所说法，便现其身，即以天华，散诸菩萨大弟子上。华至诸菩萨，即皆堕落。至大弟子，便着不堕。一切弟子，神力去华，不能令去。</p><p>尔时天女问舍利弗："何故去华？"答曰："此华不如法，是以去之。"天曰："勿谓此华为不如法。所以者何？是华无所分别，仁者自生分别想耳。若于佛法出家，有所分别，为不如法。若无所分别，是则如法。观诸菩萨，华不着者，已断一切分别想故。譬如人畏时，非人得其便。如是弟子畏生死故，色声香味触得其便。已离畏者，一切五欲无能为也。结习未尽，华着身耳。结习尽者，华不着也。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"天女散花"是《维摩诘经》最著名的场景之一。花本身没有"分别"——它不会选择落在谁身上。但舍利弗（小乘阿罗汉的代表）把花看作"不如法"的东西，想要去除——这个"去除"的念头本身就是"分别"。菩萨的花不附着——因为菩萨已经断尽一切"分别想"。这个公案对禅宗的影响深远：赵州的"吃茶去"——茶就是茶，没有"如法"或"不如法"的分别。百丈的"不被文字转"——不被概念分别所束缚。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">05</span><span class="sh-name">不二法门品 · 维摩诘默然</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>尔时维摩诘谓众菩萨言："诸仁者！云何菩萨入不二法门？各随所乐说之。"</p><p>会中有菩萨名法自在，说言："诸仁者！生灭为二。法本不生，今则无灭。得此无生法忍，是为入不二法门。"</p><p>德顶菩萨曰："垢净为二。见垢实性，则无净相。顺于灭法，是为入不二法门。"</p><p>善宿菩萨曰："是动是念为二。不动则无念，无念即无分别。通达此者，是为入不二法门。"</p><p>……如是诸菩萨，各各说已，问文殊师利："何等是菩萨入不二法门？"文殊师利曰："如我意者，于一切法，无言无说，无示无识，离诸问答，是为入不二法门。"</p><p>于是文殊师利问维摩诘："我等各自说已。仁者当说，何等是菩萨入不二法门？"时维摩诘默然无言。</p><p>文殊师利叹曰："善哉善哉！乃至无有文字语言，是真入不二法门。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>这是《维摩诘经》乃至整个大乘佛教最著名的场景。诸菩萨各自说了"不二"——生灭不二、垢净不二、动念不二……文殊师利用语言说"无言"——"于一切法，无言无说，无示无识，离诸问答，是为入不二法门"。而维摩诘——沉默。沉默不是不说话，而是"默如雷"：在彻底的沉默中，所有"说法"、"不说法"、"说不二"、"说无言"的概念全部消解。这个沉默本身是"不二"的终极演示——不能用"说"或"不说"来定义它。禅宗的"以心传心"——维摩诘的沉默是最早、最完美的"以心传心"。临济的"一喝"——就是维摩诘沉默在唐代表达。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">06</span><span class="sh-name">菩萨行品 · 不舍道法而现凡夫事</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告诸菩萨："有尽无尽解脱法门，汝等当学。云何为尽？谓有为法。云何为无尽？谓无为法。……云何菩萨不尽有为？谓不离大慈，不舍大悲。深发一切智心，而不忽忘。教化众生，终不厌倦。……</p><p>云何菩萨不住无为？谓修学空，不以空为证。修学无相无作，不以无相无作为证。修学无起，不以无起为证。……而不证入涅槃。……</p><p>菩萨如是，不尽有为，不住无为。……不舍道法而现凡夫事。是为菩萨行。"</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>"不舍道法而现凡夫事"——菩萨行不是离开世界、进入涅槃，而是在凡夫的日常生活中不离开觉悟。"不尽有为"——不否定世间的活动；"不住无为"——不贪着涅槃的寂静。这就是中道——在世而出世、出世而入世。禅宗对此的实践：百丈的"一日不作一日不食"（不舍道法）、赵州"吃茶去"（现凡夫事）、庞蕴"运水搬柴"（皆是妙道）。禅宗不是"山林佛教"——不是躲到深山里去修行；而是"生活禅"——在担水砍柴中体会无上的妙道。</p></div>
+                </div>
+              </div>
+
+              <div class="sutra-section">
+                <div class="sutra-head" onclick="this.parentElement.classList.toggle('collapsed')"><span class="sh-num">07</span><span class="sh-name">嘱累品 · 结经付嘱</span><span class="sh-toggle">▾</span></div>
+                <div class="sutra-body">
+                  <div class="sutra-text"><p>佛告弥勒菩萨言："弥勒！我今以是无量亿阿僧祇劫所集阿耨多罗三藐三菩提法，付嘱于汝。如是辈经，于佛灭后末世之中，汝等当以神力，广宣流布于阎浮提，无令断绝。……"</p><p>佛告阿难："是经名为《维摩诘所说》，亦名《不可思议解脱法门》。如是受持。"</p><p>佛说是经已，长者维摩诘、文殊师利、舍利弗、阿难等，及诸天人、阿修罗、一切大众，闻佛所说，皆大欢喜，信受奉行。</p></div>
+                  <div class="sutra-annot"><div class="sa-label">解读</div><p>全经以佛付嘱弥勒菩萨作结："无令断绝"。这部经的核心信息——"心净则佛土净"、"不二法门"、"不舍道法而现凡夫事"——在禅宗中得到了最彻底的实践。从慧能的"佛法在世间不离世间觉"到赵州的"吃茶去"、从庞蕴的"运水搬柴"到百丈的"一日不作一日不食"——整部禅宗史都可以看作是对《维摩诘经》的持续注脚。此经名为"不可思议解脱法门"——禅宗的"不可思议"：不是"不能思考"，而是超越了"能思/所思"的二元对立。维摩诘的沉默、"天女散花"的无分别、"以空空"的中道——这些都不是哲学理论，而是可以被直接体验的解脱境界。</p></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-10')">← 上一章</span><span class="nav-btn" onclick="goTo('page-9')">下一章 →</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE 9: 概念速查（收束全书） ===== -->
+  <div class="page" id="page-9">
+    <div class="page-inner">
+      <div class="page-header"><div class="ch-number">11 · GLOSSARY</div><h2>概念速查 · 全书术语释义</h2></div>
+      <div class="page-body">
+
+        <div class="grid-2">
+          <div class="card"><div class="label">空性 Śūnyatā</div><div class="val">一切法无独立自性，因缘而生。非虚无，而是超越有无的中道实相。见第 2 章、第 11 章《中论》。</div></div>
+          <div class="card"><div class="label">佛性 Buddha-nature</div><div class="val">一切众生本具觉悟潜能。"即此心即是佛，不假外求"。禅宗核心预设——开悟不是获得新东西，而是认出本来面目。</div></div>
+          <div class="card"><div class="label">如来藏 Tathāgatagarbha</div><div class="val">佛性之异名。众生虽在烦恼中，本具如来智慧德相。《楞伽经》以此印心——"如来藏者，是善不善因"。</div></div>
+          <div class="card"><div class="label">缘起 Pratītyasamutpāda</div><div class="val">"此有故彼有，此无故彼无"。一切法因缘和合而生，无独立自性。禅宗"无我"的哲学根据。见《中论》"因缘所生法，我说即是空"。</div></div>
+          <div class="card"><div class="label">中道 Madhyamaka</div><div class="val">龙树"八不中道"——不生不灭、不常不断、不一不异、不来不去。超越一切极端。禅宗"不二"思想的中观根源。见第 11 章《中论》。</div></div>
+          <div class="card"><div class="label">真如 Tathatā</div><div class="val">如其本来。诸法实相之名。不是某种"东西"，而是事物未被概念扭曲的本来面貌。禅宗"即心即佛"之"即"就是真如的直接呈现。</div></div>
+          <div class="card"><div class="label">法身 Dharmakāya</div><div class="val">佛的"法性身"——即真理本身。不是一种身体，而是觉悟的本质。《金刚经》"若见诸相非相，即见如来"——见法身就是见缘起性空。</div></div>
+          <div class="card"><div class="label">涅槃 Nirvāṇa</div><div class="val">烦恼彻底止息。龙树："涅槃与世间，无有少分别。"禅宗不追求死后的涅槃——"一念觉悟"，当下即是涅槃。见第 11 章《中论·观涅槃品》。</div></div>
+        </div>
+
+        <h3>禅宗核心教法</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">顿悟</div><div class="val">不经次第阶梯，当下直接觉悟自性。慧能南宗的根本特色——"前念迷即凡，后念悟即佛"。与北宗神秀"渐悟"相对。见第 1 章、第 6 章《坛经》。</div></div>
+          <div class="card"><div class="label">渐悟</div><div class="val">通过次第修行逐步净化自心。神秀北宗——"时时勤拂拭，莫使惹尘埃"。禅宗内部虽有顿渐之争，实为"法无顿渐，人有利钝"。</div></div>
+          <div class="card"><div class="label">见性成佛</div><div class="val">禅宗的根本目标——"见自本性"。"性"即佛性——不是用眼睛看，而是以觉悟照见。赵州"吃茶去"——在寻常事中"见性"。</div></div>
+          <div class="card"><div class="label">直指人心</div><div class="val">"直指人心，见性成佛"。禅宗独特的教学方法——不通过概念、理论、经典，而是直接指向心性本身。见第 2 章。</div></div>
+          <div class="card"><div class="label">不立文字</div><div class="val">不执着于文字概念。不是"废除文字"，而是不以文字为真理本身——"指月之指"：文字是手指，真理是月亮。见第 2 章、第 7 章（与维特根斯坦比较）。</div></div>
+          <div class="card"><div class="label">教外别传</div><div class="val">"不立文字，教外别传"。禅宗自称是佛在经典教法之外的另一种传承——不以经论为中介的"以心传心"。</div></div>
+          <div class="card"><div class="label">以心传心</div><div class="val">禅宗传承的根本方式。不是知识、理论、仪轨的传递，而是觉悟的传递——"如灯传灯"。从拈花微笑到各宗派嗣法。见第 5 章。</div></div>
+          <div class="card"><div class="label">平常心是道</div><div class="val">马祖道一的核心命题。"平常心"——不造作、不取舍、不修不整的本来状态。"道"不在特殊的宗教行为中，就在行住坐卧、运水搬柴中。见第 2 章、第 3 章。</div></div>
+          <div class="card"><div class="label">即心即佛</div><div class="val">马祖道一："即心即佛。"这个心就是佛，不需要离开自心去觅佛。但又说"非心非佛"——连"即心即佛"也不能执着。见第 2 章。</div></div>
+          <div class="card"><div class="label">非心非佛</div><div class="val">马祖的进一步接引：说"即心即佛"是为了止息学人向外求佛的心；当这个执着放下了，连"即心即佛"也要放下——"非心非佛"。</div></div>
+          <div class="card"><div class="label">无心</div><div class="val">不是没有心，而是不执着于"有心"或"无心"。六祖"于念而离念"——有念头的功能，但没有对念头的执着。见第 2 章。</div></div>
+          <div class="card"><div class="label">无念 · 无相 · 无住</div><div class="val">六祖慧能的三纲领。"无念"——于念而不念；"无相"——于相而离相；"无住"——念念之中不执着。三者一体，是禅宗修行最精炼的心法。见第 2 章、第 6 章《坛经》。</div></div>
+        </div>
+
+        <h3>修行法门</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">坐禅 Zazen</div><div class="val">端坐静修。禅宗修行基本形式。曹洞"只管打坐"——坐本身就是觉悟的呈现；临济也含参话头的坐禅方式。见第 3 章。</div></div>
+          <div class="card"><div class="label">只管打坐 Shikantaza</div><div class="val">道元曹洞宗核心修行。"只管"——不带有任何目的——不是为了成佛、不是获得开悟——坐本身就是成佛的"现成"。见第 3 章、第 4 章（日本禅宗）。</div></div>
+          <div class="card"><div class="label">公案 Koan</div><div class="val">祖师与学人之间的对话录。非逻辑可解，旨在超越理性思维的局限。"如何是佛？"——"麻三斤"。公案是教学工具，不是谜语。见第 3 章。</div></div>
+          <div class="card"><div class="label">参话头</div><div class="val">临济宗大慧宗杲创立。在公案的关键句上"参"——"念佛是谁？""万法归一，一归何处？"。不是思维分析，而是从"起疑"到"打破疑团"的过程。</div></div>
+          <div class="card"><div class="label">默照禅</div><div class="val">曹洞宗宏智正觉提倡。"默"——沉默、静坐；"照"——觉照、明察。默中有照，照中有默——非枯坐，非思量。与"看话禅"并列为宋代两大禅法。见第 3 章。</div></div>
+          <div class="card"><div class="label">看话禅</div><div class="val">大慧宗杲创立。通过在公案"话头"上"看"（专注参究）——"狗子无佛性"——只看"无"字。与默照禅合为宋禅双璧。见第 3 章。</div></div>
+          <div class="card"><div class="label">棒喝</div><div class="val">临济宗标志性教学法。棒——德山宣鉴用棒打；喝——临济义玄用喝。不是暴力——"一喝不作一喝用"——是打断学人思维惯性、截断众流的方便。见第 3 章、第 5 章（临济宗）。</div></div>
+          <div class="card"><div class="label">机锋</div><div class="val">师徒之间快速、锐利的对话。不说理论，直接应对。如赵州"吃茶去"——三个条件相同的人问同样问题，赵州都说"吃茶去"——机锋在具体情境中发挥"应机接物"的功能。</div></div>
+          <div class="card"><div class="label">经行</div><div class="val">行禅。坐禅与经行交替——动中修定，定中修慧。禅宗"生活禅"的一环——运水搬柴、经行坐禅，皆是修行。</div></div>
+          <div class="card"><div class="label">一日不作一日不食</div><div class="val">百丈怀海的"普请"制度——全体僧众共同劳动。禅宗经济独立、自给自足的基础——"农禅"传统。见第 1 章、第 4 章。</div></div>
+          <div class="card"><div class="label">普请</div><div class="val">百丈"上下均力"的集体劳动制度。打破印度佛教"不持银钱""不事生产"的传统——禅宗的制度创新之一。见第 1 章。</div></div>
+        </div>
+
+        <h3>概念与境界</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">不二 Non-duality</div><div class="val">超越一切二元对立的平等智慧——不是"合二为一"，而是"本来就无二"。生灭、垢净、善恶、凡圣——都是"二"；不二不是第三项，而是放下"二"的认知框架本身。维摩诘的沉默——不二的终极演示。见第 7 章。</div></div>
+          <div class="card"><div class="label">空</div><div class="val">中观核心概念。不是"什么都没有"，而是"没有独立自性"。空也要空——"空空"（《维摩诘经》）。禅宗"无心"、"无念"的哲学基础。见第 2 章、第 7 章（京都学派）。</div></div>
+          <div class="card"><div class="label">开悟 Satori</div><div class="val">对自性的直接觉悟。禅宗追求的不是渐进的"理解"，而是"桶底脱落"式的彻底翻转。"悟了同未悟"——悟后生活如常，但"如人饮水冷暖自知"。</div></div>
+          <div class="card"><div class="label">见性 Kenshō</div><div class="val">"见自本性"。"性"不是灵魂、自我，而是空性与觉性的统一。见性不是"看到"一个对象，而是觉悟的主体与客体同时消融——"能所双亡"。见第 2 章。</div></div>
+          <div class="card"><div class="label">本心</div><div class="val">本来清净的心——未被概念、情绪、习惯遮蔽的心的本来状态。六祖"何期自性本自清净"——本心不是修出来的，是本来就如此。</div></div>
+          <div class="card"><div class="label">自性</div><div class="val">有两个义项：(1) 中观"无自性"——没有独立实体；(2) 禅宗"见自本性"——本来的觉性。二者表面上矛盾，实则相通——"自性"不是"我"，而是"我"的空的本质。见第 2 章。</div></div>
+          <div class="card"><div class="label">我执 · 法执</div><div class="val">我执——执着有一个独立的"我"；法执——执着"法"（事物、概念）有独立自性。两者都是烦恼和痛苦的根源。禅宗的"无我"和"空"就是要打破这两层执着。</div></div>
+          <div class="card"><div class="label">转识成智</div><div class="val">唯识学概念——将八识转化为四智。禅宗不采用繁琐的唯识分析，但"转识成智"的精神——从分别意识转为无分别的智慧——与"转迷为悟"一致。见第 2 章。</div></div>
+          <div class="card"><div class="label">四智</div><div class="val">转八识所得：大圆镜智（转第八识）、平等性智（转第七识）、妙观察智（转第六识）、成所作智（转前五识）。永明延寿在禅宗中融合唯识。</div></div>
+          <div class="card"><div class="label">三昧 Samadhi</div><div class="val">心专注一境而不散乱的状态。禅宗"一行三昧"——"于一切处行住坐卧，常行一直心"（《坛经》）。不是枯定，而是行住坐卧中的定慧不二。</div></div>
+          <div class="card"><div class="label">正念 Mindfulness</div><div class="val">源于四念处，经一行禅师与卡巴金发扬，全球盛行。核心：以不评判的态度觉知当下。"于念而离念"——有念头但不被念头带走——是"正念"的禅宗表述。见第 8 章。</div></div>
+        </div>
+
+        <h3>宗派与教学法</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">五家七宗</div><div class="val">禅宗在唐末五代分化出的主要派系。五家：临济、曹洞、沩仰、云门、法眼。宋代从临济又分出黄龙、杨岐二派，合称七宗。见第 5 章。</div></div>
+          <div class="card"><div class="label">四料简</div><div class="val">临济义玄的教学框架。四种根器对应的接引方式：夺人不夺境、夺境不夺人、人境俱夺、人境俱不夺。"人"指主观，"境"指客观。"人境俱夺"——能所双亡。见第 5 章。</div></div>
+          <div class="card"><div class="label">偏正五位</div><div class="val">曹洞宗洞山良价的五位教学法。"偏"（事、现象）、"正"（理、本体）的五种组合关系——正中偏、偏中正、正中来、偏中至、兼中到。以"兼中到"为圆融之极致。见第 5 章。</div></div>
+          <div class="card"><div class="label">九十六圆相</div><div class="val">沩仰宗沩山灵祐、仰山慧寂的教学符号系统。以画圆、圆中写字等视觉方式传递禅意。"○"——圆的符号——象征佛性、圆满、绝对。见第 5 章。</div></div>
+          <div class="card"><div class="label">云门三句</div><div class="val">云门文偃的教学纲领："函盖乾坤"（本体）、"截断众流"（方法论）、"随波逐浪"（应机）。"截断众流"——云门教学最鲜明的特征——以一句截断学人的思维惯性。见第 5 章。</div></div>
+          <div class="card"><div class="label">六相</div><div class="val">法眼宗文益从《华严经》吸收的教学框架。总相、别相、同相、异相、成相、坏相——六相圆融。见第 5 章。</div></div>
+          <div class="card"><div class="label">五位君臣</div><div class="val">曹洞宗的另一教学框架。以君臣比喻理与事的关系：君（正、理、体）、臣（偏、事、用）、君臣合、臣向君、君向臣。见第 5 章。</div></div>
+        </div>
+
+        <h3>经典</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">《六祖坛经》</div><div class="val">唯一称"经"的中国佛教典籍。慧能说法录，由法海集记。核心：顿悟、无念无相无住、即心即佛。禅宗最重要文献。见第 6 章、第 11 章（逐品解读）。</div></div>
+          <div class="card"><div class="label">《金刚经》</div><div class="val">"应无所住而生其心"——慧能闻此经开悟。以破相为宗："凡所有相皆是虚妄，若见诸相非相即见如来。"禅宗核心经典之一。见第 6 章、第 11 章（32 分解读）。</div></div>
+          <div class="card"><div class="label">《楞伽经》</div><div class="val">达摩以此经印心——"吾观震旦，唯有此经可以印心"。融合如来藏与唯识。核心命题："佛语心为宗"——"心"是全部教法之枢纽。见第 6 章、第 11 章。</div></div>
+          <div class="card"><div class="label">《维摩诘经》</div><div class="val">在家修行之终极范式。"心净则佛土净"——不必远离世间另求净土。"不二法门"——维摩诘的沉默。禅宗"生活禅"的最早经典根据。见第 6 章、第 11 章。</div></div>
+          <div class="card"><div class="label">《碧岩录》</div><div class="val">"宗门第一书"。圆悟克勤对百则公案的评唱——将公案从口头传承带入文字禅的巅峰。见第 6 章。</div></div>
+          <div class="card"><div class="label">《无门关》</div><div class="val">无门慧开精选四十八则公案，以"无"字为枢机。"赵州狗子无佛性"——"无"字公案。参透"无"——开悟之门。见第 6 章。</div></div>
+          <div class="card"><div class="label">《景德传灯录》</div><div class="val">道原编纂，30 卷，记录了从过去七佛到宋代禅师的传承谱系。"传灯"——以灯喻法脉相续。其后有《五灯会元》等续作。见第 6 章。</div></div>
+          <div class="card"><div class="label">《正法眼藏》</div><div class="val">道元巨著。日本曹洞宗哲学的最高峰。以"有时"、"现成公案"、"只者"等独特的哲学语言表达禅悟。见第 6 章。</div></div>
+        </div>
+
+        <h3>日本禅宗</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">道元 Dōgen</div><div class="val">日本曹洞宗祖师（1200—1253）。入宋求法，从天童如净得法。核心："只管打坐"——修证不二、"现成公案"——修行即是开悟的显现。见第 4 章。</div></div>
+          <div class="card"><div class="label">侘寂 Wabi-sabi</div><div class="val">日本禅美学的核心。Wabi——在简朴、孤独中的美；Sabi——在残缺、无常中的美。与禅"不二"直接相关——"不完满"本身就是完美。见第 4 章。</div></div>
+          <div class="card"><div class="label">幽玄 Yūgen</div><div class="val">日本禅美学的另一维度。含蓄、深远的幽暗之美——月被薄云遮蔽、秋雾中的远山。与禅宗的"默照"——不说破、不道尽的表达方式——相通。见第 4 章。</div></div>
+          <div class="card"><div class="label">一期一会</div><div class="val">茶道中的核心精神——每一次相遇都是独一无二的"一生只此一次"。"当下"的极致化——以全部的觉知面对此刻。直接源于禅宗"当下一念"的修行。见第 4 章。</div></div>
+          <div class="card"><div class="label">茶禅一味</div><div class="val">千利休将茶道提升为禅修。"茶禅一味"——在茶汤中体会禅味。"和敬清寂"——茶道四规。见第 4 章。</div></div>
+          <div class="card"><div class="label">墨绘 Sumi-e</div><div class="val">日本禅画。以极简的笔墨表达禅境。雪舟等杨的山水——"留白"比画的部分更重要——"无画处皆成妙境"。与禅宗"不立文字"的美学表达。见第 4 章。</div></div>
+        </div>
+
+        <h3>西方对话 · 哲学比较</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">Gelassenheit · 海德格尔</div><div class="val">"让-在"——让存在者如其本来地存在。与禅宗"放下"、"无所住"高度呼应。海德格尔与禅宗的核心差异：海德格尔停留在"思"的领域；禅宗要求实存的转化。见第 7 章。</div></div>
+          <div class="card"><div class="label">语言游戏 · 维特根斯坦</div><div class="val">后期维特根斯坦：语言的意义在于使用。与禅宗"机锋"教学法完全一致——公案的意义不在于文字内容的"定义"，而在于在情境中发挥的教学功能。见第 7 章。</div></div>
+          <div class="card"><div class="label">个体化 · 荣格</div><div class="val">荣格将禅宗开悟解读为"个体化"——人格的完整实现。但批评者指出：禅宗的开悟不是"自我实现"而是"无我"——连"自我"这个概念本身都放下了。见第 7 章。</div></div>
+          <div class="card"><div class="label">场所逻辑 · 西田几多郎</div><div class="val">"绝对无的场所"——超越有/无、主/客对立的终极场域。京都学派将禅宗"空"哲学化的最高成就。见第 7 章。</div></div>
+          <div class="card"><div class="label">空的场域 · 西谷启治</div><div class="val">对虚无主义的彻底克服。空不是"什么都没有"，而是让一切如其本来的终极场域。西谷对海德格尔的批判：海德格尔的"存在"仍没有走出"有"的框架。见第 7 章。</div></div>
+          <div class="card"><div class="label">即非逻辑 · 阿部正雄</div><div class="val">"即"（soku）与"非"（hi）同时成立——"即心即佛"同时"非心非佛"。禅宗悖论式表达的哲学阐释。见第 7 章。</div></div>
+        </div>
+
+        <h3>当代延伸</h3>
+        <div class="grid-2">
+          <div class="card"><div class="label">MBSR</div><div class="val">正念减压（Mindfulness-Based Stress Reduction）。卡巴金1979年创立。当代禅修最成功的临床转化——以正念为核心的八周课程，全球数千医疗机构纳入。见第 8 章。</div></div>
+          <div class="card"><div class="label">MBCT</div><div class="val">正念认知疗法。Segal/Williams/Teasdale 2002年创立。核心机制"去中心化"（decentering）——从"与念头认同"到"旁观念头"——即禅宗"于念而不念"的认知心理学翻译。见第 8 章。</div></div>
+          <div class="card"><div class="label">神经可塑性</div><div class="val">fMRI研究证实长期禅修改变大脑结构——增强前额叶皮层、减少杏仁核反应。哈佛、斯坦福、牛津等均有专门的正念神经科学研究。见第 8 章。</div></div>
+          <div class="card"><div class="label">文化挪用</div><div class="val">"禅"在西方被商业化——禅修APP、禅意家居、禅风营销——原本的宗教/修行维度被剥离，成为消费主义标签。见第 8 章。</div></div>
+        </div>
+
+      </div>
+      <div class="page-footer"><span class="nav-btn" onclick="goTo('page-11')">← 上一章</span></div>
+    </div>
+  </div>
+function goTo(id, subpage) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById(id);
   if (target) { target.classList.add('active'); target.scrollTop = 0; }
-  document.querySelectorAll('.sidebar-nav a').forEach(function(a) {
+
+  document.querySelectorAll('.subpage').forEach(function(sp) { sp.classList.remove('active'); });
+  if (subpage) {
+    var spTarget = document.getElementById(subpage);
+    if (spTarget) spTarget.classList.add('active');
+  } else if (id === 'page-5') {
+    var overview = document.getElementById('sub-5-0');
+    if (overview) overview.classList.add('active');
+  } else if (id === 'page-6') {
+    var overview = document.getElementById('sub-6-0');
+    if (overview) overview.classList.add('active');
+  } else if (id === 'page-7') {
+    var overview = document.getElementById('sub-7-0');
+    if (overview) overview.classList.add('active');
+  } else if (id === 'page-11') {
+    var first = document.getElementById('sub-11-1');
+    if (first) first.classList.add('active');
+  }
+
+  document.querySelectorAll('.sidebar-nav > a').forEach(function(a) {
     a.classList.toggle('active', a.dataset.page === id);
   });
+  document.querySelectorAll('.sidebar-subnav a').forEach(function(a) {
+    a.classList.toggle('active', a.dataset.subpage === (subpage || ''));
+  });
+
   if (id === 'page-timeline' && typeof tlRenderEras === 'function') {
     setTimeout(function(){ tlRenderEras(); }, 50);
   }
 }
-document.querySelectorAll('.sidebar-nav a').forEach(function(a) {
+document.querySelectorAll('.sidebar-nav > a').forEach(function(a) {
   a.addEventListener('click', function(e) {
     e.preventDefault();
+    var subnav = this.nextElementSibling;
+    if (subnav && subnav.classList.contains('sidebar-subnav')) {
+      subnav.classList.toggle('collapsed');
+    }
     goTo(this.dataset.page);
+  });
+});
+// collapse subnavs by default
+document.querySelectorAll('.sidebar-subnav').forEach(function(s) { s.classList.add('collapsed'); });
+document.querySelectorAll('.sidebar-subnav a').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    goTo(a.dataset.page, a.dataset.subpage);
   });
 });
 
