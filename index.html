@@ -256,7 +256,7 @@
     <p class="msub" id="pmSub">选 HTML 文件 → 选模块 → 同步发布</p>
     <input type="hidden" id="pm_id">
     <div class="field" id="pm_filewrap">
-      <label>选择 HTML 文件</label>
+      <label id="pm_filelabel">选择 HTML 文件</label>
       <input type="file" id="pm_file" accept=".html,.htm" onchange="pmPick()">
     </div>
     <div class="field"><label>标题</label><input id="pm_title" placeholder="例如：二战全景时间线"></div>
@@ -454,6 +454,7 @@ function openUpload(){
   document.getElementById("pmSub").textContent= ghOn()? "选 HTML 文件 → 选模块 → 同步发布到线上和手机"
                                                        : "选 HTML 文件 → 选模块（提示：未配置 GitHub，暂存本地）";
   document.getElementById("pm_filewrap").style.display="block";
+  document.getElementById("pm_filelabel").textContent="选择 HTML 文件";
   document.getElementById("pm_save").textContent="上传并同步";
   fillModuleSelect(document.getElementById("pm_module"));
   ["pm_id","pm_title","pm_tags","pm_desc"].forEach(i=>document.getElementById(i).value="");
@@ -466,9 +467,11 @@ function openUpload(){
 function openEdit(id){
   const p=data.pages.find(x=>x.id===id); if(!p) return;
   modalMode="edit";
-  document.getElementById("pmTitle").textContent="编辑页面信息";
-  document.getElementById("pmSub").textContent="改标题/标签；改分类会自动把文件搬到新分类";
-  document.getElementById("pm_filewrap").style.display="none";
+  document.getElementById("pmTitle").textContent="编辑 / 更新页面";
+  document.getElementById("pmSub").textContent="改标题/标签/分类；如需更新正文，可选一个新 HTML 覆盖原文（链接、阅读进度、书签、批注都保留）";
+  document.getElementById("pm_filewrap").style.display="block";
+  document.getElementById("pm_filelabel").textContent="（可选）更新正文：重新选 HTML 覆盖原文";
+  document.getElementById("pm_file").value="";
   document.getElementById("pm_save").textContent= ghOn()? "保存并同步":"保存";
   fillModuleSelect(document.getElementById("pm_module"));
   document.getElementById("pm_id").value=p.id;
@@ -495,7 +498,9 @@ function pmResolved(){
   const m=moduleById(document.getElementById("pm_module").value);
   const fn=curFileName(); const el=document.getElementById("pm_resolved");
   if(!fn||!m){ el.innerHTML=""; return; }
-  el.innerHTML=`将放入：<code>${esc(m.folder)}/${esc(fn)}</code>`;
+  const hasNew=document.getElementById("pm_file").files[0];
+  const verb = modalMode==="edit" ? (hasNew?"更新正文到":"当前文件") : "将放入";
+  el.innerHTML=`${verb}：<code>${esc(m.folder)}/${esc(fn)}</code>`;
 }
 async function savePage(){
   const title=document.getElementById("pm_title").value.trim();
@@ -511,21 +516,31 @@ async function savePage(){
     const p=data.pages.find(x=>x.id===document.getElementById("pm_id").value);
     if(!p){ toast("找不到该页面"); return; }
     const oldMod=moduleById(p.moduleId);
-    const needMove = ghOn() && oldMod && mod && oldMod.folder!==mod.folder;
+    const newFile=document.getElementById("pm_file").files[0];
+    const oldPath=(oldMod?oldMod.folder:"")+"/"+p.file;
+    const targetPath=mod.folder+"/"+p.file;
+    if(newFile && !/\.html?$/i.test(newFile.name)){ toast("请选择 HTML 文件"); return; }
+    if(newFile && !ghOn()){ toast("更新正文需要先连接 GitHub"); return; }
     try{
-      if(needMove){
-        st.textContent="把文件搬到新分类…";
-        const oldPath=oldMod.folder+"/"+p.file, newPath=mod.folder+"/"+p.file;
-        const got=await ghGet(oldPath);
-        if(got){
-          const exists=await ghGet(newPath);
-          await ghPut(newPath, (got.content||"").replace(/\s/g,""), "改分类搬移："+title, exists&&exists.sha);
-          await ghDelete(oldPath, got.sha, "移除旧位置："+p.file);
+      if(ghOn()){
+        if(newFile){
+          st.textContent="读取新文件…";
+          const text=await newFile.text();
+          const exists=await ghGet(targetPath);
+          st.innerHTML="更新正文 <b>"+esc(targetPath)+"</b> …";
+          await ghPut(targetPath, utf8b64(text), "更新正文："+title, exists&&exists.sha);
+          if(oldPath!==targetPath){ const og=await ghGet(oldPath); if(og) await ghDelete(oldPath, og.sha, "移除旧位置："+p.file); }
+        } else if(oldMod && oldMod.folder!==mod.folder){
+          st.textContent="把文件搬到新分类…";
+          const got=await ghGet(oldPath);
+          if(got){ const exists=await ghGet(targetPath);
+            await ghPut(targetPath, (got.content||"").replace(/\s/g,""), "改分类搬移："+title, exists&&exists.sha);
+            await ghDelete(oldPath, got.sha, "移除旧位置："+p.file); }
         }
       }
-      Object.assign(p,{title,moduleId,tags,desc});
+      Object.assign(p,{title,moduleId,tags,desc}); if(newFile) p.date=new Date().toISOString().slice(0,10);
       saveLocal(); render(); renderSettings();
-      if(ghOn()){ st.textContent="同步中…"; await pushCatalog("编辑："+title); toast("已保存并同步"); }
+      if(ghOn()){ st.textContent="更新目录…"; await pushCatalog("编辑："+title); toast(newFile?"✅ 正文已更新并同步":"已保存并同步"); }
       else toast("已保存（本地）");
       closeModal();
     }catch(e){ st.textContent="同步出错："+errMsg(e); }
@@ -632,10 +647,21 @@ async function downloadSelectedZip(){
   st.innerHTML="✅ 已打包 <b>"+ok+"</b> 篇"+(fail?("，"+fail+" 篇失败"):"")+"，已下载到默认下载文件夹。"; toast("打包完成，开始下载");
 }
 async function delPage(id){
-  if(!confirm("删除这个页面登记？（不会删除 HTML 文件本身）")) return;
-  data.pages=data.pages.filter(p=>p.id!==id); saveLocal(); render(); renderSettings();
-  if(ghOn()){ try{ await pushCatalog("删除登记"); toast("已删除并同步"); }catch(e){ toast("本地已删，同步失败："+e.message); } }
-  else toast("已删除");
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  const m=moduleById(p.moduleId); const path=(m?m.folder:"")+"/"+p.file;
+  if(!ghOn()){
+    if(!confirm("从列表移除《"+p.title+"》？（未连接 GitHub，仅改本地登记）")) return;
+    data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings(); toast("已从列表移除"); return;
+  }
+  if(!confirm("删除《"+p.title+"》？\n\n将彻底删除原文件：\n"+path+"\n并从图书馆移除。\n\n（如有需要，仍可在 GitHub 提交历史中找回）")) return;
+  try{
+    toast("正在删除…");
+    let got=null; try{ got=await ghGet(path); }catch(e){}
+    if(got){ await ghDelete(path, got.sha, "删除文件："+p.file); }
+    data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings();
+    await pushCatalog("删除："+p.title);
+    toast(got?"已删除文件并同步":"原文件不在，已移除登记");
+  }catch(e){ toast("删除出错："+errMsg(e)); }
 }
 const CATS=[
   {icon:"📚",name:"综合通识",color:"#6b7280"},{icon:"🏛️",name:"历史",color:"#c08457"},
