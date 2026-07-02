@@ -58,10 +58,12 @@
   .card .meta .t{background:var(--bg);border:1px solid var(--line);padding:1px 8px;border-radius:6px}
   .card .open{position:absolute;top:14px;right:14px;font-size:13px;color:#c2c7d0;opacity:0;transition:.15s}
   .card:hover .open{opacity:1;color:var(--accent)}
-  .dlbtn{position:absolute;top:12px;right:12px;border:1px solid var(--line);background:#fff;color:var(--accent);
-    font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;cursor:pointer;z-index:2;box-shadow:var(--shadow)}
-  .dlbtn:active{transform:scale(.95)}
+  .cardbtns{position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:2}
+  .dlbtn,.updbtn{border:1px solid var(--line);background:#fff;color:var(--accent);
+    font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow)}
+  .dlbtn:active,.updbtn:active{transform:scale(.95)}
   .dlbtn.cached{color:#2f9e6f;border-color:#bfe6d2;background:#f0faf4}
+  .updbtn{color:#4f7cff}
   .card .prog{height:4px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-top:2px}
   .card .prog .pf{height:100%;border-radius:999px}
   .stack-sec{margin-bottom:14px}
@@ -374,7 +376,7 @@ function cardHTML(p){
   const rp=RP[relPath(p)]; const pct=rp&&rp.pct?Math.round(rp.pct*100):0;
   const bm=RB[relPath(p)]; const nbm=(bm&&bm.items)?bm.items.length:0;
   const no=RN[relPath(p)]; const nnote=(no&&no.items)?no.items.length:0;
-  return `<div class="card" onclick="openPage('${p.id}')"><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button>
+  return `<div class="card" onclick="openPage('${p.id}')"><div class="cardbtns"><button class="updbtn" title="上传新文件覆盖本篇" onclick="event.stopPropagation();updateDoc('${p.id}')">⟳ 更新</button><button class="dlbtn" data-id="${p.id}" onclick="event.stopPropagation();cacheOne('${p.id}',this)">⤓ 离线</button></div>
     <span class="tag" style="background:${m.color}1a;color:${m.color}">${m.icon} ${esc(m.name)}</span>
     <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="opacity:.5">—</p>`}
     <div class="meta">${tags}${p.date?`<span>· ${p.date}</span>`:""}${pct>0?`<span>· 读 ${pct}%</span>`:""}${nbm?`<span>· 🔖 ${nbm}</span>`:""}${nnote?`<span>· 📝 ${nnote}</span>`:""}</div>
@@ -429,7 +431,8 @@ async function markCachedStates(){
     }catch(e){}
   }
 }
-function pathFor(p){ const m=moduleById(p.moduleId); return "./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file); }
+function docVer(p){ return p&&p.rev?("?v="+p.rev):""; }
+function pathFor(p){ const m=moduleById(p.moduleId); return "./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file)+docVer(p); }
 function relPath(p){ const m=moduleById(p.moduleId); return (m?m.folder:"")+"/"+p.file; }
 function readPos(){ try{ return JSON.parse(localStorage.getItem("wikiReadPos.v1")||"{}"); }catch(e){ return {}; } }
 function readBm(){ try{ return JSON.parse(localStorage.getItem("wikiBookmarks.v1")||"{}"); }catch(e){ return {}; } }
@@ -444,7 +447,29 @@ async function pullReading(){ const repo=rDeriveRepo(); if(!repo) return;
     localStorage.setItem("wikiNotes.v1", JSON.stringify(rMerge(readNotes(), d.notes||{})));
   }catch(e){} }
 function openPage(id){ const p=data.pages.find(x=>x.id===id); if(!p) return;
-  window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title),"_blank"); }
+  window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title)+(p.rev?("&rev="+p.rev):""),"_blank"); }
+async function updateDoc(id){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  if(!ghOn()){ toast("更新需要先连接 GitHub（设置里填一次令牌）"); switchTab('settings'); return; }
+  let inp=document.getElementById("quickUpd");
+  if(!inp){ inp=document.createElement("input"); inp.type="file"; inp.accept=".html,.htm"; inp.id="quickUpd"; inp.style.display="none"; document.body.appendChild(inp); }
+  inp.value="";
+  inp.onchange=async()=>{ const f=inp.files[0]; if(!f) return;
+    if(!/\.html?$/i.test(f.name)){ toast("请选择 HTML 文件"); return; }
+    const m=moduleById(p.moduleId); const path=(m?m.folder:"")+"/"+p.file;
+    if(!confirm("用新文件覆盖《"+p.title+"》？\n\n原文件 "+path+" 的内容会被替换（旧版可在 GitHub 历史找回）。\n链接、阅读进度、书签、批注都保留。")) return;
+    try{ toast("正在更新《"+p.title+"》…");
+      const text=await f.text();
+      const ex=await ghGet(path);
+      await ghPut(path, utf8b64(text), "更新正文："+p.title, ex&&ex.sha);
+      p.rev=Date.now(); p.date=new Date().toISOString().slice(0,10);
+      try{ if("caches" in window){ const c=await caches.open("study-wiki-v2"); await c.delete("./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file)); } }catch(e){}
+      saveLocal(); await pushCatalog("更新正文："+p.title); render();
+      toast("✅ 已更新《"+p.title+"》，点开即是新内容");
+    }catch(e){ toast("更新失败："+errMsg(e)); }
+  };
+  inp.click();
+}
 
 /* ---------- modal: upload + edit ---------- */
 function fillModuleSelect(sel){ sel.innerHTML=data.modules.map(m=>`<option value="${m.id}">${m.icon} ${esc(m.name)}</option>`).join(""); }
@@ -538,7 +563,7 @@ async function savePage(){
             await ghDelete(oldPath, got.sha, "移除旧位置："+p.file); }
         }
       }
-      Object.assign(p,{title,moduleId,tags,desc}); if(newFile) p.date=new Date().toISOString().slice(0,10);
+      Object.assign(p,{title,moduleId,tags,desc}); if(newFile){ p.date=new Date().toISOString().slice(0,10); p.rev=Date.now(); }
       saveLocal(); render(); renderSettings();
       if(ghOn()){ st.textContent="更新目录…"; await pushCatalog("编辑："+title); toast(newFile?"✅ 正文已更新并同步":"已保存并同步"); }
       else toast("已保存（本地）");
@@ -560,12 +585,17 @@ async function savePage(){
       const text=await f.text();
       let path=mod.folder+"/"+fname;
       st.textContent="检查重名…";
-      let ex=await ghGet(path);
-      if(ex){ const baseN=fname.replace(/\.html?$/i,""); let i=2;
-        while(ex){ fname=baseN+"-"+i+".html"; path=mod.folder+"/"+fname; ex=await ghGet(path); i++; if(i>50) break; } }
-      st.innerHTML="上传 <b>"+esc(path)+"</b> …";
-      await ghPut(path, utf8b64(text), "上传页面："+title, null);
-      data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10)});
+      let ex=await ghGet(path); let overwrite=false;
+      if(ex){
+        const baseN=fname.replace(/\.html?$/i,"");
+        overwrite = confirm("「"+mod.folder+"/"+fname+"」已存在。\n\n确定 = 用新文件覆盖它（更新内容，推荐）\n取消 = 另存为副本（自动改名 "+baseN+"-2.html）");
+        if(!overwrite){ let i=2; while(ex){ fname=baseN+"-"+i+".html"; path=mod.folder+"/"+fname; ex=await ghGet(path); i++; if(i>50) break; } }
+      }
+      st.innerHTML=(overwrite?"覆盖 ":"上传 ")+"<b>"+esc(path)+"</b> …";
+      await ghPut(path, utf8b64(text), (overwrite?"覆盖更新：":"上传页面：")+title, (overwrite&&ex)?ex.sha:null);
+      const _exist = overwrite ? data.pages.find(pp=>{ const mm=moduleById(pp.moduleId); return mm && (mm.folder+"/"+pp.file)===path; }) : null;
+      if(_exist){ Object.assign(_exist,{title,moduleId,desc,tags,date:new Date().toISOString().slice(0,10),rev:Date.now()}); }
+      else { data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10), rev:Date.now()}); }
       st.textContent="更新目录…";
       await pushCatalog("上传页面："+title);
       saveLocal(); render(); renderSettings();
