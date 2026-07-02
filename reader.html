@@ -340,7 +340,7 @@ frame.addEventListener("load", ()=>{ document.getElementById("loading").style.di
     setTimeout(()=>{ const m=metrics(); if(m){ updateBar(m.max>0?m.top/m.max:0); applyAllNotes(); setupResume(); } }, 350);
   }catch(e){}
 });
-(async ()=>{ await pullReading(); })().finally(()=>{ frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")) : "about:blank"; });
+(async ()=>{ await pullReading(); })().finally(()=>{ const _rev=params.get("rev"); frame.src = doc ? ("./"+doc.split("/").map(encodeURI).join("/")+(_rev?("?v="+_rev):"")) : "about:blank"; });
 </script>
 </body>
 </html>
