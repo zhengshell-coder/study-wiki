@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球 AI 数据中心 · Epoch AI 报告全解读（含中美大厂 + 中国算力生态）</title>
+<style>
+  :root {
+    --bg-deep:#060a14; --bg-mid:#0b1220;
+    --accent-cyan:#2dd4ff; --accent-violet:#8b7cff; --accent-amber:#ffb454; --accent-rose:#ff6b6b; --accent-green:#4fe0b0; --accent-blue:#5b8dff; --accent-red:#ff5470;
+    --glass-bg:rgba(255,255,255,0.045); --glass-bg-active:rgba(45,212,255,0.09);
+    --glass-border:rgba(255,255,255,0.08); --glass-border-active:rgba(45,212,255,0.4);
+    --text-primary:#eaf0fb; --text-secondary:#93a1bd; --text-muted:#5d6a87;
+    --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC","Segoe UI",system-ui,sans-serif;
+    --font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body {
+    height:100%; font-family:var(--font-sans); color:var(--text-primary);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(45,212,255,0.07), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(139,124,255,0.06), transparent 45%),
+      linear-gradient(160deg, var(--bg-deep), var(--bg-mid));
+    background-attachment:fixed; overflow:hidden;
+  }
+  body::before { content:""; position:fixed; inset:0; background-image:radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size:28px 28px; pointer-events:none; z-index:0; }
+  .app { position:relative; z-index:1; display:flex; height:100vh; }
+
+  /* 侧边栏 */
+  .sidebar { width:288px; flex-shrink:0; display:flex; flex-direction:column; background:var(--glass-bg); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); border-right:1px solid var(--glass-border); }
+  .sidebar-header { padding:24px 24px 16px; border-bottom:1px solid var(--glass-border); }
+  .sidebar-eyebrow { font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:8px; }
+  .sidebar-title { font-size:18px; font-weight:600; line-height:1.4; }
+  .sidebar-meta { margin-top:10px; font-size:12px; color:var(--text-muted); line-height:1.6; }
+  .nav-list { flex:1; overflow-y:auto; padding:10px 12px; list-style:none; }
+  .nav-group { font-family:var(--font-mono); font-size:10px; letter-spacing:0.14em; color:var(--text-muted); text-transform:uppercase; padding:14px 14px 6px; }
+  .nav-item { position:relative; display:flex; align-items:center; gap:12px; padding:10px 14px; margin-bottom:3px; border-radius:10px; border:1px solid transparent; color:var(--text-secondary); font-size:13.5px; cursor:pointer; transition:all .2s ease; }
+  .nav-item:hover { background:var(--glass-bg); color:var(--text-primary); }
+  .nav-item.active { background:var(--glass-bg-active); border-color:var(--glass-border-active); color:var(--text-primary); box-shadow:0 0 0 1px rgba(45,212,255,0.08) inset, 0 0 22px rgba(45,212,255,0.10); }
+  .nav-index { font-family:var(--font-mono); font-size:11px; color:var(--accent-cyan); opacity:.85; flex-shrink:0; }
+  .sidebar-foot { padding:12px 22px 16px; border-top:1px solid var(--glass-border); font-size:10.5px; color:var(--text-muted); font-family:var(--font-mono); line-height:1.7; }
+
+  /* 主区 */
+  main { flex:1; overflow-y:auto; padding:48px 58px 88px; }
+  .section { display:none; max-width:980px; }
+  .section.active { display:block; animation:fadeIn .35s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+  .section-title { font-size:26px; font-weight:600; margin-bottom:8px; letter-spacing:-0.01em; }
+  .section-subtitle { font-size:13px; color:var(--text-muted); margin-bottom:26px; line-height:1.6; }
+
+  .card { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:16px; padding:22px 26px; backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); margin-bottom:18px; }
+  .card h3 { font-size:15px; font-weight:600; color:var(--accent-cyan); margin-bottom:13px; }
+  .card p { font-size:14px; line-height:1.9; color:var(--text-secondary); margin-bottom:10px; }
+  .card p:last-child { margin-bottom:0; }
+  .card ul { margin-left:18px; color:var(--text-secondary); font-size:14px; line-height:1.95; }
+  .card ul li { margin-bottom:5px; }
+
+  .hl{color:var(--accent-cyan);font-weight:600;} .hl-v{color:var(--accent-violet);font-weight:600;} .hl-a{color:var(--accent-amber);font-weight:600;} .hl-r{color:var(--accent-red);font-weight:600;}
+
+  .stat-row { display:flex; gap:13px; flex-wrap:wrap; margin-bottom:18px; }
+  .stat { flex:1; min-width:145px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px; padding:16px 18px; }
+  .stat-value { font-family:var(--font-mono); font-size:23px; font-weight:600; color:var(--accent-cyan); line-height:1.2; }
+  .stat-value.violet{color:var(--accent-violet);} .stat-value.amber{color:var(--accent-amber);} .stat-value.rose{color:var(--accent-rose);} .stat-value.green{color:var(--accent-green);}
+  .stat-label { font-size:11.5px; color:var(--text-muted); margin-top:5px; line-height:1.5; }
+
+  .bars { display:flex; flex-direction:column; gap:13px; margin-top:6px; }
+  .bar-head { display:flex; justify-content:space-between; align-items:baseline; font-size:13px; margin-bottom:6px; color:var(--text-secondary); }
+  .bar-head b { color:var(--text-primary); font-weight:600; }
+  .bar-head .sub { color:var(--text-muted); font-size:11.5px; font-weight:400; }
+  .bar-val { font-family:var(--font-mono); font-size:12px; color:var(--accent-cyan); }
+  .bar-track { height:11px; border-radius:6px; background:rgba(255,255,255,0.06); overflow:hidden; }
+  .bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,var(--accent-cyan),var(--accent-violet)); box-shadow:0 0 14px rgba(45,212,255,0.25); }
+  .bar-fill.warn { background:linear-gradient(90deg,var(--accent-amber),var(--accent-rose)); box-shadow:0 0 14px rgba(255,107,107,0.22); }
+  .bar-fill.calm { background:linear-gradient(90deg,#3a4a68,#56688f); box-shadow:none; }
+  .bar-fill.g2 { background:linear-gradient(90deg,var(--accent-violet),#b3a6ff); box-shadow:0 0 14px rgba(139,124,255,0.25); }
+  .bar-fill.red { background:linear-gradient(90deg,#ff5470,#ffb454); box-shadow:0 0 14px rgba(255,84,112,0.22); }
+
+  .tbl { width:100%; border-collapse:collapse; font-size:13px; }
+  .tbl th,.tbl td { text-align:left; padding:10px 13px; border-bottom:1px solid var(--glass-border); vertical-align:top; }
+  .tbl thead th { color:var(--accent-cyan); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; }
+  .tbl td { color:var(--text-secondary); }
+  .tbl td b { color:var(--text-primary); }
+  .tbl tr:last-child td { border-bottom:none; }
+  .tbl .num { font-family:var(--font-mono); color:var(--accent-cyan); }
+  .badge-ok { color:var(--accent-green); font-family:var(--font-mono); font-size:12px; white-space:nowrap; }
+  .tag-est { display:inline-block; font-size:10px; font-family:var(--font-mono); color:var(--accent-amber); border:1px solid rgba(255,180,84,0.4); border-radius:4px; padding:1px 5px; margin-left:6px; }
+
+  .flow { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin-top:4px; }
+  .flow-step { flex:1; min-width:116px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:12px; padding:15px; }
+  .flow-step .n { font-family:var(--font-mono); font-size:11px; color:var(--accent-cyan); }
+  .flow-step .t { font-size:13.5px; font-weight:600; color:var(--text-primary); margin:6px 0 5px; }
+  .flow-step .d { font-size:12px; color:var(--text-muted); line-height:1.55; }
+
+  .site-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  @media (max-width:900px){ .site-grid{grid-template-columns:1fr;} }
+  .site { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:14px; padding:18px 20px; position:relative; overflow:hidden; }
+  .site::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent-cyan); opacity:.8; }
+  .site.meta::before{background:var(--accent-blue);} .site.amazon::before{background:var(--accent-amber);} .site.ms::before{background:var(--accent-cyan);} .site.xai::before{background:var(--accent-green);} .site.oracle::before{background:var(--accent-rose);} .site.hw::before{background:var(--accent-red);}
+  .site .rank { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); }
+  .site .name { font-size:15px; font-weight:600; margin:3px 0 2px; }
+  .site .loc { font-size:12px; color:var(--text-muted); margin-bottom:12px; }
+  .site .kv { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:11px; }
+  .site .kv div { font-size:12px; color:var(--text-muted); }
+  .site .kv b { display:block; font-family:var(--font-mono); font-size:16px; color:var(--accent-cyan); font-weight:600; }
+  .site .note { font-size:12.5px; color:var(--text-secondary); line-height:1.6; border-top:1px solid var(--glass-border); padding-top:10px; }
+
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+  .stack { display:flex; height:34px; border-radius:8px; overflow:hidden; border:1px solid var(--glass-border); margin:10px 0 6px; }
+  .stack > div { display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:600; color:#05101f; white-space:nowrap; }
+  .legend { display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--text-secondary); margin-top:4px; }
+  .legend span { display:flex; align-items:center; }
+
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:900px){ .grid2{grid-template-columns:1fr;} }
+  .lede { font-size:15px; line-height:1.95; color:var(--text-primary); margin-bottom:22px; border-left:2px solid var(--accent-cyan); padding-left:18px; }
+  .source { font-size:11px; color:var(--text-muted); margin-top:12px; font-family:var(--font-mono); line-height:1.6; }
+  .chart-cap { font-size:12px; color:var(--text-muted); margin-top:13px; line-height:1.6; }
+  .callout { border-left:2px solid var(--accent-amber); background:rgba(255,180,84,0.05); border-radius:0 10px 10px 0; padding:12px 16px; font-size:12.5px; color:var(--text-secondary); line-height:1.7; margin-top:4px; }
+  .callout.cyan { border-color:var(--accent-cyan); background:rgba(45,212,255,0.05); }
+
+  ::-webkit-scrollbar { width:8px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:8px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-eyebrow">EPOCH AI · 报告全解读</div>
+      <div class="sidebar-title">全球 AI 数据中心<br>规模 · 电力 · 中美格局</div>
+      <div class="sidebar-meta">报告 2025-11-04 · 数据库 2026-06-30<br>Cottier · Edelman · Emberson 等</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-group">基础认知</li>
+      <li class="nav-item active" data-target="sec-overview"><span class="nav-index">01</span><span>概览 · 历史级基建</span></li>
+      <li class="nav-item" data-target="sec-power"><span class="nav-index">02</span><span>电力定生死</span></li>
+      <li class="nav-item" data-target="sec-source"><span class="nav-index">03</span><span>电从何来</span></li>
+      <li class="nav-item" data-target="sec-special"><span class="nav-index">04</span><span>为何如此特殊</span></li>
+
+      <li class="nav-group">中美大厂 · 单站数据</li>
+      <li class="nav-item" data-target="sec-sites"><span class="nav-index">05</span><span>单站图鉴 · Top 站点</span></li>
+      <li class="nav-item" data-target="sec-owners"><span class="nav-index">06</span><span>大厂算力版图</span></li>
+      <li class="nav-item" data-target="sec-uschina"><span class="nav-index">07</span><span>中美算力对比</span></li>
+
+      <li class="nav-group">中国算力生态（报告缺口补充）</li>
+      <li class="nav-item" data-target="sec-ascend"><span class="nav-index">08</span><span>昇腾 · 超节点体系</span></li>
+      <li class="nav-item" data-target="sec-cnplayers"><span class="nav-index">09</span><span>国产群雄 · 国家工程</span></li>
+
+      <li class="nav-group">趋势 · 核验 · 展望</li>
+      <li class="nav-item" data-target="sec-global"><span class="nav-index">10</span><span>全球趋势 · 速度·成本</span></li>
+      <li class="nav-item" data-target="sec-verify"><span class="nav-index">11</span><span>数据核验</span></li>
+      <li class="nav-item" data-target="sec-policy"><span class="nav-index">12</span><span>进展 · 政策 · 结论</span></li>
+    </ul>
+    <div class="sidebar-foot">来源：Epoch AI（CC-BY 4.0）+ 外部公开资料<br>中国厂家数据多为行业估算，已标注</div>
+  </aside>
+
+  <main>
+
+    <!-- 01 概览 -->
+    <section class="section active" id="sec-overview">
+      <div class="section-title">概览 · 一座数据中心，一座城市的耗电</div>
+      <div class="section-subtitle">AI 公司正在建设的这批数据中心，规模足以跻身人类历史上最大的基础设施工程之列。到 2027 年底累计投资或达数千亿美元，堪比阿波罗计划与曼哈顿计划。</div>
+
+      <div class="lede">很难直观体会 AI 数据中心的规模。以 OpenAI 的 <b>Stargate（阿比林，得州）</b>为例，它体现了这一代 AI 基建的全部特征：极高的电力、极高的算力、极大的占地、极高的造价与极快的建设速度。</div>
+
+      <div class="card">
+        <h3>📐 先说清"算力"的单位（全篇统一口径）</h3>
+        <p>"算力"其实指两个不同维度，本报告全程区分：</p>
+        <table class="tbl">
+          <thead><tr><th>维度</th><th>含义</th><th>单位（本报告统一写法）</th></tr></thead>
+          <tbody>
+            <tr><td><b>算力容量</b><br>（速率 / 机器规模）</td><td>每秒能做多少次运算，即"引擎多大"</td><td class="num">H100 等效（H100e）</td></tr>
+            <tr><td><b>训练总量</b><br>（工作量 / 里程）</td><td>训练一个模型消耗的运算<b>总次数</b> = 容量 × 时间</td><td class="num">FLOP（总运算量）</td></tr>
+          </tbody>
+        </table>
+        <div class="callout cyan" style="margin-top:12px;">
+          <b>为什么统一用"H100 等效"？</b>它把不同芯片按算力折算成"相当于多少张英伟达 H100"，是 Epoch 的标准口径（按 <b>8-bit / FP8</b> 精度归一），便于跨厂商、跨数据中心横向对比。<br>
+          <b>注意精度：</b>后文中国厂商标称的 TFLOPS / PFLOPS 多为 <b>FP16 / BF16</b> 精度，是<b>另一套标尺</b>，不能直接和 H100e 相加或换算——出现时都会注明精度。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Stargate Abilene 单站画像</h3>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">≈ 西雅图</div><div class="stat-label">整座城市所需用电量（约 1 GW 平均功率）</div></div>
+          <div class="stat"><div class="stat-value">≈51万</div><div class="stat-label">张 H100 的等效算力容量（≈ 训练 GPT-4 那台超算的 250 倍）</div></div>
+          <div class="stat"><div class="stat-value">450+</div><div class="stat-label">个足球场占地（875 英亩 / 3.5 km²）</div></div>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value amber">$32B</div><div class="stat-label">建设 + IT 设备总投入</div></div>
+          <div class="stat"><div class="stat-value amber">≈ 3,000 人</div><div class="stat-label">现场施工人员（2025 年 7 月）</div></div>
+          <div class="stat"><div class="stat-value amber">≈ 2 年</div><div class="stat-label">从空地到投运的建设周期</div></div>
+        </div>
+        <p class="source">来源：Epoch AI, "What you need to know about AI data centers" (Cottier & Edelman, 2025)，脚注 1–5。</p>
+      </div>
+
+      <div class="card">
+        <h3>为什么需要这么大？算力才是主角</h3>
+        <p>AI 数据中心本质是"塞满计算机、用来训练和运行 AI 的一组建筑"，必须做得巨大，是因为前沿 AI 对算力的需求近乎无底洞。直观类比：拿一台 <span class="hl-v">2024 款 iPad Pro</span>（<b>算力容量</b>约 38 万亿次/秒，即 3.8×10¹³ FLOP/s）去承担 xAI Grok 4 的<b>训练总量</b>（约 5×10²⁶ FLOP），需要约 <span class="hl">40 万年</span>。而前沿模型的<b>训练总量</b>仍以每年约 <span class="hl">5 倍</span>增长。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>本报告回答的核心问题</h3>
+          <ul>
+            <li>为何需要如此巨大的数据中心？作为基建为何特殊？</li>
+            <li>建在哪里、为什么？电力从哪里来？</li>
+            <li>对气候、AI 政策与 AI 未来意味着什么？</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>本解读额外延展</h3>
+          <ul>
+            <li>中美大厂逐座数据中心明细（05–07 章）</li>
+            <li><b>中国算力厂家生态</b>：昇腾/超节点/群雄/国家工程（08–09 章，原报告几乎未覆盖）</li>
+            <li>报告全部大数据的<b>逐条核验</b>（11 章）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>首座"吉瓦级"数据中心的候选</h3>
+        <p>报告预计世界首座吉瓦级 AI 数据中心将在不久后出现，主要候选为：<span class="hl">Anthropic–Amazon 的 Project Rainier、xAI 的 Colossus 2、微软的 Fayetteville、Meta 的 Prometheus、OpenAI 的 Stargate</span>。</p>
+        <p class="source">来源：报告脚注 6。</p>
+      </div>
+    </section>
+
+    <!-- 02 电力定生死 -->
+    <section class="section" id="sec-power">
+      <div class="section-title">电力，决定 AI 数据中心建在哪里</div>
+      <div class="section-subtitle">要理解一座 AI 数据中心，最该关注的单一指标就是——电力。它决定总量、决定哪些国家能host、也决定一国内部建在哪。</div>
+
+      <div class="card">
+        <h3>美国总量：到 2027 年底 20–30 GW</h3>
+        <p>仅美国，AI 数据中心到 <span class="hl">2027 年底</span>预计合计需 <span class="hl">约 20–30 GW</span>。30 GW 约相当于美国当前平均发电能力的 5%、中国的 2.5%——对这两个庞大电网是"大但可承受"。但在多数其他国家，同样的 30 GW 会占到难以承受的份额。</p>
+      </div>
+
+      <div class="card">
+        <h3>同样是 30 GW，占各国发电能力比重</h3>
+        <div class="bars">
+          <div><div class="bar-head"><span><b>美国</b></span><span class="bar-val">≈ 5%</span></div><div class="bar-track"><div class="bar-fill" style="width:5%"></div></div></div>
+          <div><div class="bar-head"><span><b>中国</b></span><span class="bar-val">≈ 2.5%</span></div><div class="bar-track"><div class="bar-fill" style="width:2.5%"></div></div></div>
+          <div><div class="bar-head"><span><b>日本</b></span><span class="bar-val">≈ 25%</span></div><div class="bar-track"><div class="bar-fill warn" style="width:25%"></div></div></div>
+          <div><div class="bar-head"><span><b>法国</b></span><span class="bar-val">≈ 50%</span></div><div class="bar-track"><div class="bar-fill warn" style="width:50%"></div></div></div>
+          <div><div class="bar-head"><span><b>英国</b></span><span class="bar-val">≈ 90%</span></div><div class="bar-track"><div class="bar-fill warn" style="width:90%"></div></div></div>
+        </div>
+        <p class="chart-cap">即便是<b>单座</b>已知最大规划 Fairwater（3.3 GW），也已占英国发电能力约 9%、法国 5%、日本 2.5%——满足 AI 电力，在中美更容易。基于各国 2024 年发电量（脚注 8–9）。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card"><h3>国内选址：靠近充裕电力</h3><p>在美国，公司倾向建在 <span class="hl-v">得州</span>等地——天然气充裕、监管红线更少，更容易把数吉瓦电力集中送到一个点。最算力密集的站点多在<b>中西部与南部</b>。其他次要因素：地形坡度、是否联邦土地、"主权 AI 算力"需求等。</p></div>
+        <div class="card"><h3>反直觉：物理距离几乎不重要</h3><p>模型"思考"一条请求的时间，比数据跨全球传输高几个数量级。设光速 2/3（20 万 km/s）：得州→纽约 2500km 仅 <span class="hl">12.5 毫秒</span>；生成 1000 字回复约 10 秒——差近 1000 倍。即便放到<span class="hl-v">月球</span>，延迟也仅约 2 秒。（自动驾驶、AI 游戏等少数场景例外，脚注 11）</p></div>
+      </div>
+    </section>
+
+    <!-- 03 电从何来 -->
+    <section class="section" id="sec-source">
+      <div class="section-title">这么多电，从哪里来？</div>
+      <div class="section-subtitle">主力电源、备用电源、"电网灵活性"与长期绿色化。</div>
+
+      <div class="card">
+        <h3>供电的分层结构</h3>
+        <div class="flow">
+          <div class="flow-step"><div class="n">主力 · A</div><div class="t">接入电网</div><div class="d">借用其他电源的富余容量。</div></div>
+          <div class="flow-step"><div class="n">主力 · B</div><div class="t">自建电厂</div><div class="d">就地新建发电，常与并网并用。</div></div>
+          <div class="flow-step"><div class="n">备用</div><div class="t">柴油发电</div><div class="d">峰值/主源掉线时兜底。</div></div>
+          <div class="flow-step"><div class="n">调节</div><div class="t">电网灵活性</div><div class="d">约 1–5% 时段主动降载，换取额外电力。</div></div>
+          <div class="flow-step"><div class="n">长期</div><div class="t">可再生+储能</div><div class="d">逐步转向风光电池，计划可能变。</div></div>
+        </div>
+        <p class="chart-cap">示例：Stargate Abilene 初期靠<span class="hl-v">现场天然气</span>，随后并网扩容，计划更多用得州风电；Goodnight 站点则临近风电场。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>为什么天然气涡轮机是主力</h3>
+          <p>据美国能源信息署（EIA）约 20 类电厂比价，<span class="hl">单位千瓦最便宜的正是天然气</span>；且能全天候供电、建设快。煤炭等更"脏"的能源受监管限制难以大规模用。</p>
+          <p>xAI 甚至被曝在孟菲斯<span class="hl-a">未获许可即先部署了一批燃气涡轮机</span>——绕过许可瓶颈的典型操作。</p>
+        </div>
+        <div class="card">
+          <h3>柴油为何"备而少用"</h3>
+          <p>受《清洁空气法》Title V 约束，年排放超 100 吨污染物即触发严格许可；吉瓦级发电机<span class="hl">几小时就会触顶</span>，故柴油仅作短时兜底。</p>
+          <p>规模有多大？Anthropic 的 Project Rainier 某站规划了 <span class="hl-a">238 台</span>柴油应急发电机（脚注 13）。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>"绿色计划"要看清细节</h3>
+        <p>长期计划转向可再生 + 储能，但计划既可能被放弃（如 Crusoe 的 Goodnight 从 7 栋缩到 3–4 栋），含义也常含糊。微软 Mount Pleasant 规划的 <span class="hl-v">250 MW 光伏</span>并非直接供数据中心，而是用来"抵消/匹配"主力天然气的碳足迹，使其显得"零碳"。</p>
+        <p class="source">来源：报告脚注 12–17。</p>
+      </div>
+    </section>
+
+    <!-- 04 为何特殊 -->
+    <section class="section" id="sec-special">
+      <div class="section-title">AI 数据中心，到底特殊在哪？</div>
+      <div class="section-subtitle">不只是"总电量大"，真正与众不同的是——在极小体积内塞进极高功率，即超高功率密度。</div>
+
+      <div class="card">
+        <h3>功率密度：AI 机柜 ≈ 传统机柜的 10 倍</h3>
+        <p>为让芯片间高速通信，芯片被密集竖直堆进"服务器机柜"。英伟达 <span class="hl-v">NVL72 GB200</span> 一柜装 <span class="hl">72 张 GPU</span>（即 36 个 Grace-Blackwell 超级芯片，每个含 2 张 Blackwell GPU + 1 颗 Grace CPU），高约 2 米、横截面仅约 0.5 m²，却消耗超过 <span class="hl">100 kW</span>——够供 100 户美国家庭。</p>
+        <div class="bars">
+          <div><div class="bar-head"><span><b>传统（非 AI）机柜</b></span><span class="bar-val">≈ 10 kW</span></div><div class="bar-track"><div class="bar-fill calm" style="width:10%"></div></div></div>
+          <div><div class="bar-head"><span><b>AI 机柜 · NVL72</b></span><span class="bar-val">100+ kW</span></div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div>
+        </div>
+        <p class="chart-cap">同样体积，AI 用途功率密度高出约一个数量级（数据中心行业普遍 10 kW/柜，脚注 18）。</p>
+      </div>
+
+      <div class="card">
+        <h3>超高密度，逼出独特的液冷系统</h3>
+        <p>密度这么高，风冷"吸不动"热量，于是普遍<span class="hl-v">液冷</span>：冷却液流经贴在芯片上的冷板取热，交给水，水流出机房后经专门设备排到室外。（类比：给热锅降温，浇水远比吹风快，脚注 20）</p>
+        <div class="flow">
+          <div class="flow-step"><div class="n">01</div><div class="t">冷板取热</div><div class="d">冷却液流过 GPU 冷板。</div></div>
+          <div class="flow-step"><div class="n">02</div><div class="t">交给水路</div><div class="d">热量传给主水循环。</div></div>
+          <div class="flow-step"><div class="n">03</div><div class="t">室外排热</div><div class="d">经冷水机组转到室外。</div></div>
+          <div class="flow-step"><div class="n">04</div><div class="t">蒸发/风冷</div><div class="d">冷却塔蒸发或风冷散热。</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>三种室外排热方式</h3>
+        <table class="tbl">
+          <thead><tr><th>方式</th><th>原理</th><th>取舍</th></tr></thead>
+          <tbody>
+            <tr><td><b>水冷机组 + 蒸发冷却塔</b></td><td>把热量转到外循环水，进冷却塔蒸发降温</td><td>高效，但蒸发消耗大量水</td></tr>
+            <tr><td><b>风冷机组</b></td><td>直接抽外部空气吹过制冷盘管降温</td><td>可循环用水，耗水更少</td></tr>
+            <tr><td><b>热水排入河流</b></td><td>把热水直接排入河道</td><td>危害水生生物，受《清洁水法》管制，较少用</td></tr>
+          </tbody>
+        </table>
+        <p class="chart-cap">这正是"AI 数据中心很费水"的由来；庞大的室外冷却设备也让数据中心"藏不住"（见第 12 章）。脚注 19。</p>
+      </div>
+    </section>
+
+    <!-- 05 单站图鉴 -->
+    <section class="section" id="sec-sites">
+      <div class="section-title">单站图鉴 · 全球最大的那几座</div>
+      <div class="section-subtitle">Epoch Frontier Data Centers Hub 以卫星影像 + 许可证 + 公开文件估算功率/算力/成本（数据库快照 2026-06-30）。</div>
+
+      <div class="card">
+        <h3>数据库总览</h3>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">61 座</div><div class="stat-label">已覆盖站点（13 家所有者）</div></div>
+          <div class="stat"><div class="stat-value violet">930万</div><div class="stat-label">H100 等效算力容量合计</div></div>
+          <div class="stat"><div class="stat-value amber">10 GW</div><div class="stat-label">IT 功率（含散热约 13 GW，超纽约市峰值 11 GW）</div></div>
+          <div class="stat"><div class="stat-value rose">≈ 27%</div><div class="stat-label">占全球已交付 AI 算力（2026-04）</div></div>
+        </div>
+        <p class="chart-cap">单站跨度极大：从不足 50 MW（够供小城 Albany）到超过 1000 MW（够供中型城市圣迭戈）。</p>
+      </div>
+
+      <div class="card">
+        <h3>按 IT 功率排名 · Top 5（MW）</h3>
+        <div class="bars">
+          <div><div class="bar-head"><span><b>Anthropic–Amazon New Carlisle</b> <span class="sub">Amazon · 印第安纳</span></span><span class="bar-val">910</span></div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div>
+          <div><div class="bar-head"><span><b>Microsoft Fairwater Atlanta</b> <span class="sub">微软 · 佐治亚</span></span><span class="bar-val">636</span></div><div class="bar-track"><div class="bar-fill" style="width:70%"></div></div></div>
+          <div><div class="bar-head"><span><b>Meta Prometheus</b> <span class="sub">Meta · 俄亥俄</span></span><span class="bar-val">631</span></div><div class="bar-track"><div class="bar-fill" style="width:69%"></div></div></div>
+          <div><div class="bar-head"><span><b>Colossus 2</b> <span class="sub">xAI · 田纳西</span></span><span class="bar-val">490</span></div><div class="bar-track"><div class="bar-fill" style="width:54%"></div></div></div>
+          <div><div class="bar-head"><span><b>OpenAI Stargate Abilene</b> <span class="sub">Oracle · 得州</span></span><span class="bar-val">421</span></div><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>按算力排名 · Top 5（万 H100 等效）</h3>
+        <div class="bars">
+          <div><div class="bar-head"><span><b>Meta Prometheus</b></span><span class="bar-val">76.3万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:100%"></div></div></div>
+          <div><div class="bar-head"><span><b>Microsoft Fairwater Atlanta</b></span><span class="bar-val">74.3万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:97%"></div></div></div>
+          <div><div class="bar-head"><span><b>Anthropic–Amazon New Carlisle</b></span><span class="bar-val">68.7万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:90%"></div></div></div>
+          <div><div class="bar-head"><span><b>Colossus 2</b></span><span class="bar-val">55.6万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:73%"></div></div></div>
+          <div><div class="bar-head"><span><b>OpenAI Stargate Abilene</b></span><span class="bar-val">51万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:67%"></div></div></div>
+        </div>
+        <p class="chart-cap">功率第一是 New Carlisle，算力第一却是 Prometheus——因不同站点芯片能效不同，功率最大者未必算力最大。</p>
+      </div>
+
+      <div class="card">
+        <h3>五座标杆站点 · 明细卡</h3>
+        <div class="site-grid">
+          <div class="site meta"><div class="rank">算力 #1</div><div class="name">Meta Prometheus</div><div class="loc">俄亥俄 New Albany · Meta 自建自用 · NVIDIA GPU</div><div class="kv"><div>IT 功率<b>631 MW</b></div><div>算力<b>76.3万</b> H100e</div></div><div class="note">当前算力最大的单站。也是 Epoch 追踪时"顺藤摸瓜"发现邻近 AWS、微软站点的起点。</div></div>
+          <div class="site amazon"><div class="rank">功率 #1</div><div class="name">Anthropic–Amazon New Carlisle</div><div class="loc">印第安纳 New Carlisle · Amazon 建 / Anthropic 用（Project Rainier）· AWS Trainium</div><div class="kv"><div>IT 功率<b>910 MW</b></div><div>算力<b>68.7万</b> H100e</div></div><div class="note">IT 功率全球第一。规划含 238 台柴油应急发电机，主力用 Amazon 自研 Trainium。</div></div>
+          <div class="site ms"><div class="rank">功率 #2 / 算力 #2</div><div class="name">Microsoft Fairwater Atlanta</div><div class="loc">佐治亚亚特兰大 · 微软 / OpenAI（可能）· NVIDIA GPU</div><div class="kv"><div>IT 功率<b>636 MW</b></div><div>算力<b>74.3万</b> H100e</div></div><div class="note">Fairwater 系列之一。更大的威斯康星 Fairwater 是已知最大在建站，规划约 <span class="hl">3.3 GW</span>（超洛杉矶全城用电）。</div></div>
+          <div class="site xai"><div class="rank">功率 #4 / 算力 #4</div><div class="name">Colossus 2</div><div class="loc">田纳西孟菲斯 · xAI（Epoch 标注 SpaceXAI）· NVIDIA GPU</div><div class="kv"><div>IT 功率<b>490 MW</b></div><div>算力<b>55.6万</b> H100e</div></div><div class="note">前代 Colossus 1（10 万张芯片、约 150 MW）据称仅 <span class="hl">122 天</span>建成——通常预期两年。</div></div>
+          <div class="site oracle"><div class="rank">功率 #5 / 算力 #5</div><div class="name">OpenAI Stargate Abilene</div><div class="loc">得州阿比林 · Oracle 建 / OpenAI 用 · NVIDIA GPU</div><div class="kv"><div>IT 功率<b>421 MW</b></div><div>算力<b>51万</b> H100e</div></div><div class="note">$5000 亿 Stargate 首站；到 2029 全计划超 <span class="hl">9 GW</span>，阿比林已投运约 0.3 GW，另 6 个美国站在建。</div></div>
+          <div class="site ms"><div class="rank">在建 · 最大规划</div><div class="name">Microsoft Fairwater（威斯康星）</div><div class="loc">威斯康星 Mount Pleasant · 微软 · 规划中</div><div class="kv"><div>规划功率<b>≈ 3.3 GW</b></div><div>约为<b>2×</b> 两年后最大训练</div></div><div class="note">已知规划最大的 AI 数据中心，用电超洛杉矶全城，约为"两年后一次最大训练"所需算力的 2 倍。</div></div>
+        </div>
+        <p class="source">来源：Epoch Frontier Data Centers Hub（2026-06-30）。80% 置信下功率误差约 1.4×、算力 1.5×、成本 1.6×。</p>
+      </div>
+    </section>
+
+    <!-- 06 大厂算力版图 -->
+    <section class="section" id="sec-owners">
+      <div class="section-title">大厂算力版图 · 谁掌握了算力</div>
+      <div class="section-subtitle">按芯片持有量（H100 等效）看，全球 AI 算力高度集中在少数美国超算商手里（截至 2025 Q4）。</div>
+
+      <div class="card">
+        <h3>四大超算商持有算力（万 H100 等效）</h3>
+        <div class="bars">
+          <div><div class="bar-head"><span><span class="dot" style="background:var(--accent-violet)"></span><b>Google</b> <span class="sub">≈ 全球 25%，主力自研 TPU</span></span><span class="bar-val">≈ 500万</span></div><div class="bar-track"><div class="bar-fill g2" style="width:100%"></div></div></div>
+          <div><div class="bar-head"><span><span class="dot" style="background:var(--accent-cyan)"></span><b>Microsoft</b> <span class="sub">以 NVIDIA 为主，少量 AMD</span></span><span class="bar-val">≈ 350万</span></div><div class="bar-track"><div class="bar-fill" style="width:70%"></div></div></div>
+          <div><div class="bar-head"><span><span class="dot" style="background:var(--accent-amber)"></span><b>Amazon</b> <span class="sub">AMD 与自研 Trainium 各半</span></span><span class="bar-val">≈ 250万</span></div><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div></div>
+          <div><div class="bar-head"><span><span class="dot" style="background:var(--accent-blue)"></span><b>Meta</b> <span class="sub">NVIDIA + AMD</span></span><span class="bar-val">≈ 225万</span></div><div class="bar-track"><div class="bar-fill" style="width:45%"></div></div></div>
+          <div><div class="bar-head"><span><span class="dot" style="background:var(--accent-rose)"></span><b>Oracle</b> <span class="sub">高度依赖 NVIDIA</span></span><span class="bar-val">≈ 100万</span></div><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div></div>
+        </div>
+        <p class="chart-cap">谷歌约 500 万 H100 等效居首，几乎全部来自自研 TPU——唯一大规模摆脱英伟达依赖的超算商。</p>
+      </div>
+
+      <div class="card">
+        <h3>集中度还在上升</h3>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">71%</div><div class="stat-label">五大超算商合计份额（2025 Q4）</div></div>
+          <div class="stat"><div class="stat-value violet">63% → 71%</div><div class="stat-label">从 2024 Q1 到 2025 Q4 上升</div></div>
+          <div class="stat"><div class="stat-value amber">≈ 25%</div><div class="stat-label">谷歌单家占全球算力</div></div>
+        </div>
+        <p>五大指 <span class="hl">Google、Microsoft、Amazon、Meta、Oracle</span>。多数 AI 实验室（含 OpenAI、Anthropic）几乎完全依赖它们获取算力——例如 Anthropic 计划 2026 年大量采购 TPU。</p>
+      </div>
+
+      <div class="card">
+        <h3>各家的芯片路线</h3>
+        <table class="tbl">
+          <thead><tr><th>所有者</th><th>主力芯片</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><b>Google</b></td><td>自研 TPU（v7 Ironwood）</td><td>唯一大规模自研，撑起 Cloud 与 DeepMind</td></tr>
+            <tr><td><b>Amazon</b></td><td>AWS Trainium + AMD</td><td>Anthropic 的 Project Rainier 即用 Trainium</td></tr>
+            <tr><td><b>Microsoft</b></td><td>NVIDIA（+ 少量 AMD）</td><td>近期 $680 亿实物资产增量主要为 AI 采购</td></tr>
+            <tr><td><b>Meta / xAI</b></td><td>NVIDIA（Meta 兼用 AMD）</td><td>Prometheus、Colossus 以 NVIDIA GPU 为主</td></tr>
+            <tr><td><b>中国（华为等）</b></td><td>华为昇腾 Ascend</td><td>H20 管制后，华为按额定算力已在中国超越英伟达（详见 08 章）</td></tr>
+          </tbody>
+        </table>
+        <p class="source">来源：Epoch AI, "Five hyperscalers…" / "Google controls the most…"（2026）；AI Chip Owners 数据库。</p>
+      </div>
+    </section>
+
+    <!-- 07 中美算力对比 -->
+    <section class="section" id="sec-uschina">
+      <div class="section-title">中美算力对比 · 高度不对称的版图</div>
+      <div class="section-subtitle">按 Epoch 芯片持有估算，美国五大超算商与中国全部企业之间存在巨大落差。</div>
+
+      <div class="card">
+        <h3>全球算力份额（累计，2025 Q4）</h3>
+        <div class="stack">
+          <div style="width:71%;background:linear-gradient(90deg,#2dd4ff,#8b7cff)">美国五大超算商 · 71%</div>
+          <div style="width:24%;background:#3a4a68;color:#cbd6ea">其他 · 24%</div>
+          <div style="width:5%;background:linear-gradient(90deg,#ffb454,#ff6b6b)">中国 5%</div>
+        </div>
+        <div class="legend">
+          <span><span class="dot" style="background:var(--accent-cyan)"></span>美国五大超算商</span>
+          <span><span class="dot" style="background:#3a4a68"></span>其他所有者</span>
+          <span><span class="dot" style="background:var(--accent-rose)"></span>中国企业合计</span>
+        </div>
+        <p class="chart-cap">中国企业合计约 <span class="hl-a">5%</span>——<b>比任何一家美国头部超算商都少</b>，且份额随时间在下降。</p>
+      </div>
+
+      <div class="card">
+        <h3>中国算力的三个宏观事实</h3>
+        <ul>
+          <li><b>体量仍小：</b>截至 2025 年底，中国企业合计约占近年领先 AI 芯片累计算力的 5% 出头，不及单个美国头部超算商。</li>
+          <li><b>华为反超英伟达：</b>H20 管制收紧、官方对华出口暂停后，按额定 FLOP/s，<span class="hl-a">华为已成为中国最大 AI 算力来源</span>（实际性能未必等同）。英伟达其后获批恢复部分对华销售。</li>
+          <li><b>估算不含走私：</b>Epoch 数字不含违规走私芯片。有研究估 2024 年逾 10 万张 A100/H100 流入中国，但仍远不足以显著缩小差距。</li>
+        </ul>
+        <p class="chart-cap">"是谁、多少"的厂家级细节见第 08–09 章。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>美国单站库的地理分布</h3>
+          <div class="bars">
+            <div><div class="bar-head"><span><b>得州 TX</b></span><span class="bar-val">13</span></div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div>
+            <div><div class="bar-head"><span><b>俄亥俄 OH</b></span><span class="bar-val">5</span></div><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div></div>
+            <div><div class="bar-head"><span><b>弗吉尼亚 VA</b></span><span class="bar-val">5</span></div><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div></div>
+            <div><div class="bar-head"><span><b>爱荷华 IA</b></span><span class="bar-val">4</span></div><div class="bar-track"><div class="bar-fill" style="width:31%"></div></div></div>
+            <div><div class="bar-head"><span><b>印第安纳 IN</b></span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:23%"></div></div></div>
+          </div>
+          <p class="chart-cap">新站多聚中西部与南部，靠近电力与光纤（单位：已覆盖站点数）。</p>
+        </div>
+        <div class="card">
+          <h3>数据边界（重要）</h3>
+          <p>Epoch 单站库<span class="hl">以美国为主</span>，海外大站目前明确列出的很少，例如马来西亚柔佛 <span class="hl-v">DayOne Nusajaya</span>、中国乌兰察布 <span class="hl-v">VNET 世纪互联</span>。</p>
+          <div class="callout">中国单站为何这么少？① Epoch 从美国起步以熟悉许可标准；② 最大的一批站点确实多在美国；③ 中国 GPU 集群数据被单独私密保存以保护来源。所以中国全貌更应看<b>芯片持有份额 + 厂家生态</b>（08–09 章），而非单站清单。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 昇腾·超节点 -->
+    <section class="section" id="sec-ascend">
+      <div class="section-title">中国算力 · 昇腾与超节点体系</div>
+      <div class="section-subtitle">原报告几乎未涉及中国厂家。以下基于外部公开资料补充——注意：中国厂家出货/产能多为<b>行业估算，非官方数据</b>。</div>
+
+      <div class="lede">中国算力的核心底座是<b>华为昇腾</b>。其策略可概括为：单卡追赶 + 超节点放大 + 软件开源 + 供应链国产化。单卡性能不敌英伟达，就用"群殴"——以系统级规模互联弥补差距。</div>
+
+      <div class="card">
+        <h3>昇腾训练芯片路线</h3>
+        <table class="tbl">
+          <thead><tr><th>型号</th><th>关键参数</th><th>制程 / 定位</th></tr></thead>
+          <tbody>
+            <tr><td><b>Ascend 910B</b></td><td>FP16 约 400+ TFLOPS 级</td><td>SMIC 7nm 级 · 前代主力</td></tr>
+            <tr><td><b>Ascend 910C</b></td><td>FP16 ≈ 800 TFLOPS；HBM 带宽 ≈ 3.2 TB/s（近 H100 的 3.35）；双芯粒封装；≈ H100 的 60–80%；单卡 ≈ $1800（约 H100 的 1/5）；约 310 W</td><td>SMIC N+2（7nm 等效）· H20 特供替代首选</td></tr>
+            <tr><td><b>Ascend 920</b></td><td>BF16 ≈ 900 TFLOPS（+15%）；HBM3 4000 GB/s（+25%）；训练效率 +30–40%</td><td>SMIC N+2 · 对标 H20，面向中国大规模部署</td></tr>
+            <tr><td><b>950 / 960 / 970</b></td><td>提高低精度算力、显存、带宽、互联</td><td>后续路线，具体待官方发布</td></tr>
+          </tbody>
+        </table>
+        <p class="source">来源：Tom's Hardware、Morgan Stanley 研报、Lennart Heim 分析、华为全联接大会公开材料等整理。参数含不确定性。</p>
+      </div>
+
+      <div class="card">
+        <h3>CloudMatrix 384 超节点 · "群殴"打法</h3>
+        <p>2025 年 4 月发布，是华为下一代 AI 数据中心架构的首个生产级落地：集成 <span class="hl-r">384 颗昇腾 910C NPU + 192 颗鲲鹏 CPU</span>，跨 <span class="hl">16 个机柜</span>（12 计算 + 4 通信），通过自研统一总线（UB）全互联，每颗 910C 提供 >392 GB/s 单向带宽，跨节点带宽接近片内、单跳延迟近 1 微秒。</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value rose">≈300 PFLOPS<span style="font-size:12px;"> (FP16)</span></div><div class="stat-label">整节点算力容量（384 卡合计，FP16 精度），与 NVL72 同一量级</div></div>
+          <div class="stat"><div class="stat-value rose">5.3×</div><div class="stat-label">芯片数量：384 颗 vs NVL72 的 72 颗</div></div>
+          <div class="stat"><div class="stat-value amber">数百 kW</div><div class="stat-label">系统峰值功耗量级，远高于 NVL72</div></div>
+        </div>
+        <p class="chart-cap">⚠️ 口径提示：这里的 <b>300 PFLOPS 是 FP16 精度、系统级</b>对比数，与前面数据中心统一使用的"H100 等效（8-bit 归一）"是<b>不同标尺</b>，不可直接相加或换算；此处只作 CloudMatrix 与 NVL72 之间的同精度对比。</p>
+        <p>跑万亿参数 MoE 模型 DeepSeek-R1 推理时，华为论文称其计算效率（tokens/s/TFLOPS）在预填充与解码阶段均超过 H100/H800 的公开数据。</p>
+        <div class="callout cyan">呼应报告主题：CloudMatrix 用约 <b>5 倍芯片数</b>换来与 NVL72 相当的集群性能，代价是<b>高得多的总功耗与占地</b>。这恰恰印证了报告的核心判断——<b>电力（功率密度）才是 AI 数据中心的关键约束</b>。在先进制程受限时，中国以"堆规模、拼电力"换算力。</div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>Atlas 超节点路线</h3>
+          <ul>
+            <li><b>Atlas 900 A3 SuperPoD：</b>384 张 910C，2025-03 发布并发货</li>
+            <li><b>Atlas 950 SuperPoD：</b>支持 8192 张 NPU，2026 MWC 发布，单机柜 64 NPU，对标 NVIDIA DGX SuperPOD</li>
+          </ul>
+          <p class="source">来源：华为全联接大会 2025 / 中国合作伙伴大会 2026 公开信息，行业报道。</p>
+        </div>
+        <div class="card">
+          <h3>制造与出货 <span class="tag-est">行业估算·非官方</span></h3>
+          <ul>
+            <li>SMIC N+2 良率：约 20%（2024）→ 40–50%（2025）</li>
+            <li>2025 年 910C 出货约 <span class="hl-a">70–80 万颗</span>（另有口径为 910B 约 30 万 + 910C 40 万+）</li>
+            <li>2026 年 910C 目标约 60 万，昇腾系列合计约 <span class="hl-a">160 万颗</span></li>
+            <li>2026 年 AI 芯片营收预计约 <span class="hl-a">$120 亿</span>（同比约 +60%）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>软硬协同与瓶颈</h3>
+        <p>软件栈 <span class="hl-v">CANN</span>（对标 CUDA）已于 <span class="hl">2026 年 2 月全面开源</span>，全量算子、MindIE、Ascend C 上线社区；推理侧可用 MindIE 加载优化模型，模型迁移（PyTorch → 昇腾）是主要工作。</p>
+        <p>核心瓶颈仍在：<span class="hl-r">先进制程</span>（SMIC 受设备/EDA 限制）、<span class="hl-r">HBM</span>（910C 的 HBM 仍主要来自海外，国产长鑫存储追赶中）、<span class="hl-r">软件生态</span>（不及 CUDA 成熟）、<span class="hl-r">集群效率</span>与稳定性。</p>
+      </div>
+    </section>
+
+    <!-- 09 国产群雄 -->
+    <section class="section" id="sec-cnplayers">
+      <div class="section-title">中国算力 · 国产群雄与国家工程</div>
+      <div class="section-subtitle">昇腾之外的国产 AI 芯片阵营，以及支撑它们的"东数西算"国家算力网。（同样多为行业公开信息，参数以官方为准）</div>
+
+      <div class="card">
+        <h3>国产 AI 芯片玩家全景</h3>
+        <table class="tbl">
+          <thead><tr><th>厂商</th><th>代表产品 / 方向</th><th>定位</th></tr></thead>
+          <tbody>
+            <tr><td><b>华为昇腾</b></td><td>910C / 920 / CloudMatrix 384</td><td>全栈唯一（芯片+服务器+云+OS+生态），中国算力核心底座</td></tr>
+            <tr><td><b>寒武纪 Cambricon</b></td><td>思元系列</td><td>A 股 AI 芯片龙头，冲刺万卡集群</td></tr>
+            <tr><td><b>海光 Hygon</b></td><td>DCU（类 GPGPU）</td><td>x86/GPGPU 路线，生态兼容性好</td></tr>
+            <tr><td><b>百度昆仑芯</b></td><td>昆仑芯 P800 等</td><td>自用 + 外供，绑定百度智能云</td></tr>
+            <tr><td><b>壁仞 Biren</b></td><td>璧砺（BR）系列</td><td>通用 GPU 路线</td></tr>
+            <tr><td><b>燧原 Enflame</b></td><td>L600（通推一体，称对标并超 H20）</td><td>面向万卡/十万卡集群</td></tr>
+            <tr><td><b>摩尔线程 Moore Threads</b></td><td>全功能 GPU + 超节点</td><td>提出"AI Foundry"，兼顾图形与计算</td></tr>
+            <tr><td><b>沐曦 MetaX</b></td><td>曦云 C600 通用 GPU</td><td>训推兼顾</td></tr>
+          </tbody>
+        </table>
+        <p class="source">来源：界面新闻/证券时报等 2025–2026 行业报道整理。</p>
+      </div>
+
+      <div class="card">
+        <h3>产业的两道门槛：万卡 → 十万卡</h3>
+        <div class="bars">
+          <div><div class="bar-head"><span><b>万卡集群</b>（1 万张）</span><span class="bar-val">国产已可支撑</span></div><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div></div>
+          <div><div class="bar-head"><span><b>十万卡集群</b>（10 万张）</span><span class="bar-val">主流仍为 NVIDIA，国产追赶中</span></div><div class="bar-track"><div class="bar-fill red" style="width:100%"></div></div></div>
+        </div>
+        <p class="chart-cap">"连接的节点越多、规模越大，越考验厂商技术水平"——超节点代表算力厂商最强的技术储备。华为 384 超节点已能支撑国内万卡、十万卡数据中心建设。</p>
+        <p>2025 年英伟达 H20 获批恢复对华销售后，国产厂商共同面对的是"<span class="hl-a">直面与 H20 竞争</span>"。</p>
+      </div>
+
+      <div class="card">
+        <h3>国家工程：东数西算 & 全国一体化算力网</h3>
+        <p>中国将算力作为基础设施统筹布局：在西部（如内蒙古<span class="hl-v">乌兰察布</span>、宁夏、贵州等，电力/气候/土地成本低）建算力枢纽，服务东部数据需求，即"<span class="hl">东数西算</span>"。配合"信创/自主可控"政策，昇腾等国产算力被列为鼓励方向，成为政务、金融、运营商智算中心的核心底座（如深圳政务 AI 32 亿元订单）。</p>
+        <div class="callout">但这套模式也有报告框架下的隐忧：① <b>电力指标与 PUE</b> 约束建设节奏（与报告"电力是关键"一致）；② 地方智算中心若利用率不足，存在<b>重复建设</b>与投资回报压力；③ 供应链上游（先进封装、HBM、光模块、液冷、电源）仍是国产替代的攻坚环节。</div>
+      </div>
+    </section>
+
+    <!-- 10 全球趋势 -->
+    <section class="section" id="sec-global">
+      <div class="section-title">全球趋势 · 速度、规模与成本</div>
+      <div class="section-subtitle">整合 Epoch Data Insights（2025Q4–2026）：增长有多快、投入有多大。</div>
+
+      <div class="card">
+        <h3>规模与速度</h3>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">≈ 30 GW</div><div class="stat-label">2025 Q4 全球 AI 数据中心功率，约等于纽约州用电峰值</div></div>
+          <div class="stat"><div class="stat-value violet">每 7 个月</div><div class="stat-label">全球 AI 算力容量（H100 等效）翻倍，约每年 3.3×</div></div>
+          <div class="stat"><div class="stat-value violet">每 7 个月</div><div class="stat-label">单座最大数据中心算力容量纪录也在翻倍</div></div>
+        </div>
+        <p class="chart-cap">纪录几度易主：xAI Colossus、Anthropic–Amazon New Carlisle、微软 Fairwater Atlanta、Meta Prometheus 等。</p>
+      </div>
+
+      <div class="card">
+        <h3>算力增长曲线（示意）· 每 7 个月翻倍</h3>
+        <svg viewBox="0 0 760 240" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 算力指数增长示意图">
+          <defs>
+            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd4ff" stop-opacity="0.42"/><stop offset="100%" stop-color="#2dd4ff" stop-opacity="0.02"/></linearGradient>
+            <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#2dd4ff"/><stop offset="100%" stop-color="#8b7cff"/></linearGradient>
+          </defs>
+          <g stroke="rgba(255,255,255,0.07)" stroke-width="1"><line x1="50" y1="30" x2="740" y2="30"/><line x1="50" y1="80" x2="740" y2="80"/><line x1="50" y1="130" x2="740" y2="130"/><line x1="50" y1="180" x2="740" y2="180"/><line x1="50" y1="200" x2="740" y2="200"/></g>
+          <path d="M50,198 L190,188 L330,168 L470,128 L610,66 L740,28 L740,200 L50,200 Z" fill="url(#area)"/>
+          <path d="M50,198 L190,188 L330,168 L470,128 L610,66 L740,28" fill="none" stroke="url(#line)" stroke-width="2.5" stroke-linejoin="round"/>
+          <g fill="#2dd4ff"><circle cx="50" cy="198" r="4"/><circle cx="190" cy="188" r="4"/><circle cx="330" cy="168" r="4"/><circle cx="470" cy="128" r="4"/><circle cx="610" cy="66" r="4"/></g>
+          <circle cx="740" cy="28" r="5" fill="#8b7cff"/>
+          <g fill="#5d6a87" font-family="monospace" font-size="11"><text x="42" y="204" text-anchor="end">2022</text><text x="740" y="220" text-anchor="end">→ 2026</text><text x="52" y="24">相对算力（对数式增长）</text></g>
+        </svg>
+        <p class="chart-cap">示意曲线：翻倍周期约 7 个月，对应每年约 3.3 倍。</p>
+      </div>
+
+      <div class="card">
+        <h3>成本与集中度</h3>
+        <table class="tbl">
+          <thead><tr><th>指标</th><th>数值</th><th>参照</th></tr></thead>
+          <tbody>
+            <tr><td>单位造价</td><td class="num">≈ $29B / GW</td><td>每吉瓦总设施功率的资本投入；服务器约占总拥有成本 60%</td></tr>
+            <tr><td>2025 年底累计投资</td><td class="num">&gt; $300B</td><td>约合美国 GDP 1%，超阿波罗（0.8%）与曼哈顿计划（0.4%）峰值</td></tr>
+            <tr><td>已知最贵单站</td><td class="num">&gt; $100B</td><td>建成时总资本成本</td></tr>
+            <tr><td>吉瓦级建设周期</td><td class="num">≤ 2 年</td><td>最大园区面积将接近曼哈顿约 1/5</td></tr>
+            <tr><td>资本 vs 现金流</td><td class="num">2026 年底</td><td>超算商资本开支按趋势将超过其现金流入</td></tr>
+          </tbody>
+        </table>
+        <p class="source">来源：Epoch AI Data Insights（2025-11 至 2026-06）。</p>
+      </div>
+    </section>
+
+    <!-- 11 数据核验 -->
+    <section class="section" id="sec-verify">
+      <div class="section-title">数据核验 · 对照原始出处</div>
+      <div class="section-subtitle">本页所有报告级大数据，逐条对照 Epoch 原报告脚注与配套数据洞察核验。✓ 表示与原始口径一致。</div>
+
+      <div class="card">
+        <h3>报告主文 · 核心数字</h3>
+        <table class="tbl">
+          <thead><tr><th>指标</th><th>本页取值</th><th>原始口径 / 出处</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>西雅图用电 ≈ 1 GW</td><td class="num">1 GW</td><td>西雅图年用电 900 万 MWh ÷ 8760h（脚注 1）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>Stargate = 250× GPT-4<br><span style="font-size:11px;color:var(--text-muted)">（算力容量口径）</span></td><td class="num">250×</td><td>GPT-4 训练机 2.5万 A100 ≈ 7.5e18 FLOP/s；Stargate ≈ 2e21 FLOP/s（脚注 2）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>占地 450+ 球场</td><td class="num">3.5 km²</td><td>875 英亩；每球场 0.00714 km²（脚注 3）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>Grok 4 ≈ 40 万年（iPad）<br><span style="font-size:11px;color:var(--text-muted)">（训练总量 ÷ 容量）</span></td><td class="num">≈4×10⁵ 年</td><td>iPad 容量 3.8e13 FLOP/s；Grok 4 训练总量 ≈ 5×10²⁶ FLOP（脚注 7）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>30 GW 各国占比</td><td class="num">5/2.5/25/50/90%</td><td>美/中/日/法/英，2024 发电量（脚注 8）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>Fairwater 3.3 GW 占比</td><td class="num">0.5/0.25/2.5/5/9%</td><td>同上五国（脚注 9）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>延迟 得州→纽约</td><td class="num">12.5 ms</td><td>2500 km ÷ 200,000 km/s（脚注 11）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>NVL72 = 72 GPU / 100+ kW</td><td class="num">72 / 100kW</td><td>36 个 Grace-Blackwell 超级芯片（脚注 18）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>AI ≈ 美国用电 1%</td><td class="num">1%</td><td>现约 5 GW / 全国约 500 GW（脚注 21）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>用水 17.4B vs 36.5T 加仑</td><td class="num">≈2000×</td><td>农业 1000 亿加仑/天×365（脚注 22）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>两年后训练 ≈ 250 万 GPU<br><span style="font-size:11px;color:var(--text-muted)">（容量口径）</span></td><td class="num">250万 H100e</td><td>Grok 4 训练机容量 ≈ 10 万 H100e ×（5×/年）²（脚注 23）</td><td class="badge-ok">✓ 核对</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>配套数据洞察 · 独立来源</h3>
+        <table class="tbl">
+          <thead><tr><th>指标</th><th>取值</th><th>出处</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>全球功率 30 GW = 纽约州峰值</td><td class="num">30 GW</td><td>Edelman 等（2026），芯片 TDP×2.5</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>算力每 7 个月翻倍</td><td class="num">3.3×/年</td><td>You 等（2026）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>五大超算商 71% / 谷歌 25%</td><td class="num">71% / 25%</td><td>Emberson 等（2026），AI Chip Owners</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>四大持有量 5/3.5/2.5/2.25/1M</td><td class="num">M H100e</td><td>Epoch / Network World 报道（2026）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>中国合计 ≈ 5%</td><td class="num">&gt;5%</td><td>Epoch AI Chip Owners（2026）</td><td class="badge-ok">✓ 核对</td></tr>
+            <tr><td>单站 Top5 功率/算力</td><td class="num">见 05 章</td><td>Frontier Data Centers Hub（2026-06-30）</td><td class="badge-ok">✓ 核对</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>不确定性与口径说明</h3>
+        <ul>
+          <li><b>算力的两个维度（全篇统一）：</b>"<b>算力容量</b>"是速率/机器规模，单位 <b>H100 等效（H100e，8-bit 归一）</b>；"<b>训练总量</b>"是训练一个模型的运算总次数，单位 <b>FLOP</b> = 容量 × 时间。二者不可混用——例如 Grok 4 的"训练机容量 ≈ 10 万 H100e"与"训练总量 ≈ 5×10²⁶ FLOP"是两个不同的数。</li>
+          <li><b>精度不同不可直接比：</b>H100e 按 8-bit(FP8) 归一；中国厂商标称的 TFLOPS/PFLOPS 多为 FP16/BF16（如 910C 800 TFLOPS、CloudMatrix 300 PFLOPS），是另一套标尺，比较时已注明精度。</li>
+          <li><b>Epoch 单站估计：</b>80% 置信下，功率误差约 1.4×、算力约 1.5×、成本约 1.6×；数据库仅覆盖全球约 27% 已交付算力。</li>
+          <li><b>功率口径：</b>报告的 30 GW 等值基于芯片额定 TDP×2.5（含服务器/散热/供配电），代表"满负荷"上限，实际利用率通常 60–80%。</li>
+          <li><b>中国厂家数据（08–09 章）：</b>出货量、产能、良率多为<span class="tag-est">行业估算·非官方</span>，与华为官方披露需区分；单卡性能"≈H100 的 60–80%"因场景（训练/推理、精度）而异。</li>
+          <li><b>时点差异：</b>报告主文为 2025-11，数据库/份额为 2026 年更新，个别单站数值（如 Prometheus 功率）随快照更新略有变化。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 12 政策与结论 -->
+    <section class="section" id="sec-policy">
+      <div class="section-title">进展 · 政策 · 结论</div>
+      <div class="section-subtitle">这一切对气候、AI 发展路径与安全意味着什么，以及尚未解答的问题。</div>
+
+      <div class="card">
+        <h3>① 气候影响：目前还不算大（但趋势要盯住）</h3>
+        <p>就"整体"而言，AI 消耗的电与水尚不足以造成广泛气候效应。美国 AI 数据中心用电约占全国 <span class="hl">1%</span>（现约 5 GW / 全国约 500 GW），仍远低于空调（12%）与照明（8%）。</p>
+        <div class="bars">
+          <div><div class="bar-head"><span>空调</span><span class="bar-val">12%</span></div><div class="bar-track"><div class="bar-fill calm" style="width:100%"></div></div></div>
+          <div><div class="bar-head"><span>照明</span><span class="bar-val">8%</span></div><div class="bar-track"><div class="bar-fill calm" style="width:67%"></div></div></div>
+          <div><div class="bar-head"><span><b>AI 数据中心</b></span><span class="bar-val">≈ 1%</span></div><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div></div>
+        </div>
+        <p class="chart-cap">用水：2023 年美国数据中心直接用水约 174 亿加仑，农业约 <span class="hl-a">36.5 万亿加仑</span>，差约 <span class="hl-a">2000 倍</span>。但若趋势延续，AI 用电到 2027 年或达全美发电量约 5%，未来十年影响或将改变，局部地区已可能有显著效应。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card"><h3>② 两年内多半不需要"分布式训练"</h3><p>两年后最大一次训练约需 <span class="hl">250 万</span>张 H100 等效 GPU；而 <span class="hl-v">Fairwater</span> 单站算力估计约为其 <span class="hl">2 倍</span>。单座数据中心仍足以支撑，故"集中式训练"很可能仍是主流——但也不排除为"吸纳富余电力"而分布式。</p></div>
+        <div class="card"><h3>③ 吉瓦级数据中心很难藏</h3><p>施工往往涉及多机构<span class="hl">数千人</span>，难以逐一审查；庞大的室外散热设备"藏不住"，卫星影像即可识别。因此"AI = 曼哈顿计划"式的高度保密类比并不贴切。</p></div>
+      </div>
+
+      <div class="card">
+        <h3>结论 · 核心是"规模"，关键指标是"电力"</h3>
+        <ul>
+          <li><b>规模是主线。</b>这批数据中心属人类历史上最大的一类基建工程。</li>
+          <li><b>电力是最重要的指标。</b>它决定选址、决定哪些国家能跟上前沿、也让数据中心难以隐藏。中国的"超节点堆规模"路线更凸显了这一点：制程受限时，以功率和芯片数量换算力。</li>
+          <li><b>算力高度集中。</b>五大美国超算商约 71%，谷歌单家约 25%；中国合计约 5% 且在下降，内部以华为昇腾为核心。</li>
+          <li><b>物理距离几乎不重要。</b>训练与推理的跨地域延迟远小于模型处理时间。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>仍然悬而未决的问题</h3>
+        <p>建成之后，往往并不确切知道<span class="hl">里面的算力被谁使用、用了多少</span>；也不知道电力有限的国家会如何应对这场大规模扩张。对这些问题，只能"边走边看"。</p>
+        <p class="source" style="margin-top:16px;">引用：Ben Cottier &amp; Yafah Edelman (2025), "What you need to know about AI data centers"；Epoch AI Frontier Data Centers Hub (2026)；Emberson/You/Somala (2026) 超算商算力份额系列。以上依 CC-BY 4.0 使用。中国算力部分基于 Tom's Hardware、Morgan Stanley、界面新闻、证券时报、华为公开材料等外部资料整理，出货/产能多为行业估算。本页为中文结构化整理，非官方发布；增长曲线为示意性可视化。</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach(function (item) {
+    item.addEventListener('click', function () {
+      document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+      document.querySelectorAll('.section').forEach(function (s) { s.classList.remove('active'); });
+      item.classList.add('active');
+      document.getElementById(item.dataset.target).classList.add('active');
+      document.querySelector('main').scrollTop = 0;
+    });
+  });
+</script>
+</body>
+</html>
