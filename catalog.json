@@ -325,15 +325,6 @@
       "date": "2026-06-21"
     },
     {
-      "id": "mqovpoemrok4",
-      "moduleId": "mq6wzyrperex",
-      "title": "叙事的艺术",
-      "file": "叙事的艺术.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-22"
-    },
-    {
       "id": "mqsdnoypi07o",
       "moduleId": "econ",
       "title": "翟东升核心论点体系分析",
@@ -371,6 +362,16 @@
       "tags": [],
       "date": "2026-07-08",
       "rev": 1783509862395
+    },
+    {
+      "id": "mrccds62zkli",
+      "moduleId": "mmqkvw9m4",
+      "title": "叙事的艺术",
+      "file": "叙事的艺术.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-07-08",
+      "rev": 1783531125723
     }
   ]
 }
