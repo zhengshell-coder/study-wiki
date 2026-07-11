@@ -76,6 +76,13 @@
       "folder": "工作总结",
       "icon": "📝",
       "color": "#5b7088"
+    },
+    {
+      "id": "mrg9rwrep3u9",
+      "name": "文学",
+      "folder": "文学",
+      "icon": "📖",
+      "color": "#b5524a"
     }
   ],
   "pages": [
