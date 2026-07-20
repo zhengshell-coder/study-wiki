@@ -1,0 +1,2885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图解 DeepSeek · 深度版：以版本演进串起大模型训练全流程</title>
+<style>
+:root {
+  --bg-deep: #060a14;
+  --bg-mid: #0b1220;
+  --accent-cyan: #2dd4ff;
+  --accent-violet: #8b7cff;
+  --accent-green: #34d399;
+  --accent-orange: #f59e0b;
+  --accent-pink: #f472b6;
+  --accent-rose: #fb7185;
+  --accent-amber: #fbbf24;
+  --accent-blue: #60a5fa;
+  --glass-bg: rgba(255,255,255,0.045);
+  --glass-bg-active: rgba(45,212,255,0.09);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-border-active: rgba(45,212,255,0.4);
+  --text-primary: #eaf0fb;
+  --text-secondary: #93a1bd;
+  --text-muted: #5d6a87;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+               "Noto Sans SC", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: radial-gradient(circle at 15% 10%, rgba(45,212,255,0.07), transparent 40%),
+              radial-gradient(circle at 85% 90%, rgba(139,124,255,0.06), transparent 45%),
+              linear-gradient(160deg, var(--bg-deep), var(--bg-mid));
+  background-attachment: fixed; overflow: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 28px 28px; pointer-events: none; z-index: 0;
+}
+.app { position: relative; z-index: 1; display: flex; height: 100vh; }
+
+.sidebar {
+  width: 290px; flex-shrink: 0; display: flex; flex-direction: column;
+  background: var(--glass-bg); backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-right: 1px solid var(--glass-border);
+}
+.sidebar-header { padding: 26px 22px 18px; border-bottom: 1px solid var(--glass-border); }
+.sidebar-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+  color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 6px;
+}
+.sidebar-title { font-size: 16px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+.sidebar-meta { margin-top: 8px; font-size: 11.5px; color: var(--text-muted); line-height:1.5; }
+.nav-list { flex: 1; overflow-y: auto; padding: 14px 10px; list-style: none; }
+.nav-group-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  color: var(--text-muted); text-transform: uppercase;
+  padding: 14px 14px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; margin-bottom: 3px; border-radius: 10px;
+  border: 1px solid transparent; color: var(--text-secondary);
+  font-size: 12.5px; cursor: pointer; transition: all 0.2s ease; line-height:1.35;
+}
+.nav-item:hover { background: var(--glass-bg); color: var(--text-primary); }
+.nav-item.active {
+  background: var(--glass-bg-active); border-color: var(--glass-border-active);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px rgba(45,212,255,0.08) inset, 0 0 22px rgba(45,212,255,0.10);
+}
+.nav-index { font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan); opacity: 0.85; flex-shrink: 0; min-width: 20px; }
+
+main { flex: 1; overflow-y: auto; padding: 44px 54px 80px; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.section-title {
+  font-size: 25px; font-weight: 700; margin-bottom: 6px;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.section-subtitle { font-size: 12.5px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.6; }
+
+.eyebrow-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 10px; }
+.version-thread {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 4px 10px; border-radius: 20px;
+  border: 1px solid rgba(251,191,36,0.25); color: var(--accent-amber);
+  background: rgba(251,191,36,0.06);
+}
+.version-thread::before { content:"◈"; opacity:0.8; }
+
+.card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; padding: 22px 26px;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  margin-bottom: 18px;
+}
+.card h3 {
+  font-size: 15.5px; font-weight: 600; color: var(--accent-cyan);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.card h3 .icon-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); }
+.card h4 { font-size: 13px; font-weight: 600; color: var(--accent-violet); margin-bottom: 8px; margin-top: 14px; }
+.card p { font-size: 13.5px; line-height: 1.85; color: var(--text-secondary); margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+.card ul, .card ol { margin-left: 18px; color: var(--text-secondary); font-size: 13.5px; line-height: 1.9; }
+.card ul li, .card ol li { margin-bottom: 4px; }
+.card strong { color: var(--text-primary); font-weight: 600; }
+
+.stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.stat {
+  flex: 1; min-width: 120px; background: var(--glass-bg);
+  border: 1px solid var(--glass-border); border-radius: 14px; padding: 16px 18px;
+}
+.stat-value { font-family: var(--font-mono); font-size: 22px; font-weight: 600; color: var(--accent-cyan); }
+.stat-label { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
+
+.code-block {
+  background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 16px 20px; margin: 12px 0; overflow-x: auto;
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; color: #c8d6f5;
+}
+.code-block .kw { color: #c792ea; }
+.code-block .fn { color: #82aaff; }
+.code-block .str { color: #c3e88d; }
+.code-block .num { color: #f78c6c; }
+.code-block .com { color: #546e7a; font-style: italic; }
+
+.table-wrap { overflow-x: auto; margin: 12px 0; border-radius: 12px; border: 1px solid var(--glass-border); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th {
+  background: rgba(45,212,255,0.08); color: var(--accent-cyan); font-weight: 600;
+  padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--glass-border); white-space: nowrap;
+}
+td { padding: 10px 14px; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.55; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.badge {
+  display: inline-block; padding: 2px 9px; border-radius: 6px;
+  font-family: var(--font-mono); font-size: 10.5px; border: 1px solid;
+}
+.badge-cyan { border-color: rgba(45,212,255,0.3); color: var(--accent-cyan); background: rgba(45,212,255,0.08); }
+.badge-violet { border-color: rgba(139,124,255,0.3); color: var(--accent-violet); background: rgba(139,124,255,0.08); }
+.badge-green { border-color: rgba(52,211,153,0.3); color: var(--accent-green); background: rgba(52,211,153,0.08); }
+.badge-orange { border-color: rgba(245,158,11,0.3); color: var(--accent-orange); background: rgba(245,158,11,0.08); }
+.badge-rose { border-color: rgba(251,113,133,0.3); color: var(--accent-rose); background: rgba(251,113,133,0.08); }
+.badge-amber { border-color: rgba(251,191,36,0.3); color: var(--accent-amber); background: rgba(251,191,36,0.08); }
+
+.formula {
+  background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border);
+  border-radius: 10px; padding: 14px 22px; margin: 12px 0;
+  font-family: var(--font-mono); font-size: 14px; color: var(--accent-cyan);
+  text-align: center; overflow-x: auto; line-height: 1.7;
+}
+
+.diagram { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 14px; padding: 24px; margin: 16px 0; text-align: center; }
+.svg-container { width: 100%; display: flex; justify-content: center; padding: 8px 0; }
+.svg-container svg { width: 100%; max-width: 1080px; height: auto; }
+
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+.compare-col { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px 18px; }
+.compare-col h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 10px; }
+.compare-col h4.cyan { color: var(--accent-cyan); }
+.compare-col h4.rose { color: var(--accent-rose); }
+.compare-col h4.green { color: var(--accent-green); }
+.compare-col h4.violet { color: var(--accent-violet); }
+.compare-col h4.amber { color: var(--accent-amber); }
+.compare-col h4.orange { color: var(--accent-orange); }
+.compare-col ul { font-size: 12.5px; line-height: 1.8; color: var(--text-secondary); margin-left: 16px; }
+.compare-col p { font-size: 12.5px; line-height: 1.8; }
+
+.callout {
+  border-left: 3px solid var(--accent-cyan); background: rgba(45,212,255,0.06);
+  border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 12px 0;
+  font-size: 12.5px; line-height: 1.8; color: var(--text-secondary);
+}
+.callout strong { color: var(--accent-cyan); }
+.callout-amber { border-left-color: var(--accent-amber); background: rgba(251,191,36,0.06); }
+.callout-amber strong { color: var(--accent-amber); }
+.callout-green { border-left-color: var(--accent-green); background: rgba(52,211,153,0.06); }
+.callout-green strong { color: var(--accent-green); }
+.callout-violet { border-left-color: var(--accent-violet); background: rgba(139,124,255,0.06); }
+.callout-violet strong { color: var(--accent-violet); }
+.callout-rose { border-left-color: var(--accent-rose); background: rgba(251,113,133,0.06); }
+.callout-rose strong { color: var(--accent-rose); }
+.callout-orange { border-left-color: var(--accent-orange); background: rgba(245,158,11,0.06); }
+.callout-orange strong { color: var(--accent-orange); }
+
+.flow-line { stroke-dasharray: 8 4; animation: flowDash 1.5s linear infinite; }
+@keyframes flowDash { to { stroke-dashoffset: -24; } }
+.pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+@keyframes pulseDot { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+.glow-cyan { filter: drop-shadow(0 0 6px rgba(45,212,255,0.5)); }
+.glow-violet { filter: drop-shadow(0 0 6px rgba(139,124,255,0.5)); }
+.glow-green { filter: drop-shadow(0 0 6px rgba(52,211,153,0.5)); }
+.highlight-cyan { color: var(--accent-cyan); }
+.highlight-violet { color: var(--accent-violet); }
+.highlight-green { color: var(--accent-green); }
+.highlight-orange { color: var(--accent-orange); }
+.highlight-rose { color: var(--accent-rose); }
+.highlight-amber { color: var(--accent-amber); }
+
+svg .node-box { fill: rgba(45,212,255,0.08); stroke: var(--accent-cyan); stroke-width: 1.5; }
+svg .node-box-violet { fill: rgba(139,124,255,0.08); stroke: var(--accent-violet); stroke-width: 1.5; }
+svg .node-box-amber { fill: rgba(245,158,11,0.08); stroke: var(--accent-orange); stroke-width: 1.5; }
+svg .node-box-green { fill: rgba(52,211,153,0.08); stroke: var(--accent-green); stroke-width: 1.5; }
+svg .node-box-rose { fill: rgba(251,113,133,0.08); stroke: var(--accent-rose); stroke-width: 1.5; }
+svg .node-box-blue { fill: rgba(96,165,250,0.08); stroke: var(--accent-blue); stroke-width: 1.5; }
+svg .node-box-muted { fill: rgba(255,255,255,0.04); stroke: rgba(255,255,255,0.15); stroke-width: 1; }
+svg .arrow { stroke: rgba(255,255,255,0.3); stroke-width: 1.5; fill: none; }
+svg .label { fill: var(--text-secondary); font-size: 12px; font-family: var(--font-sans); }
+svg .label-sm { fill: var(--text-muted); font-size: 10px; font-family: var(--font-mono); }
+svg .label-title { fill: var(--text-primary); font-size: 13px; font-weight: 600; font-family: var(--font-sans); }
+svg .label-cyan { fill: var(--accent-cyan); font-size: 12px; font-family: var(--font-mono); font-weight: 600; }
+
+.timeline-node { display: flex; gap: 16px; margin-bottom: 16px; position: relative; }
+.timeline-node::before {
+  content: ''; position: absolute; left: 9px; top: 28px; bottom: -16px;
+  width: 2px; background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+}
+.timeline-node:last-child::before { display: none; }
+.timeline-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-cyan); flex-shrink: 0; margin-top: 4px; box-shadow: 0 0 12px rgba(45,212,255,0.3); }
+.timeline-dot.violet { background: var(--accent-violet); box-shadow: 0 0 12px rgba(139,124,255,0.3); }
+.timeline-dot.amber { background: var(--accent-orange); box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+.timeline-dot.green { background: var(--accent-green); box-shadow: 0 0 12px rgba(52,211,153,0.3); }
+.timeline-dot.rose { background: var(--accent-rose); box-shadow: 0 0 12px rgba(251,113,133,0.3); }
+.timeline-content { flex: 1; }
+.timeline-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent-cyan); }
+.timeline-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin: 2px 0 4px; }
+.timeline-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.65; }
+
+.tip-card {
+  background: rgba(52,211,153,0.04); border: 1px solid rgba(52,211,153,0.15);
+  border-radius: 12px; padding: 14px 18px; margin: 12px 0;
+}
+.tip-card .tip-title { font-family: var(--font-mono); font-size: 11px; color: var(--accent-green); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.tip-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; }
+
+.warn-card {
+  background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.15);
+  border-radius: 12px; padding: 14px 18px; margin: 12px 0;
+}
+.warn-card .warn-title { font-family: var(--font-mono); font-size: 11px; color: var(--accent-orange); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.warn-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; }
+
+.analogy-card {
+  background: rgba(139,124,255,0.05); border: 1px solid rgba(139,124,255,0.18);
+  border-radius: 12px; padding: 14px 18px; margin: 12px 0;
+}
+.analogy-card .analogy-title { font-family: var(--font-mono); font-size: 11px; color: var(--accent-violet); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.analogy-card p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.8; }
+
+.depth-ladder {
+  display: flex; gap: 0; margin: 14px 0; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+.depth-step {
+  flex: 1; padding: 12px 14px; background: rgba(0,0,0,0.2);
+  border-right: 1px solid var(--glass-border); font-size: 11.5px; line-height: 1.5;
+}
+.depth-step:last-child { border-right: none; }
+.depth-step .ds-label { font-family: var(--font-mono); font-size: 10px; color: var(--accent-amber); margin-bottom: 4px; }
+.depth-step .ds-text { color: var(--text-secondary); }
+.depth-step.active { background: rgba(45,212,255,0.08); }
+
+::selection { background: rgba(45,212,255,0.25); color: #fff; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; }
+
+@media (max-width: 980px) {
+  .sidebar { width: 210px; }
+  main { padding: 28px 22px 60px; }
+  .grid-2, .grid-3, .compare-grid, .depth-ladder { grid-template-columns: 1fr; flex-direction: column; }
+  .depth-step { border-right: none; border-bottom: 1px solid var(--glass-border); }
+}
+
+/* ============ 三维演示组件 ============ */
+.viz3d-card {
+  background: linear-gradient(160deg, rgba(45,212,255,0.05), rgba(139,124,255,0.04));
+  border: 1px solid rgba(45,212,255,0.22);
+  border-radius: 16px; margin-bottom: 18px; overflow: hidden;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 0 30px rgba(45,212,255,0.06) inset;
+}
+.viz3d-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; padding: 14px 20px 12px;
+  border-bottom: 1px solid rgba(45,212,255,0.12);
+}
+.viz3d-title {
+  font-size: 13.5px; font-weight: 600; color: var(--accent-cyan);
+  display: flex; align-items: center; gap: 8px; font-family: var(--font-mono);
+}
+.viz3d-badge {
+  font-size: 9.5px; letter-spacing: 0.08em; padding: 2px 7px; border-radius: 5px;
+  background: rgba(45,212,255,0.14); border: 1px solid rgba(45,212,255,0.35);
+  color: var(--accent-cyan); font-family: var(--font-mono);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100% { box-shadow: 0 0 4px rgba(45,212,255,0.2); } 50% { box-shadow: 0 0 12px rgba(45,212,255,0.5); } }
+.viz3d-controls { display: flex; gap: 7px; flex-wrap: wrap; }
+.viz3d-btn {
+  font-family: var(--font-mono); font-size: 11px; padding: 5px 12px;
+  border-radius: 8px; cursor: pointer; transition: all 0.18s ease;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text-secondary);
+}
+.viz3d-btn:hover { border-color: rgba(45,212,255,0.4); color: var(--text-primary); }
+.viz3d-btn.active {
+  background: rgba(45,212,255,0.14); border-color: rgba(45,212,255,0.5);
+  color: var(--accent-cyan); box-shadow: 0 0 10px rgba(45,212,255,0.15);
+}
+.viz3d-stage { position: relative; height: 430px; }
+.viz3d-stage.tall { height: 580px; }
+.viz3d-stage canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  cursor: grab; touch-action: none; display: block;
+}
+.viz3d-stage canvas.dragging { cursor: grabbing; }
+.viz3d-hud {
+  position: absolute; left: 16px; top: 12px; pointer-events: none;
+  font-family: var(--font-mono); font-size: 11px; line-height: 1.7;
+  color: var(--text-secondary); text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.viz3d-hud .hud-big { font-size: 13px; color: var(--accent-cyan); font-weight: 600; }
+.viz3d-caption {
+  padding: 11px 20px 13px; font-size: 12px; line-height: 1.75;
+  color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.06);
+}
+.viz3d-caption strong { color: var(--text-secondary); }
+.viz3d-caption .drag-hint { color: var(--accent-amber); }
+.nav-3d {
+  margin-left: auto; flex-shrink: 0; font-family: var(--font-mono);
+  font-size: 8.5px; letter-spacing: 0.05em; padding: 1.5px 5px; border-radius: 4px;
+  background: rgba(139,124,255,0.13); border: 1px solid rgba(139,124,255,0.35);
+  color: var(--accent-violet);
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-eyebrow">DEEPSEEK · 深度解析</div>
+      <div class="sidebar-title">图解 DeepSeek 深度版<br>以版本演进串起训练全流程</div>
+      <div class="sidebar-meta">由浅入深 · 强化可视化 · 不预设技术背景<br>以 V1→V4 与 R1 为脉络理解 LLM 训练</div>
+    </div>
+
+    <ul class="nav-list" id="navList">
+      <li class="nav-group-label">全景</li>
+      <li class="nav-item active" data-target="sec-00">
+        <span class="nav-index">00</span><span>全景地图：一张图看懂训练全流程</span>
+      </li>
+      <li class="nav-item" data-target="sec-0plus">
+        <span class="nav-index">0+</span><span>核心理念：三维直觉总纲</span><span class="nav-3d">3D</span>
+      </li>
+      <li class="nav-group-label">基础地基</li>
+      <li class="nav-item" data-target="sec-01">
+        <span class="nav-index">01</span><span>神经网络、训练循环与 Transformer</span><span class="nav-3d">3D</span>
+      </li>
+      <li class="nav-group-label">架构核心</li>
+      <li class="nav-item" data-target="sec-02">
+        <span class="nav-index">02</span><span>注意力进化：Self-Attention → MLA</span><span class="nav-3d">3D</span>
+      </li>
+      <li class="nav-item" data-target="sec-03">
+        <span class="nav-index">03</span><span>MoE：让模型"大而省"</span><span class="nav-3d">3D</span>
+      </li>
+      <li class="nav-group-label">训练工程</li>
+      <li class="nav-item" data-target="sec-04">
+        <span class="nav-index">04</span><span>预训练全流程：数据·目标·训练循环</span>
+      </li>
+      <li class="nav-item" data-target="sec-05">
+        <span class="nav-index">05</span><span>分布式训练：并行·DualPipe·FP8</span><span class="nav-3d">3D</span>
+      </li>
+      <li class="nav-group-label">长上下文与后训练</li>
+      <li class="nav-item" data-target="sec-06">
+        <span class="nav-index">06</span><span>长上下文：从 128K 到 1M</span>
+      </li>
+      <li class="nav-item" data-target="sec-07">
+        <span class="nav-index">07</span><span>后训练：SFT·GRPO·R1·蒸馏</span>
+      </li>
+      <li class="nav-group-label">部署与综合</li>
+      <li class="nav-item" data-target="sec-08">
+        <span class="nav-index">08</span><span>推理部署与开源生态</span>
+      </li>
+      <li class="nav-item" data-target="sec-09">
+        <span class="nav-index">09</span><span>综合总览：版本×技术演进矩阵</span>
+      </li>
+    </ul>
+  </aside>
+
+  <main>
+    <!-- ============================================================ -->
+    <!-- 第零章 · 全景地图 -->
+    <!-- ============================================================ -->
+    <section class="section active" id="sec-00">
+      <div class="section-title">第零章 · 全景地图</div>
+      <div class="section-subtitle">一张图看懂大模型训练全流程 · DeepSeek 各版本如何对应每个环节的创新 · 阅读路线图</div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>先有个全局认知，再往深里钻</h3>
+        <p>大模型从零到能用，要走过一条很长的流水线。很多人一上来就被"注意力机制""MoE""强化学习"这些词淹没，是因为缺少一张"地图"——不知道每个技术到底处在流水线的哪一环、解决了什么问题。</p>
+        <p>这张地图就是本章的全部目的。请你先记住下面这条<strong>主流水线</strong>，后面每一章都是在它的某一环上"放大看"：</p>
+
+        <div class="svg-container">
+          <svg width="780" height="430" viewBox="0 0 780 430">
+            <rect x="0" y="0" width="780" height="430" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="390" y="26" text-anchor="middle" fill="var(--accent-cyan)" font-size="14" font-family="var(--font-mono)" font-weight="600">大模型训练全流程 · 主流水线</text>
+
+            <!-- 七个阶段 -->
+            <g>
+              <rect x="20" y="60" width="100" height="64" rx="10" class="node-box-green"/>
+              <text x="70" y="84" text-anchor="middle" fill="var(--accent-green)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">① 数据</text>
+              <text x="70" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">收集·清洗</text>
+              <text x="70" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">分词</text>
+
+              <rect x="130" y="60" width="100" height="64" rx="10" class="node-box"/>
+              <text x="180" y="84" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">② 预训练</text>
+              <text x="180" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">学"下一个词"</text>
+              <text x="180" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">海量算力</text>
+
+              <rect x="240" y="60" width="100" height="64" rx="10" class="node-box-violet"/>
+              <text x="290" y="84" text-anchor="middle" fill="var(--accent-violet)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">③ 长上下文</text>
+              <text x="290" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">扩展窗口</text>
+              <text x="290" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">4K→1M</text>
+
+              <rect x="350" y="60" width="100" height="64" rx="10" class="node-box-amber"/>
+              <text x="400" y="84" text-anchor="middle" fill="var(--accent-orange)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">④ SFT</text>
+              <text x="400" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">指令微调</text>
+              <text x="400" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">学"答问题"</text>
+
+              <rect x="460" y="60" width="100" height="64" rx="10" class="node-box-rose"/>
+              <text x="510" y="84" text-anchor="middle" fill="var(--accent-rose)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">⑤ 强化学习</text>
+              <text x="510" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">对齐偏好</text>
+ <text x="510" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">涌现推理</text>
+
+              <rect x="570" y="60" width="100" height="64" rx="10" class="node-box-blue"/>
+              <text x="620" y="84" text-anchor="middle" fill="var(--accent-blue)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">⑥ 蒸馏</text>
+              <text x="620" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">大教小</text>
+              <text x="620" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">能力迁移</text>
+
+              <rect x="680" y="60" width="80" height="64" rx="10" class="node-box-green"/>
+              <text x="720" y="84" text-anchor="middle" fill="var(--accent-green)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">⑦ 部署</text>
+              <text x="720" y="102" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">推理优化</text>
+              <text x="720" y="116" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">服务上线</text>
+            </g>
+
+            <!-- 箭头 -->
+            <g stroke="var(--accent-cyan)" stroke-width="1.5" fill="none">
+              <line x1="120" y1="92" x2="130" y2="92" class="flow-line"/>
+              <line x1="230" y1="92" x2="240" y2="92" class="flow-line"/>
+              <line x1="340" y1="92" x2="350" y2="92" class="flow-line"/>
+              <line x1="450" y1="92" x2="460" y2="92" class="flow-line"/>
+              <line x1="560" y1="92" x2="570" y2="92" class="flow-line"/>
+              <line x1="670" y1="92" x2="680" y2="92" class="flow-line"/>
+            </g>
+
+            <!-- 版本映射层 -->
+            <text x="390" y="158" text-anchor="middle" fill="var(--accent-amber)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">↓ DeepSeek 各版本在每个环节引入的关键技术</text>
+
+            <!-- 每阶段下方的版本徽章 -->
+            <g font-family="var(--font-mono)" font-size="11">
+              <!-- 数据 -->
+              <rect x="22" y="175" width="96" height="20" rx="5" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.3)"/>
+              <text x="70" y="189" text-anchor="middle" fill="var(--accent-green)">V1: 2T token</text>
+              <rect x="22" y="200" width="96" height="20" rx="5" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.3)"/>
+              <text x="70" y="214" text-anchor="middle" fill="var(--accent-green)">V3: 14.8T·提质</text>
+
+              <!-- 预训练 -->
+              <rect x="132" y="175" width="96" height="20" rx="5" fill="rgba(45,212,255,0.1)" stroke="rgba(45,212,255,0.3)"/>
+              <text x="180" y="189" text-anchor="middle" fill="var(--accent-cyan)">V1: Dense</text>
+              <rect x="132" y="200" width="96" height="20" rx="5" fill="rgba(45,212,255,0.1)" stroke="rgba(45,212,255,0.3)"/>
+              <text x="180" y="214" text-anchor="middle" fill="var(--accent-cyan)">V3: MTP+FP8</text>
+
+              <!-- 长上下文 -->
+              <rect x="242" y="175" width="96" height="20" rx="5" fill="rgba(139,124,255,0.1)" stroke="rgba(139,124,255,0.3)"/>
+              <text x="290" y="189" text-anchor="middle" fill="var(--accent-violet)">V3: YaRN 128K</text>
+              <rect x="242" y="200" width="96" height="20" rx="5" fill="rgba(139,124,255,0.1)" stroke="rgba(139,124,255,0.3)"/>
+              <text x="290" y="214" text-anchor="middle" fill="var(--accent-violet)">V3.2+: DSA→1M</text>
+
+              <!-- SFT -->
+              <rect x="352" y="175" width="96" height="20" rx="5" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.3)"/>
+              <text x="400" y="189" text-anchor="middle" fill="var(--accent-orange)">V3: 指令SFT</text>
+
+              <!-- RL -->
+              <rect x="462" y="175" width="96" height="20" rx="5" fill="rgba(251,113,133,0.1)" stroke="rgba(251,113,133,0.3)"/>
+              <text x="510" y="189" text-anchor="middle" fill="var(--accent-rose)">R1: GRPO纯RL</text>
+              <rect x="462" y="200" width="96" height="20" rx="5" fill="rgba(251,113,133,0.1)" stroke="rgba(251,113,133,0.3)"/>
+              <text x="510" y="214" text-anchor="middle" fill="var(--accent-rose)">V4: 专家优先</text>
+
+              <!-- 蒸馏 -->
+              <rect x="572" y="175" width="96" height="20" rx="5" fill="rgba(96,165,250,0.1)" stroke="rgba(96,165,250,0.3)"/>
+              <text x="620" y="189" text-anchor="middle" fill="var(--accent-blue)">R1→1.5B~70B</text>
+
+              <!-- 部署 -->
+              <rect x="682" y="175" width="76" height="20" rx="5" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.3)"/>
+              <text x="720" y="189" text-anchor="middle" fill="var(--accent-green)">FlashMLA</text>
+              <rect x="682" y="200" width="76" height="20" rx="5" fill="rgba(52,211,153,0.1)" stroke="rgba(52,211,153,0.3)"/>
+              <text x="720" y="214" text-anchor="middle" fill="var(--accent-green)">DSpark</text>
+            </g>
+
+            <!-- 底部说明 -->
+            <rect x="20" y="245" width="740" height="165" rx="10" fill="rgba(0,0,0,0.22)" stroke="rgba(255,255,255,0.06)"/>
+            <text x="390" y="268" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">如何使用本指南 · 由浅入深的三层结构</text>
+
+            <text x="40" y="294" fill="var(--accent-green)" font-size="12.5" font-family="var(--font-mono)">第一层 · 直觉层</text>
+            <text x="40" y="312" fill="var(--text-secondary)" font-size="12.5">每个概念先用生活类比讲清楚"它在干什么"，不出现公式。看懂这层你就能和别人聊大模型了。</text>
+
+            <text x="40" y="338" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)">第二层 · 机制层</text>
+            <text x="40" y="356" fill="var(--text-secondary)" font-size="12.5">拆解技术怎么实现：关键公式、数据流图、为什么这样设计。看懂这层你理解了"它怎么做到的"。</text>
+
+            <text x="40" y="382" fill="var(--accent-amber)" font-size="12.5" font-family="var(--font-mono)">第三层 · 工程层</text>
+            <text x="40" y="400" fill="var(--text-secondary)" font-size="12.5">DeepSeek 在实现中踩过的坑、做的优化、与同行方案的取舍。看懂这层你理解了"为什么是它做成了"。</text>
+          </svg>
+        </div>
+
+        <div class="callout-amber">
+          <strong>贯穿全篇的主线：</strong>DeepSeek 不是一次性把所有技术堆上去的。它<strong>每个版本解决流水线上一个环节的瓶颈</strong>——V1 验证能训、V2 革新架构（MLA+MoE）降本、V3 革新训练工程（FP8+无辅助损失）提效、R1 革新后训练（纯RL涌现推理）、V3.2/V4 革新长上下文与Agent。把版本号当成"章节书签"，技术脉络就清晰了。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DeepSeek 版本时间线一览</h3>
+        <div class="svg-container">
+          <svg width="780" height="200" viewBox="0 0 780 200">
+            <rect x="0" y="0" width="780" height="200" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="390" y="24" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">DeepSeek 版本演进时间线（2024.01 → 2026.04）</text>
+            <line x1="40" y1="110" x2="740" y2="110" stroke="rgba(45,212,255,0.3)" stroke-width="2"/>
+
+            <!-- 节点 -->
+            <g font-family="var(--font-mono)" font-size="11">
+              <circle cx="70" cy="110" r="6" fill="var(--accent-green)"/>
+              <text x="70" y="92" text-anchor="middle" fill="var(--accent-green)">V1</text>
+              <text x="70" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2024.01</text>
+              <text x="70" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">Dense 67B</text>
+
+              <circle cx="170" cy="110" r="7" fill="var(--accent-cyan)"/>
+              <text x="170" y="92" text-anchor="middle" fill="var(--accent-cyan)">V2</text>
+              <text x="170" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2024.05</text>
+              <text x="170" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">MLA+MoE</text>
+
+              <circle cx="270" cy="110" r="6" fill="var(--accent-blue)"/>
+              <text x="270" y="92" text-anchor="middle" fill="var(--accent-blue)">V2.5</text>
+              <text x="270" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2024.09</text>
+              <text x="270" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">对话+代码融合</text>
+
+              <circle cx="370" cy="110" r="8" fill="var(--accent-cyan)" class="glow-cyan"/>
+              <text x="370" y="92" text-anchor="middle" fill="var(--accent-cyan)">V3</text>
+              <text x="370" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2024.12</text>
+              <text x="370" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">671B·FP8·MTP</text>
+
+              <circle cx="440" cy="110" r="8" fill="var(--accent-rose)" class="glow-cyan"/>
+              <text x="440" y="92" text-anchor="middle" fill="var(--accent-rose)">R1</text>
+              <text x="440" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2025.01</text>
+              <text x="440" y="148" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">纯RL·推理涌现</text>
+
+              <circle cx="530" cy="110" r="6" fill="var(--accent-violet)"/>
+              <text x="530" y="92" text-anchor="middle" fill="var(--accent-violet)">V3.1</text>
+              <text x="530" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2025.08</text>
+              <text x="530" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">思考/非思考双模</text>
+
+              <circle cx="620" cy="110" r="7" fill="var(--accent-amber)"/>
+              <text x="620" y="92" text-anchor="middle" fill="var(--accent-amber)">V3.2</text>
+              <text x="620" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2025.12</text>
+              <text x="620" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">DSA稀疏注意力</text>
+
+              <circle cx="710" cy="110" r="9" fill="var(--accent-cyan)" class="glow-cyan"/>
+              <text x="710" y="92" text-anchor="middle" fill="var(--accent-cyan)">V4</text>
+              <text x="710" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10">2026.04</text>
+              <text x="710" y="132" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">1.6T·1M·CSA+HCA</text>
+            </g>
+            <text x="390" y="170" text-anchor="middle" fill="var(--text-muted)" font-size="11.5">两年走完别人五年的路 · 每一代在主流水线的特定环节引入关键技术</text>
+            <text x="390" y="186" text-anchor="middle" fill="var(--text-muted)" font-size="11">V3/R1 为已发表于 arXiv / Nature 的里程碑；V3.2/V4 为后续迭代版本</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>一个核心问题：大模型到底在"学"什么？</h3>
+        <p>在开始之前，先建立整个领域最根本的直觉。语言模型只做一件事：<strong>给定前文，预测下一个词</strong>。就这么一个看似无聊的任务，当模型足够大、数据足够多时，"语法、知识、推理、代码"全都会从中涌现。</p>
+        <div class="formula">P(下一个词 | 前文) → 学会这门任务，就学会了语言蕴含的一切规律</div>
+        <div class="analogy-card">
+          <div class="analogy-title">生活类比</div>
+          <p>想象一个学生读了整个互联网的所有文本。你给他半句"中国的首都是"，他不用查字典就知道下一个字大概率是"北"，再下一个是"京"。这种"接龙"能力练到极致，他不仅记住了事实，还学会了推理——因为推理本身也体现在文本的"下一句该说什么"里。大模型就是这位学生的数学化版本。</p>
+        </div>
+        <p>本指南要回答的核心问题是：<strong>DeepSeek 是怎样把"预测下一个词"这件事，做到又强又便宜又开源的？</strong>答案分布在主流水线的每一环里。我们一环一环来看。</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第 0+ 章 · 核心理念 · 三维直觉总纲 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-0plus">
+      <div class="section-title">第 0+ 章 · 核心理念：把大模型想成几何</div>
+      <div class="section-subtitle">语义=位置 · 注意力=聚光 · 训练=下山 · 压缩=降维 · 稀疏=分诊 · 并行=切块 —— 六个三维直觉，覆盖全书 80% 的技术思想</div>
+      <div class="eyebrow-row"><span class="version-thread">本章零公式 · 全部用可旋转的三维空间建立直觉，再进入正式章节</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>为什么要用"三维视角"理解大模型</h3>
+        <p>大模型内部没有"文字"，只有<strong>高维空间中的向量</strong>——V3 的每个词在模型内部是一个 7168 维的坐标点。一切技术概念本质上都是<strong>对这个空间做的几何操作</strong>：训练是在空间里"搬点"，注意力是在点之间"连线加权"，MLA 压缩是"把点云拍扁到低维面上"，MoE 是"把空间划成责任区"。</p>
+        <p>人类无法想象 7168 维，但<strong>三维是我们能亲眼看见的最高维度</strong>，而这些几何直觉从 3 维推广到 7168 维时本质不变。所以本章先用两个可拖拽的三维场景建立"世界观"，再给出六大理念的全书索引——之后各章遇到任何复杂技术，你都可以回到这里找到它的几何原型。</p>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>理念一 · 语义即几何：词向量空间</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn" data-viz-act="embed:p0">① 词即坐标</button>
+            <button class="viz3d-btn" data-viz-act="embed:p1">② 语义聚类</button>
+            <button class="viz3d-btn" data-viz-act="embed:p2">③ 方向即关系</button>
+            <button class="viz3d-btn active" data-viz-act="embed:auto">▶ 自动播放</button>
+          </div>
+        </div>
+        <div class="viz3d-stage tall">
+          <canvas data-viz="embed"></canvas>
+          <div class="viz3d-hud" id="hud-embed"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>模型"读入"任何文字的第一步，就是把它变成空间中的一个点（Embedding）。训练之后奇妙的结构自动出现：<strong>意思相近的词彼此靠近</strong>（动物一团、代码一团、情感一团）；更惊人的是<strong>"关系"变成了"方向"</strong>——从"男"指向"女"的箭头，和从"王"指向"后"的箭头几乎平行，即经典的 <strong>王 − 男 + 女 ≈ 后</strong>。理解了"语义=几何"，后面所有技术就都有了着力点：模型的一切计算，都是在这个空间里移动、比较、汇聚这些点。
+        </div>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>理念二 · 注意力即聚光：按相关性分配光束</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn" data-viz-act="attn:q4">Query = 它</button>
+            <button class="viz3d-btn" data-viz-act="attn:q5">Query = 饿</button>
+            <button class="viz3d-btn" data-viz-act="attn:q1">Query = 追</button>
+            <button class="viz3d-btn active" data-viz-act="attn:auto">▶ 自动播放</button>
+          </div>
+        </div>
+        <div class="viz3d-stage">
+          <canvas data-viz="attn"></canvas>
+          <div class="viz3d-hud" id="hud-attn"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>句子"猫追老鼠，因为它饿了"里，"它"指谁？模型的解法：让"它"升起来当 <strong>Query（探照灯）</strong>，向句中每个词投射光束，<strong>光束粗细 = 注意力权重</strong>（由 Query 与各词 Key 的相似度经 softmax 算出）。可以看到"它"的光束强烈地打在"猫"上——指代就这样被解决了。切换不同 Query 会看到<strong>每个词关注的对象各不相同</strong>；真实模型里，每个词都要当一次 Query，每层还有 128 个头同时打光（各找各的关系）。这盏"聚光灯"就是第二章注意力机制、以及 MLA/DSA 一切优化的原型。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>六大几何理念 · 全书"世界观"索引</h3>
+        <p>下面六条理念贯穿全书。前两条你刚刚已经"亲手转过"，后四条分别镇守一个正式章节——每条都配了可交互的三维演示，点击按钮直达。</p>
+        <div class="grid-2">
+          <div class="card" style="margin-bottom:0">
+            <h4>① 语义 = 几何位置</h4>
+            <p>词与概念是高维空间的坐标点，"理解"就是把点放对位置。支撑概念：Embedding、隐层维度、词表。<br><span style="color:var(--text-muted);font-size:12px">↑ 本章场景一</span></p>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>② 注意力 = 加权聚光</h4>
+            <p>按相关性给上下文分配"光照强度"，再按强度汇聚信息。支撑概念：QKV、多头、softmax。<br><span style="color:var(--text-muted);font-size:12px">↑ 本章场景二</span></p>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>③ 训练 = 地形下山</h4>
+            <p>损失函数是地形，参数是位置，梯度是坡度，学习率是步幅——整个训练就是在 6710 亿维地形里找最低谷。</p>
+            <button class="viz3d-btn" onclick="gotoSection('sec-01')">→ 第一章 · 梯度下降 3D</button>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>④ 压缩 = 降维投影</h4>
+            <p>高维数据往往贴着低维"薄面"分布（冗余），把点云拍扁到面上，只存面内坐标。MLA/DSA/CSA 全部生长于此。</p>
+            <button class="viz3d-btn" onclick="gotoSection('sec-02')">→ 第二章 · MLA 低秩压缩 3D</button>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>⑤ 稀疏 = 分诊路由</h4>
+            <p>不是所有参数都该为每个输入工作。把空间划成责任区，按需惊动少数专家——容量与算力从此解耦。</p>
+            <button class="viz3d-btn" onclick="gotoSection('sec-03')">→ 第三章 · MoE 路由 3D</button>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>⑥ 并行 = 高维切块</h4>
+            <p>训练任务是一个可以沿"数据/层/专家"多个维度切分的立方体，切法的选择 = 分布式策略的全部艺术。</p>
+            <button class="viz3d-btn" onclick="gotoSection('sec-05')">→ 第五章 · 并行切分 3D</button>
+          </div>
+        </div>
+        <div class="callout-green" style="margin-top:16px">
+          <strong>DeepSeek 的位置：</strong>这六条理念是全行业共享的"物理定律"，DeepSeek 的贡献在于把其中的<strong>压缩（MLA）、稀疏（DeepSeekMoE）、下山的工程化（FP8/DualPipe）、以及"下山信号可以极简"（GRPO 纯 RL）</strong>做到了行业极致，并全部开源。技术细节会变，这些几何直觉不会——它们是你读完本书后真正该带走的东西。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第一章 · 基础地基 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-01">
+      <div class="section-title">第一章 · 神经网络、训练循环与 Transformer</div>
+      <div class="section-subtitle">什么是参数和训练 · 训练循环四步 · 从 RNN 到 Transformer · Scaling Laws · DeepSeek V1 起点</div>
+      <div class="eyebrow-row"><span class="version-thread">V1 (2024.01) · 稠密 67B · 验证能训出世界级模型</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第一层·直觉：什么是"参数"和"训练"？</h3>
+        <div class="analogy-card">
+          <div class="analogy-title">调音台的类比</div>
+          <p>把神经网络想象成一个有<strong>几十亿个旋钮</strong>的巨型调音台。输入一段文字，信号流过这些旋钮，最后输出一个预测。一开始所有旋钮都是乱拧的，预测也是乱的。<strong>"训练"就是反复微调这些旋钮</strong>，让预测越来越准。每一个"旋钮"就是一个<strong>参数（parameter）</strong>，所谓"67B 模型"就是有 670 亿个这样的旋钮。</p>
+        </div>
+        <p>把旋钮组织起来的最小单元叫<strong>神经元</strong>：它接收若干输入，各自乘一个权重（旋钮值），加起来，再过一个非线性"激活函数"输出。很多神经元排成一层，很多层摞起来，就是<strong>深度神经网络</strong>。"深度学习"的"深"就是层数多。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第二层·机制：训练循环（最该理解的一张图）</h3>
+        <p>不管模型多大、多复杂，训练时它都在<strong>反复执行这四步循环</strong>。这是理解一切训练技术的地基：</p>
+
+        <div class="svg-container">
+          <svg width="720" height="320" viewBox="0 0 720 320">
+            <rect x="0" y="0" width="720" height="320" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="26" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">训练循环四步 · 反复执行数万次</text>
+
+            <!-- 四个节点围成环 -->
+            <rect x="60" y="60" width="160" height="70" rx="12" class="node-box-green"/>
+            <text x="140" y="86" text-anchor="middle" fill="var(--accent-green)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">① 前向传播</text>
+            <text x="140" y="104" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">数据 → 模型 → 预测</text>
+            <text x="140" y="120" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">用当前旋钮值算出结果</text>
+
+            <rect x="500" y="60" width="160" height="70" rx="12" class="node-box-amber"/>
+            <text x="580" y="86" text-anchor="middle" fill="var(--accent-orange)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">② 算损失</text>
+            <text x="580" y="104" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">预测 vs 真实答案</text>
+            <text x="580" y="120" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">差多少？(Loss)</text>
+
+            <rect x="500" y="200" width="160" height="70" rx="12" class="node-box-rose"/>
+            <text x="580" y="226" text-anchor="middle" fill="var(--accent-rose)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">③ 反向传播</text>
+            <text x="580" y="244" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">Loss 对每个参数求导</text>
+            <text x="580" y="260" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">"每个旋钮该往哪边调"</text>
+
+            <rect x="60" y="200" width="160" height="70" rx="12" class="node-box-violet"/>
+            <text x="140" y="226" text-anchor="middle" fill="var(--accent-violet)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">④ 优化器更新</text>
+            <text x="140" y="244" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">按梯度调旋钮</text>
+            <text x="140" y="260" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">AdamW: 沿"下坡"走一小步</text>
+
+            <!-- 箭头环 -->
+            <g stroke="var(--accent-cyan)" stroke-width="2" fill="none">
+              <path d="M 220 95 Q 360 95 500 95" class="flow-line"/>
+              <path d="M 580 130 Q 580 165 580 200" class="flow-line"/>
+              <path d="M 500 235 Q 360 235 220 235" class="flow-line"/>
+              <path d="M 140 200 Q 140 165 140 130" class="flow-line"/>
+            </g>
+
+            <text x="360" y="155" text-anchor="middle" fill="var(--accent-amber)" font-size="12.5" font-family="var(--font-mono)">每一圈，模型变好一点点</text>
+            <text x="360" y="178" text-anchor="middle" fill="var(--text-muted)" font-size="11.5">V3 训练 = 这个循环跑了约 14.8T token 次（折合数百万次大循环）</text>
+
+            <rect x="240" y="285" width="240" height="26" rx="8" fill="rgba(0,0,0,0.25)" stroke="rgba(255,255,255,0.08)"/>
+            <text x="360" y="302" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">梯度 = "损失随参数变化的方向"，是训练的指南针</text>
+          </svg>
+        </div>
+
+        <div class="depth-ladder">
+          <div class="depth-step active"><div class="ds-label">直觉</div><div class="ds-text">做卷子→对答案→想哪错了→下次别犯</div></div>
+          <div class="depth-step"><div class="ds-label">机制</div><div class="ds-text">前向→Loss→反向求导→AdamW更新</div></div>
+          <div class="depth-step"><div class="ds-label">工程</div><div class="ds-text">混合精度+梯度累积+分布式同步</div></div>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-title">关键概念：学习率</div>
+          <p>优化器每步"调旋钮"的幅度叫学习率。太大→震荡发散；太小→学得太慢。DeepSeek-V3 用<strong>预热+余弦衰减</strong>策略：开头小步试探，中间大步前进，结尾慢慢收尾。这个调度对训练稳定性极其关键（第五章详解）。</p>
+        </div>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>损失地形与梯度下降 · 三档学习率对比</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn" data-viz-act="loss:lr-small">太小 0.004</button>
+            <button class="viz3d-btn active" data-viz-act="loss:lr-ok">合适 0.03</button>
+            <button class="viz3d-btn" data-viz-act="loss:lr-big">太大 0.34</button>
+            <button class="viz3d-btn" data-viz-act="loss:restart">↻ 重新下降</button>
+          </div>
+        </div>
+        <div class="viz3d-stage tall">
+          <canvas data-viz="loss"></canvas>
+          <div class="viz3d-hud" id="hud-loss"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>这张"地形图"是<strong>损失函数的可视化</strong>：水平面上每个点代表一组参数取值（真实模型是 6710 亿维，这里压成 2 维），高度代表这组参数下模型"错得有多离谱"。<strong>训练 = 小球从随机起点出发，沿最陡下坡方向（负梯度）一步步滚向谷底</strong>。三档学习率各演示一种命运：<strong>太小</strong>——每步只挪一点点，磨到收敛要 900+ 步，算力成本翻约 9 倍；<strong>合适</strong>——约 100 步稳稳落进全局最优；<strong>太大</strong>——平缓地带看似正常，一进陡谷每步都跨过头，在两壁间弹跳（红色折线），永远到不了底。这正是第四章"训练稳定性"和"学习率调度"要解决的问题。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>为什么是 Transformer？从 RNN 的痛点说起</h3>
+        <p>2017 年之前，处理序列的主力是 RNN/LSTM。它有一个致命问题：<strong>必须一个词一个词地算</strong>，第 1000 个词的计算依赖第 999 个词的结果，无法并行。而且梯度传着传着就消失了，远处的信息记不住。</p>
+        <p>Google 在 2017 年提出 <strong>Transformer</strong>（《Attention Is All You Need》），核心是<strong>自注意力机制</strong>：每个词可以<strong>直接看到</strong>序列里所有其他词，一步到位算出关系，天然并行。这成为之后所有大模型（GPT、LLaMA、DeepSeek）的统一底座。</p>
+        <div class="table-wrap">
+          <table>
+            <tr><th>时代</th><th>代表</th><th>核心思想</th><th>痛点</th></tr>
+            <tr><td>统计</td><td>N-gram</td><td>数前 N 个词的共现频率</td><td>N>5 数据稀疏，记不住远处</td></tr>
+            <tr><td>循环网络</td><td>RNN/LSTM</td><td>逐步传递隐状态</td><td>不能并行，梯度消失</td></tr>
+            <tr><td><strong>当前标准</strong></td><td><strong>Transformer</strong></td><td><strong>自注意力，全局直连</strong></td><td>O(n²) 复杂度（可优化）</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>Scaling Laws：为什么"大"本身就是技术</h3>
+        <p>2020 年 OpenAI 发现：模型损失与<strong>参数量 N、数据量 D、算力 C</strong> 之间存在可预测的<strong>幂律</strong>。意思是——只要按比例放大三者，性能就能<strong>可预期地</strong>提升。这条规律把 AI 从"靠灵感"变成了"靠工程"。</p>
+        <div class="formula">L(N) ≈ (N_c / N)<sup>α</sup>　　损失随参数量幂律下降</div>
+        <p>DeepSeek 的策略不是"砸最多算力"，而是<strong>在 Scaling Laws 框架内，把每一分算力的效率榨到极致</strong>——这贯穿了它后续每一代的设计哲学。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DeepSeek V1：起点与"热身"</h3>
+        <p>2024 年 1 月，DeepSeek 发布 V1：<strong>稠密 Transformer</strong>，7B 和 67B 两种规模，2T token 训练。架构是传统的（标准 MHA + 稠密 FFN），没有花哨创新。但它在代码、数学上超过了 LLaMA-2 70B。</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">67B</div><div class="stat-label">最大规模</div></div>
+          <div class="stat"><div class="stat-value">2T</div><div class="stat-label">训练 token</div></div>
+          <div class="stat"><div class="stat-value">Dense</div><div class="stat-label">稠密架构</div></div>
+        </div>
+        <div class="callout">
+          <strong>V1 的真正意义：</strong>它向外界（也向自己）证明了"我们有能力从零训出世界级基座模型"。架构虽传统，但数据配比、训练稳定性的工程功力已经到位。真正的"DeepSeek 式创新"从 V2 才开始——V1 是地基，V2 起是上层建筑。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第二章 · 注意力进化 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-02">
+      <div class="section-title">第二章 · 注意力进化：Self-Attention → MLA</div>
+      <div class="section-subtitle">Self-Attention 六步 · 多头 · RoPE 旋转编码 · KV Cache 瓶颈 · MLA 低秩压缩 · 与 RoPE 解耦</div>
+      <div class="eyebrow-row"><span class="version-thread">V2 (2024.05) · 引入 MLA，KV Cache 压缩 93.3%，推理吞吐 5.76×</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第一层·直觉：注意力到底在干什么</h3>
+        <div class="analogy-card">
+          <div class="analogy-title">图书馆找书的类比</div>
+          <p>你带着一个<strong>查询（Query）</strong>——"我想找讲注意力的书"。每本书有一个<strong>键（Key）</strong>——书名/标签。你拿 Query 去和每本书的 Key 比对，相关性高的书（Value）对你最终的决定影响更大。注意力机制就是这个过程的数学化：<strong>按相关性加权汇总信息</strong>。</p>
+        </div>
+        <p>在"自"注意力里，Query、Key、Value 都来自同一句话的不同变换。每个词都用这种方式去"看"其他所有词，决定从谁那里吸收多少信息。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第二层·机制：Self-Attention 六步计算</h3>
+        <div class="formula">Attention(Q, K, V) = softmax(QKᵀ / √d<sub>k</sub>) · V</div>
+        <div class="svg-container">
+          <svg width="740" height="210" viewBox="0 0 740 210">
+            <rect x="0" y="0" width="740" height="210" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="370" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">Self-Attention 六步流程</text>
+            <g font-family="var(--font-mono)">
+              <rect x="15" y="44" width="100" height="40" rx="7" class="node-box-green"/>
+              <text x="65" y="62" text-anchor="middle" fill="var(--accent-green)" font-size="11" font-weight="600">① 生成Q,K,V</text>
+              <text x="65" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">x·W_Q/K/V</text>
+
+              <rect x="125" y="44" width="100" height="40" rx="7" class="node-box"/>
+              <text x="175" y="62" text-anchor="middle" fill="var(--accent-cyan)" font-size="11" font-weight="600">② 算相似度</text>
+              <text x="175" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">Q·Kᵀ 点积</text>
+
+              <rect x="235" y="44" width="100" height="40" rx="7" class="node-box-violet"/>
+              <text x="285" y="62" text-anchor="middle" fill="var(--accent-violet)" font-size="11" font-weight="600">③ 缩放</text>
+              <text x="285" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">÷√d_k</text>
+
+              <rect x="345" y="44" width="100" height="40" rx="7" class="node-box-amber"/>
+              <text x="395" y="62" text-anchor="middle" fill="var(--accent-orange)" font-size="11" font-weight="600">④ Softmax</text>
+              <text x="395" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">归一成概率</text>
+
+              <rect x="455" y="44" width="100" height="40" rx="7" class="node-box-rose"/>
+              <text x="505" y="62" text-anchor="middle" fill="var(--accent-rose)" font-size="11" font-weight="600">⑤ 加权</text>
+              <text x="505" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">概率·V</text>
+
+              <rect x="565" y="44" width="100" height="40" rx="7" class="node-box-green"/>
+              <text x="615" y="62" text-anchor="middle" fill="var(--accent-green)" font-size="11" font-weight="600">⑥ 求和输出</text>
+              <text x="615" y="76" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">得到 Z</text>
+            </g>
+            <g stroke="var(--accent-cyan)" stroke-width="1.2" fill="none">
+              <line x1="115" y1="64" x2="125" y2="64" class="flow-line"/>
+              <line x1="225" y1="64" x2="235" y2="64" class="flow-line"/>
+              <line x1="335" y1="64" x2="345" y2="64" class="flow-line"/>
+              <line x1="445" y1="64" x2="455" y2="64" class="flow-line"/>
+              <line x1="555" y1="64" x2="565" y2="64" class="flow-line"/>
+            </g>
+            <rect x="80" y="110" width="580" height="42" rx="8" fill="rgba(0,0,0,0.25)" stroke="rgba(45,212,255,0.15)"/>
+            <text x="370" y="128" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)">softmax(QKᵀ/√d_k)·V</text>
+            <text x="370" y="144" text-anchor="middle" fill="var(--text-muted)" font-size="11">查相似 → 防饱和 → 变概率 → 按重要性加权</text>
+            <text x="370" y="178" text-anchor="middle" fill="var(--text-secondary)" font-size="12">Q=当前词的"问"，K=各词的"标签"，V=各词的"内容"</text>
+            <text x="370" y="196" text-anchor="middle" fill="var(--text-muted)" font-size="11">⚠ 为什么÷√d_k：维度大点积会变大，softmax 会饱和、梯度消失</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>多头注意力：一个团队，多种视角</h3>
+        <p>一个注意力头只能学一种"关注模式"。多头让模型同时从多个子空间学习——有的头看语法、有的看语义、有的看位置。V3 有 128 层、每层 128 头，像 128 个分析师各看一个角度再汇总。</p>
+        <div class="formula">MultiHead = Concat(head₁, ..., headₕ) · W<sub>O</sub></div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>RoPE 旋转位置编码：用"旋转"表示位置</h3>
+        <p>注意力本身不知道词的<strong>顺序</strong>（"猫咬狗"和"狗咬猫"对它是同一组词）。必须注入位置信息。DeepSeek 用 <strong>RoPE（旋转位置编码）</strong>——它的思想很优雅：<strong>把 Q 和 K 向量两两配对，按词的位置旋转不同角度</strong>。</p>
+        <div class="svg-container">
+          <svg width="640" height="240" viewBox="0 0 640 240">
+            <rect x="0" y="0" width="640" height="240" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(139,124,255,0.1)"/>
+            <text x="320" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">RoPE：位置 m 的向量旋转角度 m·θ</text>
+            <!-- 位置0 -->
+            <circle cx="130" cy="120" r="50" fill="none" stroke="rgba(139,124,255,0.2)"/>
+            <line x1="130" y1="120" x2="170" y2="120" stroke="var(--accent-violet)" stroke-width="2.5"/>
+            <circle cx="170" cy="120" r="3" fill="var(--accent-violet)"/>
+            <text x="130" y="195" text-anchor="middle" fill="var(--accent-green)" font-size="12.5" font-family="var(--font-mono)">位置 0</text>
+            <text x="130" y="210" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">旋转 0°</text>
+            <!-- 位置1 -->
+            <circle cx="320" cy="120" r="50" fill="none" stroke="rgba(139,124,255,0.2)"/>
+            <line x1="320" y1="120" x2="358" y2="100" stroke="var(--accent-violet)" stroke-width="2.5"/>
+            <circle cx="358" cy="100" r="3" fill="var(--accent-violet)"/>
+            <path d="M 340 120 A 20 20 0 0 0 338 102" fill="none" stroke="var(--accent-cyan)" stroke-width="1.2"/>
+            <text x="320" y="195" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)">位置 1</text>
+            <text x="320" y="210" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">旋转 θ</text>
+            <!-- 位置2 -->
+            <circle cx="510" cy="120" r="50" fill="none" stroke="rgba(139,124,255,0.2)"/>
+            <line x1="510" y1="120" x2="540" y2="80" stroke="var(--accent-violet)" stroke-width="2.5"/>
+            <circle cx="540" cy="80" r="3" fill="var(--accent-violet)"/>
+            <path d="M 530 120 A 20 20 0 0 0 526 88" fill="none" stroke="var(--accent-amber)" stroke-width="1.2"/>
+            <text x="510" y="195" text-anchor="middle" fill="var(--accent-amber)" font-size="12.5" font-family="var(--font-mono)">位置 2</text>
+            <text x="510" y="210" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">旋转 2θ</text>
+            <text x="320" y="232" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">两词的"相对位置"= 两个旋转角度之差 → 天然支持相对位置推理</text>
+          </svg>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">RoPE 的妙处</div>
+          <p>两个词做点积时，旋转角度会相减——所以 Q 和 K 的点积只依赖<strong>相对位置</strong>而非绝对位置。这正符合语言直觉："我爱你"里"爱"和"你"的关系，跟它们在第几句无关，只跟它们<strong>隔几个词</strong>有关。RoPE 不增加参数，且为后续扩展上下文（YaRN 调频率）留了口子。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>KV Cache：推理的"内存炸弹"</h3>
+        <p>模型生成文本时是<strong>自回归</strong>的——每生成一个词就把它接回去继续生成。如果每次重算所有词的 K/V 太浪费。所以把算过的 K/V <strong>缓存</strong>起来，新词只算自己的。</p>
+        <div class="warn-card">
+          <div class="warn-title">问题：标准 MHA 的 KV Cache 巨大</div>
+          <p>每个 token 要缓存所有头的 K 和 V：<br>KV Cache = 2 × n_heads × d_head × n_layers × seq_len × 精度<br>一个 70B 级模型跑 128K 上下文，纯 MHA 单请求 KV Cache 可达 <strong>300GB+</strong>；即便用了 GQA（8 组共享）也要 <strong>约 40GB</strong>——比模型权重还占地方。这就是必须进一步压缩的根本原因。</p>
+        </div>
+        <div class="svg-container">
+          <svg width="700" height="180" viewBox="0 0 700 180">
+            <rect x="0" y="0" width="700" height="180" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(251,113,133,0.08)"/>
+            <text x="350" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">注意力压缩演进：MHA → GQA → MLA</text>
+            <rect x="20" y="40" width="200" height="110" rx="8" fill="rgba(251,113,133,0.04)" stroke="rgba(251,113,133,0.15)"/>
+            <text x="120" y="62" text-anchor="middle" fill="var(--accent-rose)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">MHA 标准</text>
+            <text x="120" y="82" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">每头独立 K,V</text>
+            <text x="120" y="108" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)">显存 1×</text>
+            <text x="120" y="132" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">GPT-3</text>
+            <rect x="250" y="40" width="200" height="110" rx="8" fill="rgba(245,158,11,0.04)" stroke="rgba(245,158,11,0.15)"/>
+            <text x="350" y="62" text-anchor="middle" fill="var(--accent-orange)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">GQA 分组共享</text>
+            <text x="350" y="82" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">多查询头共享 K,V</text>
+            <text x="350" y="108" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)">~1/4</text>
+            <text x="350" y="132" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">LLaMA 2/3</text>
+            <rect x="480" y="40" width="200" height="110" rx="8" fill="rgba(45,212,255,0.04)" stroke="rgba(45,212,255,0.2)" class="glow-cyan"/>
+            <text x="580" y="62" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">MLA 低秩压缩</text>
+            <text x="580" y="82" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">只缓存潜在向量</text>
+            <text x="580" y="108" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)">~1/10</text>
+            <text x="580" y="132" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">DeepSeek V2+</text>
+            <line x1="220" y1="95" x2="250" y2="95" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <line x1="450" y1="95" x2="480" y2="95" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第三层·工程：MLA 低秩压缩到底怎么做到的</h3>
+        <p>这是 DeepSeek 从 V2 起的<strong>核心竞争力</strong>。直觉：标准 MHA 要缓存所有头的完整 K/V，但这些信息里有大量<strong>冗余</strong>——可以用一个低维"潜在向量"高效表示。</p>
+        <div class="analogy-card">
+          <div class="analogy-title">图像压缩的类比（理解"低秩"）</div>
+          <p>一张 1024×1024 的图有 100 万个像素，但往往可以用几十个"基础模式"的加权组合来近似重建（这就是 JPEG、SVD 降维的原理）。MLA 做的也是这件事：不存完整的 K/V，而是存一个<strong>几百维的压缩向量 c</strong>，需要时再用"上投影"把 K/V 恢复出来。压缩有损，但损失小到几乎不影响效果。</p>
+        </div>
+        <div class="formula">
+          压缩：c = W<sup>down</sup> · x　（7168维 → 512维）<br>
+          恢复：K = W<sup>up</sup><sub>K</sub>·c，　V = W<sup>up</sup><sub>V</sub>·c　（512维 → 各头维度）
+        </div>
+        <div class="svg-container">
+          <svg width="700" height="260" viewBox="0 0 700 260">
+            <rect x="0" y="0" width="700" height="260" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="350" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">MLA：压缩 → 只缓存 c → 恢复 K/V</text>
+            <rect x="20" y="100" width="60" height="40" rx="8" class="node-box-green"/>
+            <text x="50" y="118" text-anchor="middle" fill="var(--accent-green)" font-size="11.5" font-family="var(--font-mono)">输入 x</text>
+            <text x="50" y="132" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">d=7168</text>
+            <line x1="80" y1="120" x2="110" y2="120" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="110" y="90" width="80" height="60" rx="8" class="node-box-amber"/>
+            <text x="150" y="110" text-anchor="middle" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">下投影</text>
+            <text x="150" y="125" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">W_down</text>
+            <text x="150" y="140" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">7168→512</text>
+            <line x1="190" y1="120" x2="220" y2="120" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="220" y="90" width="110" height="60" rx="8" class="node-box"/>
+            <text x="275" y="110" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">潜在向量 c</text>
+            <text x="275" y="125" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">d_c=512</text>
+            <text x="275" y="142" text-anchor="middle" fill="rgba(45,212,255,0.6)" font-size="10.5">★ 只缓存这个</text>
+            <line x1="330" y1="105" x2="370" y2="70" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <line x1="330" y1="135" x2="370" y2="170" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="370" y="50" width="80" height="40" rx="8" class="node-box-violet"/>
+            <text x="410" y="68" text-anchor="middle" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">恢复 K</text>
+            <text x="410" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">W_up_K</text>
+            <rect x="370" y="150" width="80" height="40" rx="8" class="node-box-violet"/>
+            <text x="410" y="168" text-anchor="middle" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">恢复 V</text>
+            <text x="410" y="182" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">W_up_V</text>
+            <line x1="450" y1="70" x2="490" y2="110" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <line x1="450" y1="170" x2="490" y2="130" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <rect x="490" y="105" width="60" height="30" rx="6" class="node-box-rose"/>
+            <text x="520" y="125" text-anchor="middle" fill="var(--accent-rose)" font-size="11.5" font-family="var(--font-mono)">Attention</text>
+            <rect x="20" y="200" width="320" height="44" rx="8" class="node-box-muted"/>
+            <text x="180" y="218" text-anchor="middle" fill="var(--text-secondary)" font-size="11">标准MHA：缓存 128头×128维×2 = 32768 维/token</text>
+            <text x="180" y="234" text-anchor="middle" fill="var(--accent-rose)" font-size="11">◆ 显存大</text>
+            <rect x="360" y="200" width="320" height="44" rx="8" class="node-box-muted"/>
+            <text x="520" y="218" text-anchor="middle" fill="var(--text-secondary)" font-size="11">MLA：只缓存 512 维潜在向量 c</text>
+            <text x="520" y="234" text-anchor="middle" fill="var(--accent-cyan)" font-size="11">◆ 压缩约 64 倍</text>
+          </svg>
+        </div>
+        <p>MLA 使 V2 的推理 KV Cache 减少 <strong>93.3%</strong>，训练成本降 <strong>42.5%</strong>，吞吐提升 <strong>5.76 倍</strong>。这是 DeepSeek API 能做到行业最低价的<strong>技术基石</strong>。</p>
+
+        <h4>RoPE 解耦：一个必须处理的冲突</h4>
+        <p>RoPE 要在注意力前作用于 Q/K，但压缩后的 c 无法直接旋转。DeepSeek 的方案是<strong>解耦式 RoPE</strong>：主走 MLA 压缩路径（位置无关），额外留一小段"RoPE 专用维度"单独旋转。看似细节，实现门槛很高——V3.2 开源后还专门修过 RoPE 布局（Indexer 非交错 / MLA 交错）的 bug。</p>
+        <div class="callout-green">
+          <strong>MLA 的深层意义：</strong>它证明注意力 KV 信息存在大量冗余，可用低维潜在空间高效表示。这个洞察成为 DeepSeek 后续一系列注意力创新（DSA/CSA/HCA）的起点——都是在"信息可以压缩"这个命题上做文章。
+        </div>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>MLA 低秩压缩：为什么"压得掉"</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn" data-viz-act="mla:stage0">① 原始 K/V</button>
+            <button class="viz3d-btn" data-viz-act="mla:stage1">② 压缩到潜在平面</button>
+            <button class="viz3d-btn" data-viz-act="mla:stage2">③ 恢复（微小误差）</button>
+            <button class="viz3d-btn active" data-viz-act="mla:auto">▶ 自动播放</button>
+          </div>
+        </div>
+        <div class="viz3d-stage">
+          <canvas data-viz="mla"></canvas>
+          <div class="viz3d-hud" id="hud-mla"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>每个亮点是一个 token 的 K/V 向量（真实是 32768 维，这里画成 3 维）。旋转后你会发现：这团点云<strong>并不是随机撒满空间的，而是紧贴着一张倾斜的"薄面"分布</strong>——这就是"低秩"的含义。既然点都住在面附近，就不必存三维坐标，只存"在面上的位置"（= 512 维潜在向量 c）即可；用时再沿面恢复，误差（黄色短线）小到不影响效果。<strong>压缩 93.3% 的底气，来自数据本身的冗余结构。</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第三章 · MoE -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-03">
+      <div class="section-title">第三章 · MoE：让模型"大而省"</div>
+      <div class="section-subtitle">稠密模型的矛盾 · 路由机制 · 细粒度+共享专家 · 无辅助损失负载均衡 · All-to-All 通信</div>
+      <div class="eyebrow-row"><span class="version-thread">V2 首引 MoE · V3 加无辅助损失+MTP · 架构从 V2 起基本定型</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第一层·直觉：为什么需要 MoE</h3>
+        <div class="analogy-card">
+          <div class="analogy-title">医院的类比</div>
+          <p>稠密模型像一个"全科医生"，什么病都自己看，但要看遍所有知识才能下结论，效率低。MoE 像一家<strong>大医院</strong>：有几百个专科医生（专家），来了病人先由分诊台（Router）判断该挂哪个科，只请相关几位医生会诊。医院整体很大（知识全），但每次看病只动用少数医生（算得快）。</p>
+        </div>
+        <p>稠密模型的根本矛盾：<strong>知识容量和计算成本都随参数线性增长</strong>。MoE 把两者解耦——总参数很大（容量大），但每个 token 只激活一小部分（成本低）。</p>
+        <div class="formula">y = Σᵢ G(x)ᵢ · Eᵢ(x)　，G(x)=softmax(Top-K(x·W<sub>g</sub>))</div>
+        <p>Router 算每个专家与输入的匹配分，选 Top-K 个，加权求和。V3 每个 token 激活 <strong>8 个路由专家 + 1 个共享专家</strong>（V2 时代为 6 路由 + 2 共享）。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第二层·机制：DeepSeekMoE 的两个关键差异</h3>
+        <div class="svg-container">
+          <svg width="720" height="300" viewBox="0 0 720 300">
+            <rect x="0" y="0" width="720" height="300" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">标准 MoE vs DeepSeekMoE</text>
+            <text x="130" y="50" text-anchor="middle" fill="var(--accent-rose)" font-size="11.5" font-family="var(--font-mono)">标准 MoE（Mixtral 8×7B）</text>
+            <rect x="40" y="60" width="180" height="160" rx="10" fill="none" stroke="rgba(251,113,133,0.2)" stroke-dasharray="5,3"/>
+            <rect x="60" y="75" width="120" height="24" rx="5" class="node-box-rose"/>
+            <text x="120" y="91" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">Expert 1 (7B)</text>
+            <rect x="60" y="106" width="120" height="24" rx="5" class="node-box-rose"/>
+            <text x="120" y="122" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">Expert 2 (7B)</text>
+            <rect x="60" y="137" width="120" height="24" rx="5" class="node-box-muted"/>
+            <text x="120" y="153" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">Expert 3 (闲置)</text>
+            <rect x="60" y="168" width="120" height="24" rx="5" class="node-box-muted"/>
+            <text x="120" y="184" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">Expert 4 (闲置)</text>
+            <text x="130" y="208" text-anchor="middle" fill="rgba(251,113,133,0.6)" font-size="10.5">8 大专家，激活 2 个</text>
+            <text x="430" y="50" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">DeepSeekMoE</text>
+            <rect x="320" y="60" width="220" height="175" rx="10" fill="none" stroke="rgba(45,212,255,0.2)" stroke-dasharray="5,3"/>
+            <text x="430" y="75" text-anchor="middle" fill="var(--accent-green)" font-size="10.5">共享专家（始终激活）</text>
+            <rect x="335" y="80" width="170" height="20" rx="4" class="node-box-green"/>
+            <text x="420" y="94" text-anchor="middle" fill="var(--accent-green)" font-size="9.5">Shared ×1（V3；V2 为 ×2）</text>
+            <text x="430" y="118" text-anchor="middle" fill="var(--accent-violet)" font-size="10.5">细粒度路由专家（256 个小专家）</text>
+            <rect x="335" y="123" width="35" height="18" rx="3" class="node-box"/>
+            <text x="352" y="135" text-anchor="middle" fill="var(--accent-cyan)" font-size="9">E1</text>
+            <rect x="375" y="123" width="35" height="18" rx="3" class="node-box-muted"/>
+            <rect x="415" y="123" width="35" height="18" rx="3" class="node-box"/>
+            <text x="432" y="135" text-anchor="middle" fill="var(--accent-cyan)" font-size="9">E3</text>
+            <rect x="455" y="123" width="35" height="18" rx="3" class="node-box-muted"/>
+            <rect x="335" y="146" width="35" height="18" rx="3" class="node-box-muted"/>
+            <rect x="375" y="146" width="35" height="18" rx="3" class="node-box"/>
+            <text x="392" y="158" text-anchor="middle" fill="var(--accent-cyan)" font-size="9">E6</text>
+            <rect x="415" y="146" width="35" height="18" rx="3" class="node-box-muted"/>
+            <rect x="455" y="146" width="35" height="18" rx="3" class="node-box"/>
+            <text x="472" y="158" text-anchor="middle" fill="var(--accent-cyan)" font-size="9">E8</text>
+            <rect x="335" y="169" width="155" height="18" rx="3" class="node-box-muted"/>
+            <text x="412" y="181" text-anchor="middle" fill="var(--text-muted)" font-size="9">... 共 256 个小专家</text>
+            <text x="430" y="210" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5">V3：1 共享 + 8 路由 = 9 激活</text>
+            <line x1="220" y1="140" x2="320" y2="140" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <text x="270" y="135" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5">创新</text>
+            <rect x="40" y="240" width="640" height="44" rx="8" fill="rgba(0,0,0,0.22)" stroke="rgba(255,255,255,0.06)"/>
+            <text x="360" y="258" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">标准 MoE: 8大×7B=56B 总参 / 2×7B=14B 激活</text>
+            <text x="360" y="274" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">DeepSeekMoE(V3): 256 小专家共 671B 总参 / 每 token 只激活 9 个 ≈ 37B</text>
+          </svg>
+        </div>
+        <ul>
+          <li><strong>细粒度专家</strong>：256 个小专家代替 8 个大专家。组合数指数级增加，每个 token 能更精确"拼装"所需能力——像用乐高小块而非整块大积木。</li>
+          <li><strong>共享专家</strong>：始终激活、处理通用知识（V2 用 2 个，V3 起精简为 1 个），保证路由失败时基础能力不掉。</li>
+        </ul>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>MoE 路由：token 只惊动少数专家</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn active" data-viz-act="moe:play">▶ 持续路由</button>
+            <button class="viz3d-btn" data-viz-act="moe:pause">⏸ 暂停</button>
+            <button class="viz3d-btn" data-viz-act="moe:slow">🐢 慢速</button>
+          </div>
+        </div>
+        <div class="viz3d-stage">
+          <canvas data-viz="moe"></canvas>
+          <div class="viz3d-hud" id="hud-moe"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>白色小球是逐个到来的 token。每个 token 先经过顶部的 <strong>Router（分诊台）</strong>打分，然后<strong>只飞向被选中的 2 个路由专家</strong>（演示把 256 个简化为 16 个，真实 V3 是 256 选 8）；绿色的<strong>共享专家</strong>每个 token 都会经过。注意观察：不同 token 点亮的专家组合不同（数学 token 和代码 token 走不同的科室），而任一时刻大部分专家是暗的——<strong>这就是"1.6T 总参数、只算 49B"的秘密：容量与算力解耦</strong>。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>第三层·工程：无辅助损失负载均衡</h3>
+        <p>MoE 训练的经典毛病：<strong>负载不均衡</strong>。大多数 token 涌向少数热门专家，冷门专家得不到训练，模型退化。</p>
+        <p>传统做法是加一个<strong>辅助损失</strong>惩罚不均衡——但它会<strong>干扰主训练目标</strong>，模型变笨。DeepSeek-V3 的创新：<strong>不用损失，用动态偏置</strong>。</p>
+        <div class="formula">选择概率 = softmax(x·W<sub>g</sub> + b)　，b 按负载动态加减</div>
+        <div class="analogy-card">
+          <div class="analogy-title">餐厅调度的类比</div>
+          <p>不是给忙的厨师罚款（辅助损失，伤积极性），而是给闲的厨师<strong>挂"今日推荐"牌</strong>（提高偏置 b），把客人引流过去。忙的厨师摘掉牌子（降低 b）。"软调节"既均衡又不干扰主业。</p>
+        </div>
+        <div class="callout-green">
+          <strong>效果：</strong>256 个专家负载均衡良好，模型质量反而优于用辅助损失的版本。这是 V3 能把 MoE 训稳的关键工程贡献之一。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>MoE 的隐藏难点：All-to-All 通信</h3>
+        <p>256 个专家分布在几百张 GPU 上。每个 token 算出要找哪几个专家后，<strong>必须把数据发给存有这些专家的卡</strong>，算完再收回来。这种"所有卡两两交换数据"的通信叫 <strong>All-to-All</strong>，是 MoE 训练的最大瓶颈。</p>
+        <div class="callout-orange">
+          <strong>这就是 DeepEP 存在的理由：</strong>DeepSeek 开源的 DeepEP 通信库，专门优化 MoE 的 All-to-All——低延迟 Kernel（推理）+ 高吞吐 Kernel（训练），把通信和计算重叠起来隐藏延迟。没有这类优化，MoE 的算力利用率会跌到 30% 以下。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>各版本 MoE 演进</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>版本</th><th>总参/激活</th><th>专家</th><th>本代新增</th></tr>
+            <tr><td>V1 (2024.01)</td><td>67B / 67B</td><td>—</td><td>稠密基线，验证数据配比</td></tr>
+            <tr><td><strong>V2 (2024.05)</strong></td><td><strong>236B / 21B</strong></td><td>160 路由 + 2 共享，激活 6+2</td><td>MLA + DeepSeekMoE 首次引入</td></tr>
+            <tr><td><strong>V3 (2024.12)</strong></td><td><strong>671B / 37B</strong></td><td>256 路由 + 1 共享，激活 8+1</td><td>无辅助损失 + MTP + FP8</td></tr>
+            <tr><td>V3.2 (2025.12)</td><td>685B / 37B</td><td>同 V3</td><td>DSA 稀疏注意力</td></tr>
+            <tr><td><strong>V4-Pro (2026.04)</strong></td><td><strong>1.6T / 49B</strong></td><td>更大专家池</td><td>CSA+HCA + 1M 上下文</td></tr>
+            <tr><td>V4-Flash</td><td>284B / 13B</td><td>精简池</td><td>低成本变体</td></tr>
+          </table>
+        </div>
+        <p>关键观察：从 V2 到 V4，<strong>MoE 架构几乎没变</strong>——这证明 MLA+DeepSeekMoE 的设计有极强的延续性和可扩展性。每代只是同一框架上叠加新优化。</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第四章 · 预训练全流程 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-04">
+      <div class="section-title">第四章 · 预训练全流程：数据·目标·训练循环</div>
+      <div class="section-subtitle">数据管线 · 分词 · NTP→MTP · 训练超参 · 稳定性 · 上下文扩展</div>
+      <div class="eyebrow-row"><span class="version-thread">V1: 2T token · V3: 14.8T token + MTP + 全程无尖峰</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>数据：大模型的"食物"，质量&gt;数量</h3>
+        <p>预训练的第一件事是<strong>喂数据</strong>。数据决定能力上限。V3 在 14.8T token 上训练，来源大致：</p>
+        <ul>
+          <li><strong>网页文本</strong>：CommonCrawl 抓取，质量过滤</li>
+          <li><strong>图书/论文</strong>：高质量长文本，世界知识</li>
+          <li><strong>代码</strong>：GitHub 等，占比约 30%，提升编程与推理</li>
+          <li><strong>数学数据</strong>：数学推理与科学文献</li>
+        </ul>
+        <div class="tip-card">
+          <div class="tip-title">数据质量的"看不见的功夫"</div>
+          <p>DeepSeek 在去重、去毒、质量打分上投入巨大。好数据策略能用更少 token 训出更好模型——这比"堆数据"更考验工程。V1→V3 token 数从 2T 涨到 14.8T，但更重要的是<strong>数据质量大幅提升</strong>。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>分词：让模型"看懂"文字</h3>
+        <p>计算机只认数字。第一步是把文本切成 token（标记）再映射成 ID。DeepSeek 用 <strong>BPE（Byte-Pair Encoding）</strong>：统计所有字符对频率，反复合并最高频的对，形成词表。</p>
+        <div class="code-block">
+<span class="com"># BPE 反复合并最高频字符对</span>
+<span class="str">"深度学习改变世界"</span> -> [<span class="num">3276</span>, <span class="num">18922</span>, <span class="num">5031</span>, <span class="num">8872</span>]
+<span class="str">"def fibonacci(n):"</span> -> [<span class="num">8912</span>, <span class="num">44321</span>, <span class="num">11</span>, <span class="num">89</span>]
+<span class="com"># 词表 ~128K，覆盖中英混排与代码</span>
+        </div>
+        <p>词表大小是权衡：太小→序列变长算得慢；太大→嵌入矩阵占显存。128K 对中英代码混合是较优解。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>训练目标：从"下一个词"到"未来多个词"</h3>
+        <p>标准目标是 <strong>NTP（Next Token Prediction）</strong>：给定前文预测下一个 token，用<strong>交叉熵损失</strong>。</p>
+        <div class="formula">L = -Σ log P(真实下一个 token | 前文)</div>
+        <p><strong>V3 的创新：MTP（Multi-Token Prediction）</strong>——在主干上叠加多个辅助预测头，每个头负责预测往后第 k 个位置。一次前向，同时学多个未来 token。</p>
+        <div class="svg-container">
+          <svg width="720" height="180" viewBox="0 0 720 180">
+            <rect x="0" y="0" width="720" height="180" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="20" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">标准 NTP vs MTP</text>
+            <text x="120" y="46" text-anchor="middle" fill="var(--accent-rose)" font-size="11.5" font-family="var(--font-mono)">标准 NTP</text>
+            <rect x="30" y="56" width="180" height="100" rx="8" fill="rgba(251,113,133,0.04)" stroke="rgba(251,113,133,0.12)"/>
+            <text x="120" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="11">输入: "深度学习改"</text>
+            <text x="120" y="94" text-anchor="middle" fill="var(--accent-cyan)" font-size="11">预测: "变"</text>
+            <text x="120" y="118" text-anchor="middle" fill="var(--text-muted)" font-size="10">只预测下一位置</text>
+            <text x="120" y="146" text-anchor="middle" fill="var(--accent-rose)" font-size="10.5">◆ 信息利用率低</text>
+            <text x="440" y="46" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">MTP（DeepSeek-V3）</text>
+            <rect x="260" y="56" width="360" height="100" rx="8" fill="rgba(45,212,255,0.04)" stroke="rgba(45,212,255,0.12)"/>
+            <text x="440" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="11">输入: "深度学习改变"</text>
+            <text x="440" y="94" text-anchor="middle" fill="var(--accent-cyan)" font-size="11">主头:"世界" | 头2:"的" | 头3:"格" | ...</text>
+            <text x="440" y="118" text-anchor="middle" fill="var(--text-muted)" font-size="10">同时预测多个后续位置</text>
+            <text x="440" y="146" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5">◆ 训练更高效，推理可推测解码</text>
+            <line x1="210" y1="106" x2="260" y2="106" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+          </svg>
+        </div>
+        <p>MTP 两个好处：(1) 训练学到更丰富序列信息，利好代码与数学；(2) 推理时辅助头可当"草稿模型"做<strong>推测解码</strong>，主模型快速验证，推理加速 2-3 倍。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>训练循环的工程细节：把循环跑稳跑快</h3>
+        <p>第一章讲的四步循环，在 V3 这种规模下要跑约 2.8 个月、2048 张 H800。要让这个循环既快又稳，关键超参与技巧：</p>
+        <div class="svg-container">
+          <svg width="720" height="200" viewBox="0 0 720 200">
+            <rect x="0" y="0" width="720" height="200" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">学习率调度：预热 → 稳定 → 余弦衰减</text>
+            <line x1="40" y1="170" x2="680" y2="170" stroke="rgba(255,255,255,0.15)"/>
+            <line x1="40" y1="170" x2="40" y2="40" stroke="rgba(255,255,255,0.15)"/>
+            <text x="20" y="44" fill="var(--text-muted)" font-size="10.5">学习率</text>
+            <text x="690" y="174" fill="var(--text-muted)" font-size="10.5">训练步数</text>
+            <path d="M 40 160 Q 90 160 120 70 L 360 70 Q 480 70 580 150 L 680 162" stroke="var(--accent-cyan)" stroke-width="2.5" fill="none"/>
+            <text x="80" y="155" fill="var(--accent-green)" font-size="10.5">预热</text>
+            <text x="240" y="62" fill="var(--accent-cyan)" font-size="10.5">稳定训练（大步前进）</text>
+            <text x="560" y="142" fill="var(--accent-amber)" font-size="10.5">余弦衰减（慢慢收尾）</text>
+            <circle cx="120" cy="70" r="3" fill="var(--accent-cyan)"/>
+            <circle cx="360" cy="70" r="3" fill="var(--accent-cyan)"/>
+            <circle cx="580" cy="150" r="3" fill="var(--accent-amber)"/>
+          </svg>
+        </div>
+        <ul>
+          <li><strong>优化器 AdamW</strong>：带权重衰减的自适应梯度方法，是大模型标配</li>
+          <li><strong>Batch Size 逐步放大</strong>：开头小 batch 试探，稳定后放大提升吞吐</li>
+          <li><strong>梯度裁剪</strong>：梯度范数超阈值就缩放，防梯度爆炸</li>
+          <li><strong>混合精度</strong>：BF16 主干 + FP8 矩阵乘（第五章详解）</li>
+          <li><strong>Checkpoint 恢复</strong>：定期存档，硬件故障可回滚</li>
+        </ul>
+        <div class="callout">
+          <strong>一个惊人的成就：</strong>V3 整个训练过程<strong>没有出现任何不可恢复的损失尖峰或回滚</strong>。对 671B/2048 GPU/2.8 月的训练，这种稳定性业内极罕见。靠的是精心设计的容错、数值稳定性、以及 FP8 的精细精度管理。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>上下文长度扩展：从 4K 到 128K</h3>
+        <p>预训练完后，还有两阶段上下文扩展：</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">32K</div><div class="stat-label">第一阶段</div></div>
+          <div class="stat"><div class="stat-value">128K</div><div class="stat-label">第二阶段</div></div>
+          <div class="stat"><div class="stat-value">YaRN</div><div class="stat-label">扩展方法</div></div>
+        </div>
+        <p><strong>YaRN</strong> 调整 RoPE 的基频率 θ，让模型"以为"自己见过更长序列，配合少量长序列继续训练。渐进式比一次性扩展到 128K 更稳更省。（第六章会讲 V3.2/V4 如何进一步用稀疏注意力突破到 1M。）</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第五章 · 分布式训练 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-05">
+      <div class="section-title">第五章 · 分布式训练：并行·DualPipe·FP8</div>
+      <div class="section-subtitle">显存预算 · 四种并行 · DualPipe 双向流水 · FP8 混合精度 · 基础设施开源</div>
+      <div class="eyebrow-row"><span class="version-thread">V3 首创：671B 规模 FP8 训练 + 无 TP 并行 + DualPipe</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>为什么必须分布式：显存预算</h3>
+        <p>671B 参数，一张 H100（80GB）连权重都放不下。训练时显存要装<strong>四样东西</strong>：</p>
+        <div class="svg-container">
+          <svg width="680" height="200" viewBox="0 0 680 200">
+            <rect x="0" y="0" width="680" height="200" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="340" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">训练显存预算（堆叠条）</text>
+            <rect x="60" y="60" width="120" height="100" fill="rgba(45,212,255,0.3)" stroke="var(--accent-cyan)"/>
+            <text x="120" y="80" text-anchor="middle" fill="var(--text-primary)" font-size="11.5">权重</text>
+            <text x="120" y="150" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">FP8: 1×</text>
+            <rect x="180" y="60" width="120" height="100" fill="rgba(139,124,255,0.3)" stroke="var(--accent-violet)"/>
+            <text x="240" y="80" text-anchor="middle" fill="var(--text-primary)" font-size="11.5">梯度</text>
+            <text x="240" y="150" text-anchor="middle" fill="var(--accent-violet)" font-size="10.5" font-family="var(--font-mono)">同权重</text>
+            <rect x="300" y="60" width="180" height="100" fill="rgba(245,158,11,0.3)" stroke="var(--accent-orange)"/>
+            <text x="390" y="80" text-anchor="middle" fill="var(--text-primary)" font-size="11.5">优化器状态</text>
+            <text x="390" y="150" text-anchor="middle" fill="var(--accent-orange)" font-size="10.5" font-family="var(--font-mono)">AdamW: ~2×权重</text>
+            <rect x="480" y="60" width="140" height="100" fill="rgba(251,113,133,0.3)" stroke="var(--accent-rose)"/>
+            <text x="550" y="80" text-anchor="middle" fill="var(--text-primary)" font-size="11.5">激活值</text>
+            <text x="550" y="150" text-anchor="middle" fill="var(--accent-rose)" font-size="10.5" font-family="var(--font-mono)">随 batch 增长</text>
+            <text x="340" y="185" text-anchor="middle" fill="var(--text-muted)" font-size="11.5">671B 模型用 FP32 训练 → 仅权重+优化器就要数 TB，必须切片到多卡</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>四种并行策略</h3>
+        <div class="svg-container">
+          <svg width="720" height="290" viewBox="0 0 720 290">
+            <rect x="0" y="0" width="720" height="290" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">四种并行 + 组合</text>
+            <rect x="20" y="40" width="160" height="80" rx="8" class="node-box-green"/>
+            <text x="100" y="60" text-anchor="middle" fill="var(--accent-green)" font-size="12" font-family="var(--font-mono)" font-weight="600">数据并行 DP</text>
+            <text x="100" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="10">模型复制到每卡</text>
+            <text x="100" y="90" text-anchor="middle" fill="var(--text-secondary)" font-size="10">数据分 batch</text>
+            <text x="100" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">→ AllReduce 同步梯度</text>
+            <rect x="195" y="40" width="160" height="80" rx="8" class="node-box"/>
+            <text x="275" y="60" text-anchor="middle" fill="var(--accent-cyan)" font-size="12" font-family="var(--font-mono)" font-weight="600">张量并行 TP</text>
+            <text x="275" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="10">一层切成多卡</text>
+            <text x="275" y="90" text-anchor="middle" fill="var(--text-secondary)" font-size="10">每步都通信</text>
+            <text x="275" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">→ AllReduce 每步</text>
+            <rect x="370" y="40" width="160" height="80" rx="8" class="node-box-violet"/>
+            <text x="450" y="60" text-anchor="middle" fill="var(--accent-violet)" font-size="12" font-family="var(--font-mono)" font-weight="600">流水线并行 PP</text>
+            <text x="450" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="10">不同层在不同卡</text>
+            <text x="450" y="90" text-anchor="middle" fill="var(--text-secondary)" font-size="10">卡1: 1-16层</text>
+            <text x="450" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">→ 流水气泡</text>
+            <rect x="545" y="40" width="160" height="80" rx="8" class="node-box-amber"/>
+            <text x="625" y="60" text-anchor="middle" fill="var(--accent-orange)" font-size="12" font-family="var(--font-mono)" font-weight="600">专家并行 EP</text>
+            <text x="625" y="76" text-anchor="middle" fill="var(--text-secondary)" font-size="10">MoE 专家分到多卡</text>
+            <text x="625" y="90" text-anchor="middle" fill="var(--text-secondary)" font-size="10">按需路由</text>
+            <text x="625" y="108" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">→ All-to-All</text>
+            <rect x="80" y="145" width="560" height="50" rx="10" fill="rgba(45,212,255,0.04)" stroke="rgba(45,212,255,0.15)"/>
+            <text x="360" y="165" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">3D/4D 并行 = DP × TP × PP × EP</text>
+            <text x="360" y="184" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">示例：DP=8 × TP=1 × PP=16 × EP=16 = 2048 张 GPU</text>
+            <rect x="80" y="215" width="560" height="60" rx="8" class="node-box-muted"/>
+            <text x="360" y="235" text-anchor="middle" fill="var(--text-secondary)" font-size="12">V3 训练配置</text>
+            <text x="360" y="255" text-anchor="middle" fill="var(--text-muted)" font-size="11">2048 张 H800 · 跨 2 集群 · NVLink + InfiniBand · <tspan fill="var(--accent-cyan)" font-weight="600">不用 TP</tspan></text>
+          </svg>
+        </div>
+        <p>V3 <strong>不用张量并行（TP）</strong>就训成了 671B——这在同规模里非常罕见。TP 每步都要 AllReduce 通信，是瓶颈。DeepSeek 靠精心优化内存布局和通信模式绕开了它，是重大工程成就。</p>
+      </div>
+
+      <div class="viz3d-card">
+        <div class="viz3d-head">
+          <div class="viz3d-title"><span class="viz3d-badge">3D 交互</span>并行 = 沿不同维度"切"训练任务</div>
+          <div class="viz3d-controls">
+            <button class="viz3d-btn active" data-viz-act="par:whole">整体任务</button>
+            <button class="viz3d-btn" data-viz-act="par:dp">DP 切数据</button>
+            <button class="viz3d-btn" data-viz-act="par:pp">PP 切层</button>
+            <button class="viz3d-btn" data-viz-act="par:ep">EP 切专家</button>
+            <button class="viz3d-btn" data-viz-act="par:all">组合并行</button>
+          </div>
+        </div>
+        <div class="viz3d-stage">
+          <canvas data-viz="par"></canvas>
+          <div class="viz3d-hud" id="hud-par"></div>
+        </div>
+        <div class="viz3d-caption">
+          <span class="drag-hint">✦ 按住拖拽旋转视角。</span>把整个训练任务想象成一个立方体，三条棱分别是三种"可切的维度"：<strong>数据批次（DP）、模型层（PP）、专家（EP）</strong>。每种并行策略就是沿一条棱把立方体切成片，每片交给一组 GPU；点击"组合并行"看三刀同时切下去的效果——<strong>每个小块 = 一张 GPU 的职责范围</strong>，DP×PP×EP 相乘就是总卡数（V3：跨这三维组合出 2048 张 H800，刻意不切"张量"这第四刀以省通信）。旋转立方体，体会"并行策略的本质是给高维任务选切法"。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DualPipe：几乎消除流水线气泡</h3>
+        <p>流水线并行有固有的"气泡"：某些 GPU 等其他卡结果时闲置，传统约浪费 20-30%。<strong>DualPipe</strong> 用<strong>双向流水</strong>：数据从两端同时输入相向而行，前向计算和反向通信重叠，几乎消除气泡。</p>
+        <div class="svg-container">
+          <svg width="720" height="170" viewBox="0 0 720 170">
+            <rect x="0" y="0" width="720" height="170" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="18" text-anchor="middle" fill="var(--accent-cyan)" font-size="12.5" font-family="var(--font-mono)" font-weight="600">传统流水线 vs DualPipe</text>
+            <text x="120" y="42" text-anchor="middle" fill="var(--accent-rose)" font-size="10.5">传统（有气泡）</text>
+            <rect x="30" y="50" width="320" height="44" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(255,255,255,0.05)"/>
+            <rect x="35" y="55" width="55" height="18" fill="rgba(52,211,153,0.3)" rx="3"/>
+            <text x="62" y="68" text-anchor="middle" fill="var(--accent-green)" font-size="9">计算</text>
+            <rect x="95" y="55" width="55" height="18" fill="rgba(255,255,255,0.05)" rx="3"/>
+            <text x="122" y="68" text-anchor="middle" fill="rgba(251,113,133,0.5)" font-size="9">气泡</text>
+            <rect x="155" y="55" width="55" height="18" fill="rgba(52,211,153,0.3)" rx="3"/>
+            <text x="182" y="68" text-anchor="middle" fill="var(--accent-green)" font-size="9">计算</text>
+            <rect x="215" y="55" width="55" height="18" fill="rgba(255,255,255,0.05)" rx="3"/>
+            <text x="242" y="68" text-anchor="middle" fill="rgba(251,113,133,0.5)" font-size="9">气泡</text>
+            <rect x="275" y="55" width="60" height="18" fill="rgba(52,211,153,0.3)" rx="3"/>
+            <text x="305" y="68" text-anchor="middle" fill="var(--accent-green)" font-size="9">计算</text>
+            <text x="190" y="92" text-anchor="middle" fill="rgba(251,113,133,0.5)" font-size="9.5">~20-30% 气泡率</text>
+            <text x="520" y="42" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5">DualPipe（几乎无气泡）</text>
+            <rect x="360" y="50" width="310" height="44" rx="6" fill="rgba(0,0,0,0.2)" stroke="rgba(45,212,255,0.12)"/>
+            <rect x="365" y="55" width="135" height="18" fill="rgba(52,211,153,0.3)" rx="3"/>
+            <text x="432" y="68" text-anchor="middle" fill="var(--accent-green)" font-size="9">→ 前向 micro-batch 1</text>
+            <rect x="520" y="55" width="135" height="18" fill="rgba(45,212,255,0.25)" rx="3"/>
+            <text x="587" y="68" text-anchor="middle" fill="var(--accent-cyan)" font-size="9">← 前向 micro-batch 2</text>
+            <text x="515" y="92" text-anchor="middle" fill="var(--accent-cyan)" font-size="9.5">计算-通信完全重叠</text>
+            <rect x="80" y="115" width="560" height="40" rx="8" class="node-box-muted"/>
+            <text x="360" y="133" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">配合 DeepEP，实现跨节点 MoE All-to-All 通信完全隐藏</text>
+            <text x="360" y="148" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">关键思想：把"通信"塞进"计算"的空隙里</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>FP8 混合精度：把算力榨到极致</h3>
+        <p>降低数值精度是省显存+加速的核心。V3 是<strong>首个在 671B 超大规模上验证 FP8 训练</strong>的团队。</p>
+        <div class="svg-container">
+          <svg width="680" height="160" viewBox="0 0 680 160">
+            <rect x="0" y="0" width="680" height="160" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="340" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">浮点数位宽对比</text>
+            <rect x="40" y="45" width="600" height="30" rx="4" fill="rgba(45,212,255,0.08)" stroke="var(--accent-cyan)"/>
+            <text x="50" y="64" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">FP32</text>
+            <rect x="100" y="50" width="80" height="20" fill="var(--accent-green)" opacity="0.5"/><text x="140" y="64" text-anchor="middle" font-size="9.5">符号+指数8</text>
+            <rect x="180" y="50" width="450" height="20" fill="var(--accent-violet)" opacity="0.5"/><text x="405" y="64" text-anchor="middle" font-size="9.5">尾数23</text>
+            <rect x="40" y="85" width="600" height="30" rx="4" fill="rgba(139,124,255,0.08)" stroke="var(--accent-violet)"/>
+            <text x="50" y="104" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">BF16</text>
+            <rect x="100" y="90" width="80" height="20" fill="var(--accent-green)" opacity="0.5"/><text x="140" y="104" text-anchor="middle" font-size="9.5">指数8</text>
+            <rect x="180" y="90" width="180" height="20" fill="var(--accent-violet)" opacity="0.5"/><text x="270" y="104" text-anchor="middle" font-size="9.5">尾数7</text>
+            <rect x="40" y="125" width="600" height="28" rx="4" fill="rgba(245,158,11,0.1)" stroke="var(--accent-orange)" class="glow-cyan"/>
+            <text x="50" y="143" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">FP8</text>
+            <rect x="100" y="128" width="80" height="20" fill="var(--accent-green)" opacity="0.5"/><text x="140" y="143" text-anchor="middle" font-size="9.5">指数4~5</text>
+            <rect x="180" y="128" width="80" height="20" fill="var(--accent-violet)" opacity="0.5"/><text x="220" y="143" text-anchor="middle" font-size="9.5">尾数2~3</text>
+            <text x="320" y="143" fill="var(--accent-amber)" font-size="10.5" font-family="var(--font-mono)">★ 显存 1/4，速度数倍 ↑</text>
+          </svg>
+        </div>
+        <p><strong>精度管理策略</strong>（不是全部用 FP8，而是混合）：矩阵乘法 GEMM 用 FP8（计算量最大）；累加用 FP32（保精度）；LayerNorm/Softmax 保留 BF16/FP32；梯度通信用 BF16。还要做<strong>分块缩放（tile-wise scaling）</strong>——每个小块动态选合适缩放因子，弥补 FP8 表示范围窄的问题。</p>
+        <div class="callout">
+          <strong>成本对比：</strong>V3 的 14.8T token 训练仅花 <strong>2.788M H800 GPU 小时</strong>，按市场价约 <strong>557 万美元</strong>。对比 GPT-4 训练成本估计超 6300 万美元——DeepSeek 用不到 1/10 的成本训出接近 GPT-4 水平的模型。FP8 是其中最关键的节流手段。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>基础设施开源：让社区能复用</h3>
+        <div class="grid-2">
+          <div class="card" style="margin-bottom:0"><h4>3FS · 分布式文件系统</h4><p>AI 训练/推理专用高性能存储，聚合带宽 TB/s 级，支持 KV Cache 持久化。10k+ ⭐</p></div>
+          <div class="card" style="margin-bottom:0"><h4>DeepEP · MoE 通信库</h4><p>解决 All-to-All 瓶颈，低延迟+高吞吐 Kernel，NVLink/RDMA 优化。9.8k+ ⭐</p></div>
+          <div class="card" style="margin-bottom:0"><h4>DeepGEMM · FP8 矩阵乘</h4><p>FP8 GEMM 内核，支持分组 GEMM（MoE）、连续块 GEMM。7.5k+ ⭐</p></div>
+          <div class="card" style="margin-bottom:0"><h4>FlashMLA · 注意力推理内核</h4><p>高效 MLA 推理，分页 KV Cache，支持 DSA。12.7k+ ⭐</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第六章 · 长上下文 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-06">
+      <div class="section-title">第六章 · 长上下文：从 128K 到 1M</div>
+      <div class="section-subtitle">O(n²) 难题 · FlashAttention 分块 · DSA 稀疏注意力 · CSA+HCA 混合 · 1M 上下文</div>
+      <div class="eyebrow-row"><span class="version-thread">V3: YaRN 128K → V3.2: DSA → V4: CSA+HCA 1M</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>核心挑战：注意力的 O(n²) 诅咒</h3>
+        <p>标准注意力的计算和显存都随序列长度<strong>平方增长</strong>。从 128K 到 1M，计算量涨约 64 倍。</p>
+        <div class="table-wrap">
+          <table>
+            <tr><th>上下文</th><th>注意力计算量</th><th>体验</th></tr>
+            <tr><td>8K</td><td>1×</td><td>流畅</td></tr>
+            <tr><td>32K</td><td>16×</td><td>可接受</td></tr>
+            <tr><td>128K</td><td>256×</td><td>需优化</td></tr>
+            <tr><td><strong>1M</strong></td><td><strong>16,384×</strong></td><td><strong>必须专项优化</strong></td></tr>
+          </table>
+        </div>
+        <div class="callout-amber">
+          <strong>关键洞察：</strong>并非所有 token 间的注意力都重要。自然语言大量冗余，多数 token 对的注意力权重很低，可安全跳过。这是所有稀疏注意力的理论基础。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>FlashAttention：先把显存降到 O(n)</h3>
+        <p>FlashAttention 不改计算量，但通过<strong>分块（tiling）</strong>把显存从 O(n²) 降到 O(n)：把 Q/K/V 切成小块，在 GPU 高速 SRAM 里完成小块注意力，避免把巨大的 n×n 注意力矩阵写回慢速 HBM 显存。它是 IO 优化，不是算力优化。</p>
+        <div class="svg-container">
+          <svg width="640" height="180" viewBox="0 0 640 180">
+            <rect x="0" y="0" width="640" height="180" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="320" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">FlashAttention 分块计算</text>
+            <rect x="40" y="45" width="160" height="100" fill="rgba(251,113,133,0.06)" stroke="rgba(251,113,133,0.2)"/>
+            <text x="120" y="62" text-anchor="middle" fill="var(--accent-rose)" font-size="11.5">标准注意力</text>
+            <rect x="55" y="72" width="130" height="60" fill="rgba(251,113,133,0.15)"/>
+            <text x="120" y="100" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">n×n 大矩阵</text>
+            <text x="120" y="116" text-anchor="middle" fill="var(--accent-rose)" font-size="10.5" font-family="var(--font-mono)">显存 O(n²)</text>
+            <rect x="240" y="45" width="160" height="100" fill="rgba(45,212,255,0.06)" stroke="rgba(45,212,255,0.2)"/>
+            <text x="320" y="62" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5">FlashAttention</text>
+            <g>
+              <rect x="255" y="72" width="28" height="28" fill="rgba(45,212,255,0.2)" stroke="var(--accent-cyan)"/>
+              <rect x="287" y="72" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+              <rect x="319" y="72" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+              <rect x="351" y="72" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+              <rect x="255" y="104" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+              <rect x="287" y="104" width="28" height="28" fill="rgba(45,212,255,0.2)" stroke="var(--accent-cyan)"/>
+              <rect x="319" y="104" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+              <rect x="351" y="104" width="28" height="28" fill="rgba(45,212,255,0.1)" stroke="var(--accent-cyan)"/>
+            </g>
+            <text x="320" y="148" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">分块在 SRAM 算，显存 O(n)</text>
+            <text x="480" y="80" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">HBM 慢显存</text>
+            <text x="480" y="100" text-anchor="middle" fill="var(--accent-amber)" font-size="10.5">↕ 少读写</text>
+            <text x="480" y="120" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">SRAM 快缓存</text>
+            <line x1="200" y1="95" x2="240" y2="95" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DSA：DeepSeek 稀疏注意力（V3.2）</h3>
+        <p>FlashAttention 只省显存不省算力。V3.2 引入 <strong>DSA</strong>：<strong>用轻量级 Indexer 模块预测哪些 KV 位置重要，只对 Top-K 重要位置做完整注意力</strong>。</p>
+        <div class="svg-container">
+          <svg width="700" height="240" viewBox="0 0 700 240">
+            <rect x="0" y="0" width="700" height="240" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="350" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">标准 vs DSA 稀疏注意力</text>
+            <text x="120" y="48" text-anchor="middle" fill="var(--accent-rose)" font-size="11">标准注意力矩阵（全算）</text>
+            <rect x="50" y="55" width="160" height="80" fill="rgba(45,212,255,0.2)" stroke="rgba(255,255,255,0.1)"/>
+            <rect x="60" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.8"/>
+            <rect x="74" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.3"/>
+            <rect x="88" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.6"/>
+            <rect x="102" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.2"/>
+            <rect x="60" y="76" width="10" height="10" fill="var(--accent-cyan)" opacity="0.3"/>
+            <rect x="88" y="76" width="10" height="10" fill="var(--accent-cyan)" opacity="0.7"/>
+            <rect x="60" y="90" width="10" height="10" fill="var(--accent-cyan)" opacity="0.6"/>
+            <rect x="102" y="90" width="10" height="10" fill="var(--accent-cyan)" opacity="0.5"/>
+            <text x="130" y="118" text-anchor="middle" fill="var(--accent-rose)" font-size="10.5" font-family="var(--font-mono)">O(n²)</text>
+            <text x="440" y="48" text-anchor="middle" fill="var(--accent-cyan)" font-size="11">DSA 稀疏矩阵（只算亮的）</text>
+            <rect x="340" y="55" width="200" height="80" fill="rgba(0,0,0,0.3)" stroke="rgba(45,212,255,0.2)"/>
+            <rect x="390" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.9"/>
+            <rect x="440" y="62" width="10" height="10" fill="var(--accent-cyan)" opacity="0.7"/>
+            <rect x="370" y="76" width="10" height="10" fill="var(--accent-cyan)" opacity="0.8"/>
+            <rect x="420" y="76" width="10" height="10" fill="var(--accent-cyan)" opacity="0.9"/>
+            <rect x="350" y="90" width="10" height="10" fill="var(--accent-cyan)" opacity="0.6"/>
+            <rect x="460" y="90" width="10" height="10" fill="var(--accent-cyan)" opacity="0.5"/>
+            <text x="440" y="118" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">O(n·k), k≪n</text>
+            <rect x="380" y="150" width="120" height="28" rx="6" class="node-box-amber"/>
+            <text x="440" y="168" text-anchor="middle" fill="var(--accent-orange)" font-size="11" font-family="var(--font-mono)">Indexer 预测</text>
+            <line x1="210" y1="95" x2="340" y2="95" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <text x="275" y="88" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5">稀疏化</text>
+            <rect x="60" y="195" width="580" height="36" rx="8" fill="rgba(0,0,0,0.2)" stroke="rgba(255,255,255,0.06)"/>
+            <text x="350" y="213" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">Indexer 快速判断哪些 KV 对当前 Query 重要 → 只算 Top-K</text>
+            <text x="350" y="227" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5">V3.2 上实现 50%+ 成本降低，质量几乎无损</text>
+          </svg>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">DSA 的硬件亲和性</div>
+          <p>Indexer 的预测与 Hopper GPU 的稀疏计算支持配合，实现计算-通信协同。DeepSeek 开源了 CUDA 和 TileLang 两版内核。DSA 是"信息可压缩"洞察在注意力上的直接延伸——和 MLA 一脉相承。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>V4 的 CSA + HCA：让 1M 上下文成真</h3>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <h4 class="cyan">CSA（压缩稀疏注意力）</h4>
+            <ul>
+              <li>压缩率 m=4：每 4 token 合并成 1 个 KV</li>
+              <li>对压缩后 KV 做 DSA 稀疏注意力</li>
+              <li>保留 128 窗口 token 不压缩（保局部精度）</li>
+              <li>双重压缩流（交叠窗口）保边界</li>
+              <li>定位：精细的长程 token 级注意力</li>
+            </ul>
+          </div>
+          <div class="compare-col">
+            <h4 class="violet">HCA（高压缩注意力）</h4>
+            <ul>
+              <li>压缩率 m'=128：极高压缩比</li>
+              <li>不做稀疏化，保持密集</li>
+              <li>提供粗粒度全局上下文视图</li>
+              <li>一个序列流（高压缩+滑动窗口）</li>
+              <li>定位：极低成本的全局长程记忆</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>混合哲学：</strong>CSA 负责"精细"（哪几个 token 重要），HCA 负责"粗略"（整体在讨论什么主题）。配合 MLA 低秩压缩，三重机制把 V4 的 1M 推理 FLOPs 降到 V3.2 的 <strong>27%</strong>，KV Cache 降到 <strong>10%</strong>。
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th></th><th>V3 / V3.2</th><th>V4-Pro</th><th>V4-Flash</th></tr>
+            <tr><td>最大上下文</td><td>128K</td><td>1M</td><td>1M</td></tr>
+            <tr><td>注意力</td><td>MLA</td><td>CSA+HCA+MLA</td><td>CSA+HCA+MLA</td></tr>
+            <tr><td>1M 推理 FLOPs</td><td>不可行</td><td>V3.2 的 27%</td><td>V3.2 的 10%</td></tr>
+            <tr><td>KV Cache (1M)</td><td>—</td><td>V3.2 的 10%</td><td>V3.2 的 7%</td></tr>
+            <tr><td>实际意义</td><td>~10 万字</td><td>~75 万汉字（几部长篇）</td><td>同上，成本更低</td></tr>
+          </table>
+        </div>
+        <p>从 V3.2 到 V4，上下文能力提升 <strong>8 倍</strong>，但 V4-Flash 在 1M 下的推理开销甚至低于 V3.2 在 128K 下的开销——三重压缩架构的威力。</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第七章 · 后训练 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-07">
+      <div class="section-title">第七章 · 后训练：SFT·GRPO·R1·蒸馏</div>
+      <div class="section-subtitle">从续写器到助手 · SFT · RLHF→GRPO · R1 推理涌现 · 四阶段 · 蒸馏</div>
+      <div class="eyebrow-row"><span class="version-thread">R1: 纯 RL 涌现推理（发表于 Nature）· V3.1: 双模式 · V4: 专家优先</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>为什么需要后训练？</h3>
+        <p>预训练后的模型是个强大的<strong>"文本续写器"</strong>——擅长预测下一个词，但不擅长"回答问题"。后训练把它变成<strong>有用的 AI 助手</strong>。</p>
+        <div class="svg-container">
+          <svg width="720" height="100" viewBox="0 0 720 100">
+            <rect x="0" y="0" width="720" height="100" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <rect x="20" y="30" width="90" height="40" rx="8" class="node-box-green"/>
+            <text x="65" y="50" text-anchor="middle" fill="var(--accent-green)" font-size="11.5" font-family="var(--font-mono)">预训练</text>
+            <text x="65" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">续写器</text>
+            <line x1="110" y1="50" x2="140" y2="50" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="140" y="30" width="70" height="40" rx="8" class="node-box"/>
+            <text x="175" y="50" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">SFT</text>
+            <text x="175" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">指令</text>
+            <line x1="210" y1="50" x2="240" y2="50" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="240" y="30" width="100" height="40" rx="8" class="node-box-violet"/>
+            <text x="290" y="50" text-anchor="middle" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">GRPO</text>
+            <text x="290" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">对齐/推理</text>
+            <line x1="340" y1="50" x2="370" y2="50" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="370" y="30" width="60" height="40" rx="8" class="node-box-amber"/>
+            <text x="400" y="50" text-anchor="middle" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">蒸馏</text>
+            <text x="400" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">迁移</text>
+            <line x1="430" y1="50" x2="460" y2="50" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="460" y="30" width="100" height="40" rx="8" class="node-box-rose"/>
+            <text x="510" y="50" text-anchor="middle" fill="var(--accent-rose)" font-size="11.5" font-family="var(--font-mono)">AI 助手</text>
+            <text x="510" y="64" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">DeepSeek</text>
+            <text x="640" y="55" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">续写 → 回答 → 对齐 → 推理</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>SFT：教会模型"听指令"</h3>
+        <p>用高质量"指令-回复"对微调模型。数量不需多（数千到数万条），但质量要求极高。SFT 后模型从"乱续写"变成"能回答问题"，但风格可能啰嗦或不安全——这要靠 RL 解决。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>GRPO：DeepSeek 的强化学习创新</h3>
+        <p>传统 PPO 要训一个 Critic（价值模型）估计"当前策略有多好"，又贵又难。DeepSeek 的 <strong>GRPO</strong>（Group Relative Policy Optimization）用<strong>组内相对比较</strong>消除了 Critic。</p>
+        <div class="formula">
+          基线 b = (1/G)·Σ r(y<sub>i</sub>)　组内平均奖励<br>
+          优势 A<sub>i</sub> = r(y<sub>i</sub>) - b　高于平均→正激励，低于→负激励<br>
+          + KL 惩罚项 β·KL(π‖π<sub>ref</sub>) 防止偏离太远
+        </div>
+        <div class="svg-container">
+          <svg width="720" height="220" viewBox="0 0 720 220">
+            <rect x="0" y="0" width="720" height="220" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(139,124,255,0.1)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13" font-family="var(--font-mono)" font-weight="600">GRPO 组相对策略优化</text>
+            <rect x="20" y="42" width="120" height="40" rx="8" class="node-box-green"/>
+            <text x="80" y="60" text-anchor="middle" fill="var(--accent-green)" font-size="11.5" font-family="var(--font-mono)">问题 Q</text>
+            <text x="80" y="74" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">"计算 17×23"</text>
+            <line x1="140" y1="62" x2="170" y2="40" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <line x1="140" y1="62" x2="170" y2="62" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <line x1="140" y1="62" x2="170" y2="84" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <rect x="170" y="25" width="100" height="30" rx="6" class="node-box"/>
+            <text x="220" y="42" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">回答1 r=0.8</text>
+            <rect x="170" y="47" width="100" height="30" rx="6" class="node-box"/>
+            <text x="220" y="64" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">回答2 r=1.0</text>
+            <rect x="170" y="69" width="100" height="30" rx="6" class="node-box"/>
+            <text x="220" y="86" text-anchor="middle" fill="var(--accent-cyan)" font-size="10.5" font-family="var(--font-mono)">回答3 r=0.3</text>
+            <line x1="270" y1="40" x2="320" y2="62" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <line x1="270" y1="62" x2="320" y2="62" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <line x1="270" y1="84" x2="320" y2="62" stroke="var(--accent-cyan)" stroke-width="1" class="flow-line"/>
+            <rect x="320" y="42" width="120" height="40" rx="8" class="node-box-violet"/>
+            <text x="380" y="60" text-anchor="middle" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">组平均基线</text>
+            <text x="380" y="74" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">b=(0.8+1.0+0.3)/3=0.7</text>
+            <line x1="440" y1="62" x2="470" y2="62" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="470" y="42" width="110" height="40" rx="8" class="node-box-amber"/>
+            <text x="525" y="60" text-anchor="middle" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">优势</text>
+            <text x="525" y="74" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">A₁=+0.1 A₂=+0.3 A₃=-0.4</text>
+            <line x1="580" y1="62" x2="610" y2="62" stroke="var(--accent-cyan)" stroke-width="1.5" class="flow-line"/>
+            <rect x="610" y="42" width="90" height="40" rx="8" class="node-box-green"/>
+            <text x="655" y="60" text-anchor="middle" fill="var(--accent-green)" font-size="11.5" font-family="var(--font-mono)">更新策略</text>
+            <text x="655" y="74" text-anchor="middle" fill="var(--text-muted)" font-size="9.5">强化好的，抑制差的</text>
+            <rect x="80" y="120" width="560" height="84" rx="8" fill="rgba(0,0,0,0.2)" stroke="rgba(255,255,255,0.06)"/>
+            <text x="360" y="140" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">PPO：要额外训 Value 模型估计基线（又贵又难）</text>
+            <text x="360" y="158" text-anchor="middle" fill="var(--accent-cyan)" font-size="11.5">GRPO：用组内采样多个回答的<tspan font-weight="700">平均奖励</tspan>当基线</text>
+            <text x="360" y="176" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">+ KL 惩罚防策略漂移过远 → 训练更简单、更稳定</text>
+            <text x="360" y="194" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">关键：对同一问题采样一组回答，"组内卷"出优劣</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>R1：推理能力的"涌现"</h3>
+        <p>DeepSeek-R1 证明了一个颠覆性结论：<strong>推理能力不一定需要人类标注的推理示范</strong>。通过纯 RL 和可验证奖励（答案对错），模型能<strong>自行发现</strong>反思、验证、分解等推理策略。该工作 2025 年 9 月发表于 <strong>Nature（vol 645，封面论文）</strong>——纯 RL 过程中，R1-Zero 在 AIME 2024 的 pass@1 从 <strong>15.6% 一路涨到 77.9%</strong>（自洽投票下 86.7%），只靠"最终答案对不对"这一个信号。</p>
+
+        <div class="callout-rose">
+          <strong>"Aha 时刻"：</strong>R1-Zero（纯 RL、无 SFT 冷启动）在训练中自发出现了一段行为——模型输出"Wait, let me reconsider..."（等等，让我重新想想）。这种自我反思不是人教的，是 RL 探索出来的。这是推理"涌现"的标志性瞬间。
+        </div>
+
+        <h4>R1 的四阶段训练（完整路线图）</h4>
+        <div class="timeline-node">
+          <div class="timeline-dot amber"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">阶段1 · 冷启动 SFT</div>
+            <div class="timeline-title">注入基础推理格式</div>
+            <div class="timeline-desc">数千条高质量长思维链（CoT）数据，含人工示例与 R1-Zero 输出的后处理。SFT 微调 V3-Base，教会"边思考边回答"的格式，输出含 &lt;reasoning_process&gt; 标签。</div>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">阶段2 · 面向推理的 RL</div>
+            <div class="timeline-title">GRPO 强化推理</div>
+            <div class="timeline-desc">从冷启动点用 GRPO 在数学、代码等可验证任务上做 RL。奖励=答案准确性+语言一致性。模型在探索中<strong>自动涌现</strong>反思、验证、分解等策略。</div>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-dot violet"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">阶段3 · 拒绝采样 + SFT</div>
+            <div class="timeline-title">扩展通用能力</div>
+            <div class="timeline-desc">用 RL 检查点生成 600K 推理数据 + 200K 通用数据。拒绝采样只留正确回答。混合后两轮 SFT，平衡推理与通用能力。</div>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-dot green"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">阶段4 · 全场景 RL</div>
+            <div class="timeline-title">偏好对齐</div>
+            <div class="timeline-desc">再次用 GRPO，但奖励多样化：推理任务用规则奖励，通用任务用神经奖励模型。覆盖多场景人类偏好，得到兼具推理与对话的 DeepSeek-R1。</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>深远影响：</strong>R1 改变了对"推理是否需要人类示范"的认知——机器可从简单的"对/错"信号中自行发现复杂推理策略。这对 AGI 研究有里程碑意义。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>蒸馏：让推理能力惠及小模型</h3>
+        <p>蒸馏=让大模型（教师）教小模型（学生）。DeepSeek 把 R1 推理能力蒸馏到 6 个规模的小模型：</p>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-value">1.5B</div><div class="stat-label">最小</div></div>
+          <div class="stat"><div class="stat-value">7B</div><div class="stat-label">Qwen-7B</div></div>
+          <div class="stat"><div class="stat-value">8B</div><div class="stat-label">LLaMA-8B</div></div>
+          <div class="stat"><div class="stat-value">14B</div><div class="stat-label">Qwen-14B ★</div></div>
+          <div class="stat"><div class="stat-value">32B</div><div class="stat-label">Qwen-32B</div></div>
+          <div class="stat"><div class="stat-value">70B</div><div class="stat-label">LLaMA-70B</div></div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">惊人的效果</div>
+          <p>R1-Distill-Qwen-14B 在 AIME 2024 达 69.7%，MATH-500 达 93.9%，<strong>超过大部分 70B 级模型</strong>。推理能力可"压缩"到小模型，无需在小模型上从头跑 RL——极高效。</p>
+        </div>
+        <p>做法：用 R1 生成大量含完整推理过程的数据，SFT 小模型。小模型直接学 R1 的"思维方式"——反思、验证、多步推理——而不必自己从 RL 中探索。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>后训练的版本演进</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>版本</th><th>后训练方式</th><th>核心能力</th></tr>
+            <tr><td>V3 (2024.12)</td><td>SFT + RL + R1 蒸馏</td><td>通用对话 + 数学推理</td></tr>
+            <tr><td>V3.1 (2025.08)</td><td>混合模式训练</td><td>Thinking / Non-Thinking 双模式</td></tr>
+            <tr><td>V3.2 (2025.12)</td><td>Thinking-in-Tool-Use</td><td>推理融入工具调用，Agent 能力</td></tr>
+            <tr><td><strong>V4 (2026.04)</strong></td><td>专家优先后训练</td><td>领域专家融合，Agentic Coding SOTA</td></tr>
+          </table>
+        </div>
+        <p>V4 的"专家优先"分两步：<strong>① 独立培养</strong>——按领域（数学/竞赛代码/Agent/指令遵循等）各自跑 SFT + GRPO 强化学习，训出 N 个"单科状元"；<strong>② 在线策略蒸馏（OPD）合并</strong>——让一个学生模型自己生成回答，同时对齐各科老师的全词表输出分布（加权 KL 距离），把多个专长压进一个通用模型。与 R1 时代"先合并再统一 RL"相比，V4 把整合环节完全交给了蒸馏——"十个老师教一个学生"。</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第八章 · 推理部署与生态 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-08">
+      <div class="section-title">第八章 · 推理部署与开源生态</div>
+      <div class="section-subtitle">推理优化五重奏 · 推测解码 · Thinking 双模式 · 四层技术栈 · 行业定位</div>
+      <div class="eyebrow-row"><span class="version-thread">每代部署优化叠加：MLA → DSA → FlashMLA → DSpark</span></div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>推理优化的五重奏</h3>
+        <div class="grid-2">
+          <div class="card" style="margin-bottom:0"><h4>MLA 压缩</h4><p>KV Cache 减 10 倍，支持更大 batch。基础优势。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>DSA 稀疏化</h4><p>注意力计算减 50%+，长上下文尤其显著。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>FlashMLA 内核</h4><p>MLA 专用推理内核（12.7k⭐），分页 KV Cache、DSA、Hopper 优化。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>DSpark 推测解码</h4><p>V4 配套的推测解码方法（置信度调度 + 半自回归草稿），单用户生成速度较 MTP-1 基线再快 <strong>60–85%</strong>；训练/评估代码以 <strong>DeepSpec 框架</strong>开源（2026.06）。</p></div>
+        </div>
+        <div class="callout">
+          <strong>推测解码原理：</strong>小模型（草稿头）一次快速猜出几个候选 token，大模型一次性并行验证这些候选。猜对的直接接受，猜错的从错误处重新生成。因为大模型验证 N 个 token 和生成 1 个 token 时间相近，所以能整体加速。V3 用 MTP 头做草稿是这个思路的 1.0；V4 的 DSpark 在此之上加了"半自回归草稿 + 按置信度动态决定猜多远"，猜得更长也更准。
+        </div>
+        <div class="callout-green">
+          <strong>部署形态：</strong>V4 官方推荐 vLLM 或 SGLang。vLLM 支持 MLA 的 PagedAttention、TP/PP、Chunked Prefill。部署 671B 通常需 8 张 H100(80GB) 起步。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>Thinking vs Non-Thinking 双模式</h3>
+        <p>从 V3.1 起 DeepSeek 支持两种推理模式，按需选择：</p>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <h4 class="violet">Thinking（思考）</h4>
+            <ul>
+              <li>先内部推理再输出答案</li>
+              <li>适合：数学、代码、复杂推理、Agent</li>
+              <li>支持 reasoning_effort（high/max）</li>
+              <li>质量高，延迟较长</li>
+            </ul>
+          </div>
+          <div class="compare-col">
+            <h4 class="cyan">Non-Thinking（直接答）</h4>
+            <ul>
+              <li>直接输出，省略推理</li>
+              <li>适合：日常对话、翻译、摘要</li>
+              <li>响应快，token 消耗少</li>
+              <li>成本更低</li>
+            </ul>
+          </div>
+        </div>
+        <p>背后是重要的产品洞察：<strong>不是所有问题都需要深度推理</strong>。问"今天天气"不需要思维链。双模式让用户按需平衡性能与成本。</p>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DeepSeek 开源生态全景</h3>
+        <p>DeepSeek 的开源不是"发布权重"，而是系统性开源<strong>四层技术栈</strong>：</p>
+        <div class="svg-container">
+          <svg width="720" height="320" viewBox="0 0 720 320">
+            <rect x="0" y="0" width="720" height="320" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">DeepSeek 开源技术栈</text>
+            <rect x="20" y="40" width="680" height="56" rx="10" fill="rgba(45,212,255,0.04)" stroke="rgba(45,212,255,0.15)"/>
+            <text x="40" y="58" fill="var(--accent-cyan)" font-size="11.5" font-family="var(--font-mono)">模型层 · MIT</text>
+            <rect x="40" y="66" width="90" height="22" rx="6" class="node-box"/><text x="85" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">V4-Pro 1.6T</text>
+            <rect x="140" y="66" width="80" height="22" rx="6" class="node-box"/><text x="180" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">V4-Flash</text>
+            <rect x="230" y="66" width="70" height="22" rx="6" class="node-box"/><text x="265" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">V3.2</text>
+            <rect x="310" y="66" width="80" height="22" rx="6" class="node-box"/><text x="350" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">R1 系列</text>
+            <rect x="400" y="66" width="100" height="22" rx="6" class="node-box"/><text x="450" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">DeepSeek-OCR</text>
+            <rect x="510" y="66" width="110" height="22" rx="6" class="node-box"/><text x="565" y="81" text-anchor="middle" fill="var(--text-secondary)" font-size="10.5">Jam-Pretrain</text>
+            <rect x="20" y="110" width="680" height="50" rx="10" fill="rgba(139,124,255,0.04)" stroke="rgba(139,124,255,0.15)"/>
+            <text x="40" y="128" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">推理优化层</text>
+            <rect x="40" y="136" width="110" height="18" rx="6" class="node-box-violet"/><text x="95" y="149" text-anchor="middle" fill="var(--accent-violet)" font-size="10.5">FlashMLA 12.7k⭐</text>
+            <rect x="160" y="136" width="110" height="18" rx="6" class="node-box-violet"/><text x="215" y="149" text-anchor="middle" fill="var(--accent-violet)" font-size="10.5">DSpark / DeepSpec</text>
+            <rect x="280" y="136" width="100" height="18" rx="6" class="node-box-violet"/><text x="330" y="149" text-anchor="middle" fill="var(--accent-violet)" font-size="10.5">TileKernels</text>
+            <rect x="20" y="174" width="680" height="50" rx="10" fill="rgba(245,158,11,0.04)" stroke="rgba(245,158,11,0.15)"/>
+            <text x="40" y="192" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">训练基础设施层</text>
+            <rect x="40" y="200" width="90" height="18" rx="6" class="node-box-amber"/><text x="85" y="213" text-anchor="middle" fill="var(--accent-orange)" font-size="10.5">3FS 10k⭐</text>
+            <rect x="140" y="200" width="100" height="18" rx="6" class="node-box-amber"/><text x="190" y="213" text-anchor="middle" fill="var(--accent-orange)" font-size="10.5">DeepEP 9.8k⭐</text>
+            <rect x="250" y="200" width="110" height="18" rx="6" class="node-box-amber"/><text x="305" y="213" text-anchor="middle" fill="var(--accent-orange)" font-size="10.5">DeepGEMM 7.5k⭐</text>
+            <rect x="20" y="238" width="680" height="50" rx="10" fill="rgba(52,211,153,0.04)" stroke="rgba(52,211,153,0.15)"/>
+            <text x="40" y="256" fill="var(--accent-green)" font-size="11.5" font-family="var(--font-mono)">应用与 Agent 层</text>
+            <rect x="40" y="264" width="120" height="18" rx="6" class="node-box-green"/><text x="100" y="277" text-anchor="middle" fill="var(--accent-green)" font-size="10.5">Claude Code 适配</text>
+            <rect x="170" y="264" width="120" height="18" rx="6" class="node-box-green"/><text x="230" y="277" text-anchor="middle" fill="var(--accent-green)" font-size="10.5">CodeBuddy 适配</text>
+            <rect x="300" y="264" width="120" height="18" rx="6" class="node-box-green"/><text x="360" y="277" text-anchor="middle" fill="var(--accent-green)" font-size="10.5">OpenCode 适配</text>
+            <text x="360" y="310" text-anchor="middle" fill="var(--text-muted)" font-size="11.5">四层全栈开源，社区能复用从训练到部署的完整技术</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>V4 行业定位</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>维度</th><th>DeepSeek V4-Pro</th><th>GPT-5.4</th><th>Gemini 3.1-Pro</th><th>Claude Opus 4.6</th></tr>
+            <tr><td>开源</td><td><span class="badge badge-green">MIT 完全</span></td><td><span class="badge badge-rose">闭源</span></td><td><span class="badge badge-rose">闭源</span></td><td><span class="badge badge-rose">闭源</span></td></tr>
+            <tr><td>参数</td><td>1.6T/49B 激活</td><td>未公开</td><td>未公开</td><td>未公开</td></tr>
+            <tr><td>上下文</td><td>1M</td><td>1M+</td><td>2M</td><td>500K</td></tr>
+            <tr><td>SWE-bench</td><td><span class="badge badge-cyan">80.6%</span></td><td>领先</td><td>强</td><td>强</td></tr>
+            <tr><td>Agentic Coding</td><td><span class="badge badge-green">开源 SOTA</span></td><td>领先</td><td>强</td><td>思考模式领先</td></tr>
+            <tr><td>数学/推理</td><td>开源最强</td><td>领先</td><td>强</td><td>强</td></tr>
+            <tr><td>API 成本</td><td><span class="badge badge-green">极低</span></td><td>高</td><td>高</td><td>高</td></tr>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>性价比压倒性：</strong>V4-Pro 在 SWE-bench Verified 达 80.6%（距 Claude Opus 4.6 仅差 0.2%），但 API 价格仅为闭源模型的几分之一。更关键是完全开源——可在自己服务器运行，无需 API 费用。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 第九章 · 综合总览 -->
+    <!-- ============================================================ -->
+    <section class="section" id="sec-09">
+      <div class="section-title">第九章 · 综合总览：版本×技术演进矩阵</div>
+      <div class="section-subtitle">一张表串起所有 · 创新决策树 · DeepSeek 的"基因" · 行业启示 · 未来</div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>版本 × 技术演进总矩阵</h3>
+        <p>这是全篇的"索引"。每一行是流水线的一个环节，每一列是一个版本，单元格是该版本在这个环节引入的关键技术。空格=沿用前代。</p>
+        <div class="table-wrap">
+          <table>
+            <tr>
+              <th>流水线环节</th><th>V1 (24.01)</th><th>V2 (24.05)</th><th>V3 (24.12)</th><th>R1 (25.01)</th><th>V3.1 (25.08)</th><th>V3.2 (25.12)</th><th>V4 (26.04)</th>
+            </tr>
+            <tr>
+              <td><strong>① 数据</strong></td>
+              <td>2T token</td>
+              <td>8.1T</td>
+              <td>14.8T·提质</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>更大配比</td>
+            </tr>
+            <tr>
+              <td><strong>② 架构/预训练</strong></td>
+              <td>Dense MHA</td>
+              <td><span class="badge badge-cyan">MLA</span><br><span class="badge badge-cyan">DeepSeekMoE</span></td>
+              <td><span class="badge badge-cyan">无辅助损失</span><br><span class="badge badge-cyan">MTP</span><br><span class="badge badge-cyan">FP8</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>1.6T·CSA+HCA</td>
+            </tr>
+            <tr>
+              <td><strong>③ 长上下文</strong></td>
+              <td>4K</td>
+              <td>128K</td>
+              <td>YaRN 128K</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="badge badge-violet">DSA 稀疏</span></td>
+              <td><span class="badge badge-violet">1M</span></td>
+            </tr>
+            <tr>
+              <td><strong>④ 分布式工程</strong></td>
+              <td>标准</td>
+              <td>EP 并行</td>
+              <td><span class="badge badge-amber">DualPipe</span><br><span class="badge badge-amber">无TP</span><br><span class="badge badge-amber">FP8@671B</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>⑤ 后训练</strong></td>
+              <td>SFT</td>
+              <td>SFT+RL</td>
+              <td>SFT+RL+R1蒸馏</td>
+              <td><span class="badge badge-rose">纯RL涌现</span><br><span class="badge badge-rose">GRPO</span><br><span class="badge badge-rose">4阶段</span></td>
+              <td>双模式</td>
+              <td>Tool-Use</td>
+              <td>专家优先</td>
+            </tr>
+            <tr>
+              <td><strong>⑥ 蒸馏</strong></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="badge badge-cyan">R1→1.5B~70B</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>⑦ 推理部署</strong></td>
+              <td>标准</td>
+              <td>MLA 内核</td>
+              <td>MTP推测解码</td>
+              <td>—</td>
+              <td>—</td>
+              <td>FlashMLA+DSA</td>
+              <td>DSpark+1M</td>
+            </tr>
+            <tr>
+              <td><strong>参数/激活</strong></td>
+              <td>67B/67B</td>
+              <td>236B/21B</td>
+              <td>671B/37B</td>
+              <td>同V3</td>
+              <td>同V3</td>
+              <td>685B/37B</td>
+              <td>1.6T/49B</td>
+            </tr>
+            <tr>
+              <td><strong>训练成本</strong></td>
+              <td>—</td>
+              <td>较低</td>
+              <td><span class="badge badge-green">~$5.57M</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>怎么读这张表：</strong>横向看——每个版本在哪些环节做了创新（亮色格）。纵向看——某个环节的技术如何代代演进。你会发现：<strong>V2 是架构革命，V3 是工程革命，R1 是后训练革命，V3.2/V4 是长上下文革命</strong>。每一代只攻克一个主战场，绝不贪多——这是 DeepSeek 能高效迭代的根本节奏。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>创新决策树：为什么是这些技术</h3>
+        <div class="svg-container">
+          <svg width="720" height="380" viewBox="0 0 720 380">
+            <rect x="0" y="0" width="720" height="380" rx="14" fill="rgba(255,255,255,0.012)" stroke="rgba(45,212,255,0.08)"/>
+            <text x="360" y="22" text-anchor="middle" fill="var(--accent-cyan)" font-size="13.5" font-family="var(--font-mono)" font-weight="600">DeepSeek 关键技术决策树</text>
+            <rect x="290" y="36" width="140" height="34" rx="8" class="node-box-green"/>
+            <text x="360" y="58" text-anchor="middle" fill="var(--accent-green)" font-size="12" font-family="var(--font-mono)" font-weight="600">核心目标：又强又便宜</text>
+            <line x1="360" y1="70" x2="180" y2="100" stroke="var(--accent-cyan)" stroke-width="1.5" class="arrow"/>
+            <line x1="360" y1="70" x2="540" y2="100" stroke="var(--accent-cyan)" stroke-width="1.5" class="arrow"/>
+            <rect x="100" y="100" width="160" height="34" rx="8" class="node-box-amber"/>
+            <text x="180" y="122" text-anchor="middle" fill="var(--accent-orange)" font-size="11.5" font-family="var(--font-mono)">降推理成本</text>
+            <rect x="460" y="100" width="160" height="34" rx="8" class="node-box-violet"/>
+            <text x="540" y="122" text-anchor="middle" fill="var(--accent-violet)" font-size="11.5" font-family="var(--font-mono)">降训练成本</text>
+            <line x1="180" y1="134" x2="100" y2="160" stroke="var(--accent-cyan)" stroke-width="1.2" class="arrow"/>
+            <line x1="180" y1="134" x2="260" y2="160" stroke="var(--accent-cyan)" stroke-width="1.2" class="arrow"/>
+            <rect x="40" y="160" width="120" height="30" rx="6" class="node-box"/>
+            <text x="100" y="180" text-anchor="middle" fill="var(--accent-cyan)" font-size="11" font-family="var(--font-mono)">MLA 压缩 KV</text>
+            <rect x="200" y="160" width="120" height="30" rx="6" class="node-box"/>
+            <text x="260" y="180" text-anchor="middle" fill="var(--accent-cyan)" font-size="11" font-family="var(--font-mono)">DSA/CSA 稀疏</text>
+            <line x1="540" y1="134" x2="460" y2="160" stroke="var(--accent-cyan)" stroke-width="1.2" class="arrow"/>
+            <line x1="540" y1="134" x2="620" y2="160" stroke="var(--accent-cyan)" stroke-width="1.2" class="arrow"/>
+            <rect x="400" y="160" width="120" height="30" rx="6" class="node-box"/>
+            <text x="460" y="180" text-anchor="middle" fill="var(--accent-cyan)" font-size="11" font-family="var(--font-mono)">MoE 稀疏激活</text>
+            <rect x="560" y="160" width="120" height="30" rx="6" class="node-box"/>
+            <text x="620" y="180" text-anchor="middle" fill="var(--accent-cyan)" font-size="11" font-family="var(--font-mono)">FP8+DualPipe</text>
+            <line x1="100" y1="190" x2="100" y2="210" stroke="rgba(255,255,255,0.2)"/>
+            <line x1="260" y1="190" x2="260" y2="210" stroke="rgba(255,255,255,0.2)"/>
+            <line x1="460" y1="190" x2="460" y2="210" stroke="rgba(255,255,255,0.2)"/>
+            <line x1="620" y1="190" x2="620" y2="210" stroke="rgba(255,255,255,0.2)"/>
+            <rect x="40" y="210" width="120" height="26" rx="6" class="node-box-muted"/>
+            <text x="100" y="227" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">→ V2 起</text>
+            <rect x="200" y="210" width="120" height="26" rx="6" class="node-box-muted"/>
+            <text x="260" y="227" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">→ V3.2/V4</text>
+            <rect x="400" y="210" width="120" height="26" rx="6" class="node-box-muted"/>
+            <text x="460" y="227" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">→ V2 起</text>
+            <rect x="560" y="210" width="120" height="26" rx="6" class="node-box-muted"/>
+            <text x="620" y="227" text-anchor="middle" fill="var(--text-muted)" font-size="10.5">→ V3</text>
+            <rect x="160" y="270" width="400" height="90" rx="10" fill="rgba(52,211,153,0.05)" stroke="rgba(52,211,153,0.18)"/>
+            <text x="360" y="290" text-anchor="middle" fill="var(--accent-green)" font-size="12" font-family="var(--font-mono)" font-weight="600">统一的底层哲学</text>
+            <text x="360" y="310" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">几乎所有创新都源于同一个洞察：<tspan fill="var(--accent-cyan)" font-weight="600">信息是冗余的，可以压缩</tspan></text>
+            <text x="360" y="328" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">MLA 压缩 KV · DSA 压缩注意力矩阵 · MoE 压缩激活 · FP8 压缩数值</text>
+            <text x="360" y="346" text-anchor="middle" fill="var(--text-secondary)" font-size="11.5">蒸馏压缩能力到小模型 · 蒸馏压缩推理过程</text>
+          </svg>
+        </div>
+        <div class="callout-green">
+          <strong>一句话总结 DeepSeek 的技术哲学：</strong>在"信息可压缩"的统一洞察下，对流水线每一环做极致的效率优化，再把优化后的整个栈完整开源。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>DeepSeek 的"基因"：为什么是它做成了</h3>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <h4 class="rose">典型 AI 公司</h4>
+            <ul>
+              <li>追求商业化营收</li>
+              <li>闭源 + API 收费</li>
+              <li>有限开源权重</li>
+              <li>依赖外部算力</li>
+              <li>研究服务产品</li>
+            </ul>
+          </div>
+          <div class="compare-col">
+            <h4 class="cyan">DeepSeek</h4>
+            <ul>
+              <li>追求 AGI 研究突破</li>
+              <li>MIT 协议 + API 超低价</li>
+              <li>全栈开源（权重+设施+内核）</li>
+              <li>自研训练框架与通信库</li>
+              <li>产品反哺研究</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout-violet">
+          <strong>关键背景：</strong>DeepSeek 背靠量化对冲基金 High-Flyer，创始人梁文锋是数学与工程出身。量化投资的基因就是<strong>"用更少资源获更大回报"</strong>——这直接决定了 DeepSeek 对算法创新和工程效率的极致追求：不堆算力，而是优化每一分算力。这是 MLA/FP8/DualPipe 这些"省到极致"技术能从 DeepSeek 而非算力巨头手里诞生的深层原因。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>四条行业启示</h3>
+        <div class="grid-2">
+          <div class="card" style="margin-bottom:0">
+            <h4>算法-工程协同设计</h4>
+            <p>低成本不靠堆硬件，靠 MLA/DSA/FP8/DualPipe 等算法与工程的协同创新。每层优化都来自对问题的深刻理解。</p>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>开源可以超越闭源</h4>
+            <p>V4-Pro 多维度达甚至超闭源模型。证明开源模式技术上完全可行，且因社区参与可能更快迭代。</p>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>推理可以涌现</h4>
+            <p>R1 纯 RL 路线证明推理能力不一定需要人类示范。机器能从简单"对/错"信号中自行发现复杂推理策略。</p>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <h4>Agent 是新前沿</h4>
+            <p>V4 把 Agent 能力作为核心设计目标，验证了大模型从"对话工具"到"工作助手"的范式转变。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="icon-dot"></span>未来展望</h3>
+        <div class="grid-3">
+          <div class="card" style="margin-bottom:0"><h4>推理深化</h4><p>纯 RL 推理涌现继续深化，从"刻意触发"变为"自然融入"日常交互。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>超长上下文普及</h4><p>1M+ token 成标配，全量输入取代检索片段，改变 RAG/Agent/文档处理架构。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>Agent 自主性</h4><p>从对话到行动。V4 已展示 Agentic Coding，未来扩展到更多真实世界任务。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>多模态融合</h4><p>DeepSeek 已有 VL/OCR 多模态模型，V4 主模型纯文本，多模态能力开发中。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>效率革命</h4><p>保持能力同时持续降推理成本，让大模型真正无处不在。</p></div>
+          <div class="card" style="margin-bottom:0"><h4>在线学习</h4><p>V4 技术报告提到为在线学习范式奠基——模型可能从交互中持续学习更新。</p></div>
+        </div>
+      </div>
+
+      <div class="card" style="text-align:center;border-color:rgba(45,212,255,0.2)">
+        <div class="callout-green" style="border:none;background:none;text-align:center">
+          <p style="font-size:15px;color:var(--accent-cyan);font-weight:600;margin-bottom:8px">「不诱于誉，不恐于诽，率道而行，端然正己。」</p>
+          <p style="font-size:13px;color:var(--text-secondary)">DeepSeek 的长期主义，在追求短期商业回报的 AI 行业中显得尤为珍贵。</p>
+          <p style="font-size:13px;color:var(--text-secondary);margin-top:6px">从 V1 到 V4，两年走完别人五年的路。</p>
+          <p style="font-size:13px;color:var(--text-secondary);margin-top:6px">真正的竞争力不在拥有最多资源，而在最深的理解和最优的工程——这正是"深度求索"的最好诠释。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ================================================================
+   轻量级 3D 引擎（零依赖 · 离线可用）
+   透视投影 + 画家算法深度排序 + 拖拽轨道相机
+   ================================================================ */
+(function () {
+  'use strict';
+  var REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  /* ---------- 引擎 ---------- */
+  function Engine(canvas, sceneDef) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.running = false;
+    this.lastT = 0;
+    this.elapsed = 0;
+    this.cam = { yaw: sceneDef.yaw || 0.7, pitch: sceneDef.pitch || 0.42, dist: sceneDef.dist || 4.5, ty: sceneDef.ty || 0 };
+    this.autoRot = (sceneDef.autoRot !== false) && !REDUCED;
+    this.lastUser = -1e9;
+    this.items = [];
+    this.W = 300; this.H = 150;
+    this.scene = sceneDef;
+    this.hud = sceneDef.hud ? document.getElementById(sceneDef.hud) : null;
+    this.hudLast = '';
+    this.hudT = 0;
+    if (sceneDef.init) sceneDef.init(this);
+    this._bindPointer();
+    var self = this;
+    this._loop = function (t) {
+      if (!self.running) return;
+      var dt = self.lastT ? Math.min((t - self.lastT) / 1000, 0.05) : 0.016;
+      self.lastT = t;
+      self.elapsed += dt;
+      if (self.autoRot && (self.elapsed - self.lastUser > 4)) self.cam.yaw += dt * 0.055;
+      self._frame(dt);
+      requestAnimationFrame(self._loop);
+    };
+  }
+  Engine.prototype.start = function () {
+    if (this.running) return;
+    this.running = true; this.lastT = 0;
+    this._resize();
+    requestAnimationFrame(this._loop);
+  };
+  Engine.prototype.stop = function () { this.running = false; };
+  Engine.prototype._resize = function () {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    if (w < 4 || h < 4) return;
+    if (this.canvas.width !== Math.round(w * dpr) || this.canvas.height !== Math.round(h * dpr)) {
+      this.canvas.width = Math.round(w * dpr);
+      this.canvas.height = Math.round(h * dpr);
+    }
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.W = w; this.H = h;
+  };
+  Engine.prototype._bindPointer = function () {
+    var self = this, dragging = false, lx = 0, ly = 0;
+    var cv = this.canvas;
+    function down(x, y) { dragging = true; lx = x; ly = y; cv.classList.add('dragging'); self.lastUser = self.elapsed; }
+    function move(x, y) {
+      if (!dragging) return;
+      self.cam.yaw -= (x - lx) * 0.0062;
+      self.cam.pitch = Math.max(0.04, Math.min(1.32, self.cam.pitch + (y - ly) * 0.0055));
+      lx = x; ly = y; self.lastUser = self.elapsed;
+    }
+    function up() { dragging = false; cv.classList.remove('dragging'); }
+    cv.addEventListener('mousedown', function (e) { down(e.clientX, e.clientY); e.preventDefault(); });
+    window.addEventListener('mousemove', function (e) { move(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', up);
+    cv.addEventListener('touchstart', function (e) { if (e.touches.length === 1) { down(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); } }, { passive: false });
+    cv.addEventListener('touchmove', function (e) { if (e.touches.length === 1) { move(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); } }, { passive: false });
+    cv.addEventListener('touchend', up);
+  };
+  Engine.prototype.project = function (x, y, z) {
+    var c = this.cam;
+    var cy = Math.cos(c.yaw), sy = Math.sin(c.yaw);
+    var x1 = x * cy - z * sy, z1 = x * sy + z * cy;
+    var yy = y - c.ty;
+    var cp = Math.cos(c.pitch), sp = Math.sin(c.pitch);
+    var y2 = yy * cp - z1 * sp, z2 = yy * sp + z1 * cp;
+    var zc = z2 + c.dist;
+    if (zc < 0.12) zc = 0.12;
+    var f = Math.min(this.W, this.H) * 1.32 / zc;
+    return { x: this.W / 2 + x1 * f, y: this.H / 2 - y2 * f, s: f, d: zc };
+  };
+  /* 绘制原语（带深度） */
+  Engine.prototype.point = function (x, y, z, r, color, glow, alpha) {
+    var p = this.project(x, y, z);
+    this.items.push({ d: p.d, t: 'pt', x: p.x, y: p.y, r: Math.max(0.6, r * p.s), c: color, g: glow || 0, a: alpha == null ? 1 : alpha });
+  };
+  Engine.prototype.line = function (a, b, color, w, alpha) {
+    var p1 = this.project(a[0], a[1], a[2]), p2 = this.project(b[0], b[1], b[2]);
+    this.items.push({ d: (p1.d + p2.d) / 2, t: 'ln', x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, c: color, w: w || 1, a: alpha == null ? 1 : alpha });
+  };
+  Engine.prototype.quad = function (pts, fill, alpha, stroke, sa) {
+    var pp = [], d = 0;
+    for (var i = 0; i < 4; i++) { var p = this.project(pts[i][0], pts[i][1], pts[i][2]); pp.push(p); d += p.d; }
+    this.items.push({ d: d / 4, t: 'qd', p: pp, c: fill, a: alpha == null ? 1 : alpha, s: stroke, sa: sa == null ? 0.06 : sa });
+  };
+  Engine.prototype.text = function (x, y, z, str, color, size, alpha, weight) {
+    var p = this.project(x, y, z);
+    this.items.push({ d: p.d - 0.001, t: 'tx', x: p.x, y: p.y, str: str, c: color, fs: size || 11, a: alpha == null ? 1 : alpha, w: weight || '' });
+  };
+  Engine.prototype._frame = function (dt) {
+    this._resize();
+    var g = this.ctx;
+    g.clearRect(0, 0, this.W, this.H);
+    this.items.length = 0;
+    this.scene.frame(this, dt, this.elapsed);
+    this.items.sort(function (a, b) { return b.d - a.d; });
+    for (var i = 0; i < this.items.length; i++) {
+      var it = this.items[i];
+      g.globalAlpha = it.a;
+      if (it.t === 'qd') {
+        g.beginPath();
+        g.moveTo(it.p[0].x, it.p[0].y);
+        g.lineTo(it.p[1].x, it.p[1].y);
+        g.lineTo(it.p[2].x, it.p[2].y);
+        g.lineTo(it.p[3].x, it.p[3].y);
+        g.closePath();
+        g.fillStyle = it.c; g.fill();
+        if (it.s) { g.globalAlpha = it.sa; g.strokeStyle = it.s; g.lineWidth = 1; g.stroke(); }
+      } else if (it.t === 'ln') {
+        g.beginPath(); g.moveTo(it.x1, it.y1); g.lineTo(it.x2, it.y2);
+        g.strokeStyle = it.c; g.lineWidth = it.w; g.stroke();
+      } else if (it.t === 'pt') {
+        if (it.g > 0) {
+          var gr = g.createRadialGradient(it.x, it.y, 0, it.x, it.y, it.r * (2.2 + it.g));
+          gr.addColorStop(0, it.c); gr.addColorStop(0.45, it.c); gr.addColorStop(1, 'rgba(0,0,0,0)');
+          g.globalAlpha = it.a * 0.35;
+          g.fillStyle = gr;
+          g.beginPath(); g.arc(it.x, it.y, it.r * (2.2 + it.g), 0, 6.2832); g.fill();
+          g.globalAlpha = it.a;
+        }
+        g.beginPath(); g.arc(it.x, it.y, it.r, 0, 6.2832);
+        g.fillStyle = it.c; g.fill();
+      } else if (it.t === 'tx') {
+        g.font = (it.w ? it.w + ' ' : '') + it.fs + 'px "SFMono-Regular",Consolas,Menlo,monospace';
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillStyle = it.c; g.fillText(it.str, it.x, it.y);
+      }
+    }
+    g.globalAlpha = 1;
+    /* HUD 节流更新 */
+    if (this.hud && this.scene.hudText) {
+      this.hudT += dt;
+      if (this.hudT > 0.12) {
+        this.hudT = 0;
+        var h = this.scene.hudText(this);
+        if (h !== this.hudLast) { this.hud.innerHTML = h; this.hudLast = h; }
+      }
+    }
+  };
+
+  /* ---------- 调色工具 ---------- */
+  function rgba(c, a) { return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function mix(c1, c2, t) {
+    return [Math.round(c1[0] + (c2[0] - c1[0]) * t), Math.round(c1[1] + (c2[1] - c1[1]) * t), Math.round(c1[2] + (c2[2] - c1[2]) * t)];
+  }
+  var C_CYAN = [45, 212, 255], C_VIOLET = [139, 124, 255], C_GREEN = [52, 211, 153],
+      C_AMBER = [251, 191, 36], C_ROSE = [251, 113, 133], C_DIM = [70, 84, 110], C_WHITE = [234, 240, 251];
+  var LIGHT = (function () { var l = [0.46, 0.78, 0.42], n = Math.hypot(l[0], l[1], l[2]); return [l[0] / n, l[1] / n, l[2] / n]; })();
+
+  /* 轴对齐小立方体（含朝向光照） */
+  function drawBox(eng, cx, cy, cz, sx, sy, sz, color, alpha, glowTop) {
+    var x0 = cx - sx / 2, x1 = cx + sx / 2, y0 = cy - sy / 2, y1 = cy + sy / 2, z0 = cz - sz / 2, z1 = cz + sz / 2;
+    var v = [[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
+    var faces = [
+      { i: [0,1,2,3], n: [0,0,-1] }, { i: [5,4,7,6], n: [0,0,1] },
+      { i: [4,0,3,7], n: [-1,0,0] }, { i: [1,5,6,2], n: [1,0,0] },
+      { i: [3,2,6,7], n: [0,1,0] }, { i: [4,5,1,0], n: [0,-1,0] }
+    ];
+    for (var f = 0; f < faces.length; f++) {
+      var fc = faces[f];
+      var lum = 0.52 + 0.48 * Math.max(0, fc.n[0]*LIGHT[0] + fc.n[1]*LIGHT[1] + fc.n[2]*LIGHT[2]);
+      if (fc.n[1] > 0.5 && glowTop) lum = Math.min(1.35, lum + glowTop);
+      var col = rgba([Math.min(255, Math.round(color[0]*lum)), Math.min(255, Math.round(color[1]*lum)), Math.min(255, Math.round(color[2]*lum))], 1);
+      eng.quad([v[fc.i[0]], v[fc.i[1]], v[fc.i[2]], v[fc.i[3]]], col, alpha, '#9ab', 0.10);
+    }
+  }
+  function floorGrid(eng, y, half, step, alpha) {
+    for (var i = -half; i <= half + 0.001; i += step) {
+      eng.line([-half, y, i], [half, y, i], rgba(C_CYAN, 0.9), 1, alpha);
+      eng.line([i, y, -half], [i, y, half], rgba(C_CYAN, 0.9), 1, alpha);
+    }
+  }
+  function bez(a, b, c, t) {
+    var mt = 1 - t;
+    return [mt*mt*a[0] + 2*mt*t*b[0] + t*t*c[0], mt*mt*a[1] + 2*mt*t*b[1] + t*t*c[1], mt*mt*a[2] + 2*mt*t*b[2] + t*t*c[2]];
+  }
+  function easeIO(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2; }
+
+  /* ================================================================
+     场景 1 · 损失地形与梯度下降
+     ================================================================ */
+  var lossScene = (function () {
+    var N = 33, EXT = 1.6, mode = 'ok', settled = false, steps = 0;
+    /* 三档学习率：步频（步/秒）决定观看节奏，步与步之间平滑插值 */
+    var MODES = {
+      small: { lr: 0.004, mom: 0.60, sps: 60, label: '0.004（太小）' },
+      ok:    { lr: 0.030, mom: 0.86, sps: 24, label: '0.03（合适）' },
+      big:   { lr: 0.34,  mom: 0,    sps: 5,  label: '0.34（太大）' }
+    };
+    function f(x, z) {
+      var v = 0.30 * (0.42 * x * x + 0.62 * z * z);
+      v -= 0.60 * Math.exp(-(((x + 0.78) * (x + 0.78)) + ((z + 0.52) * (z + 0.52))) / 0.16);
+      v -= 0.34 * Math.exp(-(((x - 0.88) * (x - 0.88)) + ((z - 0.78) * (z - 0.78))) / 0.22);
+      v += 0.20 * Math.exp(-(((x - 0.10) * (x - 0.10)) + ((z + 0.90) * (z + 0.90))) / 0.11);
+      v += 0.035 * Math.sin(3.1 * x) * Math.cos(2.9 * z);
+      return v * 1.15 + 0.58;
+    }
+    function grad(x, z) {
+      var e = 0.0015;
+      return [(f(x + e, z) - f(x - e, z)) / (2 * e), (f(x, z + e) - f(x, z - e)) / (2 * e)];
+    }
+    var prev, next, vel, phase, trail;
+    function reset() {
+      var sx = 1.22, sz = -1.18;
+      prev = [sx, f(sx, sz) + 0.03, sz];
+      next = prev; vel = [0, 0]; phase = 0; trail = [prev]; steps = 0; settled = false;
+    }
+    function stepOnce() {
+      var M = MODES[mode];
+      var g = grad(next[0], next[2]);
+      vel[0] = vel[0] * M.mom - M.lr * g[0];
+      vel[1] = vel[1] * M.mom - M.lr * g[1];
+      var nx = Math.max(-EXT + 0.05, Math.min(EXT - 0.05, next[0] + vel[0]));
+      var nz = Math.max(-EXT + 0.05, Math.min(EXT - 0.05, next[2] + vel[1]));
+      prev = next;
+      next = [nx, f(nx, nz) + 0.03, nz];
+      steps++;
+      trail.push(next);
+      if (trail.length > 500) trail.shift();
+      if (mode !== 'big' && Math.hypot(g[0], g[1]) < 0.045 && Math.hypot(vel[0], vel[1]) < 0.0012) settled = true;
+    }
+    reset();
+    var GMIN = (function () { /* 数值找全局最优 */
+      var bx = 0, bz = 0, bv = 1e9;
+      for (var x = -EXT; x <= EXT; x += 0.02) for (var z = -EXT; z <= EXT; z += 0.02) {
+        var v = f(x, z); if (v < bv) { bv = v; bx = x; bz = z; }
+      }
+      return { x: bx, z: bz, y: bv };
+    })();
+    return {
+      dist: 4.6, yaw: 0.85, pitch: 0.52, ty: 0.42, hud: 'hud-loss',
+      action: function (a) {
+        if (a === 'restart') { reset(); return; }
+        var m = a.replace('lr-', '');
+        if (MODES[m]) { mode = m; reset(); }
+      },
+      hudText: function () {
+        var loss = f(next[0], next[2]);
+        var st;
+        if (settled) {
+          st = mode === 'small'
+            ? '<span style="color:#34d399">✓ 终于收敛……用了 ' + steps + ' 步（约为合适档 9 倍）</span>'
+            : '<span style="color:#34d399">✓ 已收敛于全局最优谷底</span>';
+        } else if (mode === 'big') {
+          st = steps < 16 ? '<span style="color:#fb7185">✗ 步子太大：看似前进…</span>'
+                          : '<span style="color:#fb7185">✗ 一进陡谷就跨过头 → 谷壁间弹跳</span>';
+        } else if (mode === 'small' && steps > 250) {
+          st = '仍在缓慢挪动……（算力成本白白燃烧）';
+        } else st = '下降中…';
+        return '<div class="hud-big">Loss = ' + loss.toFixed(3) + '</div>步数 step = ' + steps +
+               '<br>学习率 = ' + MODES[mode].label + '<br>' + st;
+      },
+      frame: function (eng, dt, t) {
+        /* 曲面 */
+        var i, j;
+        for (i = 0; i < N - 1; i++) {
+          for (j = 0; j < N - 1; j++) {
+            var x0 = -EXT + 2 * EXT * i / (N - 1), x1 = -EXT + 2 * EXT * (i + 1) / (N - 1);
+            var z0 = -EXT + 2 * EXT * j / (N - 1), z1 = -EXT + 2 * EXT * (j + 1) / (N - 1);
+            var y00 = f(x0, z0), y10 = f(x1, z0), y11 = f(x1, z1), y01 = f(x0, z1);
+            var hAvg = (y00 + y10 + y11 + y01) / 4;
+            var tt = Math.max(0, Math.min(1, (hAvg - 0.02) / 1.15));
+            var col = mix(C_CYAN, [52, 44, 120], Math.pow(tt, 0.85));
+            eng.quad([[x0, y00, z0], [x1, y10, z0], [x1, y11, z1], [x0, y01, z1]],
+              rgba(col, 1), 0.30 + 0.30 * (1 - tt), rgba(C_CYAN, 1), 0.055);
+          }
+        }
+        /* 全局最优标记 */
+        var pulse = 0.5 + 0.5 * Math.sin(t * 2.4);
+        eng.point(GMIN.x, GMIN.y + 0.015, GMIN.z, 0.028 + 0.012 * pulse, rgba(C_GREEN, 1), 1.6, 0.9);
+        eng.text(GMIN.x, GMIN.y - 0.16, GMIN.z, '全局最优（Loss 最低）', rgba(C_GREEN, 0.85), 12);
+        /* 步进推进（离散步 + 帧间平滑插值） */
+        if (!settled) {
+          phase += dt * MODES[mode].sps;
+          var guard = 0;
+          while (phase >= 1 && guard++ < 8 && !settled) { stepOnce(); phase -= 1; }
+          if (phase > 1) phase = 1;
+        }
+        /* 轨迹折线：大学习率下的"之字弹跳"清晰可见 */
+        var tcol = mode === 'big' ? C_ROSE : C_AMBER;
+        for (i = 1; i < trail.length; i++) {
+          var a2 = i / trail.length;
+          eng.line(trail[i - 1], trail[i], rgba(tcol, 1), mode === 'big' ? 1.7 : 2, 0.08 + 0.72 * a2);
+        }
+        /* 小球：prev→next 间缓动插值 */
+        var e2 = settled ? 1 : easeIO(Math.min(1, phase));
+        var bx = prev[0] + (next[0] - prev[0]) * e2;
+        var bz = prev[2] + (next[2] - prev[2]) * e2;
+        var by = f(bx, bz) + 0.05;
+        eng.point(bx, by, bz, 0.058, rgba(C_WHITE, 1), 2.2, 1);
+        eng.text(bx, by + 0.18, bz, '当前参数 θ', rgba(C_WHITE, 0.8), 11.5);
+      }
+    };
+  })();
+
+  /* ================================================================
+     场景 2 · MLA 低秩压缩
+     ================================================================ */
+  var mlaScene = (function () {
+    /* 潜在平面：过原点，法向量 n */
+    var nv = (function () { var n = [0.42, 1, 0.30], L = Math.hypot(n[0], n[1], n[2]); return [n[0] / L, n[1] / L, n[2] / L]; })();
+    var U = (function () { var u = [1, -(nv[0] * 1 + nv[2] * 0) / nv[1], 0]; var L = Math.hypot(u[0], u[1], u[2]); return [u[0] / L, u[1] / L, u[2] / L]; })();
+    var V = [nv[1] * U[2] - nv[2] * U[1], nv[2] * U[0] - nv[0] * U[2], nv[0] * U[1] - nv[1] * U[0]];
+    function pt(a, b, e) {
+      return [a * U[0] + b * V[0] + e * nv[0], a * U[1] + b * V[1] + e * nv[1], a * U[2] + b * V[2] + e * nv[2]];
+    }
+    var pts = [];
+    (function () {
+      var rnd = (function () { var s = 42; return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; })();
+      for (var i = 0; i < 88; i++) {
+        var a = (rnd() + rnd() - 1) * 1.30;
+        var b = (rnd() + rnd() - 1) * 0.92;
+        var e = (rnd() + rnd() + rnd() - 1.5) * 0.34;
+        pts.push({ a: a, b: b, e: e, o: pt(a, b, e), p: pt(a, b, 0), r: pt(a, b, e * 0.12) });
+      }
+    })();
+    var stage = 0, target = 0, auto = true, phase = 0, morph = 0; /* morph: 0原始 1平面 2恢复 */
+    var SEQ = [[0, 2.2], [1, 1.8], [2, 2.6]];
+    return {
+      dist: 4.3, yaw: 0.55, pitch: 0.38, ty: 0, hud: 'hud-mla',
+      action: function (a) {
+        if (a === 'auto') { auto = true; return; }
+        auto = false;
+        if (a === 'stage0') target = 0;
+        if (a === 'stage1') target = 1;
+        if (a === 'stage2') target = 2;
+      },
+      hudText: function () {
+        var names = ['① 原始 K/V 向量（每 token 32768 维）', '② 压缩：投影到低维潜在空间（512 维 c）', '③ 恢复：W_up 重建 K/V，误差极小'];
+        var s = Math.round(morph);
+        var cache = ['缓存需求：32768 维 / token', '缓存需求：512 维 / token（-98%*）', '重建质量：≈ 原始（黄线 = 误差）'];
+        return '<div class="hud-big">' + names[s] + '</div>' + cache[s] + (s === 1 ? '<br><span style="opacity:0.65">*单层示意；整模型净压缩 93.3%</span>' : '');
+      },
+      frame: function (eng, dt, t) {
+        if (auto) {
+          phase += dt;
+          var idx = 0, acc2 = 0;
+          for (var k = 0; k < SEQ.length; k++) { acc2 += SEQ[k][1]; if (phase < acc2) { idx = k; break; } idx = k; }
+          if (phase >= acc2) phase = 0;
+          target = SEQ[idx][0];
+        }
+        morph += (target - morph) * Math.min(1, dt * 3.2);
+        var m = morph;
+        /* 潜在平面（stage>=0.5 淡入） */
+        var planeA = Math.max(0, Math.min(1, (m - 0.25) * 1.6)) * (m > 1.5 ? (1 - (m - 1.5) * 0.25) : 1);
+        if (planeA > 0.02) {
+          var corners = [pt(-1.55, -1.10, 0), pt(1.55, -1.10, 0), pt(1.55, 1.10, 0), pt(-1.55, 1.10, 0)];
+          eng.quad(corners, rgba(C_CYAN, 1), 0.075 * planeA, rgba(C_CYAN, 1), 0.25 * planeA);
+          for (var gl = -1.2; gl <= 1.21; gl += 0.4) {
+            eng.line(pt(-1.55, gl, 0), pt(1.55, gl, 0), rgba(C_CYAN, 1), 1, 0.13 * planeA);
+            eng.line(pt(gl * 1.29, -1.10, 0), pt(gl * 1.29, 1.10, 0), rgba(C_CYAN, 1), 1, 0.13 * planeA);
+          }
+          eng.text(pt(0, -1.28, 0)[0], pt(0, -1.28, 0)[1], pt(0, -1.28, 0)[2], '潜在空间 c（512 维平面）', rgba(C_CYAN, 0.85 * planeA), 11, planeA);
+        }
+        /* 点云 */
+        for (var i = 0; i < pts.length; i++) {
+          var P = pts[i], cur;
+          if (m <= 1) {
+            var t1 = easeIO(Math.max(0, Math.min(1, m)));
+            cur = [P.o[0] + (P.p[0] - P.o[0]) * t1, P.o[1] + (P.p[1] - P.o[1]) * t1, P.o[2] + (P.p[2] - P.o[2]) * t1];
+          } else {
+            var t2 = easeIO(Math.max(0, Math.min(1, m - 1)));
+            cur = [P.p[0] + (P.r[0] - P.p[0]) * t2, P.p[1] + (P.r[1] - P.p[1]) * t2, P.p[2] + (P.r[2] - P.p[2]) * t2];
+          }
+          var colT = (P.a + 1.3) / 2.6;
+          var col = mix(C_CYAN, C_VIOLET, colT);
+          /* 压缩期间的投影线 */
+          if (m > 0.12 && m < 0.98) {
+            eng.line(P.o, cur, rgba(C_DIM, 1), 1, 0.28);
+          }
+          /* 恢复阶段：原位鬼影 + 误差线 */
+          if (m > 1.25) {
+            var ga = Math.min(1, (m - 1.25) * 1.8);
+            eng.point(P.o[0], P.o[1], P.o[2], 0.020, rgba(C_DIM, 1), 0, 0.38 * ga);
+            eng.line(P.o, cur, rgba(C_AMBER, 1), 1.4, 0.5 * ga);
+          }
+          eng.point(cur[0], cur[1], cur[2], 0.030, rgba(col, 1), 0.8, 0.95);
+        }
+        /* 阶段标签 */
+        if (m > 1.6) {
+          eng.text(0, 1.15, 0, '黄色短线 = 重建误差（小到不伤效果）', rgba(C_AMBER, 0.8), 10.5, Math.min(1, (m - 1.6) * 2));
+        }
+        if (m < 0.3) {
+          eng.text(0, 1.25, 0, '看似杂乱的高维向量……其实贴着一张"薄面"分布', rgba(C_WHITE, 0.6), 10.5, 1 - m * 3);
+        }
+      }
+    };
+  })();
+
+  /* ================================================================
+     场景 3 · MoE 路由
+     ================================================================ */
+  var moeScene = (function () {
+    var XS = [-0.93, -0.31, 0.31, 0.93];
+    var experts = [];
+    for (var xi = 0; xi < 4; xi++) for (var zi = 0; zi < 4; zi++) {
+      experts.push({ x: XS[xi], z: XS[zi], glow: 0, hits: 0 });
+    }
+    var shared = { x: 1.85, z: 0, glow: 0 };
+    var ROUTER = [0, 1.95, 0];
+    var SINK = [0, -1.05, 0];
+    var tokens = [], spawnT = 0, done = 0, speed = 1, playing = true;
+    function pick2() {
+      var a = Math.floor(Math.random() * 16), b;
+      do { b = Math.floor(Math.random() * 16); } while (b === a);
+      return [a, b];
+    }
+    return {
+      dist: 5.3, yaw: 0.62, pitch: 0.46, ty: 0.35, hud: 'hud-moe',
+      action: function (a) {
+        if (a === 'play') { playing = true; speed = 1; }
+        if (a === 'pause') playing = false;
+        if (a === 'slow') { playing = true; speed = 0.38; }
+      },
+      hudText: function () {
+        return '<div class="hud-big">每 token 激活：2/16 路由 + 1 共享</div>真实 V3 配置：8/256 路由 + 1 共享<br>已处理 token：' + done;
+      },
+      frame: function (eng, dt0, t) {
+        var dt = playing ? dt0 * speed : 0;
+        /* 地面 */
+        floorGrid(eng, -0.02, 1.55, 0.31, 0.05);
+        /* 专家格子 */
+        for (var i = 0; i < 16; i++) {
+          var E = experts[i];
+          E.glow = Math.max(0, E.glow - dt * 1.6);
+          var col = E.glow > 0.02 ? mix(C_VIOLET, C_CYAN, Math.min(1, E.glow)) : [58, 66, 96];
+          drawBox(eng, E.x, 0.26 + E.glow * 0.10, E.z, 0.42, 0.52 + E.glow * 0.2, 0.42, col, 0.5 + 0.5 * Math.min(1, E.glow + 0.25), E.glow);
+        }
+        /* 共享专家 */
+        shared.glow = Math.max(0, shared.glow - dt * 1.8);
+        drawBox(eng, shared.x, 0.33, shared.z, 0.5, 0.66 + shared.glow * 0.15, 0.5, mix([30, 90, 70], C_GREEN, 0.4 + 0.6 * Math.min(1, shared.glow)), 0.85, shared.glow);
+        eng.text(shared.x, 0.95, shared.z, '共享专家（每 token 必经）', rgba(C_GREEN, 0.85), 10.5);
+        /* Router */
+        var rp = 0.5 + 0.5 * Math.sin(t * 3);
+        eng.point(ROUTER[0], ROUTER[1], ROUTER[2], 0.085, rgba(C_AMBER, 1), 1.6 + rp * 0.6, 1);
+        eng.text(ROUTER[0], ROUTER[1] + 0.28, ROUTER[2], 'Router 分诊台', rgba(C_AMBER, 0.9), 11.5, 1, '600');
+        eng.text(0, -0.28, 1.35, '16 路由专家（示意 · 真实 256 个）', rgba(C_WHITE, 0.5), 10);
+        /* 汇合点 */
+        eng.point(SINK[0], SINK[1], SINK[2], 0.045, rgba(C_CYAN, 1), 1.2, 0.8);
+        eng.text(SINK[0], SINK[1] - 0.22, SINK[2], '加权求和 → 输出', rgba(C_CYAN, 0.75), 10.5);
+        /* token 生成 */
+        spawnT -= dt;
+        if (spawnT <= 0 && tokens.length < 5) {
+          spawnT = 1.05;
+          var pk = pick2();
+          tokens.push({ st: 'fall', pr: 0, e: pk, sx: (Math.random() - 0.5) * 1.4, sz: (Math.random() - 0.5) * 1.4 });
+        }
+        /* token 状态机 */
+        for (var k = tokens.length - 1; k >= 0; k--) {
+          var T = tokens[k];
+          if (T.st === 'fall') {
+            T.pr += dt / 0.85;
+            var p0 = [T.sx, 3.15, T.sz];
+            var cur = bez(p0, [T.sx * 0.4, 2.6, T.sz * 0.4], ROUTER, easeIO(Math.min(1, T.pr)));
+            eng.point(cur[0], cur[1], cur[2], 0.052, rgba(C_WHITE, 1), 1.4, 1);
+            if (T.pr >= 1) { T.st = 'route'; T.pr = 0; }
+          } else if (T.st === 'route') {
+            T.pr += dt / 0.42;
+            /* 打分扫描线 */
+            for (var s2 = 0; s2 < 16; s2++) {
+              var E2 = experts[s2];
+              var sel = (s2 === T.e[0] || s2 === T.e[1]);
+              eng.line(ROUTER, [E2.x, 0.55, E2.z], rgba(sel ? C_AMBER : C_DIM, 1), sel ? 1.6 : 1, (sel ? 0.5 : 0.10) * Math.sin(Math.min(1, T.pr) * Math.PI));
+            }
+            eng.point(ROUTER[0], ROUTER[1], ROUTER[2], 0.06, rgba(C_WHITE, 1), 1.5, 1);
+            if (T.pr >= 1) { T.st = 'go'; T.pr = 0; }
+          } else if (T.st === 'go') {
+            T.pr += dt / 0.62;
+            var pr = easeIO(Math.min(1, T.pr));
+            for (var m2 = 0; m2 < 2; m2++) {
+              var E3 = experts[T.e[m2]];
+              var dst = [E3.x, 0.58, E3.z];
+              var c2 = bez(ROUTER, [(ROUTER[0] + dst[0]) / 2, 1.7, (ROUTER[2] + dst[2]) / 2], dst, pr);
+              eng.point(c2[0], c2[1], c2[2], 0.045, rgba(C_CYAN, 1), 1.2, 1);
+            }
+            var dsh = [shared.x, 0.72, shared.z];
+            var c3 = bez(ROUTER, [(ROUTER[0] + dsh[0]) / 2, 1.8, dsh[2]], dsh, pr);
+            eng.point(c3[0], c3[1], c3[2], 0.045, rgba(C_GREEN, 1), 1.2, 1);
+            if (T.pr >= 1) {
+              experts[T.e[0]].glow = 1; experts[T.e[1]].glow = 1; shared.glow = 1;
+              T.st = 'back'; T.pr = 0;
+            }
+          } else if (T.st === 'back') {
+            T.pr += dt / 0.6;
+            var pb = easeIO(Math.min(1, T.pr));
+            for (var m3 = 0; m3 < 2; m3++) {
+              var E4 = experts[T.e[m3]];
+              var src = [E4.x, 0.1, E4.z];
+              var c4 = bez(src, [E4.x * 0.4, -0.6, E4.z * 0.4], SINK, pb);
+              eng.point(c4[0], c4[1], c4[2], 0.038, rgba(C_CYAN, 1), 1, 1 - pb * 0.3);
+            }
+            var c5 = bez([shared.x, 0.05, shared.z], [shared.x * 0.4, -0.62, 0], SINK, pb);
+            eng.point(c5[0], c5[1], c5[2], 0.038, rgba(C_GREEN, 1), 1, 1 - pb * 0.3);
+            if (T.pr >= 1) { done++; tokens.splice(k, 1); }
+          }
+        }
+      }
+    };
+  })();
+
+  /* ================================================================
+     场景 4 · 并行切分立方体
+     ================================================================ */
+  var parScene = (function () {
+    var mode = 'whole';
+    var sep = { x: 0, y: 0, z: 0 }, tgt = { x: 0, y: 0, z: 0 };
+    var CELL = 0.34, GAP = 0.075, NN = 4;
+    var SPAN = NN * CELL + (NN - 1) * GAP;
+    var MODES = {
+      whole: { x: 0, y: 0, z: 0, name: '整体训练任务', desc: '一个 671B 模型 × 海量数据的总工作量' },
+      dp:    { x: 0.42, y: 0, z: 0, name: '数据并行 DP', desc: '4 份数据分片 × 各持完整模型副本' },
+      pp:    { x: 0, y: 0.42, z: 0, name: '流水线并行 PP', desc: '按层切段：每组 GPU 负责一段层' },
+      ep:    { x: 0, y: 0, z: 0.42, name: '专家并行 EP', desc: '256 个专家分组放到不同 GPU' },
+      all:   { x: 0.22, y: 0.22, z: 0.22, name: '组合并行 DP×PP×EP', desc: '64 小块 = 64 组 GPU 职责（示意 2048 卡）' }
+    };
+    function colorFor(ix, iy, iz) {
+      if (mode === 'dp') return mix(C_GREEN, [20, 60, 45], ix / 3 * 0.55);
+      if (mode === 'pp') return mix(C_VIOLET, [40, 34, 90], iy / 3 * 0.55);
+      if (mode === 'ep') return mix(C_AMBER, [95, 70, 15], iz / 3 * 0.55);
+      if (mode === 'all') {
+        var c1 = mix(C_GREEN, C_VIOLET, iy / 3);
+        return mix(c1, C_AMBER, iz / 3 * 0.7);
+      }
+      return mix(C_CYAN, [30, 90, 120], ((ix + iy + iz) % 2) * 0.25);
+    }
+    return {
+      dist: 5.4, yaw: 0.78, pitch: 0.5, ty: 0.1, hud: 'hud-par',
+      action: function (a) { if (MODES[a]) { mode = a; tgt = MODES[a]; } },
+      hudText: function () {
+        var M = MODES[mode];
+        var extra = mode === 'all' ? '<br>V3 实际：DP×PP(16)×EP 组合 ≈ 2048 张 H800' : (mode === 'whole' ? '<br>切法就是并行策略' : '');
+        return '<div class="hud-big">' + M.name + '</div>' + M.desc + extra;
+      },
+      frame: function (eng, dt, t) {
+        sep.x += (tgt.x - sep.x) * Math.min(1, dt * 4);
+        sep.y += (tgt.y - sep.y) * Math.min(1, dt * 4);
+        sep.z += (tgt.z - sep.z) * Math.min(1, dt * 4);
+        var boxes = [];
+        for (var ix = 0; ix < NN; ix++) for (var iy = 0; iy < NN; iy++) for (var iz = 0; iz < NN; iz++) {
+          var bx = (ix - (NN - 1) / 2) * (CELL + GAP) + (ix - (NN - 1) / 2) * sep.x;
+          var by = (iy - (NN - 1) / 2) * (CELL + GAP) + (iy - (NN - 1) / 2) * sep.y;
+          var bz = (iz - (NN - 1) / 2) * (CELL + GAP) + (iz - (NN - 1) / 2) * sep.z;
+          drawBox(eng, bx, by, bz, CELL, CELL, CELL, colorFor(ix, iy, iz), 0.92);
+        }
+        /* 坐标轴 */
+        var axLen = SPAN / 2 + 0.55 + Math.max(sep.x, sep.y, sep.z) * 1.6;
+        var o = -SPAN / 2 - 0.35;
+        eng.line([o, o, o], [axLen, o, o], rgba(C_GREEN, 1), 1.6, 0.75);
+        eng.text(axLen + 0.28, o, o, '数据维 → DP', rgba(C_GREEN, 0.95), 11, 1, '600');
+        eng.line([o, o, o], [o, axLen, o], rgba(C_VIOLET, 1), 1.6, 0.75);
+        eng.text(o, axLen + 0.22, o, '层维 → PP', rgba(C_VIOLET, 0.95), 11, 1, '600');
+        eng.line([o, o, o], [o, o, axLen], rgba(C_AMBER, 1), 1.6, 0.75);
+        eng.text(o, o, axLen + 0.3, '专家维 → EP', rgba(C_AMBER, 0.95), 11, 1, '600');
+        if (mode === 'all') {
+          var blink = 0.55 + 0.45 * Math.sin(t * 2.2);
+          eng.text(0, -SPAN / 2 - 0.75 - sep.y * 1.6, 0, '每个小块 = 一组 GPU 的职责', rgba(C_WHITE, 0.6 * blink + 0.25), 11);
+        }
+        if (mode === 'whole') {
+          eng.text(0, SPAN / 2 + 0.5, 0, 'TP（张量维）是第四刀 —— V3 刻意不切，省下海量通信', rgba(C_WHITE, 0.45), 10);
+        }
+      }
+    };
+  })();
+
+  /* ================================================================
+     场景 5 · 词向量空间：语义即几何
+     ================================================================ */
+  var embedScene = (function () {
+    var CL = [
+      { c: C_GREEN, label: '动物', center: [-1.05, 0.55, -0.59],
+        words: [['猫', -1.05, 0.55, -0.60], ['狗', -0.85, 0.42, -0.35], ['虎', -1.25, 0.70, -0.42], ['鸟', -0.95, 0.80, -0.75], ['鱼', -1.15, 0.30, -0.85]] },
+      { c: C_CYAN, label: '代码', center: [1.03, 0.63, -0.54],
+        words: [['if', 0.95, 0.75, -0.55], ['for', 1.15, 0.60, -0.30], ['def', 0.85, 0.50, -0.75], ['函数', 1.20, 0.85, -0.65], ['循环', 1.00, 0.45, -0.45]] },
+      { c: C_ROSE, label: '情感', center: [-0.08, -0.73, 0.85],
+        words: [['喜', -0.15, -0.65, 0.90], ['怒', 0.10, -0.80, 0.70], ['哀', -0.30, -0.90, 0.75], ['乐', 0.05, -0.55, 1.05]] }
+    ];
+    var M = [-0.35, -0.30, 0.15], W = [0.45, -0.18, 0.28], K = [-0.15, 0.55, 0.75];
+    var Q = [K[0] + W[0] - M[0] + 0.03, K[1] + W[1] - M[1] + 0.02, K[2] + W[2] - M[2] - 0.02];
+    var AN = [['男', M], ['女', W], ['王', K], ['后', Q]];
+    function tri(p, c) { return Math.max(0, 1 - Math.abs(p - c) / 0.55); }
+    var p = 0, target = 0, auto = true, timer = 0;
+    return {
+      dist: 4.7, yaw: 0.62, pitch: 0.36, ty: 0, hud: 'hud-embed',
+      action: function (a) {
+        if (a === 'auto') { auto = true; return; }
+        auto = false;
+        if (a === 'p0') target = 0;
+        if (a === 'p1') target = 1;
+        if (a === 'p2') target = 2;
+      },
+      hudText: function () {
+        var s = Math.round(p);
+        var names = [
+          '① 词即坐标：每个词 = 空间中一个点',
+          '② 语义聚类：意思相近 → 距离相近',
+          '③ 方向即关系：王 − 男 + 女 ≈ 后'
+        ];
+        var subs = [
+          '真实模型：V3 每个词是 7168 维坐标（这里画 3 维）',
+          '训练自动形成结构：动物一团 · 代码一团 · 情感一团',
+          '"性别"是一个方向向量，平移它就完成类比推理'
+        ];
+        return '<div class="hud-big">' + names[s] + '</div>' + subs[s];
+      },
+      frame: function (eng, dt, t) {
+        if (auto) {
+          timer += dt;
+          if (timer > 4.5) { timer = 0; target = (target + 1) % 3; }
+        }
+        p += (target - p) * Math.min(1, dt * 2.6);
+        var cw = tri(p, 1);                                   /* 聚类阶段强度 */
+        var aw = Math.max(0, Math.min(1, (p - 1.55) * 2.2));  /* 类比阶段强度 */
+        /* 空间边框（辅助三维感） */
+        var E = 1.45, i;
+        var cs = [[-E,-E,-E],[E,-E,-E],[E,-E,E],[-E,-E,E],[-E,E,-E],[E,E,-E],[E,E,E],[-E,E,E]];
+        var eg = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+        for (i = 0; i < eg.length; i++) eng.line(cs[eg[i][0]], cs[eg[i][1]], rgba(C_CYAN, 1), 1, 0.06);
+        /* 聚类 */
+        for (var c = 0; c < CL.length; c++) {
+          var G = CL[c];
+          if (cw > 0.03) {
+            eng.point(G.center[0], G.center[1], G.center[2], 0.30, rgba(G.c, 1), 2.5, 0.10 * cw);
+            eng.text(G.center[0], G.center[1] + 0.42, G.center[2], G.label + '区', rgba(G.c, 0.9), 13, cw, '600');
+          }
+          for (i = 0; i < G.words.length; i++) {
+            var Wd = G.words[i];
+            var dim = aw > 0 ? 1 - aw * 0.72 : 1;
+            eng.point(Wd[1], Wd[2] === undefined ? 0 : Wd[2], Wd[3], 0.042, rgba(G.c, 1), 0.7 + cw * 1.2, (0.55 + 0.4 * cw) * dim);
+            eng.text(Wd[1], Wd[2] + 0.13, Wd[3], Wd[0], rgba(C_WHITE, 1), 12, (0.55 + 0.35 * cw) * dim);
+          }
+        }
+        /* 类比四词（始终可见，类比阶段高亮） */
+        for (i = 0; i < AN.length; i++) {
+          var A = AN[i], hot = 0.5 + 0.5 * aw;
+          var col = (i >= 2) ? C_AMBER : C_WHITE;
+          eng.point(A[1][0], A[1][1], A[1][2], 0.045, rgba(col, 1), 0.7 + aw * 1.4, hot);
+          eng.text(A[1][0], A[1][1] + 0.14, A[1][2], A[0], rgba(col, 1), 12.5, 0.6 + 0.4 * aw, '600');
+        }
+        if (aw > 0.03) {
+          /* 性别方向：男→女 与 王→后 平行 */
+          eng.line(M, W, rgba(C_AMBER, 1), 2.2, 0.9 * aw);
+          eng.point(W[0], W[1], W[2], 0.028, rgba(C_AMBER, 1), 0.5, aw);
+          eng.line(K, Q, rgba(C_AMBER, 1), 2.2, 0.9 * aw);
+          eng.point(Q[0], Q[1], Q[2], 0.028, rgba(C_AMBER, 1), 0.5, aw);
+          eng.line(M, K, rgba(C_VIOLET, 1), 1.2, 0.35 * aw);
+          eng.line(W, Q, rgba(C_VIOLET, 1), 1.2, 0.35 * aw);
+          var mid = [(M[0] + W[0]) / 2, (M[1] + W[1]) / 2 - 0.16, (M[2] + W[2]) / 2];
+          eng.text(mid[0], mid[1], mid[2], '"性别"方向 →', rgba(C_AMBER, 0.9), 11.5, aw);
+          eng.text(Q[0] + 0.05, Q[1] + 0.34, Q[2], '两条箭头几乎平行！', rgba(C_AMBER, 0.85), 12, aw);
+        }
+      }
+    };
+  })();
+
+  /* ================================================================
+     场景 6 · 注意力聚光：按相关性分配光束
+     ================================================================ */
+  var attnScene = (function () {
+    var WORDS = ['猫', '追', '老鼠', '因为', '它', '饿', '了'];
+    var QSET = {
+      q4: { i: 4, w: [0.62, 0.04, 0.18, 0.03, 0.04, 0.06, 0.03], note: '"它"的光束 62% 打在"猫"上 → 指代被解决' },
+      q5: { i: 5, w: [0.38, 0.06, 0.10, 0.04, 0.34, 0.05, 0.03], note: '"饿"同时照亮"猫"与"它" → 确认谁饿了' },
+      q1: { i: 1, w: [0.45, 0.06, 0.38, 0.03, 0.03, 0.03, 0.02], note: '"追"关注动作双方："猫"与"老鼠"' }
+    };
+    var seq = ['q4', 'q5', 'q1'], cur = 'q4', auto = true, timer = 0, si = 0;
+    var w = QSET.q4.w.slice(), lift = [0, 0, 0, 0, 1, 0, 0];
+    function X(i) { return -1.5 + 0.5 * i; }
+    return {
+      dist: 4.9, yaw: 0.30, pitch: 0.40, ty: 0.45, hud: 'hud-attn',
+      action: function (a) {
+        if (a === 'auto') { auto = true; return; }
+        auto = false;
+        if (QSET[a]) cur = a;
+      },
+      hudText: function () {
+        var S = QSET[cur];
+        return '<div class="hud-big">Query = "' + WORDS[S.i] + '"</div>' + S.note + '<br>光束粗细 = softmax(Q·Kᵀ/√d) 权重';
+      },
+      frame: function (eng, dt, t) {
+        if (auto) {
+          timer += dt;
+          if (timer > 4.2) { timer = 0; si = (si + 1) % 3; cur = seq[si]; }
+        }
+        var S = QSET[cur], i;
+        for (i = 0; i < 7; i++) {
+          w[i] += (S.w[i] - w[i]) * Math.min(1, dt * 3);
+          lift[i] += ((i === S.i ? 1 : 0) - lift[i]) * Math.min(1, dt * 3);
+        }
+        floorGrid(eng, -0.02, 1.9, 0.38, 0.045);
+        /* 词块 */
+        var top1 = -1, best = 0;
+        for (i = 0; i < 7; i++) if (i !== S.i && w[i] > best) { best = w[i]; top1 = i; }
+        for (i = 0; i < 7; i++) {
+          var glow = Math.min(1, w[i] * 1.7) * (1 - lift[i]);
+          var col = mix([58, 66, 96], i === top1 ? C_AMBER : C_CYAN, Math.min(1, w[i] * 1.9));
+          if (lift[i] > 0.02) col = mix(col, C_WHITE, lift[i] * 0.7);
+          drawBox(eng, X(i), 0.05 + lift[i] * 0.02, 0, 0.38, 0.10 + glow * 0.05, 0.38, col, 0.9, glow);
+          /* 词标签（Query 升起时跟随） */
+          var ly = 0.26 + lift[i] * 0.0;
+          eng.text(X(i), ly, 0.28, WORDS[i], rgba(lift[i] > 0.5 ? C_WHITE : [176, 190, 220], 1), 13, 0.75 + 0.25 * lift[i], lift[i] > 0.5 ? '600' : '');
+          /* 权重百分比 */
+          if (i !== S.i && w[i] > 0.08) {
+            eng.text(X(i), 0.52, 0, Math.round(w[i] * 100) + '%', rgba(i === top1 ? C_AMBER : C_CYAN, 0.95), 12.5, 1, '600');
+          }
+        }
+        /* Query 升起 */
+        var qx = X(S.i), qy = 0.15 + 1.05 * lift[S.i];
+        eng.point(qx, qy, 0, 0.065, rgba(C_WHITE, 1), 2.0, 1);
+        eng.text(qx, qy + 0.24, 0, 'Query "' + WORDS[S.i] + '"', rgba(C_WHITE, 0.95), 13, 1, '600');
+        /* 光束 */
+        for (i = 0; i < 7; i++) {
+          if (i === S.i) continue;
+          eng.line([qx, qy, 0], [X(i), 0.13, 0], rgba(i === top1 ? C_AMBER : C_CYAN, 1), 0.8 + 7.5 * w[i], 0.10 + 0.85 * w[i]);
+        }
+        eng.text(0, 1.62, 0, '每个词都会轮流当一次 Query · 128 个头同时各自打光', rgba(C_WHITE, 0.45), 11.5);
+      }
+    };
+  })();
+
+  /* ================================================================
+     管理器：注册 / 懒加载 / 章节激活
+     ================================================================ */
+  var DEFS = { loss: lossScene, mla: mlaScene, moe: moeScene, par: parScene, embed: embedScene, attn: attnScene };
+  var INST = {};
+  window.activateVizIn = function (sectionEl) {
+    for (var k in INST) INST[k].stop();
+    if (!sectionEl) return;
+    var list = sectionEl.querySelectorAll('canvas[data-viz]');
+    for (var i = 0; i < list.length; i++) {
+      var cv = list[i], name = cv.getAttribute('data-viz');
+      if (!DEFS[name]) continue;
+      if (!INST[name]) INST[name] = new Engine(cv, DEFS[name]);
+      INST[name].start();
+    }
+  };
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { for (var k in INST) INST[k].stop(); }
+    else { window.activateVizIn(document.querySelector('.section.active')); }
+  });
+  /* 控件按钮 */
+  var MOMENTARY = { 'loss:restart': 1 };
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('[data-viz-act]') : null;
+    if (!btn) return;
+    var act = btn.getAttribute('data-viz-act');
+    var parts = act.split(':');
+    var inst = INST[parts[0]];
+    if (inst && inst.scene.action) inst.scene.action(parts[1]);
+    if (!MOMENTARY[act]) {
+      var group = btn.parentElement.querySelectorAll('[data-viz-act]');
+      for (var i = 0; i < group.length; i++) {
+        var g = group[i];
+        if (MOMENTARY[g.getAttribute('data-viz-act')]) continue;
+        g.classList.toggle('active', g === btn);
+      }
+    }
+  });
+})();
+
+/* ---------- 章节导航 ---------- */
+window.gotoSection = function (id) {
+  var item = document.querySelector('.nav-item[data-target="' + id + '"]');
+  if (item) item.click();
+};
+document.querySelectorAll('.nav-item').forEach(function (item) {
+  item.addEventListener('click', function () {
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+    document.querySelectorAll('.section').forEach(function (s) { s.classList.remove('active'); });
+    item.classList.add('active');
+    var sec = document.getElementById(item.dataset.target);
+    sec.classList.add('active');
+    var main = document.querySelector('main');
+    if (main) main.scrollTop = 0;
+    if (window.activateVizIn) window.activateVizIn(sec);
+  });
+});
+if (window.activateVizIn) window.activateVizIn(document.querySelector('.section.active'));
+</script>
+
+</body>
+</html>
