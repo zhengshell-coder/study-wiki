@@ -1,0 +1,797 @@
+<!--
+  原则2 · 应对变化中的世界秩序 —— 多轨纵向时间轴
+  Ray Dalio《Principles for Dealing with the Changing World Order》核心理念可视化
+  基于 timeline 框架骨架：引擎(时间定位/纪元分段/对数/_C 数据层/筛选/分级详情)保持不变，仅注入本书领域数据。
+  四个模块：帝国兴衰大周期 / 八大实力决定因素 / 长期债务与货币周期 / 内部秩序六阶段
+-->
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>原则2 · 世界秩序大周期 · 时间轴</title>
+<style>
+:root{
+  --bg-deep:#060a14; --bg-mid:#0b1220;
+  --panel:rgba(255,255,255,.045); --border:rgba(255,255,255,.08);
+  --accent:#2dd4ff; --accent2:#8b7cff;
+  --text:#eaf0fb; --text2:#93a1bd; --muted:#5d6a87;
+  --lvl3:229,122,138; --lvl2:224,164,90; --lvl1:111,168,214;   /* 重要程度配色：与轨道色解耦 */
+}
+*{box-sizing:border-box}
+body{margin:0;height:100vh;overflow:hidden;color:var(--text);
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:radial-gradient(1200px 600px at 70% -10%,rgba(45,212,255,.08),transparent),
+             radial-gradient(900px 500px at -10% 110%,rgba(139,124,255,.07),transparent),var(--bg-deep);}
+.app{display:flex;height:100vh}
+/* ===== 左栏 ===== */
+.sidebar{width:248px;flex:none;padding:18px 14px;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);
+  border-right:1px solid var(--border);backdrop-filter:blur(22px)}
+.eyebrow{font:600 10px/1.4 ui-monospace,monospace;letter-spacing:.18em;color:var(--accent)}
+.s-title{font-size:17px;font-weight:700;margin:2px 0 14px;line-height:1.35}
+.nav-label{font:600 10px/1 ui-monospace,monospace;letter-spacing:.14em;color:var(--muted);margin:14px 4px 8px}
+.nav-super,.nav-group{border-radius:12px;padding:8px;margin-bottom:10px}
+.nav-super{background:rgba(45,212,255,.08);border:1px solid rgba(45,212,255,.22)}
+.nav-group{background:rgba(255,255,255,.025);border:1px solid var(--border)}
+.nav-group .g-name{font-size:11px;color:var(--text2);padding:2px 4px 6px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,.025);border:1px solid transparent;margin-top:6px;font-size:13px;transition:.15s}
+.nav-item:hover{background:rgba(255,255,255,.06)}
+.nav-item.active{background:rgba(45,212,255,.10);border-color:rgba(45,212,255,.40);box-shadow:0 0 14px rgba(45,212,255,.18)}
+.nav-tag{margin-left:auto;font:600 9px/1 ui-monospace,monospace;letter-spacing:.06em;color:var(--muted);
+  border:1px solid var(--border);border-radius:6px;padding:2px 5px}
+.s-foot{margin-top:18px;font-size:10.5px;color:var(--muted);line-height:1.6}
+/* ===== 中栏 ===== */
+.zone{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{position:relative;z-index:1000;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--border)}
+.filter-box{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:10px;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+  border:1px solid var(--border);backdrop-filter:blur(22px)}
+.filter-label{font:600 10px/1 ui-monospace,monospace;color:var(--muted);letter-spacing:.08em}
+.dd{position:relative}
+.dd-btn,.pill{cursor:pointer;font-size:12px;color:var(--text);background:rgba(255,255,255,.05);
+  border:1px solid var(--border);border-radius:8px;padding:5px 11px}
+.pill.active{background:rgba(45,212,255,.12);border-color:rgba(45,212,255,.4)}
+.dd-menu{position:absolute;top:110%;left:0;min-width:150px;max-height:340px;overflow:auto;z-index:2000;
+  background:rgba(11,18,32,.98);border:1px solid var(--border);border-radius:10px;padding:6px;
+  box-shadow:0 12px 40px rgba(0,0,0,.55);backdrop-filter:blur(18px)}
+.dd-menu div{padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer}
+.dd-menu div:hover{background:rgba(255,255,255,.07)}
+.scroll{flex:1;overflow:auto;position:relative}
+.track-header{position:sticky;top:0;z-index:5;height:46px;border-bottom:1px solid var(--border);
+  background:rgba(6,10,20,.9);backdrop-filter:blur(8px)}
+.th{position:absolute;top:7px;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.th-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.th-name{font-size:12px;font-weight:600}.th-sub{display:block;font-size:9px;color:var(--muted)}
+.era{border-bottom:1px solid rgba(255,255,255,.05)}
+.era-head{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;cursor:pointer;
+  background:rgba(255,255,255,.02);font-size:12px}
+.era-name{font-weight:600;color:var(--text2)}.era-range{font:10px ui-monospace,monospace;color:var(--muted)}
+.era-body{position:relative;width:100%}
+.era.collapsed .era-body{display:none}
+.track-line{position:absolute;top:0;bottom:0;width:1px;transform:translateX(-50%);opacity:.16}
+.tick{position:absolute;left:6px;font:10px ui-monospace,monospace;color:var(--muted);transform:translateY(-50%)}
+.grid-line{position:absolute;left:56px;right:0;height:1px;background:rgba(255,255,255,.04)}
+/* 圆点＝锚点，精确落在 (轨道列 × 时间值) 上；标签绝对定位浮于一侧，不再推动圆点 */
+.event{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:2}
+.event .dot{display:block;width:11px;height:11px;border-radius:50%}
+.event.lvl1 .dot{background:rgba(var(--lvl1),.85);box-shadow:0 0 8px rgba(var(--lvl1),.45)}
+.event.lvl2 .dot{width:16px;height:16px;background:rgba(var(--lvl2),.85);box-shadow:0 0 11px rgba(var(--lvl2),.5)}
+.event.lvl3 .dot{width:22px;height:22px;background:rgba(var(--lvl3),.85);box-shadow:0 0 14px rgba(var(--lvl3),.55)}
+.event .ev-label{position:absolute;left:calc(100% + 7px);top:50%;transform:translateY(-50%);
+  font-size:11px;color:var(--text2);white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.event.side-l .ev-label{left:auto;right:calc(100% + 7px)}
+.event:hover{z-index:6}
+.event:hover .ev-label{color:var(--text)}
+.event.selected{z-index:7}
+.event.selected .dot{outline:2px solid #fff;outline-offset:2px}
+/* ===== 右栏 ===== */
+.detail{width:328px;flex:none;padding:18px 16px;overflow-y:auto;border-left:1px solid var(--border);backdrop-filter:blur(22px)}
+.d-eyebrow{font:600 10px/1 ui-monospace,monospace;letter-spacing:.16em;color:var(--accent)}
+.d-title{font-size:16px;font-weight:600;margin:4px 0 10px;line-height:1.4}
+.d-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.badge{font-size:10.5px;color:var(--text2);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;padding:3px 7px}
+.badge.l1{color:rgb(var(--lvl1))}.badge.l2{color:rgb(var(--lvl2))}.badge.l3{color:rgb(var(--lvl3))}
+.d-desc{font-size:12.5px;line-height:1.7;padding-left:10px;border-left:2px solid var(--accent);color:var(--text);margin-bottom:8px}
+.d-h{font:600 11.5px/1 ui-monospace,monospace;letter-spacing:.06em;color:var(--accent);margin:14px 0 4px}
+.d-p{font-size:12.5px;line-height:1.78;color:var(--text2);margin:0 0 6px}
+.d-src{margin-top:12px;font-size:11px;color:var(--muted)}
+.close{cursor:pointer;font-size:11px;color:var(--accent)}
+.legend{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+.legend .row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:11.5px;color:var(--text2)}
+.legend .d{width:14px;height:14px;border-radius:50%;flex:none}
+.overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:20;
+  background:rgba(6,10,20,.7);backdrop-filter:blur(6px)}
+.overlay .card{text-align:center;color:var(--text2);max-width:280px}
+@media(max-width:1100px){.sidebar{width:210px}.detail{width:280px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 左栏：分类层级导航 -->
+  <aside class="sidebar">
+    <div class="eyebrow">RAY DALIO · 原则 II</div>
+    <div class="s-title">世界秩序 · <span id="sGroup">—</span></div>
+    <div class="nav-label">议题 / 维度</div>
+    <div id="nav"></div>
+    <div class="s-foot">纵轴＝时间主线，横向轨道＝影响经济的不同因素。<br>资料来源：瑞·达里奥《原则2：应对变化中的世界秩序》核心观点之可视化解读，仅供学习参考。</div>
+  </aside>
+  <!-- 中栏：筛选栏 + 纵向时间轴 -->
+  <section class="zone">
+    <div class="topbar">
+      <div class="filter-box" id="dimBox">
+        <span class="filter-label">轨道</span>
+        <div class="dd"><button class="dd-btn" id="trackBtn">全部轨道 ▾</button><div class="dd-menu" id="trackMenu" style="display:none"></div></div>
+        <div class="dd" id="subWrap" style="display:none"><button class="dd-btn" id="subBtn">子轨道：全部 ▾</button><div class="dd-menu" id="subMenu" style="display:none"></div></div>
+        <button class="pill" id="expandAll">展开</button>
+        <button class="pill" id="collapseAll">折叠</button>
+      </div>
+      <div class="filter-box">
+        <span class="filter-label">重要程度</span>
+        <button class="pill active" data-level="0">全部</button>
+        <button class="pill" data-level="1">一般</button>
+        <button class="pill" data-level="2">重要</button>
+        <button class="pill" data-level="3">核心</button>
+      </div>
+    </div>
+    <div class="scroll" id="scroll">
+      <div class="overlay" id="overlay"><div class="card"><div class="d-eyebrow">COMING SOON</div><p>该模块规划中，将以同构框架扩展。</p></div></div>
+      <div class="track-header" id="trackHeader"></div>
+      <div id="eras"></div>
+    </div>
+  </section>
+  <!-- 右栏：默认说明 / 事件详情 -->
+  <aside class="detail">
+    <div id="detailDefault">
+      <div class="d-eyebrow">GUIDE · 阅读方式</div><div class="d-title" id="guideTitle">如何阅读这张时间轴</div>
+      <p class="d-p" id="guideText">纵向为时间方向（上＝早，下＝近）；横向并行的每一列是一个「影响经济的因素」轨道。圆点的大小与颜色表示重要程度。点击任一事件查看分级详情；点击纪元标题可折叠该时段；顶栏可按轨道与重要程度筛选；左栏可切换四个观察视角。</p>
+      <div class="legend">
+        <div class="d-eyebrow" style="margin-bottom:8px">重要程度图例</div>
+        <div class="row"><span class="d" style="background:rgba(229,122,138,.85);box-shadow:0 0 12px rgba(229,122,138,.5)"></span>核心 · 大周期的关键转折</div>
+        <div class="row"><span class="d" style="width:11px;height:11px;background:rgba(224,164,90,.85)"></span>重要 · 推动趋势的节点</div>
+        <div class="row"><span class="d" style="width:8px;height:8px;background:rgba(111,168,214,.85)"></span>一般 · 背景与铺垫</div>
+      </div>
+    </div>
+    <div id="detailEvent" style="display:none"></div>
+  </aside>
+</div>
+
+<script>
+/* ===================== 工具 ===================== */
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function lvlCN(l){return l===3?'核心':l===2?'重要':'一般';}
+
+/* ===================== 模块一：帝国兴衰大周期（时间＝公元年） ===================== */
+const TRACKS_EMPIRE=[
+  {id:'global',name:'世界格局',sub:'跨类',color:'#9aa7bd'},
+  {id:'nl',name:'荷兰',sub:'第一代霸权',color:'#f5a623'},
+  {id:'gb',name:'英国',sub:'第二代霸权',color:'#ff6b6b'},
+  {id:'us',name:'美国',sub:'当代霸权',color:'#4aa8ff'},
+  {id:'cn',name:'中国',sub:'崛起大国',color:'#3ecf8e'},
+  {id:'other',name:'其他列强',sub:'西/德/日/苏',color:'#b58bff',children:[{id:'es',name:'西班牙'},{id:'de',name:'德国'},{id:'jp',name:'日本'},{id:'su',name:'苏联/俄'}]},
+];
+const ERAS_EMPIRE=[
+  {id:'e1',name:'大航海前夜',start:1500,end:1600,height:200},
+  {id:'e2',name:'荷兰世纪',start:1600,end:1700,height:300},
+  {id:'e3',name:'英国崛起',start:1700,end:1800,height:240},
+  {id:'e4',name:'不列颠治世',start:1800,end:1900,height:300},
+  {id:'e5',name:'两次世界大战',start:1900,end:1950,height:300},
+  {id:'e6',name:'美国治世',start:1950,end:2000,height:240},
+  {id:'e7',name:'权力再平衡',start:2000,end:2040,height:300},
+];
+const EVENTS_EMPIRE=[
+  {value:1500,track:'global',level:2,label:'格局',title:'大航海时代开启',desc:'远洋贸易与殖民扩张拉开序幕，全球性的财富与权力竞争由此展开。',source:'《原则2》大周期'},
+  {value:1944,track:'global',level:2,label:'秩序',title:'布雷顿森林体系',desc:'二战末期确立以美元为中心的国际货币与贸易秩序。',source:'《原则2》货币与信贷'},
+  {value:2020,track:'global',level:3,label:'转折',title:'世界秩序的转折点',desc:'债务货币化、贫富分化与中美博弈叠加，达里奥判断当下正处于大周期后段。',source:'《原则2》当下与未来'},
+
+  {value:1550,track:'other',level:1,label:'白银',sub:'es',title:'西班牙帝国 · 白银时代',desc:'美洲白银支撑起庞大帝国，但财富未转化为持久的生产力与竞争力。',source:'《原则2》'},
+  {value:1602,track:'nl',level:3,label:'上升',title:'荷兰东印度公司(VOC)成立',desc:'人类首个股份制公司与证券交易所，金融与商业组织的革命性创新。',source:'《原则2》荷兰篇'},
+  {value:1609,track:'nl',level:3,label:'上升',title:'阿姆斯特丹银行 · 荷兰盾成储备货币',desc:'建立可信赖的货币与银行体系，荷兰盾成为首个被广泛接受的世界储备货币。',source:'《原则2》荷兰篇'},
+  {value:1648,track:'nl',level:2,label:'上升',title:'威斯特伐利亚和约',desc:'荷兰独立获得承认，近代主权国家体系确立。',source:'《原则2》荷兰篇'},
+  {value:1650,track:'nl',level:3,label:'顶峰',title:'荷兰黄金时代顶峰',desc:'人均收入与贸易份额居世界之首，阿姆斯特丹为全球金融中心。',source:'《原则2》荷兰篇'},
+  {value:1672,track:'nl',level:2,label:'衰落',title:'灾难年(Rampjaar)',desc:'英法夹击，荷兰由盛转衰的转折之年。',source:'《原则2》荷兰篇'},
+  {value:1694,track:'gb',level:2,label:'上升',title:'英格兰银行成立',desc:'建立国家信用与公债体系，为日后金融霸权奠基。',source:'《原则2》英国篇'},
+  {value:1750,track:'cn',level:1,label:'背景',title:'清代 · 曾长期为最大经济体',desc:'工业革命之前，中国经济总量长期居世界前列。',source:'《原则2》中国篇'},
+  {value:1760,track:'gb',level:3,label:'上升',title:'工业革命',desc:'蒸汽与机器带来生产力跃迁，英国的竞争力与产出领先世界。',source:'《原则2》英国篇'},
+  {value:1780,track:'nl',level:2,label:'衰落',title:'第四次英荷战争',desc:'荷兰的海上与金融霸权被英国取代。',source:'《原则2》荷兰篇'},
+  {value:1815,track:'gb',level:3,label:'上升',title:'滑铁卢 · 拿破仑战争终结',desc:'英国确立海上与金融霸权，英镑成为新的世界储备货币。',source:'《原则2》英国篇'},
+  {value:1839,track:'cn',level:2,label:'衰落',title:'鸦片战争 · 百年衰落',desc:'内部失序与外部冲击下，中国国力跌入低谷。',source:'《原则2》中国篇'},
+  {value:1850,track:'gb',level:3,label:'顶峰',title:'不列颠治世 · 世界工厂',desc:'英国占据世界制造业与贸易最大份额，伦敦为全球金融中心，国力达到顶峰。',source:'《原则2》英国篇'},
+  {value:1871,track:'other',level:2,label:'挑战',sub:'de',title:'德国统一 · 崛起挑战英国',desc:'统一后的德国在工业与军事上迅速崛起，成为对英国霸权的主要挑战。',source:'《原则2》'},
+  {value:1875,track:'gb',level:2,label:'衰落',title:'竞争力见顶 · 美德追赶',desc:'美国、德国在创新与产出上迅速逼近，英国的相对优势开始下滑。',source:'《原则2》英国篇'},
+  {value:1890,track:'us',level:2,label:'上升',title:'成为世界最大经济体',desc:'经济产出超越英国，但储备货币地位仍滞后数十年。',source:'《原则2》美国篇'},
+  {value:1905,track:'other',level:1,label:'扩张',sub:'jp',title:'日俄战争 · 日本崛起',desc:'日本击败俄国，成为亚洲新兴强权。',source:'《原则2》'},
+  {value:1913,track:'us',level:2,label:'上升',title:'美联储成立',desc:'建立中央银行与现代货币体系。',source:'《原则2》美国篇'},
+  {value:1914,track:'gb',level:3,label:'衰落',title:'第一次世界大战',desc:'战争重创英国财政，债务激增，霸权根基动摇。',source:'《原则2》英国篇'},
+  {value:1944,track:'gb',level:2,label:'让位',title:'英镑让位美元',desc:'布雷顿森林确立美元中心地位，英镑储备货币地位作为滞后指标最终终结。',source:'《原则2》英国篇'},
+  {value:1944,track:'us',level:3,label:'顶峰',title:'布雷顿森林 · 美元霸权确立',desc:'美元锚定黄金成为世界储备货币，纽约取代伦敦成为全球金融中心。',source:'《原则2》美国篇'},
+  {value:1945,track:'us',level:3,label:'顶峰',title:'二战胜利 · 美国治世',desc:'拥有全球约一半的GDP与多数黄金储备，综合国力达到顶峰。',source:'《原则2》美国篇'},
+  {value:1947,track:'other',level:2,label:'冷战',sub:'su',title:'美苏冷战 · 苏联阵营',desc:'两极格局形成，苏联在军事上与美国长期对峙。',source:'《原则2》'},
+  {value:1949,track:'cn',level:1,label:'重启',title:'中华人民共和国成立',desc:'中国开启新一轮内部秩序周期。',source:'《原则2》中国篇'},
+  {value:1971,track:'us',level:3,label:'转折',title:'尼克松冲击 · 美元脱钩黄金',desc:'放弃金本位，进入法定货币时代，长期债务货币化的起点。',source:'《原则2》货币与信贷'},
+  {value:1978,track:'cn',level:3,label:'崛起',title:'改革开放',desc:'市场化改革启动并融入全球经济，中国进入长期高速上升。',source:'《原则2》中国篇'},
+  {value:1980,track:'other',level:2,label:'追赶',sub:'jp',title:'日本经济崛起',desc:'制造业与出口令日本一度逼近美国，但终因泡沫与人口而失速。',source:'《原则2》'},
+  {value:1991,track:'other',level:1,label:'解体',sub:'su',title:'苏联解体',desc:'冷战结束，美国成为唯一超级大国，单极时刻到来。',source:'《原则2》'},
+  {value:2001,track:'cn',level:3,label:'崛起',title:'加入WTO · 世界工厂',desc:'深度融入全球贸易，制造与出口份额跃居世界第一。',source:'《原则2》中国篇'},
+  {value:2008,track:'us',level:3,label:'衰落',title:'全球金融危机',desc:'债务泡沫破裂，零利率与量化宽松开启。',source:'《原则2》货币与信贷'},
+  {value:2010,track:'cn',level:3,label:'崛起',title:'成为世界第二大经济体',desc:'在多项实力指标上快速逼近美国。',source:'《原则2》中国篇'},
+  {value:2018,track:'cn',level:2,label:'博弈',title:'中美博弈加剧',desc:'贸易、科技、资本多线竞争，典型的守成大国与崛起大国冲突。',source:'《原则2》当下'},
+  {value:2020,track:'us',level:2,label:'衰落',title:'疫情 · 大规模货币化',desc:'财政赤字与央行印钞空前，内部分化加剧。',source:'《原则2》当下'},
+];
+const DETAIL_MAP_EMPIRE={
+  '1602-nl':{
+    basics:['时间 · 1602年（荷兰世纪）','主体 · 荷兰联合东印度公司(VOC)','领域 · 荷兰崛起','重要程度 · 核心事件'],
+    bg:'17世纪初的荷兰刚从西班牙独立，凭借海上贸易迅速积累财富；但远洋贸易风险极高，需要新的融资方式来分摊风险、汇聚资本。',
+    core:['VOC 是人类历史上第一家股份制公司，向公众发行可自由转让的股票，并催生了世界上第一个证券交易所。','它把分散的私人储蓄转化为可长期投入的资本，使荷兰得以组织起跨越半个地球的贸易与军事网络。'],
+    value:'达里奥视其为「资本主义运作方式」的关键创新：发达的资本市场，是一个国家把储蓄高效转化为生产力、从而崛起的核心引擎。',
+    impact:'金融与商业组织上的领先，连同阿姆斯特丹银行与荷兰盾，推动荷兰成为第一个拥有世界储备货币的现代商业帝国。',
+    ext:['关联 · 1609 阿姆斯特丹银行与荷兰盾','来源 · 《原则2》荷兰篇'],
+  },
+  '1815-gb':{
+    basics:['时间 · 1815年（英国崛起）','主体 · 大英帝国','领域 · 储备货币更替','重要程度 · 核心事件'],
+    bg:'经历拿破仑战争的长期较量，英国凭借工业革命带来的生产力优势和强大海军，最终击败法国。',
+    core:['拿破仑战败后，英国成为无可争议的世界霸主，开启约一个世纪的「不列颠治世」。','英镑取代荷兰盾成为新的世界主导储备货币，伦敦成为全球金融中心。'],
+    value:'印证了达里奥的大周期逻辑：教育与创新 → 竞争力与贸易 → 经济与军事实力 → 金融中心 → 储备货币，依次到位后霸权得以确立。',
+    impact:'储备货币地位带来巨大的「过度特权」，但也埋下日后过度借贷与霸权透支的种子。',
+    ext:['关联 · 1850 不列颠治世顶峰','来源 · 《原则2》英国篇'],
+  },
+  '1850-gb':{
+    basics:['时间 · 约1850年（不列颠治世）','主体 · 大英帝国','领域 · 国力顶峰','重要程度 · 核心事件'],
+    bg:'工业革命使英国成为「世界工厂」，铁路、蒸汽与自由贸易把英国推上生产与贸易的巅峰。',
+    core:['英国占据世界制造业产出与贸易的最大份额，海军控制全球海上要道。','伦敦金融城成为世界资本配置中心，英镑信用遍及全球。'],
+    value:'这是典型的「顶峰」状态——多项实力指标同时见顶，往往也正是盛极而衰的转折临界点。',
+    impact:'此后美国与德国在创新与产出上迅速追赶，英国的相对优势开始不可逆地下滑。',
+    ext:['关联 · 1875 美德追赶','来源 · 《原则2》英国篇'],
+  },
+  '1944-us':{
+    basics:['时间 · 1944年（两次世界大战）','主体 · 美国','领域 · 储备货币确立','重要程度 · 核心事件'],
+    bg:'两次世界大战摧毁了欧洲列强的财政，美国凭借完整的工业体系和庞大的黄金储备成为最大债权国。',
+    core:['布雷顿森林会议确立以美元为中心、美元锚定黄金、各国货币锚定美元的国际货币体系。','纽约取代伦敦成为全球金融中心，美元成为世界主导储备货币。'],
+    value:'达里奥指出，储备货币地位通常是一国实力中「最后到位、也最后丧失」的滞后指标——它标志着霸权的成熟。',
+    impact:'美元霸权赋予美国独特的融资特权，但也为后来长期的债务扩张与货币化埋下伏笔。',
+    ext:['关联 · 1971 尼克松冲击','来源 · 《原则2》货币与信贷'],
+  },
+  '1971-us':{
+    basics:['时间 · 1971年（美国治世）','主体 · 美国','领域 · 货币制度转折','重要程度 · 核心事件'],
+    bg:'越战与社会开支使美国的财政与黄金储备承压，美元兑黄金的承诺难以为继。',
+    core:['尼克松宣布美元与黄金脱钩，布雷顿森林体系瓦解，世界进入纯粹的法定货币（信用货币）时代。','货币不再有硬资产约束，央行得以更自由地创造货币与信贷。'],
+    value:'这是达里奥「长期债务周期」的关键节点：从「硬通货」转向「可被无限创造的信用货币」，为债务货币化打开了大门。',
+    impact:'此后债务与资产价格长期膨胀，贫富差距扩大，并最终在2008年与2020年以危机和大规模印钞的形式显现。',
+    ext:['关联 · 2008 全球金融危机','来源 · 《原则2》货币与信贷'],
+  },
+  '1978-cn':{
+    basics:['时间 · 1978年（美国治世）','主体 · 中国','领域 · 大国崛起','重要程度 · 核心事件'],
+    bg:'经历百年衰落与内部动荡后，中国开启新一轮内部秩序周期，亟需通过改革重建增长。',
+    core:['改革开放启动市场化改革并融入全球经济，释放出巨大的生产力与人力资本。','此后数十年间，中国在教育、产出、贸易、创新等多项实力指标上持续快速上升。'],
+    value:'达里奥将中国的再次崛起视为当代大周期的核心变量——一个守成霸权（美国）与崛起大国（中国）并存的典型格局。',
+    impact:'2001年入世、2010年成为世界第二大经济体，使中美在贸易、科技、资本与地缘层面的博弈成为塑造未来世界秩序的主线。',
+    ext:['关联 · 2018 中美博弈','来源 · 《原则2》中国篇'],
+  },
+};
+
+/* ===================== 模块二：八大实力决定因素（时间＝大周期进程 0–100%） ===================== */
+const TRACKS_POWERS=[
+  {id:'global',name:'综合国力',sub:'跨类',color:'#9aa7bd'},
+  {id:'edu',name:'教育',sub:'1·起点',color:'#5ec8e8'},
+  {id:'inno',name:'创新科技',sub:'2',color:'#7c9cff'},
+  {id:'comp',name:'竞争力',sub:'3',color:'#59c39a'},
+  {id:'trade',name:'贸易份额',sub:'4',color:'#e8c35e'},
+  {id:'output',name:'经济产出',sub:'5',color:'#e89a5e'},
+  {id:'mil',name:'军事实力',sub:'6',color:'#e87b7b'},
+  {id:'fin',name:'金融中心',sub:'7',color:'#c78bff'},
+  {id:'curr',name:'储备货币',sub:'8·滞后',color:'#f2d06b'},
+];
+const ERAS_POWERS=[
+  {id:'p1',name:'上升期 · 实力依次兴起',start:0,end:35,height:360},
+  {id:'p2',name:'顶峰期 · 多指标见顶',start:35,end:55,height:240},
+  {id:'p3',name:'衰落期 · 竞争力流失',start:55,end:80,height:320},
+  {id:'p4',name:'危机与更替',start:80,end:100,height:240},
+];
+const EVENTS_POWERS=[
+  {value:3,track:'global',level:1,label:'起点',title:'健康的教育与财政',desc:'周期上升始于良好的教育、较低的债务与稳健的治理。',source:'《原则2》决定因素'},
+  {value:50,track:'global',level:3,label:'顶峰',title:'综合国力顶峰',desc:'八大实力多数同时见顶，是为大周期的巅峰。',source:'《原则2》决定因素'},
+  {value:85,track:'global',level:3,label:'衰落',title:'债务货币化',desc:'为偿债而大量印钞，货币与购买力受到侵蚀。',source:'《原则2》货币与信贷'},
+  {value:97,track:'global',level:3,label:'更替',title:'储备货币地位丧失',desc:'旧霸权让位，新的大周期开启。',source:'《原则2》决定因素'},
+
+  {value:5,track:'edu',level:2,label:'上升',title:'教育投入领先',desc:'达里奥认为良好的教育是一国兴起的根本起点。',source:'《原则2》决定因素'},
+  {value:30,track:'edu',level:2,label:'顶峰',title:'人力资本顶峰',desc:'教育积累转化为高素质劳动力与人才优势。',source:'《原则2》决定因素'},
+  {value:70,track:'edu',level:1,label:'衰落',title:'教育相对优势下滑',desc:'变富之后投入与质量相对滑落，是衰落的早期信号。',source:'《原则2》决定因素'},
+
+  {value:12,track:'inno',level:2,label:'上升',title:'创新与技术突破',desc:'教育优势转化为技术发明与新产业。',source:'《原则2》决定因素'},
+  {value:38,track:'inno',level:3,label:'顶峰',title:'科技领先全球',desc:'掌握当时最先进的技术与新兴产业。',source:'《原则2》决定因素'},
+  {value:72,track:'inno',level:1,label:'衰落',title:'创新被他国追赶模仿',desc:'技术外溢，后发国家以更低成本复制。',source:'《原则2》决定因素'},
+
+  {value:18,track:'comp',level:2,label:'上升',title:'竞争力上升',desc:'高效率、低成本使产品在全球市场具竞争力。',source:'《原则2》决定因素'},
+  {value:40,track:'comp',level:2,label:'顶峰',title:'全球最具竞争力',desc:'在多数关键产业中占据成本与质量优势。',source:'《原则2》决定因素'},
+  {value:66,track:'comp',level:2,label:'衰落',title:'成本上升 · 竞争力流失',desc:'成功导致工资与成本上升，他国以更低成本复制。',source:'《原则2》决定因素'},
+
+  {value:25,track:'trade',level:2,label:'上升',title:'贸易份额扩大',desc:'竞争力推动该国成为世界主要贸易方。',source:'《原则2》决定因素'},
+  {value:45,track:'trade',level:2,label:'顶峰',title:'世界贸易主导',desc:'占据全球贸易最大份额，规则制定权随之而来。',source:'《原则2》决定因素'},
+  {value:70,track:'trade',level:1,label:'衰落',title:'贸易份额被分流',desc:'竞争力下降使贸易份额被新兴对手蚕食。',source:'《原则2》决定因素'},
+
+  {value:30,track:'output',level:2,label:'上升',title:'经济产出快速增长',desc:'贸易与生产力共同推高经济总量。',source:'《原则2》决定因素'},
+  {value:50,track:'output',level:3,label:'顶峰',title:'世界最大经济体',desc:'经济规模登顶，成为全球增长引擎。',source:'《原则2》决定因素'},
+  {value:75,track:'output',level:1,label:'衰落',title:'增长放缓',desc:'相对份额随竞争力流失而下降。',source:'《原则2》决定因素'},
+
+  {value:34,track:'mil',level:2,label:'上升',title:'军力扩张护航贸易',desc:'为保护贸易路线与海外利益建立强大军事力量。',source:'《原则2》决定因素'},
+  {value:54,track:'mil',level:3,label:'顶峰',title:'军事霸权',desc:'拥有全球投射能力，维护其主导的秩序。',source:'《原则2》决定因素'},
+  {value:79,track:'mil',level:2,label:'衰落',title:'过度扩张 · 军事负担',desc:'维持全球军事存在的成本侵蚀财政。',source:'《原则2》决定因素'},
+
+  {value:40,track:'fin',level:2,label:'上升',title:'金融中心兴起',desc:'资本市场与银行体系成为全球资金枢纽。',source:'《原则2》决定因素'},
+  {value:58,track:'fin',level:3,label:'顶峰',title:'全球金融中心',desc:'为世界配置资本，金融影响力达到顶点。',source:'《原则2》决定因素'},
+  {value:85,track:'fin',level:1,label:'衰落',title:'金融中心地位松动',desc:'随债务与信誉受损，资金与定价权外移。',source:'《原则2》决定因素'},
+
+  {value:46,track:'curr',level:2,label:'上升',title:'货币国际化',desc:'随贸易与金融地位上升，货币被各国广泛使用。',source:'《原则2》决定因素'},
+  {value:62,track:'curr',level:3,label:'顶峰',title:'世界储备货币',desc:'储备货币地位是最后到达顶峰的实力指标。',source:'《原则2》决定因素'},
+  {value:95,track:'curr',level:3,label:'衰落',title:'储备货币地位终结',desc:'作为滞后指标最后才衰落，往往以货币贬值收场。',source:'《原则2》决定因素'},
+];
+const DETAIL_MAP_POWERS={
+  '5-edu':{
+    basics:['时间 · 周期进程约5%（上升期）','要素 · 教育','属性 · 兴起的根本起点','重要程度 · 重要'],
+    bg:'在一个新秩序确立、债务负担较轻的上升期初段，社会有意愿也有能力对教育进行投入。',
+    core:['达里奥把良好的教育列为大周期上升的「第一因」——它不仅指知识技能，也包括文明素养、价值观与协作能力。','教育投入领先，为后续的创新、竞争力与生产力奠定人力资本基础。'],
+    value:'这是「八大实力依次兴起」序列的起点：教育 → 创新与科技 → 竞争力 → 贸易 → 产出 → 军事 → 金融中心 → 储备货币。',
+    impact:'教育优势会在数十年后转化为技术与经济领先；而当一国变富后，教育投入与质量的相对下滑，往往是衰落的早期信号。',
+    ext:['关联 · 12% 创新与技术突破','来源 · 《原则2》决定因素'],
+  },
+  '66-comp':{
+    basics:['时间 · 周期进程约66%（衰落期）','要素 · 竞争力','属性 · 由盛转衰的关键','重要程度 · 重要'],
+    bg:'长期成功使国民收入与成本上升，社会逐渐趋于享受财富而非艰苦奋斗。',
+    core:['成本上升削弱价格竞争力，后发国家以更低成本模仿和复制领先者的技术与模式。','竞争力的流失会逐步传导到贸易份额与经济产出的下降。'],
+    value:'达里奥强调，竞争力的衰退常常是「成功本身带来的」——这是大周期由盛转衰的内在机制之一。',
+    impact:'竞争力下滑叠加债务上升，使一国越来越依赖借贷与储备货币特权来维持生活水平，从而加速衰落。',
+    ext:['关联 · 70% 贸易份额被分流','来源 · 《原则2》决定因素'],
+  },
+  '62-curr':{
+    basics:['时间 · 周期进程约62%（顶峰后段）','要素 · 储备货币','属性 · 滞后的顶峰指标','重要程度 · 核心'],
+    bg:'当一国成为最大贸易国并拥有最强金融中心后，其货币被各国广泛用于交易与储备。',
+    core:['储备货币地位是八大实力中「最后到达顶峰」的一项，往往在经济与军事已开始相对衰退后仍维持很久。','它赋予该国低成本借贷的「过度特权」，但也诱使其过度负债。'],
+    value:'达里奥称储备货币为「滞后指标」：它的强势会掩盖底层实力的衰退，给人霸权仍然稳固的错觉。',
+    impact:'当债务过度、被迫大量印钞偿债时，储备货币的购买力与地位最终瓦解——通常以货币贬值收场，标志大周期落幕。',
+    ext:['关联 · 95% 储备货币地位终结','来源 · 《原则2》决定因素'],
+  },
+  '50-global':{
+    basics:['时间 · 周期进程约50%（顶峰期）','要素 · 综合国力','属性 · 大周期巅峰','重要程度 · 核心'],
+    bg:'经过数十年上升，教育、创新、竞争力、贸易、产出、军事、金融等实力先后到位。',
+    core:['多项实力指标在此前后同时见顶，国家进入「治世」般的繁荣与主导地位。','然而盛极之时，也正是过度自信、贫富分化与债务积累开始的时刻。'],
+    value:'顶峰并非稳态，而是力量对比的转折点——达里奥提醒，衰败的种子往往在巅峰时就已种下。',
+    impact:'此后进入衰落期：竞争力流失、债务货币化、内部冲突与外部挑战相继出现。',
+    ext:['关联 · 85% 债务货币化','来源 · 《原则2》决定因素'],
+  },
+  '85-global':{
+    basics:['时间 · 周期进程约85%（衰落期）','要素 · 货币与债务','属性 · 债务货币化','重要程度 · 核心'],
+    bg:'衰落期债务远超偿付能力，而财政紧缩在政治上往往不可行。',
+    core:['央行通过大量创造货币来购买政府债务（货币化），以缓解债务压力。','这会稀释货币购买力，侵蚀储备货币地位，并进一步扩大贫富差距。'],
+    value:'这是长期债务周期的末段特征，也是储备货币由强转弱的核心机制。',
+    impact:'货币贬值与社会矛盾叠加，往往伴随内部失序与外部权力更替，推动新一轮周期开启。',
+    ext:['关联 · 97% 储备货币地位丧失','来源 · 《原则2》货币与信贷'],
+  },
+};
+
+/* ===================== 模块三：长期债务与货币周期（时间＝公元年） ===================== */
+const TRACKS_DEBT=[
+  {id:'global',name:'体系秩序',sub:'跨类',color:'#9aa7bd'},
+  {id:'money',name:'货币制度',sub:'硬通货↔信用',color:'#f2d06b'},
+  {id:'debt',name:'债务负担',sub:'杠杆',color:'#ff6b6b'},
+  {id:'cb',name:'央行与利率',sub:'政策',color:'#4aa8ff'},
+  {id:'crisis',name:'危机与市场',sub:'去杠杆',color:'#b58bff'},
+  {id:'wealth',name:'贫富差距',sub:'社会',color:'#3ecf8e'},
+];
+const ERAS_DEBT=[
+  {id:'d1',name:'古典金本位',start:1815,end:1914,height:260},
+  {id:'d2',name:'战争与大萧条',start:1914,end:1944,height:300},
+  {id:'d3',name:'布雷顿森林',start:1944,end:1971,height:240},
+  {id:'d4',name:'法定货币时代',start:1971,end:2008,height:300},
+  {id:'d5',name:'量化宽松与货币化',start:2008,end:2030,height:280},
+];
+const EVENTS_DEBT=[
+  {value:1815,track:'global',level:1,label:'秩序',title:'拿破仑战后金融秩序',desc:'英国主导下，以黄金为锚的国际金融秩序逐步形成。',source:'《原则2》货币与信贷'},
+  {value:1971,track:'global',level:2,label:'货币化',title:'法定货币时代开启',desc:'货币与硬资产脱钩，全球进入纯信用货币体系。',source:'《原则2》货币与信贷'},
+  {value:2020,track:'global',level:2,label:'转向',title:'债务货币化与去全球化',desc:'央行印钞、财政扩张与去全球化叠加，重塑货币秩序。',source:'《原则2》当下'},
+
+  {value:1816,track:'money',level:2,label:'硬通货',title:'英国金本位确立',desc:'货币以黄金为锚，约束了货币与信贷的无限创造。',source:'《原则2》货币与信贷'},
+  {value:1944,track:'money',level:3,label:'硬通货',title:'布雷顿森林 · 美元锚定黄金',desc:'确立美元锚定黄金、各国货币锚定美元的体系。',source:'《原则2》货币与信贷'},
+  {value:1971,track:'money',level:3,label:'货币化',title:'尼克松冲击 · 法定货币',desc:'美元与黄金脱钩，货币创造不再受硬资产约束。',source:'《原则2》货币与信贷'},
+  {value:2009,track:'money',level:2,label:'货币化',title:'大规模印钞 · QE常态化',desc:'量化宽松成为常规工具，货币供给大幅扩张。',source:'《原则2》货币与信贷'},
+
+  {value:1925,track:'debt',level:2,label:'信贷扩张',title:'1920年代债务繁荣',desc:'信贷驱动的繁荣积累了巨大的债务泡沫。',source:'《原则2》/《债务危机》'},
+  {value:1929,track:'debt',level:2,label:'去杠杆',title:'债务见顶',desc:'债务规模见顶，泡沫即将破裂。',source:'《原则2》/《债务危机》'},
+  {value:2007,track:'debt',level:2,label:'去杠杆',title:'私人债务见顶',desc:'家庭与金融部门杠杆达到峰值，危机临近。',source:'《原则2》货币与信贷'},
+  {value:2021,track:'debt',level:3,label:'货币化',title:'政府债务激增',desc:'公共债务占GDP升至历史高位，由央行印钞间接承接。',source:'《原则2》当下与未来'},
+
+  {value:1913,track:'cb',level:2,label:'信贷扩张',title:'美联储成立',desc:'现代中央银行体系建立，货币与信贷管理制度化。',source:'《原则2》货币与信贷'},
+  {value:1933,track:'cb',level:2,label:'去杠杆',title:'罗斯福贬值美元 · 弃国内金本位',desc:'通过让美元贬值来创造货币、缓解债务通缩。',source:'《原则2》/《债务危机》'},
+  {value:1981,track:'cb',level:2,label:'紧缩',title:'沃尔克高利率打通胀',desc:'极高利率压制通胀，开启数十年的利率下行长周期。',source:'《原则2》货币与信贷'},
+  {value:2008,track:'cb',level:3,label:'货币化',title:'零利率 + 量化宽松',desc:'利率触及零下限后，央行转向印钞购债。',source:'《原则2》货币与信贷'},
+  {value:2020,track:'cb',level:2,label:'货币化',title:'无限量QE',desc:'疫情冲击下央行无上限购债，配合空前财政刺激。',source:'《原则2》当下'},
+
+  {value:1929,track:'crisis',level:3,label:'去杠杆',title:'大萧条',desc:'债务紧缩引发通缩、银行倒闭与大规模失业。',source:'《原则2》/《债务危机》'},
+  {value:2000,track:'crisis',level:1,label:'去杠杆',title:'互联网泡沫破裂',desc:'科技股泡沫破裂，引发宽松周期。',source:'《原则2》货币与信贷'},
+  {value:2008,track:'crisis',level:3,label:'去杠杆',title:'全球金融危机',desc:'长期债务周期的私人债务见顶破裂，全球去杠杆。',source:'《原则2》货币与信贷'},
+  {value:2020,track:'crisis',level:2,label:'冲击',title:'疫情冲击',desc:'外生冲击叠加高债务，触发空前货币与财政应对。',source:'《原则2》当下'},
+
+  {value:1929,track:'wealth',level:2,label:'分化',title:'贫富差距顶峰(战间期)',desc:'1920年代财富高度集中，与社会动荡相互交织。',source:'《原则2》内部秩序'},
+  {value:2007,track:'wealth',level:2,label:'分化',title:'财富差距再度极化',desc:'资产价格上涨使财富差距重回历史高位。',source:'《原则2》内部秩序'},
+  {value:2016,track:'wealth',level:2,label:'分化',title:'民粹主义抬头',desc:'贫富与价值观差距扩大，推动民粹与政治极化。',source:'《原则2》内部秩序'},
+];
+const DETAIL_MAP_DEBT={
+  '1944-money':{
+    basics:['时间 · 1944年（布雷顿森林）','主体 · 美元体系','属性 · 硬通货阶段','重要程度 · 核心'],
+    bg:'二战后美国掌握世界多数黄金储备，各国亟需重建稳定的国际货币秩序。',
+    core:['确立美元锚定黄金（35美元/盎司）、各国货币锚定美元的体系。','这是一种「以硬资产为锚」的货币制度，约束了货币的无限创造。'],
+    value:'达里奥把货币分为三类：硬通货 → 对硬通货的索取权（纸币）→ 信用货币；此时仍处于有硬约束的阶段。',
+    impact:'随着美国债务与对外支付增加，黄金约束日益难以维持，为1971年的脱钩埋下伏笔。',
+    ext:['关联 · 1971 尼克松冲击','来源 · 《原则2》货币与信贷'],
+  },
+  '1971-money':{
+    basics:['时间 · 1971年','主体 · 美元','属性 · 货币化阶段开启','重要程度 · 核心'],
+    bg:'美国黄金储备相对其对外负债持续下降，兑付承诺难以为继。',
+    core:['尼克松宣布美元与黄金脱钩，全球进入纯法定（信用）货币时代。','货币创造不再受硬资产约束，央行与政府获得更大的货币与财政空间。'],
+    value:'这是长期债务周期的标志性转折：从「硬通货」迈向「可被无限创造的信用货币」。',
+    impact:'此后数十年，债务、资产价格与贫富差距长期上升，并在危机时以印钞应对。',
+    ext:['关联 · 2008 零利率与QE','来源 · 《原则2》货币与信贷'],
+  },
+  '1929-crisis':{
+    basics:['时间 · 1929–1933（大萧条）','主体 · 全球经济','属性 · 去杠杆','重要程度 · 核心'],
+    bg:'1920年代债务驱动的繁荣积累了巨大泡沫，1929年股市崩盘引爆债务危机。',
+    core:['债务紧缩引发通缩、银行倒闭与大规模失业，是典型的「萧条式去杠杆」。','1933年罗斯福让美元贬值、放弃国内金本位，以创造货币、缓解债务。'],
+    value:'达里奥用其作为「债务危机模板」的核心案例：危机后期，央行被迫印钞与贬值几乎是必然选择。',
+    impact:'大萧条加剧了内部贫富对立与外部地缘紧张，与同期极端政治的崛起、最终走向二战相互交织。',
+    ext:['关联 · 1933 罗斯福贬值','来源 · 《原则2》/《债务危机》'],
+  },
+  '2008-cb':{
+    basics:['时间 · 2008年','主体 · 各国央行','属性 · 货币化','重要程度 · 核心'],
+    bg:'长期债务周期累积的私人债务在2007–08年见顶并破裂，引发全球金融危机。',
+    core:['央行将利率降至零下限，并通过量化宽松（QE）大规模购买资产、创造货币。','这是1971年以来信用货币体系下「印钞应对去杠杆」的典型操作。'],
+    value:'印证了达里奥的判断：当利率触及0、常规货币政策失效时，央行转向「印钞购债」成为主要工具。',
+    impact:'资产价格被推高，持有资产者与未持有者的财富差距进一步扩大，为民粹主义与政治极化提供了土壤。',
+    ext:['关联 · 2020 无限量QE','来源 · 《原则2》货币与信贷'],
+  },
+  '2021-debt':{
+    basics:['时间 · 2020年代','主体 · 主要经济体政府','属性 · 货币化','重要程度 · 核心'],
+    bg:'疫情冲击下各国推出空前的财政刺激，政府债务占GDP比重升至历史高位。',
+    core:['财政赤字由央行印钞间接承接，公共债务与货币供给同步激增。','这与历史上大周期后段「债务货币化」的特征高度吻合。'],
+    value:'达里奥认为，这是判断「我们正处于长期债务周期后段」的重要现实证据。',
+    impact:'高债务、货币贬值压力与贫富分化叠加，使内部秩序与储备货币地位面临考验。',
+    ext:['关联 · 1971 法定货币时代','来源 · 《原则2》当下与未来'],
+  },
+};
+
+/* ===================== 模块四：内部秩序六阶段（时间＝周期进程 0–100%） ===================== */
+const TRACKS_INTERNAL=[
+  {id:'global',name:'周期总览',sub:'跨类',color:'#9aa7bd'},
+  {id:'fiscal',name:'财政与债务',sub:'',color:'#f2d06b'},
+  {id:'gap',name:'贫富/价值观',sub:'根本驱动',color:'#ff6b6b'},
+  {id:'politics',name:'政治极化',sub:'',color:'#b58bff'},
+  {id:'order',name:'社会秩序',sub:'冲突',color:'#5ec8e8'},
+];
+const ERAS_INTERNAL=[
+  {id:'s1',name:'第1阶段 · 新秩序与领导层',start:0,end:12,height:170},
+  {id:'s2',name:'第2阶段 · 制度与官僚体系',start:12,end:28,height:200},
+  {id:'s3',name:'第3阶段 · 和平与繁荣',start:28,end:48,height:250},
+  {id:'s4',name:'第4阶段 · 过度举债与分化',start:48,end:68,height:260},
+  {id:'s5',name:'第5阶段 · 财政恶化与冲突',start:68,end:88,height:260},
+  {id:'s6',name:'第6阶段 · 内战与革命',start:88,end:100,height:180},
+];
+const EVENTS_INTERNAL=[
+  {value:3,track:'global',level:2,label:'重启',title:'旧秩序崩溃 · 新秩序确立',desc:'上一轮内战或革命决出胜负，胜者建立新的领导层与规则。',source:'《原则2》内部秩序'},
+  {value:8,track:'politics',level:1,label:'奠基',title:'新领导层巩固权力',desc:'集中权力、稳定局势，确立新的统治结构。',source:'《原则2》内部秩序'},
+
+  {value:16,track:'fiscal',level:1,label:'建制',title:'重建货币与财政体系',desc:'修复信用、重建税收与货币制度。',source:'《原则2》内部秩序'},
+  {value:22,track:'order',level:1,label:'建制',title:'官僚与制度体系完善',desc:'建立高效的资源分配与治理机构。',source:'《原则2》内部秩序'},
+
+  {value:36,track:'global',level:3,label:'繁荣',title:'和平与繁荣顶峰',desc:'生产率与债务良性配合，社会信任高，普遍乐观。',source:'《原则2》内部秩序'},
+  {value:40,track:'fiscal',level:2,label:'繁荣',title:'信贷扩张推动增长',desc:'债务与投资共同推动经济繁荣。',source:'《原则2》内部秩序'},
+  {value:44,track:'gap',level:1,label:'分化',title:'贫富差距开始扩大',desc:'繁荣果实分配不均，差距在繁荣中悄然累积。',source:'《原则2》内部秩序'},
+
+  {value:54,track:'fiscal',level:2,label:'过度',title:'债务与赤字膨胀',desc:'支出与借贷超出可持续水平。',source:'《原则2》内部秩序'},
+  {value:60,track:'gap',level:3,label:'分化',title:'贫富与价值观差距加剧',desc:'巨大的财富与价值观差距使社会共识瓦解、对立加剧。',source:'《原则2》内部秩序'},
+  {value:64,track:'politics',level:2,label:'极化',title:'民粹主义与政治极化',desc:'左右民粹兴起，温和派受挤压，妥协空间收窄。',source:'《原则2》内部秩序'},
+
+  {value:72,track:'fiscal',level:3,label:'危机',title:'债务危机 · 货币贬值',desc:'债务难以为继，政府被迫在加税、紧缩与印钞贬值间抉择。',source:'《原则2》内部秩序'},
+  {value:78,track:'order',level:2,label:'动荡',title:'社会动荡与抗议',desc:'罢工、抗议与冲突频发，社会秩序受冲击。',source:'《原则2》内部秩序'},
+  {value:82,track:'politics',level:2,label:'极化',title:'强人政治抬头 · 民主受冲击',desc:'危机中民众倾向强势领导，制度制衡被削弱。',source:'《原则2》内部秩序'},
+
+  {value:92,track:'order',level:3,label:'冲突',title:'内战或革命',desc:'矛盾累积到临界点，以激烈方式重新分配财富与权力。',source:'《原则2》内部秩序'},
+  {value:97,track:'global',level:3,label:'重启',title:'财富与权力再分配 · 新周期',desc:'冲突结束，胜者建立新秩序，周期回到第1阶段。',source:'《原则2》内部秩序'},
+];
+const DETAIL_MAP_INTERNAL={
+  '3-global':{
+    basics:['时间 · 进程约3%（第1阶段）','维度 · 周期总览','属性 · 新秩序确立','重要程度 · 重要'],
+    bg:'上一轮内战或革命决出胜负，旧秩序崩塌。',
+    core:['胜者建立新的领导层与权力结构，重新制定规则与财富分配方式。','这是内部周期的起点：秩序从混乱中重建。'],
+    value:'达里奥的内部周期始于「新秩序」，提醒我们当前的稳定都源自上一轮冲突的结果。',
+    impact:'随后进入制度建设与繁荣阶段，但分配格局也在此时埋下日后矛盾的种子。',
+    ext:['关联 · 36% 和平繁荣顶峰','来源 · 《原则2》内部秩序'],
+  },
+  '36-global':{
+    basics:['时间 · 进程约36%（第3阶段）','维度 · 周期总览','属性 · 和平繁荣','重要程度 · 核心'],
+    bg:'制度与官僚体系成熟，社会信任高，生产率与债务良性配合。',
+    core:['这是内部周期的黄金期：和平、繁荣、创新与广泛的乐观情绪。','人们逐渐把繁荣视为理所当然，风险意识下降。'],
+    value:'达里奥指出，正是繁荣本身孕育了下一阶段的过度——债务扩张与贫富分化往往在此时悄然开始。',
+    impact:'随后进入第4阶段：过度支出、债务膨胀与贫富/价值观差距扩大。',
+    ext:['关联 · 60% 贫富差距加剧','来源 · 《原则2》内部秩序'],
+  },
+  '60-gap':{
+    basics:['时间 · 进程约60%（第4阶段）','维度 · 贫富与价值观差距','属性 · 矛盾累积','重要程度 · 核心'],
+    bg:'长期繁荣与债务扩张使财富越来越集中，资产持有者与普通劳动者的差距拉大。',
+    core:['巨大的贫富差距叠加价值观分裂，使社会共识瓦解、对立加剧。','达里奥视「财富与价值观差距」为内部冲突最重要的根本驱动。'],
+    value:'这是判断一个社会是否走向第5阶段（激烈冲突）的核心预警指标。',
+    impact:'差距持续扩大将引发民粹主义、政治极化，并在财政恶化时升级为激烈的社会冲突。',
+    ext:['关联 · 72% 债务危机','来源 · 《原则2》内部秩序'],
+  },
+  '72-fiscal':{
+    basics:['时间 · 进程约72%（第5阶段）','维度 · 财政与债务','属性 · 危机临界','重要程度 · 核心'],
+    bg:'债务累积到难以为继，经济下行又使财政收入萎缩。',
+    core:['债务危机爆发，政府被迫在加税、紧缩与印钞贬值之间抉择，通常走向印钞与贬值。','糟糕的财政状况与激烈的内部冲突相互强化。'],
+    value:'达里奥把「糟糕的财政＋激烈的内部冲突」列为第5阶段最危险的组合，是滑向第6阶段的临界点。',
+    impact:'若处理不当，可能升级为社会失序、强人政治乃至内战或革命（第6阶段）。',
+    ext:['关联 · 92% 内战或革命','来源 · 《原则2》内部秩序'],
+  },
+  '92-order':{
+    basics:['时间 · 进程约92%（第6阶段）','维度 · 社会秩序与冲突','属性 · 秩序重置','重要程度 · 核心'],
+    bg:'矛盾累积到临界点，既有秩序无法通过常规方式调和。',
+    core:['内战或革命爆发，以激烈方式重新分配财富与政治权力。','这是旧内部秩序的终点，也是下一轮新秩序的起点。'],
+    value:'达里奥强调内部周期的「循环」本质：冲突并非偶然，而是大周期后段的典型产物。',
+    impact:'冲突结束后，胜者建立新秩序，周期回到第1阶段，开始新一轮循环。',
+    ext:['关联 · 3% 新秩序确立','来源 · 《原则2》内部秩序'],
+  },
+};
+
+/* ===================== 模块注册表 + 左栏导航 ===================== */
+const MODULES=[
+  {id:'empire',  name:'帝国兴衰大周期',    en:'BIG CYCLE'},
+  {id:'powers',  name:'八大实力决定因素',  en:'8 POWERS'},
+  {id:'debt',    name:'长期债务与货币周期',en:'DEBT CYCLE'},
+  {id:'internal',name:'内部秩序六阶段',    en:'INTERNAL ORDER'},
+];
+const NAV=[
+  {type:'super',id:'empire',name:'帝国兴衰大周期',tag:'总览'},
+  {type:'group',name:'三大驱动力 · 内在机制',items:[
+    {id:'powers',  name:'八大实力决定因素',tag:'实力'},
+    {id:'debt',    name:'长期债务与货币周期',tag:'货币'},
+    {id:'internal',name:'内部秩序六阶段',tag:'社会'},
+  ]},
+];
+/* 各模块的「使用说明」面板文案 */
+const GUIDE={
+  empire:{t:'帝国兴衰大周期',p:'纵向为公元年（1500→2040），每一列是一个帝国/强权。看四代霸权（荷兰→英国→美国→中国）的兴起、顶峰与衰落如何前后交叠——储备货币也随之从荷兰盾→英镑→美元依次更替。「其他列强」轨道可下钻到西/德/日/苏。'},
+  powers:{t:'八大实力决定因素',p:'纵向为「大周期进程 0→100%」。八条轨道是达里奥衡量国力的八大要素。注意它们的兴起顺序：教育最先、储备货币最后；而衰落时储备货币又最晚崩塌——它是「滞后指标」。这正是本书最核心的一张图。'},
+  debt:{t:'长期债务与货币周期',p:'纵向为公元年（1815→2030）。看货币如何从「硬通货（金本位）」一步步走向「信用货币与债务货币化」：1933与1971两次脱钩/贬值是关键转折，2008与2020则是「印钞应对去杠杆」的典型。'},
+  internal:{t:'内部秩序六阶段',p:'纵向为内部周期进程，分为六个阶段。看一个社会如何从「新秩序」走向「繁荣」，再因债务与贫富/价值观差距走向「冲突」乃至「革命」，然后重启。达里奥视贫富与价值观差距为内部冲突的根本驱动。'},
+};
+
+/* ===================== 数据层指针 _C + 切换 ===================== */
+const _C={tracks:[],eras:[],data:[],map:{},label:e=>'',fmt:v=>''+v};
+function setModule(id){
+  if(id==='empire'){_C.tracks=TRACKS_EMPIRE;_C.eras=ERAS_EMPIRE;_C.data=EVENTS_EMPIRE;_C.map=DETAIL_MAP_EMPIRE;_C.fmt=v=>Math.round(v)+'年';}
+  else if(id==='powers'){_C.tracks=TRACKS_POWERS;_C.eras=ERAS_POWERS;_C.data=EVENTS_POWERS;_C.map=DETAIL_MAP_POWERS;_C.fmt=v=>Math.round(v)+'%';}
+  else if(id==='debt'){_C.tracks=TRACKS_DEBT;_C.eras=ERAS_DEBT;_C.data=EVENTS_DEBT;_C.map=DETAIL_MAP_DEBT;_C.fmt=v=>Math.round(v)+'年';}
+  else if(id==='internal'){_C.tracks=TRACKS_INTERNAL;_C.eras=ERAS_INTERNAL;_C.data=EVENTS_INTERNAL;_C.map=DETAIL_MAP_INTERNAL;_C.fmt=v=>Math.round(v)+'%';}
+  _C.label=e=>e.label||'';                 /* 各模块标签语义不同：阶段/状态 */
+  state.visibleTracks=new Set(_C.tracks.map(t=>t.id));
+}
+
+/* ===================== 状态 ===================== */
+let state={module:'empire',levelFilter:0,visibleTracks:new Set(),track:'all',sub:'all',selected:null};
+
+/* ===================== 时间定位（框架内核，勿改） ===================== */
+function eraOf(v){
+  for(const er of _C.eras){if(v>=er.start&&v<er.end)return er;}
+  const last=_C.eras[_C.eras.length-1];
+  return (last&&v>=last.start)?last:_C.eras[0];
+}
+function eraTop(era,v){
+  const h=era.height;
+  if(era.type==='log'){
+    const a=Math.log(Math.abs(era.start)),b=Math.log(Math.abs(era.end)),x=Math.log(Math.abs(v));
+    return (a-x)/(a-b)*h;
+  }
+  return (v-era.start)/(era.end-era.start)*h;
+}
+function fmtValue(v){return _C.fmt?_C.fmt(v):(''+v);}     /* 值→展示文本：按当前模块的单位 */
+function niceStep(span,target){
+  const raw=span/Math.max(1,target);
+  const mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  const n=raw/mag;
+  return (n<1.5?1:n<3?2:n<7?5:10)*mag;
+}
+function renderTicks(era,body){
+  const add=(top,txt)=>{
+    if(top<-2||top>era.height+2)return;
+    const ln=document.createElement('div');ln.className='grid-line';ln.style.top=top+'px';body.appendChild(ln);
+    const tk=document.createElement('div');tk.className='tick';tk.style.top=top+'px';tk.textContent=txt;body.appendChild(tk);
+  };
+  if(era.type==='log'){
+    const sgn=era.start<0?-1:1,hi=Math.abs(era.start),lo=Math.max(1,Math.abs(era.end));
+    for(let p=Math.pow(10,Math.ceil(Math.log10(lo)));p<=hi;p*=10)add(eraTop(era,sgn*p),fmtValue(sgn*p));
+    return;
+  }
+  const lo=Math.min(era.start,era.end),hi=Math.max(era.start,era.end);
+  const step=niceStep(hi-lo,5);
+  for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step)add(eraTop(era,v),fmtValue(v));
+}
+
+/* ===================== 筛选（合取） ===================== */
+function eventVisible(e){
+  if(!state.visibleTracks.has(e.track))return false;
+  if(state.levelFilter!==0&&e.level!==state.levelFilter)return false;
+  if(state.sub!=='all'&&e.track!=='global'&&e.sub!==state.sub)return false;
+  return true;
+}
+
+/* ===================== 渲染：表头 + 时间轴 ===================== */
+function visibleTracks(){return _C.tracks.filter(t=>state.visibleTracks.has(t.id));}
+function colLeft(idx,N){return 'calc(64px + (100% - 64px) * '+((idx+0.5)/N)+')';}
+function renderHeader(){
+  const host=document.getElementById('trackHeader');host.innerHTML='';
+  const vt=visibleTracks(),N=vt.length;
+  vt.forEach((t,idx)=>{const c=document.createElement('div');c.className='th';c.style.left=colLeft(idx,N);
+    c.innerHTML='<span class="th-dot" style="background:'+t.color+'"></span><span class="th-name">'+esc(t.name)+'</span><span class="th-sub">'+esc(t.sub||'')+'</span>';
+    host.appendChild(c);});
+}
+function renderEras(){
+  renderHeader();
+  const root=document.getElementById('eras');root.innerHTML='';
+  const vt=visibleTracks(),N=vt.length;
+  _C.eras.forEach(era=>{
+    const block=document.createElement('div');block.className='era';
+    const head=document.createElement('div');head.className='era-head';
+    head.innerHTML='<span class="era-name">'+esc(era.name)+'</span><span class="era-range">'+esc(fmtValue(era.start))+' – '+esc(fmtValue(era.end))+'</span>';
+    head.onclick=()=>block.classList.toggle('collapsed');
+    const body=document.createElement('div');body.className='era-body';body.style.height=era.height+'px';
+    vt.forEach((t,idx)=>{const ln=document.createElement('div');ln.className='track-line';ln.style.left=colLeft(idx,N);ln.style.background=t.color;body.appendChild(ln);});
+    renderTicks(era,body);
+    const evs=_C.data.filter(e=>eventVisible(e)&&eraOf(e.value)===era).sort((x,y)=>x.value-y.value);
+    const lastTop={};
+    evs.forEach(e=>{
+      const idx=vt.findIndex(t=>t.id===e.track);if(idx<0)return;
+      const top=eraTop(era,e.value);
+      const node=document.createElement('div');node.className='event lvl'+e.level;
+      if(lastTop[e.track]!=null&&Math.abs(top-lastTop[e.track])<14)node.classList.add('side-l');
+      lastTop[e.track]=top;
+      node.style.top=top+'px';node.style.left=colLeft(idx,N);
+      node.innerHTML='<span class="dot"></span><span class="ev-label">'+esc(e.title)+'</span>';
+      node.onclick=()=>selectEvent(e,node);
+      body.appendChild(node);
+    });
+    block.appendChild(head);block.appendChild(body);root.appendChild(block);
+  });
+}
+
+/* ===================== 详情：分级 + 模板 + 兜底 ===================== */
+function renderSec(title,val){
+  if(!val)return '';
+  const parts=(Array.isArray(val)?val:[val]).filter(Boolean);
+  if(!parts.length)return '';
+  return '<h3 class="d-h">'+esc(title)+'</h3>'+parts.map(p=>'<p class="d-p">'+esc(p)+'</p>').join('');
+}
+function detailRich(e){
+  const era=eraOf(e.value),lv=lvlCN(e.level),tr=_C.tracks.find(t=>t.id===e.track)||{name:''};
+  const gen={
+    basics:['时间 · '+fmtValue(e.value)+'（'+era.name+'）','领域 · '+tr.name+(_C.label(e)?('（'+_C.label(e)+'）'):''),'重要程度 · '+lv+'事件'],
+    bg:era.name+'阶段的背景下，'+e.title+'随之出现。',
+    core:e.desc,
+    value:'在「'+tr.name+'」轨道中属'+lv+'级节点，体现该因素在大周期中的关键推进。',
+    impact:'其影响沿时间轴向后传导，并与其他轨道相互呼应。',
+    ext:['来源 · '+e.source,'提示 · 可切换模块/轨道，在同一时间值上做跨类对照。'],
+  };
+  const m=_C.map[e.value+'-'+e.track];
+  if(!m)return gen;
+  return{basics:m.basics||gen.basics,bg:m.bg||gen.bg,core:m.core||gen.core,value:m.value||gen.value,impact:m.impact||gen.impact,ext:m.ext||gen.ext};
+}
+function selectEvent(e,node){
+  state.selected=e;
+  document.querySelectorAll('.event.selected').forEach(x=>x.classList.remove('selected'));
+  if(node)node.classList.add('selected');
+  document.getElementById('detailDefault').style.display='none';
+  const box=document.getElementById('detailEvent');box.style.display='block';
+  const tr=_C.tracks.find(t=>t.id===e.track)||{name:'',color:'#888'},lab=_C.label(e);
+  let secs;
+  if(e.level===1){
+    secs='<h3 class="d-h">简介</h3><p class="d-p">'+esc(e.desc)+'</p>';
+  }else{
+    const r=detailRich(e);
+    secs=renderSec('基础信息',r.basics)+renderSec('历史背景',r.bg)+renderSec('核心内容',r.core)
+        +renderSec('价值与意义',r.value)+renderSec('深远影响',r.impact)+renderSec('延伸 · 关联',r.ext);
+  }
+  box.innerHTML='<span class="close" id="dclose">返回说明</span>'
+    +'<div class="d-eyebrow">EVENT</div><div class="d-title">'+esc(e.title)+'</div>'
+    +'<div class="d-meta"><span class="badge">'+esc(fmtValue(e.value))+'</span>'
+    +'<span class="badge"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+tr.color+';margin-right:4px"></span>'+esc(tr.name)+'</span>'
+    +(lab?'<span class="badge">'+esc(lab)+'</span>':'')
+    +'<span class="badge l'+e.level+'">● '+esc(lvlCN(e.level))+'</span></div>'
+    +'<div class="d-desc">'+esc(e.desc)+'</div>'+secs
+    +'<div class="d-src">来源：'+esc(e.source)+'</div>';
+  document.getElementById('dclose').onclick=()=>{box.style.display='none';document.getElementById('detailDefault').style.display='block';
+    document.querySelectorAll('.event.selected').forEach(x=>x.classList.remove('selected'));};
+}
+
+/* ===================== 左栏导航 + 模块切换 ===================== */
+function renderNav(){
+  const host=document.getElementById('nav');host.innerHTML='';
+  NAV.forEach(sec=>{
+    if(sec.type==='super'){
+      const d=document.createElement('div');d.className='nav-super';
+      d.innerHTML='<div class="nav-item" data-dim="'+sec.id+'">'+esc(sec.name)+'<span class="nav-tag">'+esc(sec.tag||'')+'</span></div>';
+      host.appendChild(d);
+    }else{
+      const g=document.createElement('div');g.className='nav-group';
+      g.innerHTML='<div class="g-name">'+esc(sec.name)+'</div>'+sec.items.map(it=>'<div class="nav-item" data-dim="'+it.id+'">'+esc(it.name)+'<span class="nav-tag">'+esc(it.tag||'')+'</span></div>').join('');
+      host.appendChild(g);
+    }
+  });
+  host.querySelectorAll('.nav-item').forEach(el=>el.onclick=()=>applyModule(el.dataset.dim));
+}
+function applyModule(id){
+  const m=MODULES.find(x=>x.id===id)||MODULES[0];
+  const implemented=['empire','powers','debt','internal'].includes(id);
+  document.getElementById('sGroup').textContent=m.name;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.dim===id));
+  const ov=document.getElementById('overlay'),subWrap=document.getElementById('subWrap');
+  if(!implemented){ov.style.display='flex';subWrap.style.display='none';return;}
+  ov.style.display='none';
+  state.module=id;setModule(id);
+  /* 同步右栏默认说明 */
+  const g=GUIDE[id];if(g){document.getElementById('guideTitle').textContent=g.t;document.getElementById('guideText').textContent=g.p;}
+  /* 切回默认说明面板 */
+  document.getElementById('detailEvent').style.display='none';
+  document.getElementById('detailDefault').style.display='block';
+  /* 重置轨道两级联动 */
+  state.track='all';state.sub='all';subWrap.style.display='none';
+  document.getElementById('trackBtn').textContent='全部轨道 ▾';
+  document.getElementById('subBtn').textContent='子轨道：全部 ▾';
+  renderEras();
+}
+
+/* ===================== 筛选交互 ===================== */
+function closeAllMenus(){document.querySelectorAll('.dd-menu').forEach(m=>m.style.display='none');}
+function toggleMenu(menu,renderFn){const open=menu.style.display!=='none';closeAllMenus();if(!open){renderFn&&renderFn();menu.style.display='block';}}
+function trackChildren(id){const t=_C.tracks.find(x=>x.id===id);return (t&&t.children)?t.children:[];}
+function renderTrackMenu(){
+  const menu=document.getElementById('trackMenu');
+  const opts=[{id:'__all',name:'全部轨道'}].concat(_C.tracks.filter(t=>t.id!=='global'));
+  menu.innerHTML=opts.map(o=>'<div data-tk="'+o.id+'">'+esc(o.name)+'</div>').join('');
+  menu.querySelectorAll('div').forEach(d=>d.onclick=()=>{
+    const tk=d.dataset.tk,subWrap=document.getElementById('subWrap');
+    state.sub='all';document.getElementById('subBtn').textContent='子轨道：全部 ▾';
+    if(tk==='__all'){state.track='all';state.visibleTracks=new Set(_C.tracks.map(t=>t.id));
+      document.getElementById('trackBtn').textContent='全部轨道 ▾';subWrap.style.display='none';}
+    else{state.track=tk;state.visibleTracks=new Set(['global',tk]);
+      document.getElementById('trackBtn').textContent=d.textContent+' ▾';
+      subWrap.style.display=trackChildren(tk).length?'':'none';}
+    renderEras();
+  });
+}
+function renderSubMenu(){
+  const menu=document.getElementById('subMenu');
+  const opts=[{id:'all',name:'全部'}].concat(trackChildren(state.track));
+  menu.innerHTML=opts.map(o=>'<div data-v="'+o.id+'">'+esc(o.name)+'</div>').join('');
+  menu.querySelectorAll('div').forEach(d=>d.onclick=()=>{
+    state.sub=d.dataset.v;document.getElementById('subBtn').textContent='子轨道：'+d.textContent+' ▾';renderEras();
+  });
+}
+function bindUI(){
+  const bind=(id,menuId,fn)=>{const b=document.getElementById(id),m=document.getElementById(menuId);
+    b.onclick=ev=>{ev.stopPropagation();toggleMenu(m,fn);};};
+  bind('trackBtn','trackMenu',renderTrackMenu);
+  bind('subBtn','subMenu',renderSubMenu);
+  document.addEventListener('click',closeAllMenus);
+  document.querySelectorAll('.pill[data-level]').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.pill[data-level]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');state.levelFilter=parseInt(b.dataset.level,10);renderEras();});
+  document.getElementById('expandAll').onclick=()=>document.querySelectorAll('.era').forEach(s=>s.classList.remove('collapsed'));
+  document.getElementById('collapseAll').onclick=()=>document.querySelectorAll('.era').forEach(s=>s.classList.add('collapsed'));
+}
+
+/* ===================== 启动（顺序：先数据→渲染→应用→绑定） ===================== */
+setModule('empire');
+renderNav();
+renderEras();
+applyModule('empire');
+bindUI();
+</script>
+</body>
+</html>
