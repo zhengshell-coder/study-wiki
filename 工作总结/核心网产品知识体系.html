@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心网产品知识体系 · 4G/5G 核心网产品经理进阶手册</title>
+<style>
+  :root {
+    --bg-deep:#060a14; --bg-mid:#0b1220;
+    --accent-cyan:#2dd4ff; --accent-violet:#8b7cff; --accent-amber:#ffb84d;
+    --accent-green:#4dff9e; --accent-red:#ff5d6c; --accent-pink:#ff6ec7;
+    --glass-bg:rgba(255,255,255,0.045); --glass-bg-active:rgba(45,212,255,0.09);
+    --glass-border:rgba(255,255,255,0.08); --glass-border-active:rgba(45,212,255,0.4);
+    --text-primary:#eaf0fb; --text-secondary:#93a1bd; --text-muted:#5d6a87;
+    --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC","Segoe UI",system-ui,sans-serif;
+    --font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;font-family:var(--font-sans);color:var(--text-primary);
+    background:radial-gradient(circle at 15% 10%,rgba(45,212,255,0.07),transparent 40%),
+      radial-gradient(circle at 85% 90%,rgba(139,124,255,0.06),transparent 45%),
+      linear-gradient(160deg,var(--bg-deep),var(--bg-mid));background-attachment:fixed;overflow:hidden;}
+  body::before{content:"";position:fixed;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px);
+    background-size:28px 28px;pointer-events:none;z-index:0;}
+  .app{position:relative;z-index:1;display:flex;height:100vh;}
+  .sidebar{width:264px;flex-shrink:0;display:flex;flex-direction:column;
+    background:var(--glass-bg);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    border-right:1px solid var(--glass-border);}
+  .sidebar-header{padding:28px 24px 20px;border-bottom:1px solid var(--glass-border);}
+  .sidebar-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--accent-cyan);text-transform:uppercase;margin-bottom:6px;}
+  .sidebar-title{font-size:17px;font-weight:600;color:var(--text-primary);line-height:1.4;}
+  .sidebar-meta{margin-top:8px;font-size:12px;color:var(--text-muted);}
+  .nav-list{flex:1;overflow-y:auto;padding:16px 12px;list-style:none;}
+  .nav-group-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;padding:16px 14px 6px;}
+  .nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:11px 14px;margin-bottom:3px;border-radius:10px;border:1px solid transparent;color:var(--text-secondary);font-size:13.5px;cursor:pointer;transition:all .2s ease;}
+  .nav-item:hover{background:var(--glass-bg);color:var(--text-primary);}
+  .nav-item.active{background:var(--glass-bg-active);border-color:var(--glass-border-active);color:var(--text-primary);box-shadow:0 0 0 1px rgba(45,212,255,.08) inset,0 0 22px rgba(45,212,255,.10);}
+  .nav-index{font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);opacity:.85;flex-shrink:0;}
+  main{flex:1;overflow-y:auto;padding:44px 52px 80px;}
+  .section{display:none;} .section.active{display:block;animation:fadeIn .35s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .section-title{font-size:24px;font-weight:600;margin-bottom:6px;}
+  .section-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:28px;}
+  .card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:20px;}
+  .card h3{font-size:15px;font-weight:600;color:var(--accent-cyan);margin-bottom:12px;}
+  .card h4{font-size:14px;font-weight:600;color:var(--accent-violet);margin:16px 0 8px;}
+  .card p{font-size:14px;line-height:1.85;color:var(--text-secondary);margin-bottom:8px;}
+  .card ul{margin-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;}
+  .card ul li{margin-bottom:4px;} .card strong{color:var(--text-primary);font-weight:600;}
+  .stat-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:140px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:18px 20px;}
+  .stat-value{font-family:var(--font-mono);font-size:26px;font-weight:600;color:var(--accent-cyan);}
+  .stat-label{font-size:12px;color:var(--text-muted);margin-top:4px;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;}
+  .data-table th{text-align:left;padding:10px 14px;color:var(--accent-cyan);font-weight:600;border-bottom:1px solid var(--glass-border-active);white-space:nowrap;}
+  .data-table td{padding:10px 14px;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,0.04);line-height:1.6;}
+  .data-table tr:hover td{color:var(--text-primary);background:rgba(45,212,255,0.03);}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);margin:2px 4px 2px 0;}
+  .tag-cyan{background:rgba(45,212,255,.15);color:var(--accent-cyan);}
+  .tag-violet{background:rgba(139,124,255,.15);color:var(--accent-violet);}
+  .tag-amber{background:rgba(255,184,77,.15);color:var(--accent-amber);}
+  .tag-green{background:rgba(77,255,158,.15);color:var(--accent-green);}
+  .tag-red{background:rgba(255,93,108,.15);color:var(--accent-red);}
+  .tag-huawei{background:rgba(255,93,108,.12);color:#ff7a8a;}
+  .tag-ericsson{background:rgba(45,212,255,.12);color:#5db8e8;}
+  .tag-nokia{background:rgba(139,124,255,.12);color:#a89aff;}
+  .tag-zte{background:rgba(77,255,158,.12);color:#5deba0;}
+  .tag-4g{background:rgba(255,184,77,.12);color:var(--accent-amber);}
+  .tag-5g{background:rgba(45,212,255,.12);color:var(--accent-cyan);}
+  .sub-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .sub-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all .2s;}
+  .sub-tab:hover{color:var(--text-primary);}
+  .sub-tab.active{border-color:var(--glass-border-active);background:var(--glass-bg-active);color:var(--accent-cyan);}
+  .sub-content{display:none;} .sub-content.active{display:block;}
+  .diagram-box{background:rgba(6,10,20,.6);border:1px solid var(--glass-border);border-radius:14px;padding:32px;margin:16px 0;text-align:center;}
+  .diagram-caption{font-size:12px;color:var(--text-muted);margin-top:12px;font-style:italic;}
+  .dim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:16px 0;}
+  .dim-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:18px 20px;}
+  .dim-card .dim-title{font-size:13px;font-weight:600;margin-bottom:8px;}
+  .dim-card .dim-body{font-size:13px;line-height:1.7;color:var(--text-secondary);}
+  .dim-huawei{border-left:3px solid var(--accent-red);} .dim-huawei .dim-title{color:#ff7a8a;}
+  .dim-competitor{border-left:3px solid var(--accent-cyan);} .dim-competitor .dim-title{color:var(--accent-cyan);}
+  .dim-customer{border-left:3px solid var(--accent-amber);} .dim-customer .dim-title{color:var(--accent-amber);}
+  .dim-principle{border-left:3px solid var(--accent-green);} .dim-principle .dim-title{color:var(--accent-green);}
+  .dim-challenge{border-left:3px solid var(--accent-violet);} .dim-challenge .dim-title{color:var(--accent-violet);}
+  .callout{border-left:3px solid var(--accent-cyan);background:rgba(45,212,255,.05);border-radius:0 8px 8px 0;padding:14px 18px;margin:12px 0;font-size:13px;color:var(--text-secondary);line-height:1.7;}
+  .callout-amber{border-left-color:var(--accent-amber);background:rgba(255,184,77,.05);}
+  .callout-red{border-left-color:var(--accent-red);background:rgba(255,93,108,.05);}
+  .callout strong{color:var(--text-primary);}
+  .bottleneck-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-left:3px solid var(--accent-red);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
+  .bottleneck-card .bk-title{font-size:15px;font-weight:600;color:var(--accent-red);margin-bottom:10px;}
+  .bottleneck-card .bk-symptom{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}
+  .bottleneck-card .bk-solution{background:rgba(77,255,158,.04);border:1px solid rgba(77,255,158,.15);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text-secondary);line-height:1.7;}
+  .bottleneck-card .bk-solution strong{color:var(--accent-green);}
+  .step-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0;}
+  .step-node{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:12px 16px;font-size:12px;text-align:center;min-width:100px;position:relative;}
+  .step-node.active{border-color:var(--accent-cyan);background:var(--glass-bg-active);}
+  .step-arrow{width:24px;height:2px;background:var(--text-muted);position:relative;flex-shrink:0;}
+  .step-arrow::after{content:'';position:absolute;right:-4px;top:-3px;width:0;height:0;border-left:6px solid var(--text-muted);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+  .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0;}
+  .compare-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:16px 18px;}
+  .compare-card .cc-vendor{font-size:12px;font-weight:600;margin-bottom:8px;font-family:var(--font-mono);}
+  .compare-card .cc-product{font-size:13px;color:var(--text-primary);margin-bottom:6px;}
+  .compare-card .cc-spec{font-size:11px;color:var(--text-muted);line-height:1.6;}
+  .evol-timeline{position:relative;padding:20px 0;}
+  .evol-timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent-amber),var(--accent-cyan),var(--accent-violet));transform:translateX(-50%);}
+  .evol-item{position:relative;width:50%;padding:12px 24px;margin-bottom:8px;}
+  .evol-item.left{left:0;text-align:right;padding-right:40px;}
+  .evol-item.right{left:50%;padding-left:40px;}
+  .evol-item::before{content:'';position:absolute;top:18px;width:12px;height:12px;border-radius:50%;border:2px solid;background:var(--bg-deep);}
+  .evol-item.left::before{right:-6px;border-color:var(--accent-cyan);}
+  .evol-item.right::before{left:-6px;border-color:var(--accent-violet);}
+  .evol-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .evol-desc{font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .scenario-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;margin-bottom:20px;}
+  .scenario-card.sc-leading{border-left:4px solid var(--accent-green);}
+  .scenario-card.sc-middle{border-left:4px solid var(--accent-cyan);}
+  .scenario-card.sc-conservative{border-left:4px solid var(--accent-amber);}
+  .scenario-card h3{margin-bottom:16px;}
+  .scenario-card.sc-leading h3{color:var(--accent-green);}
+  .scenario-card.sc-middle h3{color:var(--accent-cyan);}
+  .scenario-card.sc-conservative h3{color:var(--accent-amber);}
+  .region-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:18px 20px;margin-bottom:12px;}
+  .region-card .rc-title{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .region-card .rc-body{font-size:13px;color:var(--text-secondary);line-height:1.7;}
+  .nf-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:16px 18px;margin:6px 0;}
+  .nf-card .nf-name{font-size:14px;font-weight:600;margin-bottom:4px;font-family:var(--font-mono);}
+  .nf-card .nf-full{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+  .nf-card .nf-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;}
+  .nf-4g{border-left:3px solid var(--accent-amber);} .nf-4g .nf-name{color:var(--accent-amber);}
+  .nf-5g{border-left:3px solid var(--accent-cyan);} .nf-5g .nf-name{color:var(--accent-cyan);}
+  .nf-ims{border-left:3px solid var(--accent-violet);} .nf-ims .nf-name{color:var(--accent-violet);}
+  .slice-vis{display:flex;gap:4px;margin:16px 0;height:180px;}
+  .slice-lane{flex:1;border:1px solid;border-radius:10px;padding:12px;display:flex;flex-direction:column;justify-content:flex-start;position:relative;overflow:hidden;}
+  .slice-lane .sl-name{font-size:13px;font-weight:600;margin-bottom:6px;font-family:var(--font-mono);}
+  .slice-lane .sl-desc{font-size:11px;color:var(--text-muted);line-height:1.5;}
+  .slice-embb{border-color:rgba(45,212,255,.3);background:rgba(45,212,255,.04);}
+  .slice-embb .sl-name{color:var(--accent-cyan);}
+  .slice-urllc{border-color:rgba(255,93,108,.3);background:rgba(255,93,108,.04);}
+  .slice-urllc .sl-name{color:var(--accent-red);}
+  .slice-mmtc{border-color:rgba(77,255,158,.3);background:rgba(77,255,158,.04);}
+  .slice-mmtc .sl-name{color:var(--accent-green);}
+  .slice-pipe{position:absolute;bottom:0;left:12px;right:12px;height:4px;border-radius:2px;opacity:.5;}
+  @keyframes flow-dash{to{stroke-dashoffset:-20;}} .flow-line{stroke-dasharray:6 4;animation:flow-dash 1s linear infinite;}
+  .dc-3d-scene{perspective:1200px;perspective-origin:50% 30%;width:100%;height:440px;position:relative;overflow:visible;}
+  .dc-3d-stage{transform-style:preserve-3d;width:100%;height:100%;position:relative;animation:dc-rotate 20s linear infinite;transform:rotateX(-12deg) rotateY(-20deg);}
+  @keyframes dc-rotate{0%{transform:rotateX(-12deg) rotateY(-20deg);}25%{transform:rotateX(-12deg) rotateY(10deg);}50%{transform:rotateX(-12deg) rotateY(40deg);}75%{transform:rotateX(-12deg) rotateY(10deg);}100%{transform:rotateX(-12deg) rotateY(-20deg);}}
+  .dc3d-floor{position:absolute;width:560px;height:340px;left:50%;top:50%;transform:translate(-50%,-25%) rotateX(90deg);background:linear-gradient(rgba(45,212,255,.03),transparent),repeating-linear-gradient(0deg,rgba(255,255,255,.025) 1px,transparent 40px),repeating-linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 40px);border:1px solid rgba(255,255,255,.05);border-radius:4px;}
+  .dc3d-rack{position:absolute;width:70px;height:200px;border-radius:6px;transform-style:preserve-3d;}
+  .dc3d-rack-body{width:70px;height:200px;background:linear-gradient(135deg,rgba(45,212,255,.06),rgba(20,30,45,.7));border:1px solid rgba(45,212,255,.2);border-radius:6px;position:relative;display:flex;flex-direction:column;padding:6px 4px;gap:3px;}
+  .dc3d-server{flex:1;background:rgba(15,25,40,.8);border:1px solid rgba(45,212,255,.15);border-radius:3px;display:flex;align-items:center;padding:0 4px;gap:3px;}
+  .dc3d-led{width:4px;height:4px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 4px var(--accent-green);animation:dc-led 2s ease-in-out infinite;}
+  .dc3d-led-amber{background:var(--accent-amber);box-shadow:0 0 4px var(--accent-amber);animation-delay:.5s;}
+  .dc3d-led-cyan{background:var(--accent-cyan);box-shadow:0 0 4px var(--accent-cyan);animation-delay:1s;}
+  @keyframes dc-led{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .dc3d-rack-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;font-family:var(--font-mono);color:var(--accent-cyan);background:rgba(6,10,20,.85);border:1px solid rgba(45,212,255,.3);border-radius:4px;padding:2px 6px;white-space:nowrap;}
+  .dc3d-cloud{position:absolute;width:120px;height:60px;left:50%;top:8%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;}
+  .dc3d-cloud-body{width:120px;height:50px;background:radial-gradient(ellipse,rgba(139,124,255,.12),rgba(139,124,255,.03));border:1px solid rgba(139,124,255,.25);border-radius:30px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--font-mono);color:var(--accent-violet);}
+  .dc3d-ue{position:absolute;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;border:2px solid;}
+  .dc3d-label{position:absolute;background:rgba(6,10,20,.85);border:1px solid;border-radius:6px;padding:4px 8px;font-size:11px;font-family:var(--font-mono);white-space:nowrap;z-index:20;backdrop-filter:blur(8px);}
+  .dc3d-label-cyan{border-color:var(--accent-cyan);color:var(--accent-cyan);}
+  .dc3d-label-green{border-color:var(--accent-green);color:var(--accent-green);}
+  .dc3d-label-amber{border-color:var(--accent-amber);color:var(--accent-amber);}
+  .dc3d-label-violet{border-color:var(--accent-violet);color:var(--accent-violet);}
+  .dc3d-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;justify-content:center;}
+  .dc3d-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);}
+  .dc3d-legend-dot{width:10px;height:10px;border-radius:50%;border:1px solid;}
+  ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;}
+  svg .svg-label{fill:var(--text-secondary);font-size:11px;font-family:var(--font-sans);}
+  svg .svg-title{fill:var(--accent-cyan);font-size:13px;font-weight:600;font-family:var(--font-sans);}
+  svg .svg-mono{fill:var(--text-muted);font-size:10px;font-family:var(--font-mono);}
+  @keyframes ca-flow{0%{stroke-dashoffset:30;}100%{stroke-dashoffset:0;}} .ca-line{stroke-dasharray:8 4;animation:ca-flow 1.5s linear infinite;}
+  .stack-layer{display:flex;align-items:center;padding:10px 16px;margin:3px 0;border-radius:8px;font-size:13px;border:1px solid;gap:12px;}
+  .stack-layer .layer-name{font-weight:600;min-width:60px;} .stack-layer .layer-desc{color:var(--text-muted);font-size:12px;}
+  .layer-amf{background:rgba(45,212,255,.08);border-color:rgba(45,212,255,.25);color:var(--accent-cyan);}
+  .layer-smf{background:rgba(77,255,158,.08);border-color:rgba(77,255,158,.25);color:var(--accent-green);}
+  .layer-upf{background:rgba(139,124,255,.08);border-color:rgba(139,124,255,.25);color:var(--accent-violet);}
+  .layer-pcf{background:rgba(255,184,77,.08);border-color:rgba(255,184,77,.25);color:var(--accent-amber);}
+  .layer-udm{background:rgba(255,93,108,.08);border-color:rgba(255,93,108,.25);color:var(--accent-red);}
+  .layer-nrf{background:rgba(255,110,199,.08);border-color:rgba(255,110,199,.25);color:var(--accent-pink);}
+  .split-line{height:2px;background:repeating-linear-gradient(90deg,var(--accent-cyan),var(--accent-cyan) 6px,transparent 6px,transparent 12px);margin:6px 0;position:relative;}
+  .split-label{position:absolute;right:0;top:-18px;font-size:11px;font-family:var(--font-mono);color:var(--accent-cyan);}
+  @keyframes nf-pulse{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.1);}}
+  .nf-node{animation:nf-pulse 2s ease-in-out infinite;}
+  .vnf-evol-box{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:16px 0;}
+  .vnf-stage{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:20px 24px;text-align:center;min-width:160px;position:relative;}
+  .vnf-stage .vs-title{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .vnf-stage .vs-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+  .vnf-arrow{width:40px;height:2px;background:var(--accent-cyan);position:relative;flex-shrink:0;margin:0 8px;}
+  .vnf-arrow::after{content:'';position:absolute;right:-4px;top:-5px;width:0;height:0;border-left:8px solid var(--accent-cyan);border-top:6px solid transparent;border-bottom:6px solid transparent;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-eyebrow">4G/5G CORE NETWORK · PM</div>
+      <div class="sidebar-title">核心网产品<br>知识体系手册</div>
+      <div class="sidebar-meta">华为产品学习 · 增强版<br>4G/5G双制式 · 产品线总裁视角</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-group-label">宏观篇</li>
+      <li class="nav-item active" data-target="sec-overview"><span class="nav-index">01</span><span>总裁视角全景</span></li>
+      <li class="nav-item" data-target="sec-region"><span class="nav-index">02</span><span>区域市场与CTO对话</span></li>
+      <li class="nav-group-label">演进篇</li>
+      <li class="nav-item" data-target="sec-evolution"><span class="nav-index">03</span><span>核心网技术演进</span></li>
+      <li class="nav-group-label">产品篇</li>
+      <li class="nav-item" data-target="sec-architecture"><span class="nav-index">04</span><span>核心网架构总览</span></li>
+      <li class="nav-item" data-target="sec-modules"><span class="nav-index">05</span><span>核心网元详解</span></li>
+      <li class="nav-item" data-target="sec-cloud"><span class="nav-index">06</span><span>云化与虚拟化</span></li>
+      <li class="nav-group-label">技术篇</li>
+      <li class="nav-item" data-target="sec-tech"><span class="nav-index">07</span><span>关键技术原理</span></li>
+      <li class="nav-group-label">实战篇</li>
+      <li class="nav-item" data-target="sec-scenario"><span class="nav-index">08</span><span>部署场景</span></li>
+      <li class="nav-item" data-target="sec-strategy"><span class="nav-index">09</span><span>客户选型策略</span></li>
+      <li class="nav-item" data-target="sec-bottleneck"><span class="nav-index">10</span><span>典型瓶颈与方案</span></li>
+      <li class="nav-group-label">战略篇</li>
+      <li class="nav-item" data-target="sec-pm"><span class="nav-index">11</span><span>产品经理能力地图</span></li>
+      <li class="nav-item" data-target="sec-evolution-scenarios"><span class="nav-index">12</span><span>网络演进三场景</span></li>
+    </ul>
+  </aside>
+
+  <main>
+
+    <!-- ==================== 01 总裁视角全景 ==================== -->
+    <section class="section active" id="sec-overview">
+      <div class="section-title">产品线总裁视角 · 核心网产品全景</div>
+      <div class="section-subtitle">站在产品线总裁高度审视4G/5G核心网 · 投资逻辑 · 客户痛点 · 竞争格局</div>
+
+      <div class="card">
+        <h3>为什么产品经理需要"总裁视角"</h3>
+        <p>核心网产品线总裁不关心某个AMF的并发用户数，他关心的是：<strong>全球不同区域的客户在核心网云化上怎么花钱？华为的5GC产品组合能不能接住ToB行业专网需求？友商在云原生核心网上抢哪些蛋糕？</strong>作为产品经理，你必须能从总裁视角理解全局，才能在CTO对话中展现战略深度而非仅仅是网元清单罗列。</p>
+        <div class="dim-grid">
+          <div class="dim-card dim-principle">
+            <div class="dim-title">懂产品知识（基础层）</div>
+            <div class="dim-body">4G/5G全制式核心网体系：EPC/5GC网元功能、SBA架构、CUPS分离、NFV虚拟化、网络切片、IMS语音。能看懂架构图，能解释信令流程。</div>
+          </div>
+          <div class="dim-card dim-customer">
+            <div class="dim-title">懂客户投资策略（战略层）</div>
+            <div class="dim-body">发达市场重5GC云化和ToB切片变现，新兴市场重EPC扩容和成本控制，前沿市场重2G/3G退网和融合核心网。不同市场4G/5G核心网投资节奏完全不同。</div>
+          </div>
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">能应对CTO问询（实战层）</div>
+            <div class="dim-body">面对不同国家CTO关于"5GC什么时候上""云化值不值""华为和友商差异在哪"的提问，能给出有数据、有逻辑、有方案的回答。</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>本手册学习路径</strong>：宏观篇（总裁视角/区域市场）-> 演进篇（2G->5G核心网路线）-> 产品篇（架构/网元/云化）-> 技术篇（切片/SBA/CUPS/MEC）-> 实战篇（场景/选型/瓶颈）-> 战略篇（能力地图/网络演进场景）。由浅入深，从战略到执行。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G/5G 核心网全球投资格局 - 产品线总裁看的"大盘"</h3>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-value">~60%</div>
+            <div class="stat-label">全球移动核心网仍为4G EPC<br>EPC至少运营到2030年+</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">~35%</div>
+            <div class="stat-label">5GC已部署的运营商<br>中韩美日欧领先</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">~5%</div>
+            <div class="stat-label">2G/3G核心网仍存<br>非洲/南亚部分地区</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">$80B+</div>
+            <div class="stat-label">全球核心网+IMS年投资<br>含云化/虚拟化</div>
+          </div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>总裁视角的关键判断</strong>：<strong>EPC不会消失，5GC不会立即全面替代</strong>。未来5-7年，4G EPC/5GC长期共存是基本盘。产品线必须同时服务两类客户：①"5GC先行者"（中韩日美欧，追求SA云化和ToB切片变现）；②"EPC深耕者"（东南亚/中东/非洲/拉美，追求EPC扩容和低成本融合）。<strong>核心网的4G/5G融合能力和云化平滑演进能力是核心竞争壁垒</strong>。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>核心网数据中心三维全景（自动旋转）</h3>
+        <p>以3D视角展示典型核心网DC部署：服务器机柜集群（含EPC/5GC/IMS虚拟化网元）通过Spine-Leaf网络互联，上接云管平台，下连基站回传。适用于4G EPC和5GC（EPC物理/虚拟化部署 / 5GC云原生部署）。</p>
+        <div class="diagram-box" style="padding:16px;overflow:visible;">
+          <div class="dc-3d-scene">
+            <div class="dc-3d-stage">
+              <div class="dc3d-floor"></div>
+              <div class="dc3d-cloud">
+                <div class="dc3d-cloud-body">CloudCore 管理编排层</div>
+                <div class="dc3d-label dc3d-label-violet" style="top:-24px;left:50%;transform:translateX(-50%);">MANO / NFVO / 云管平台</div>
+              </div>
+              <div class="dc3d-rack" style="left:12%;top:35%;">
+                <div class="dc3d-rack-label">CloudCore vEPC (VNF)</div>
+                <div class="dc3d-rack-body">
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">vMME</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">SGW-C</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-amber"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);">PGW-C</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led dc3d-led-amber"></div><div class="dc3d-led"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);">PCRF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">HSS</span></div>
+                </div>
+              </div>
+              <div class="dc3d-rack" style="left:35%;top:35%;">
+                <div class="dc3d-rack-label">CloudCore 5GC (CNF)</div>
+                <div class="dc3d-rack-body">
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">AMF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">SMF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">NRF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-amber"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);">PCF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">NWDAF</span></div>
+                </div>
+              </div>
+              <div class="dc3d-rack" style="left:58%;top:35%;">
+                <div class="dc3d-rack-label">UPF + CloudIMS</div>
+                <div class="dc3d-rack-body">
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">UPF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">SGW-U</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-amber"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);">SBC</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led"></div><div class="dc3d-led dc3d-led-cyan"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);">CSCF</span></div>
+                  <div class="dc3d-server"><div class="dc3d-led dc3d-led-amber"></div><div class="dc3d-led"></div><span style="font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);">SMSF</span></div>
+                </div>
+              </div>
+              <div class="dc3d-rack" style="left:81%;top:35%;width:60px;height:200px;">
+                <div class="dc3d-rack-label" style="font-size:8px;">CloudUA/BCG</div>
+                <div class="dc3d-rack-body" style="width:60px;">
+                  <div class="dc3d-server" style="padding:0 3px;"><div class="dc3d-led"></div><span style="font-size:6px;font-family:var(--font-mono);color:var(--accent-cyan);">UDR</span></div>
+                  <div class="dc3d-server" style="padding:0 3px;"><div class="dc3d-led"></div><span style="font-size:6px;font-family:var(--font-mono);color:var(--accent-cyan);">UDSF</span></div>
+                  <div class="dc3d-server" style="padding:0 3px;"><div class="dc3d-led dc3d-led-amber"></div><span style="font-size:6px;font-family:var(--font-mono);color:var(--accent-amber);">SEPP</span></div>
+                  <div class="dc3d-server" style="padding:0 3px;"><div class="dc3d-led"></div><span style="font-size:6px;font-family:var(--font-mono);color:var(--accent-cyan);">AUSF</span></div>
+                  <div class="dc3d-server" style="padding:0 3px;"><div class="dc3d-led dc3d-led-amber"></div><span style="font-size:6px;font-family:var(--font-mono);color:var(--accent-amber);">NEF</span></div>
+                </div>
+              </div>
+              <div class="dc3d-ue" style="left:10%;bottom:5%;border-color:var(--accent-cyan);color:var(--accent-cyan);">gNB</div>
+              <div class="dc3d-ue" style="left:45%;bottom:5%;border-color:var(--accent-amber);color:var(--accent-amber);">eNB</div>
+              <div class="dc3d-ue" style="left:80%;bottom:5%;border-color:var(--accent-green);color:var(--accent-green);">DN</div>
+              <svg style="position:absolute;inset:0;pointer-events:none;z-index:10;" viewBox="0 0 700 440" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="dc-cable1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b7cff" stop-opacity=".5"/><stop offset="100%" stop-color="#2dd4ff" stop-opacity=".5"/></linearGradient>
+                  <linearGradient id="dc-cable2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2dd4ff" stop-opacity=".4"/><stop offset="100%" stop-color="#4dff9e" stop-opacity=".4"/></linearGradient>
+                </defs>
+                <path id="dc-path1" d="M 350 80 Q 280 150, 220 220" fill="none" stroke="url(#dc-cable1)" stroke-width="2" stroke-dasharray="6 4" class="flow-line"/>
+                <path id="dc-path2" d="M 350 80 Q 380 150, 400 220" fill="none" stroke="url(#dc-cable1)" stroke-width="2" stroke-dasharray="6 4" class="flow-line"/>
+                <path id="dc-path3" d="M 350 80 Q 420 160, 560 220" fill="none" stroke="url(#dc-cable1)" stroke-width="2" stroke-dasharray="6 4" class="flow-line" opacity=".6"/>
+                <path id="dc-path4" d="M 350 80 Q 480 180, 640 220" fill="none" stroke="url(#dc-cable2)" stroke-width="1.5" stroke-dasharray="6 4" class="flow-line" opacity=".4"/>
+                <path d="M 80 400 Q 200 350, 220 300" fill="none" stroke="rgba(45,212,255,.4)" stroke-width="2" stroke-dasharray="6 4" class="flow-line" opacity=".5"/>
+                <path d="M 350 400 Q 350 350, 400 300" fill="none" stroke="rgba(255,184,77,.4)" stroke-width="2" stroke-dasharray="6 4" class="flow-line" opacity=".5"/>
+                <path d="M 620 400 Q 560 350, 560 300" fill="none" stroke="rgba(77,255,158,.4)" stroke-width="2" stroke-dasharray="6 4" class="flow-line" opacity=".5"/>
+                <line x1="220" y1="260" x2="400" y2="260" stroke="rgba(45,212,255,.15)" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="400" y1="260" x2="560" y2="260" stroke="rgba(77,255,158,.15)" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="560" y1="260" x2="640" y2="260" stroke="rgba(139,124,255,.15)" stroke-width="1" stroke-dasharray="3 2"/>
+                <text x="310" y="255" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;opacity:.5;">Spine-Leaf N4/SBA</text>
+                <circle r="4" fill="#2dd4ff" opacity="0.9"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#dc-path1"/></animateMotion></circle>
+                <circle r="3" fill="#4dff9e" opacity="0.7"><animateMotion dur="3s" repeatCount="indefinite" begin="1s"><mpath href="#dc-path2"/></animateMotion></circle>
+                <circle r="3" fill="#8b7cff" opacity="0.6"><animateMotion dur="3.5s" repeatCount="indefinite" begin="2s"><mpath href="#dc-path3"/></animateMotion></circle>
+                <text x="180" y="370" class="svg-mono" fill="#2dd4ff" opacity=".6">N2/N3回传</text>
+                <text x="550" y="370" class="svg-mono" fill="#8b7cff" opacity=".5">N6数据</text>
+              </svg>
+            </div>
+          </div>
+          <div class="dc3d-legend">
+            <div class="dc3d-legend-item"><div class="dc3d-legend-dot" style="border-color:var(--accent-amber);background:rgba(255,184,77,.15);"></div>CloudCore vEPC (VNF)</div>
+            <div class="dc3d-legend-item"><div class="dc3d-legend-dot" style="border-color:var(--accent-cyan);background:rgba(45,212,255,.15);"></div>CloudCore 5GC (CNF)</div>
+            <div class="dc3d-legend-item"><div class="dc3d-legend-dot" style="border-color:var(--accent-green);background:rgba(77,255,158,.15);"></div>UPF + CloudIMS</div>
+            <div class="dc3d-legend-item"><div class="dc3d-legend-dot" style="border-color:var(--accent-violet);background:rgba(139,124,255,.15);"></div>CloudUA / CloudBCG</div>
+            <div class="dc3d-legend-item"><div class="dc3d-legend-dot" style="border-color:var(--accent-cyan);background:rgba(45,212,255,.1);"></div>信令流(动画)</div>
+          </div>
+          <div class="diagram-caption">图 1-1 · 核心网DC三维全景：4个机柜(CloudCore vEPC/5GC CNF/UPF+IMS/CloudUA+BCG) + Spine-Leaf互联 + 信令流动画</div>
+        </div>
+        <div class="callout">
+          <strong>4G vs 5G核心网物理差异</strong>：4G EPC可以是物理网元（传统 ATCA 机框）或虚拟化网元（VNF on VM）；5GC必须是云原生部署（CNF on Container）。<strong>华为CloudCore平台同时支持EPC VNF和5GC CNF</strong>，一个DC管理双制式，支持4G/5G融合网元（如融合AMF/MME、融合SMF/SGW-C）。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>全球核心网设备厂商格局</h3>
+        <div class="compare-grid">
+          <div class="compare-card" style="border-left:3px solid var(--accent-red);">
+            <div class="cc-vendor" style="color:#ff7a8a;">华为 Huawei</div>
+            <div class="cc-product">CloudCore全系列4G/5G核心网</div>
+            <div class="cc-spec">全球份额第一(~28%)<br>优势：融合核心网、切片、ToB方案<br>挑战：部分市场政策限制</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-cyan);">
+            <div class="cc-vendor" style="color:#5db8e8;">爱立信 Ericsson</div>
+            <div class="cc-product">Dual Mode 5G Core</div>
+            <div class="cc-spec">份额第二(~26%)<br>优势：欧美市场、云原生成熟<br>挑战：ToB方案不如华为全</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-violet);">
+            <div class="cc-vendor" style="color:#a89aff;">诺基亚 Nokia</div>
+            <div class="cc-product">CPC / magenta Core</div>
+            <div class="cc-spec">份额第三(~20%)<br>优势：北美、vRAN协同<br>挑战：产品迭代偏慢</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-green);">
+            <div class="cc-vendor" style="color:#5deba0;">中兴 ZTE</div>
+            <div class="cc-product">Common Core</div>
+            <div class="cc-spec">国内份额第二<br>优势：性价比、国内交付<br>挑战：海外品牌力弱</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>核心术语速查（4G/5G核心网）</h3>
+        <table class="data-table">
+          <thead><tr><th>缩写</th><th>全称</th><th>一句话解释</th><th>4G/5G</th></tr></thead>
+          <tbody>
+            <tr><td>EPC</td><td>Evolved Packet Core</td><td>4G核心网，全IP分组交换</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>5GC</td><td>5G Core</td><td>5G核心网，支持SBA/切片/边缘计算</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>MME</td><td>Mobility Management Entity</td><td>4G移动性管理网元（信令面）</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>AMF</td><td>Access and Mobility Management Function</td><td>5G接入和移动性管理（MME演进）</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>SMF</td><td>Session Management Function</td><td>5G会话管理（SGW-C/PGW-C演进）</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>UPF</td><td>User Plane Function</td><td>5G用户面（SGW-U/PGW-U演进），可下沉</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>SBA</td><td>Service-Based Architecture</td><td>5GC控制面服务化架构，HTTP/2 RESTful API</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>CUPS</td><td>Control and User Plane Separation</td><td>控制面/用户面分离，4G后期引入</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>NFV</td><td>Network Functions Virtualization</td><td>网元虚拟化，物理设备变软件</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>MEC</td><td>Multi-access Edge Computing</td><td>边缘计算，UPF下沉实现低时延</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>IMS</td><td>IP Multimedia Subsystem</td><td>VoLTE/VoNR语音核心网</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>NRF</td><td>Network Repository Function</td><td>5GC服务注册发现（SBA核心组件）</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>SEPP</td><td>Security Edge Protection Proxy</td><td>5GC漫游安全代理，跨PLMN信令必经</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>NWDAF</td><td>Network Data Analytics Function</td><td>5GC AI数据分析网元，5.5G AI原生核心</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>N26</td><td>N26 Interface</td><td>AMF↔MME接口，4G/5G互操作（EPS Fallback基础）</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>UDR</td><td>Unified Data Repository</td><td>5GC统一数据存储，数据与逻辑分离</td><td><span class="tag tag-5g">5G</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 02 区域市场与CTO对话 ==================== -->
+    <section class="section" id="sec-region">
+      <div class="section-title">区域市场与CTO对话指南</div>
+      <div class="section-subtitle">不同区域市场的4G/5G核心网投资策略 · CTO关注点 · 典型问答</div>
+
+      <div class="card">
+        <h3>全球三大市场类型与4G/5G核心网投资策略</h3>
+        <div class="region-card" style="border-left:4px solid var(--accent-green);">
+          <div class="rc-title" style="color:var(--accent-green);">领先市场（发达市场）：中国/韩国/日本/美国/西欧</div>
+          <div class="rc-body">
+            <strong>核心网状态</strong>：5GC SA已规模部署，EPC开始减容但承载VoLTE和存量4G用户<br>
+            <strong>CTO关注</strong>：5GC云原生演进、网络切片商用变现、MEC ToB场景、核心网自动化运维<br>
+            <strong>投资优先级</strong>：5GC SA扩容 > MEC边缘部署 > EPC优化退容 > 2G/3G核心网退网<br>
+            <strong>典型痛点</strong>：5GC ToB投资回报不清晰；EPC/5GC双栈运维复杂；云原生迁移风险<br>
+            <strong>华为机会</strong>：CloudCore融合核心网、端到端切片方案、MEC+行业专网
+          </div>
+        </div>
+        <div class="region-card" style="border-left:4px solid var(--accent-cyan);">
+          <div class="rc-title" style="color:var(--accent-cyan);">新兴市场：东南亚/中东/拉美/印度</div>
+          <div class="rc-body">
+            <strong>核心网状态</strong>：EPC为主力（虚拟化占比50-70%），5GC刚起步或试点<br>
+            <strong>CTO关注</strong>：EPC扩容降成本、5GC试点选址、融合核心网保护投资、2G/3G退网<br>
+            <strong>投资优先级</strong>：EPC扩容 > 融合核心网升级 > 2G/3G退网 > 5GC试点<br>
+            <strong>典型痛点</strong>：预算有限ARPU低（$2-5/月）；DC基础设施薄弱；运维人才不足<br>
+            <strong>华为机会</strong>：融合EPC/5GC核心网（一套系统管双制式）、虚拟化降TCO、轻量化5GC
+          </div>
+        </div>
+        <div class="region-card" style="border-left:4px solid var(--accent-amber);">
+          <div class="rc-title" style="color:var(--accent-amber);">前沿市场：非洲/南亚/部分拉美</div>
+          <div class="rc-body">
+            <strong>核心网状态</strong>：2G/3G核心网仍占30-50%，EPC建设中，5GC未提上日程<br>
+            <strong>CTO关注</strong>：2G/3G退网策略、EPC基础覆盖、超低成本建网、Mobile Money平台<br>
+            <strong>投资优先级</strong>：3G->4G核心网升级 > 2G维护 > EPC扩容 > 5GC(远期)<br>
+            <strong>典型痛点</strong>：极端预算约束；DC电力不稳定；用户终端以2G/3G为主<br>
+            <strong>华为机会</strong>：融合2G/3G/4G/5G核心网、低功耗DC方案、Mobile Money平台
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CTO对话模拟 - 典型问答</h3>
+        <div class="callout"><strong>场景1：领先市场CTO问</strong>"我们5GC SA已经部署了，但ToB切片只有试点没有规模商用，切片变现路径是什么？"</div>
+        <p><strong>回答框架</strong>：①切片变现需要从"技术验证"转向"商业模式验证"（按SLA分级计费）；②建议先在3个高价值ToB场景做切片商用（智慧矿山/港口/电力），每个场景定义SLA等级和计费模型；③用NEF开放API让企业自管理切片，降低运维成本；④同时推进BSS/OSS改造支持切片计费。<br>
+        <strong>华为差异</strong>：端到端切片方案（RAN+CN+MEC）最成熟，超1000个ToB商用案例，切片管理平台支持SLA自动保障。</p>
+
+        <div class="callout callout-amber"><strong>场景2：新兴市场CTO问</strong>"我们EPC是传统物理网元，扩容贵且慢。要不要现在虚拟化？5GC什么时候上？"</div>
+        <p><strong>回答框架</strong>：①EPC虚拟化是必经之路，但不需要一步到位（先虚拟化新扩容部分，存量物理网元逐步替换）；②虚拟化EPC降低扩容成本30%+，且部署快（软件下发即可）；③5GC建议先部署融合核心网（一套系统同时管EPC和5GC），在首都做5GC SA试点；④融合核心网保护投资：未来5GC扩容不需换平台。<br>
+        <strong>华为差异</strong>：CloudCore融合核心网一套平台管2G/3G/4G/5G，EPC虚拟化和5GC演进无缝衔接。</p>
+
+        <div class="callout callout-red"><strong>场景3：前沿市场CTO问</strong>"我们3G核心网运维成本太高，但退3G语音怎么办？VoLTE覆盖率还不够。"</div>
+        <p><strong>回答框架</strong>：①3G退网是必然趋势，关键是"语音先行"策略；②先推进VoLTE覆盖（4G EPC+IMS），用VoLTE替换3G语音；③3G核心网退网后，频段重耕为4G；④2G核心网暂时保留（GSM物联网/基础语音），用融合核心网2G/3G/4G共管；⑤终端补贴加速用户换4G手机。<br>
+        <strong>华为差异</strong>：华为融合核心网支持2G/3G/4G/5G四模共管，CSFB/VoLTE/SRVCC语音互操作最成熟。</p>
+
+        <div class="callout"><strong>场景4：任意市场CTO问</strong>"华为5GC和爱立信/诺基亚相比，核心差异在哪？"</div>
+        <p><strong>回答框架</strong>：①<strong>融合核心网最强</strong>：一套平台管2G/3G/4G/5G，友商通常EPC和5GC分两套；②<strong>切片端到端最成熟</strong>：RAN+CN+MEC+管理全栈切片，友商多只有CN切片；③<strong>云原生落地领先</strong>：CNF容器化部署、微服务粒度最细；④<strong>ToB方案最全</strong>：行业专网/MEC/UPF下沉方案超1000商用；⑤<strong>5.5G核心网先锋</strong>：网络智能化/AI运维领先。<strong>劣势坦诚</strong>：价格偏高（用TCO和运维自动化说服），部分市场政策受限。</p>
+
+        <div class="callout callout-red"><strong>场景5：竞标counter - 爱立信云原生攻势</strong>"爱立信说他们5GC全CNF容器化最成熟，微服务粒度最细。华为的CNF是不是落后了？"</div>
+        <p><strong>回答框架</strong>：①<strong>坦诚承认</strong>：爱立信在CNF纯云原生技术栈上确实起步早，K8s编排成熟度高；②<strong>反问焦点</strong>：贵司当前EPC是物理还是虚拟化？（如果还在用物理/虚拟化EPC）爱立信5GC CNF和他们的EPC是两套独立平台，您的4G用户怎么管？还要维护两套系统？③<strong>华为优势</strong>：华为CloudCore是<strong>VNF+CNF混合演进</strong>--EPC保持VNF、5GC用CNF，一套平台一套运维团队。爱立信"纯CNF"听起来先进，但对有EPC存量的运营商意味着<strong>双平台双运维</strong>；④<strong>数据counter</strong>：华为ToB商用>1000个（爱立信~300-400个），端到端切片覆盖RAN+CN+MEC（爱立信主要CN切片）。<br>
+        <strong>一句话</strong>："爱立信CNF技术领先半个版本，但华为融合架构省一套平台和运维团队，5年TCO低15-25%。"</p>
+
+        <div class="callout callout-red"><strong>场景6：竞标counter - 诺基亚UPF性能攻势</strong>"诺基亚说他们ReefShark芯片加速UPF吞吐最高，华为UPF性能够吗？"</div>
+        <p><strong>回答框架</strong>：①<strong>坦诚回应</strong>：诺基亚ReefShark自研芯片UPF确实在单实例吞吐上有优势（~800Gbps）；②<strong>对等方案</strong>：华为也有自研Solar芯片硬件加速UPF（~400-800Gbps），性能在同一量级；③<strong>转移焦点</strong>：UPF性能只是核心网选型的一个维度。更重要的是：<strong>UPF灵活部署</strong>（华为支持软件UPF+硬件UPF混合，按场景选型）、<strong>切片端到端</strong>（诺基亚CN切片为主，缺RAN+MEC联动）、<strong>融合核心网</strong>（诺基亚EPC和5GC也是分平台的）；④<strong>长期风险</strong>：诺基亚核心网产品迭代节奏比华为慢1-2个版本，5.5G核心网进度落后。<br>
+        <strong>一句话</strong>："UPF性能华为有对等方案，但选核心网不能只看UPF吞吐--融合、切片、ToB生态、迭代速度华为全面领先。"</p>
+      </div>
+
+      <div class="card">
+        <h3>不同区域4G/5G核心网投资节奏对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>领先市场</th><th>新兴市场</th><th>前沿市场</th></tr></thead>
+          <tbody>
+            <tr><td>EPC投资重心</td><td>减容优化、退网准备</td><td>扩容+虚拟化升级</td><td>3G->4G升级、基础建设</td></tr>
+            <tr><td>5GC投资节奏</td><td>SA规模部署+云原生</td><td>首都/核心城市试点</td><td>远期规划(3-5年后)</td></tr>
+            <tr><td>2G/3G核心网策略</td><td>已完成或进行中退网</td><td>启动退网</td><td>2G保留、3G逐步退</td></tr>
+            <tr><td>虚拟化/云化</td><td>CNF容器化为主</td><td>VNF虚拟化为主</td><td>物理网元为主</td></tr>
+            <tr><td>MEC部署</td><td>广泛部署+ToB商用</td><td>核心城市试点</td><td>未部署</td></tr>
+            <tr><td>关键华为产品</td><td>CloudCore/切片/MEC</td><td>融合核心网/vEPC</td><td>融合核心网/低功耗DC</td></tr>
+            <tr><td>CTO决策周期</td><td>6-12月（战略驱动）</td><td>12-24月（ROI驱动）</td><td>24-36月（预算驱动）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 03 核心网技术演进 ==================== -->
+    <section class="section" id="sec-evolution">
+      <div class="section-title">核心网技术演进 · 从2G到5G</div>
+      <div class="section-subtitle">3GPP标准路线 · 核心网架构变革 · 语音演进 · 虚拟化演进</div>
+
+      <div class="card">
+        <h3>3GPP核心网标准演进路线（2G -> 5G -> 6G）</h3>
+        <div class="evol-timeline">
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-amber);">2G/3G 核心网 (2000-2010)</div>
+            <div class="evol-desc">电路交换(CS)+分组交换(PS)并存；MSC处理语音；SGSN/GGSN处理数据</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-amber);">4G EPC Rel-8~9 (2010)</div>
+            <div class="evol-desc">全IP分组核心网；CS域消失（语音靠VoLTE/IMS）；MME/SGW/PGW/HSS架构</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-amber);">4G EPC Rel-10~13 (2013-2016)</div>
+            <div class="evol-desc">载波聚合核心网支持；NB-IoT核心网扩展；虚拟化EPC开始</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-amber);">4G EPC Rel-14 (2017)</div>
+            <div class="evol-desc">CUPS引入（控制面/用户面分离：SGW-C/SGW-U、PGW-C/PGW-U）；为5GC原生CUPS奠定基础</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-cyan);">5GC Rel-15 (2018)</div>
+            <div class="evol-desc">SBA服务化架构；AMF/SMF/UPF新架构；支持NSA；网络切片基础</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-cyan);">5GC Rel-16~17 (2020-2022)</div>
+            <div class="evol-desc">URLLC增强、TSN时间敏感网络、NPN非公网；切片商用成熟；CNF容器化</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-violet);">5.5G Core Rel-18+ (2024+)</div>
+            <div class="evol-desc">网络智能化(AI原生)、通感一体核心网、RedCap核心网支持；自治网络</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-pink);">6G Core (2030+)</div>
+            <div class="evol-desc">AI原生核心网、算网一体、全息通信支撑；语义通信；内生安全</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G EPC vs 5GC 核心技术对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-4g">4G EPC</span></th><th><span class="tag tag-5g">5GC</span></th><th>为什么变</th></tr></thead>
+          <tbody>
+            <tr><td>架构</td><td>点对点接口（S1/S6/S11等）</td><td>服务化架构SBA（HTTP/2 API）</td><td>灵活组合、弹性扩缩、自动注册发现</td></tr>
+            <tr><td>控制/用户面</td><td>Rel-14后引入CUPS（可选）</td><td>原生CUPS（AMF/SMF vs UPF）</td><td>用户面下沉，支持MEC低时延</td></tr>
+            <tr><td>网元接口</td><td>固定接口（GTP-C/S6a/S11）</td><td>服务化接口（Namf/Nsmf/Nudm）</td><td>微服务化、API化</td></tr>
+            <tr><td>网络切片</td><td>不支持</td><td>原生支持（NSSF切片选择）</td><td>一张网分多个逻辑网络给不同业务</td></tr>
+            <tr><td>部署形态</td><td>物理网元或VNF虚拟化</td><td>VNF或CNF云原生容器化</td><td>云原生弹性伸缩、敏捷运维</td></tr>
+            <tr><td>用户面</td><td>SGW+PGW（集中在DC）</td><td>UPF（可分布式下沉到边缘）</td><td>MEC边缘计算、低时延</td></tr>
+            <tr><td>QoS模型</td><td>EPS Bearer（专用/默认承载）</td><td>QoS Flow（更细粒度）</td><td>差异化服务质量保障</td></tr>
+            <tr><td>语音</td><td>VoLTE (IMS over EPC)</td><td>VoNR (IMS over 5GC)</td><td>5G原生语音，无需回落</td></tr>
+            <tr><td>峰值速率</td><td>~1Gbps</td><td>~10-20Gbps</td><td>10-20倍提升</td></tr>
+            <tr><td>时延</td><td>~10-30ms（端到端）</td><td>~1-10ms（URLLC+MEC）</td><td>支撑工业控制等低时延场景</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：5GC不是"全新的网"，而是EPC的<strong>架构重构和能力增强</strong>。核心网元功能对应关系不变（MME->AMF, SGW/PGW->SMF+UPF, HSS->UDM, PCRF->PCF），但接口方式从点对点变SBA、部署从物理/虚拟化变云原生、用户面从集中变分布。<strong>理解EPC是理解5GC的基础</strong>--CUPS、虚拟化等概念在4G后期已引入，5GC是全面化和极致化。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>语音核心网演进 - CS -> VoLTE -> VoNR</h3>
+        <table class="data-table">
+          <thead><tr><th>阶段</th><th>语音方案</th><th>核心网支撑</th><th>说明</th><th>4G/5G</th></tr></thead>
+          <tbody>
+            <tr><td>2G/3G</td><td>CS语音</td><td>MSC/MSS电路交换</td><td>语音走传统电路域</td><td><span class="tag tag-4g">2G/3G</span></td></tr>
+            <tr><td>4G初期</td><td>CSFB</td><td>EPC+MSC</td><td>4G语音回落到3G/2G</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>4G成熟</td><td>VoLTE</td><td>EPC+IMS</td><td>语音走IP分组域，IMS控制</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>4G->5G过渡</td><td>EPS Fallback</td><td>5GC+EPC+IMS</td><td>5G终端回落4G用VoLTE</td><td><span class="tag tag-5g">5G NSA/SA</span></td></tr>
+            <tr><td>5G成熟</td><td>VoNR</td><td>5GC+IMS</td><td>5G原生语音，IMS over 5GC</td><td><span class="tag tag-5g">5G SA</span></td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>CTO最关心的问题之一</strong>：5G SA初期VoNR终端覆盖率低，通常用EPS Fallback（5G语音回落4G VoLTE）。<strong>IMS是4G/5G语音的统一控制核心</strong>--VoLTE和VoNR共用IMS平台，只是接入网和核心网不同。华为IMS支持VoLTE/VoNR/SRVCC全语音互操作，一套IMS管4G/5G语音。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>网络功能虚拟化演进 - 物理 -> VNF -> CNF</h3>
+        <div class="vnf-evol-box">
+          <div class="vnf-stage" style="border-color:rgba(255,184,77,.3);">
+            <div class="vs-title" style="color:var(--accent-amber);">物理网元</div>
+            <div class="vs-desc">专用硬件(ATCA机框)<br>网元=盒子<br>扩容=买新设备</div>
+          </div>
+          <div class="vnf-arrow"></div>
+          <div class="vnf-stage" style="border-color:rgba(45,212,255,.3);">
+            <div class="vs-title" style="color:var(--accent-cyan);">VNF虚拟化</div>
+            <div class="vs-desc">通用服务器+虚拟机<br>网元=软件(VM)<br>扩容=加资源</div>
+          </div>
+          <div class="vnf-arrow"></div>
+          <div class="vnf-stage" style="border-color:rgba(139,124,255,.3);">
+            <div class="vs-title" style="color:var(--accent-violet);">CNF云原生</div>
+            <div class="vs-desc">容器+微服务+K8s<br>网元=容器组<br>弹性伸缩、CI/CD</div>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>物理网元</th><th>VNF</th><th>CNF</th></tr></thead>
+          <tbody>
+            <tr><td>部署形态</td><td>专用硬件</td><td>VM虚拟机</td><td>容器+微服务</td></tr>
+            <tr><td>扩缩容</td><td>买新设备(月级)</td><td>加VM(小时级)</td><td>弹性伸缩(秒级)</td></tr>
+            <tr><td>资源利用率</td><td>~20-30%</td><td>~40-50%</td><td>~60-80%</td></tr>
+            <tr><td>运维方式</td><td>手工CLI</td><td>EM网管</td><td>CI/CD自动化</td></tr>
+            <tr><td>典型应用</td><td>2G/3G、4G早期</td><td>4G EPC、5GC初期</td><td>5GC主流方向</td></tr>
+            <tr><td>华为方案</td><td>传统ATCA产品</td><td>CloudCore VNF</td><td>CloudCore CNF</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>演进逻辑</strong>：物理->VNF解决"硬件专有化"问题（通用硬件替代专用）；VNF->CNF解决"软件单体化"问题（微服务替代单体）。<strong>华为CloudCore同时支持VNF和CNF</strong>，客户可按节奏逐步从VNF迁移到CNF。4G EPC以VNF为主，5GC以CNF为主流方向。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 04 核心网架构总览 ==================== -->
+    <section class="section" id="sec-architecture">
+      <div class="section-title">核心网架构总览 · 4G/5G对比</div>
+      <div class="section-subtitle">4G EPC vs 5GC架构 · SBA服务化 · CUPS分离 · 动态信令流 · 厂商架构对比</div>
+
+      <div class="card">
+        <h3>4G EPC vs 5GC 架构对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-4g">4G EPC</span></th><th><span class="tag tag-5g">5GC</span></th><th>变化原因</th></tr></thead>
+          <tbody>
+            <tr><td>控制面架构</td><td>MME集中式，点对点接口</td><td>AMF/SMF/PCF等，SBA服务化</td><td>解耦、弹性、API化</td></tr>
+            <tr><td>用户面架构</td><td>SGW+PGW（集中式DC）</td><td>UPF（可分布式下沉到边缘）</td><td>MEC低时延、本地卸载</td></tr>
+            <tr><td>接口协议</td><td>GTP-C/S1AP/S6a/Diameter</td><td>HTTP/2 RESTful (SBI)</td><td>IT化、API化、服务注册</td></tr>
+            <tr><td>数据库</td><td>HSS（Diameter）</td><td>UDM+UDR+AUSF（HTTP/2）</td><td>数据与逻辑分离</td></tr>
+            <tr><td>策略</td><td>PCRF（Gx接口）</td><td>PCF（Npcf服务化接口）</td><td>策略服务化、切片感知</td></tr>
+            <tr><td>切片</td><td>不支持</td><td>NSSF+切片实例</td><td>多业务隔离</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>SBA服务化架构原理 - 5GC控制面核心</h3>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;">
+          <div style="flex:1;min-width:320px;">
+            <div class="diagram-box" style="padding:20px;">
+              <svg width="620" height="400" viewBox="0 0 620 400">
+                <circle cx="310" cy="200" r="40" fill="rgba(255,110,199,.1)" stroke="#ff6ec7" stroke-width="1.5"/>
+                <text x="310" y="198" text-anchor="middle" class="svg-title" fill="#ff6ec7">NRF</text>
+                <text x="310" y="212" text-anchor="middle" class="svg-mono" fill="#5d6a87">注册/发现</text>
+                <circle cx="140" cy="80" r="30" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5" class="nf-node"/>
+                <text x="140" y="78" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:11px;">AMF</text>
+                <text x="140" y="92" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">移动性管理</text>
+                <circle cx="480" cy="80" r="30" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5" class="nf-node" style="animation-delay:.3s;"/>
+                <text x="480" y="78" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:11px;">SMF</text>
+                <text x="480" y="92" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">会话管理</text>
+                <circle cx="140" cy="320" r="30" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5" class="nf-node" style="animation-delay:.6s;"/>
+                <text x="140" y="318" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:11px;">PCF</text>
+                <text x="140" y="332" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">策略控制</text>
+                <circle cx="480" cy="320" r="30" fill="rgba(255,93,108,.08)" stroke="#ff5d6c" stroke-width="1.5" class="nf-node" style="animation-delay:.9s;"/>
+                <text x="480" y="318" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:11px;">UDM</text>
+                <text x="480" y="332" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">统一数据</text>
+                <circle cx="310" cy="50" r="22" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5" class="nf-node" style="animation-delay:1.2s;"/>
+                <text x="310" y="48" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">AUSF</text>
+                <text x="310" y="60" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">鉴权</text>
+                <circle cx="310" cy="365" r="22" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1" class="nf-node" style="animation-delay:1.5s;"/>
+                <text x="310" y="363" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">NEF</text>
+                <text x="310" y="375" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">能力开放</text>
+                <circle cx="65" cy="140" r="22" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1" class="nf-node" style="animation-delay:.4s;"/>
+                <text x="65" y="138" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">NSSF</text>
+                <text x="65" y="150" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">切片选择</text>
+                <circle cx="560" cy="200" r="25" fill="rgba(255,110,199,.06)" stroke="#ff6ec7" stroke-width="1" stroke-dasharray="3 2" class="nf-node" style="animation-delay:.8s;"/>
+                <text x="560" y="198" text-anchor="middle" class="svg-mono" fill="#ff6ec7" style="font-size:9px;">SEPP</text>
+                <text x="560" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">漫游安全</text>
+                <text x="560" y="240" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">→ 其他PLMN</text>
+                <circle cx="65" cy="280" r="22" fill="rgba(77,255,158,.06)" stroke="#4dff9e" stroke-width="1" class="nf-node" style="animation-delay:1.1s;"/>
+                <text x="65" y="278" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">NWDAF</text>
+                <text x="65" y="290" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">AI分析</text>
+                <line x1="165" y1="95" x2="275" y2="175" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="455" y1="95" x2="345" y2="175" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="165" y1="305" x2="275" y2="225" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="455" y1="305" x2="345" y2="225" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="310" y1="72" x2="310" y2="160" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="310" y1="343" x2="310" y2="240" stroke="rgba(255,110,199,.25)" stroke-width="1" class="flow-line"/>
+                <line x1="87" y1="152" x2="275" y2="190" stroke="rgba(255,110,199,.2)" stroke-width="1" class="flow-line"/>
+                <line x1="535" y1="200" x2="350" y2="200" stroke="rgba(255,110,199,.2)" stroke-width="1" stroke-dasharray="3 2" class="flow-line"/>
+                <line x1="87" y1="268" x2="275" y2="215" stroke="rgba(77,255,158,.2)" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="170" y1="80" x2="450" y2="80" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="4 3"/>
+                <text x="310" y="72" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">Namf_Communication</text>
+                <line x1="170" y1="320" x2="450" y2="320" stroke="rgba(255,255,255,.06)" stroke-width="1" stroke-dasharray="4 3"/>
+                <text x="310" y="312" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">Nudm_数据查询</text>
+                <text x="310" y="395" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">10个NF通过NRF注册发现 · SEPP保护跨PLMN信令 · NWDAF采集全NF数据分析</text>
+              </svg>
+              <div class="diagram-caption">图 4-1 · SBA架构（10个核心NF）：NRF中心注册 · SEPP漫游边界 · NWDAF数据分析</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:280px;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+            <div style="background:rgba(255,110,199,.06);border:1px solid rgba(255,110,199,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-pink);">NRF 的角色</h4>
+              <p style="font-size:13px;margin:0;">网络功能注册库。所有NF启动后向NRF注册，需要调用其他NF服务时通过NRF发现。类似微服务的"服务注册中心"。</p>
+            </div>
+            <div style="background:rgba(45,212,255,.06);border:1px solid rgba(45,212,255,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-cyan);">SBA vs 4G点对点</h4>
+              <p style="font-size:13px;margin:0;">4G EPC网元间是固定接口（S6a/S11），新增网元需定义新接口。5GC SBA让NF间通过标准HTTP/2 API灵活交互，新增NF只需注册到NRF。</p>
+            </div>
+            <div style="background:rgba(77,255,158,.06);border:1px solid rgba(77,255,158,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-green);">SBA的价值</h4>
+              <p style="font-size:13px;margin:0;">①弹性扩缩容（NF实例可增减）；②灵活组合（按需调用服务）；③开放性（NEF向第三方开放API）；④敏捷迭代（微服务独立升级）。</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>4G/5G关键差异</strong>：4G EPC是"紧耦合"架构（网元间固定接口），5GC是"松耦合"SBA架构（服务注册+API调用）。<strong>SBA是5GC支持切片、弹性、开放的技术基础</strong>。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CUPS控制/用户面分离 - 从4G到5G</h3>
+        <div class="diagram-box">
+          <svg width="660" height="340" viewBox="0 0 660 340">
+            <text x="160" y="25" text-anchor="middle" class="svg-title" fill="var(--accent-amber)">4G EPC (CUPS前)</text>
+            <rect x="100" y="50" width="120" height="50" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="160" y="80" text-anchor="middle" class="svg-mono" fill="#2dd4ff">MME(控制面)</text>
+            <rect x="100" y="120" width="120" height="50" rx="8" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/>
+            <text x="160" y="150" text-anchor="middle" class="svg-mono" fill="#ffb84d">SGW(控制+用户)</text>
+            <rect x="100" y="190" width="120" height="50" rx="8" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/>
+            <text x="160" y="220" text-anchor="middle" class="svg-mono" fill="#ffb84d">PGW(控制+用户)</text>
+            <text x="160" y="270" text-anchor="middle" class="svg-mono" fill="#5d6a87">控制面和用户面<br>耦合在一起</text>
+
+            <text x="490" y="25" text-anchor="middle" class="svg-title" fill="var(--accent-cyan)">5GC (原生CUPS)</text>
+            <rect x="420" y="50" width="120" height="50" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="490" y="80" text-anchor="middle" class="svg-mono" fill="#2dd4ff">AMF(控制面)</text>
+            <rect x="420" y="120" width="120" height="50" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="490" y="150" text-anchor="middle" class="svg-mono" fill="#4dff9e">SMF(控制面)</text>
+            <rect x="420" y="200" width="120" height="50" rx="8" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/>
+            <text x="490" y="225" text-anchor="middle" class="svg-mono" fill="#8b7cff">UPF(用户面)</text>
+            <rect x="570" y="200" width="60" height="50" rx="8" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="600" y="225" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">UPF</text>
+            <text x="600" y="238" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">边缘</text>
+            <text x="490" y="285" text-anchor="middle" class="svg-mono" fill="#5d6a87">控制面集中DC<br>用户面可分布式下沉</text>
+
+            <line x1="300" y1="170" x2="400" y2="170" stroke="#ff5d6c" stroke-width="2" class="flow-line"/>
+            <text x="350" y="160" text-anchor="middle" class="svg-mono" fill="#ff5d6c">演进</text>
+            <line x1="540" y1="145" x2="540" y2="200" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="555" y="175" class="svg-mono" fill="#5d6a87" style="font-size:8px;">N4</text>
+          </svg>
+          <div class="diagram-caption">图 4-2 · CUPS演进：4G控制/用户面耦合 -> 5G原生分离，UPF可下沉边缘</div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>CUPS的核心价值</strong>：控制面集中部署（省DC资源），用户面分布式下沉（降时延）。<strong>UPF下沉是MEC边缘计算的技术基础</strong>。4G Rel-14引入CUPS（SGW-C/SGW-U, PGW-C/PGW-U），但5GC是原生CUPS设计。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G/5G互操作架构 - NSA到SA演进与N26接口</h3>
+        <div class="diagram-box">
+          <svg width="660" height="360" viewBox="0 0 660 360">
+            <text x="160" y="20" text-anchor="middle" class="svg-title" fill="var(--accent-amber)">NSA (Option 3x)</text>
+            <rect x="100" y="35" width="120" height="40" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1"/>
+            <text x="160" y="60" text-anchor="middle" class="svg-mono" fill="#2dd4ff">UE (Dual Mode)</text>
+            <rect x="80" y="100" width="70" height="40" rx="8" fill="rgba(255,184,77,.08)" stroke="#ffb84d"/>
+            <text x="115" y="125" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:11px;">eNB</text>
+            <rect x="170" y="100" width="70" height="40" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff"/>
+            <text x="205" y="125" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:11px;">gNB</text>
+            <line x1="115" y1="75" x2="115" y2="100" stroke="#ffb84d" stroke-width="1.5"/>
+            <line x1="205" y1="75" x2="205" y2="100" stroke="#2dd4ff" stroke-width="1.5"/>
+            <line x1="150" y1="120" x2="170" y2="120" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="160" y="112" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">X2</text>
+            <rect x="50" y="170" width="60" height="35" rx="6" fill="rgba(255,184,77,.06)" stroke="#ffb84d"/>
+            <text x="80" y="192" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">MME</text>
+            <rect x="120" y="170" width="60" height="35" rx="6" fill="rgba(255,184,77,.06)" stroke="#ffb84d"/>
+            <text x="150" y="192" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">SGW</text>
+            <rect x="190" y="170" width="60" height="35" rx="6" fill="rgba(255,184,77,.06)" stroke="#ffb84d"/>
+            <text x="220" y="192" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">PGW</text>
+            <line x1="115" y1="140" x2="80" y2="170" stroke="#ffb84d" stroke-width="1" class="flow-line"/>
+            <line x1="205" y1="140" x2="80" y2="170" stroke="rgba(45,212,255,.3)" stroke-width="1" class="flow-line" opacity=".5"/>
+            <text x="250" y="190" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">EPC核心网</text>
+            <text x="160" y="235" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">gNB作为辅站接入EPC</text>
+            <text x="160" y="250" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">无5GC · 无切片 · 无MEC</text>
+
+            <line x1="310" y1="180" x2="370" y2="180" stroke="#ff5d6c" stroke-width="2" class="flow-line"/>
+            <text x="340" y="170" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">演进</text>
+            <text x="340" y="195" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">建5GC</text>
+            <text x="340" y="207" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">开N26</text>
+
+            <text x="510" y="20" text-anchor="middle" class="svg-title" fill="var(--accent-cyan)">SA + 4G/5G互操作</text>
+            <rect x="450" y="35" width="120" height="40" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1"/>
+            <text x="510" y="60" text-anchor="middle" class="svg-mono" fill="#2dd4ff">UE (Dual Mode)</text>
+            <rect x="475" y="100" width="70" height="40" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff"/>
+            <text x="510" y="125" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:11px;">gNB</text>
+            <line x1="510" y1="75" x2="510" y2="100" stroke="#2dd4ff" stroke-width="1.5"/>
+            <rect x="400" y="170" width="55" height="35" rx="6" fill="rgba(45,212,255,.06)" stroke="#2dd4ff"/>
+            <text x="427" y="192" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">AMF</text>
+            <rect x="465" y="170" width="55" height="35" rx="6" fill="rgba(77,255,158,.06)" stroke="#4dff9e"/>
+            <text x="492" y="192" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">SMF</text>
+            <rect x="530" y="170" width="55" height="35" rx="6" fill="rgba(139,124,255,.06)" stroke="#8b7cff"/>
+            <text x="557" y="192" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">UPF</text>
+            <line x1="510" y1="140" x2="427" y2="170" stroke="#2dd4ff" stroke-width="1" class="flow-line"/>
+            <text x="595" y="190" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">5GC</text>
+            <rect x="595" y="170" width="55" height="35" rx="6" fill="rgba(139,124,255,.04)" stroke="#8b7cff" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="622" y="187" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">UPF</text>
+            <text x="622" y="199" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">MEC</text>
+            <line x1="510" y1="140" x2="622" y2="170" stroke="rgba(139,124,255,.3)" stroke-width="1" class="flow-line" opacity=".4"/>
+            <rect x="350" y="230" width="55" height="30" rx="6" fill="rgba(255,184,77,.04)" stroke="#ffb84d" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="377" y="250" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">MME</text>
+            <line x1="400" y1="188" x2="377" y2="230" stroke="#ff5d6c" stroke-width="2" class="flow-line"/>
+            <rect x="340" y="265" width="80" height="20" rx="4" fill="rgba(255,93,108,.08)" stroke="#ff5d6c"/>
+            <text x="380" y="280" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">N26接口</text>
+            <rect x="430" y="230" width="55" height="30" rx="6" fill="rgba(255,184,77,.04)" stroke="#ffb84d" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="457" y="250" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">SGW</text>
+            <rect x="495" y="230" width="55" height="30" rx="6" fill="rgba(255,184,77,.04)" stroke="#ffb84d" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="522" y="250" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">PGW</text>
+            <text x="600" y="248" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">EPC(保留)</text>
+            <rect x="350" y="300" width="280" height="25" rx="6" fill="rgba(139,124,255,.06)" stroke="#8b7cff"/>
+            <text x="490" y="318" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:10px;">IMS (4G/5G共用)</text>
+            <line x1="522" y1="245" x2="490" y2="300" stroke="rgba(139,124,255,.2)" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="557" y1="205" x2="490" y2="300" stroke="rgba(139,124,255,.2)" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="510" y="345" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">EPS Fallback: gNB->AMF->N26->MME->SGW->IMS(VoLTE) | 5GC切片+MEC全能力可用</text>
+          </svg>
+          <div class="diagram-caption">图 4-3 · 4G/5G互操作架构：NSA(Option 3x) -> SA(N26互操作)，EPC保留承载VoLTE</div>
+        </div>
+        <div class="callout">
+          <strong>NSA三种Option</strong>：Option 3（gNB经eNB接EPC，分流在eNB）、3a（gNB直连EPC S1-U，分流在SGW）、3x（gNB作为辅站，分流在gNB，<strong>最主流</strong>）。SA通过<strong>N26接口</strong>实现4G/5G互操作，支持EPS Fallback和跨制式切换。华为融合AMF/MME天然支持N26，无需额外接口部署。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>动态信令流：UE注册到数据连接</h3>
+        <div class="diagram-box">
+          <svg width="660" height="300" viewBox="0 0 660 300">
+            <path id="cn-signal-path" d="M 30 150 L 120 150 L 220 150 L 320 150 L 420 150 L 520 150 L 620 150" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+            <rect x="20" y="120" width="80" height="60" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="60" y="155" text-anchor="middle" class="svg-title">UE/gNB</text>
+            <rect x="130" y="120" width="80" height="60" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="170" y="148" text-anchor="middle" class="svg-title" fill="#2dd4ff">AMF</text>
+            <text x="170" y="165" text-anchor="middle" class="svg-mono">注册/移动性</text>
+            <line x1="210" y1="150" x2="270" y2="150" stroke="#ff5d6c" stroke-width="1.5" class="flow-line"/>
+            <text x="240" y="140" text-anchor="middle" class="svg-mono" fill="#ff5d6c">N1/N2</text>
+            <rect x="270" y="120" width="80" height="60" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="310" y="148" text-anchor="middle" class="svg-title" fill="#4dff9e">SMF</text>
+            <text x="310" y="165" text-anchor="middle" class="svg-mono">会话管理</text>
+            <line x1="350" y1="150" x2="410" y2="150" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/>
+            <text x="380" y="140" text-anchor="middle" class="svg-mono" fill="#4dff9e">N4</text>
+            <rect x="410" y="120" width="80" height="60" rx="8" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/>
+            <text x="450" y="148" text-anchor="middle" class="svg-title" fill="#8b7cff">UPF</text>
+            <text x="450" y="165" text-anchor="middle" class="svg-mono">用户面转发</text>
+            <line x1="490" y1="150" x2="570" y2="150" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+            <text x="530" y="140" text-anchor="middle" class="svg-mono" fill="#8b7cff">N3/N6</text>
+            <rect x="570" y="120" width="60" height="60" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="600" y="155" text-anchor="middle" class="svg-title" fill="#4dff9e">DN</text>
+            <circle r="5" fill="#2dd4ff" opacity="0.9"><animateMotion dur="4s" repeatCount="indefinite"><mpath href="#cn-signal-path"/></animateMotion></circle>
+            <circle r="4" fill="#4dff9e" opacity="0.7"><animateMotion dur="4s" repeatCount="indefinite" begin="1s"><mpath href="#cn-signal-path"/></animateMotion></circle>
+            <circle r="4" fill="#8b7cff" opacity="0.7"><animateMotion dur="4s" repeatCount="indefinite" begin="2s"><mpath href="#cn-signal-path"/></animateMotion></circle>
+            <text x="60" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">无线接入</text>
+            <text x="170" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">~2ms</text>
+            <text x="310" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">~1ms</text>
+            <text x="450" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">~0.5ms</text>
+            <text x="600" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">互联网</text>
+            <text x="330" y="260" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G: UE->eNB->MME->SGW->PGW->DN（控制/用户面耦合）</text>
+            <text x="330" y="278" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G: UE->gNB->AMF->SMF->UPF->DN（SBA+CUPS分离，UPF可下沉）</text>
+          </svg>
+          <div class="diagram-caption">图 4-3 · 5GC动态信令流（信令包动画流动）</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 vs 友商核心网架构方案对比</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为 CloudCore</div>
+            <div class="dim-body"><strong>融合核心网</strong>：一套平台管2G/3G/4G/5G<br><strong>CloudNative</strong>：CNF容器化+微服务<br><strong>端到端切片</strong>：RAN+CN+MEC全栈<br><strong>MEC集成</strong>：UPF+MEP一体化</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">爱立信 Dual Mode 5GC</div>
+            <div class="dim-body"><strong>双模核心网</strong>：EPC+5GC共平台<br><strong>Cloud NF</strong>：VNF/CNF混合<br><strong>优势</strong>：云原生技术成熟、欧美生态<br><strong>劣势</strong>：切片端到端不如华为</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">诺基亚 magenta Core</div>
+            <div class="dim-body"><strong>Cloud Core</strong>：全云化架构<br><strong>ReefShark芯片</strong>：UPF硬件加速<br><strong>优势</strong>：UPF性能、芯片自研<br><strong>劣势</strong>：产品迭代偏慢</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>客户挑战</strong>：运营商面临"要不要上CNF云原生"的决策。CNF好处是弹性伸缩和敏捷运维，但容器化对运维团队要求高。华为方案是"VNF+CNF混合演进"：EPC保持VNF，5GC逐步CNF化，客户按节奏推进。
+        </div>
+      </div>
+      <div class="card">
+        <h3>5GC安全架构 - 比4G强在哪里</h3>
+        <table class="data-table">
+          <thead><tr><th>安全层</th><th><span class="tag tag-4g">4G EPC</span></th><th><span class="tag tag-5g">5GC</span></th><th>改进点</th></tr></thead>
+          <tbody>
+            <tr><td><strong>用户身份保护</strong></td><td>IMSI明文传输（空口可被截获追踪）</td><td><strong>SUCI加密</strong>：SUPI用公钥加密为SUCI后传输，空口不可追踪</td><td>5GC引入ECIES公钥加密，UE用运营商公钥加密SUPI</td></tr>
+            <tr><td><strong>主认证</strong></td><td>LTE-AKA（双向认证）</td><td><strong>5G-AKA</strong>或<strong>EAP-AKA'</strong>（双向认证，增强归属网确认）</td><td>5G-AKA增加归属网对认证结果的显式确认；EAP-AKA'支持EAP框架扩展</td></tr>
+            <tr><td><strong>二次认证</strong></td><td>不支持</td><td>支持非3GPP接入（如WiFi）的独立二次认证</td><td>5GC允许非3GPP接入通过EAP做二次认证，安全接入企业网</td></tr>
+            <tr><td><strong>网间安全</strong></td><td>Diameter Relay（IPSec可选）</td><td><strong>SEPP</strong>（HTTP/2消息级加密+拓扑隐藏+IE过滤）</td><td>4G漫游信令保护在网络层(IPSec)，5GC在应用层(SEPP)保护更细粒度</td></tr>
+            <tr><td><strong>用户面加密</strong></td><td>空口加密（UP integrity可选）</td><td>空口加密+<strong>UP Integrity强制</strong>（用户面完整性保护）</td><td>5GC用户面完整性保护防止中间人篡改数据包</td></tr>
+            <tr><td><strong>密钥层次</strong></td><td>K -> CK/IK -> K_eNB（3层）</td><td>K -> K_AUSF -> K_SEAF -> K_gNB -> K_N3IWF（5层，更深层次）</td><td>5GC密钥层次更深，前向安全性更强</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>PM要点</strong>：5GC安全相比4G有<strong>三大飞跃</strong>：①<strong>SUCI加密</strong>彻底解决IMSI Catcher攻击（4G最大安全漏洞）；②<strong>SEPP</strong>让漫游信令保护从网络层上升到应用层，支持IE级过滤；③<strong>用户面完整性保护</strong>防止数据包被篡改。这些是运营商安全合规团队最关心的改进。<strong>华为CloudCore内置全套5GC安全能力</strong>，CloudBCG提供SEPP漫游安全代理。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 05 核心网元详解 ==================== -->
+    <section class="section" id="sec-modules">
+      <div class="section-title">核心网元详解 · EPC/5GC/IMS</div>
+      <div class="section-subtitle">4G/5G网元对比 · 华为产品型号 · 友商规格对比 · 客户选型关注</div>
+
+      <div class="sub-tabs" id="mod-tabs">
+        <div class="sub-tab active" data-target="mod-epc">4G EPC网元</div>
+        <div class="sub-tab" data-target="mod-5gc">5GC网元</div>
+        <div class="sub-tab" data-target="mod-ims">IMS语音网元</div>
+      </div>
+
+      <div class="sub-content active" id="mod-epc">
+        <div class="card">
+          <h3>4G EPC核心网元</h3>
+          <p>4G EPC由5个核心网元组成：MME（控制面）、SGW（服务网关）、PGW（PDN网关）、HSS（用户数据库）、PCRF（策略控制）。Rel-14后引入CUPS可拆分为SGW-C/SGW-U、PGW-C/PGW-U。</p>
+          <div class="dim-grid">
+            <div class="nf-card nf-4g">
+              <div class="nf-name">MME</div>
+              <div class="nf-full">Mobility Management Entity</div>
+              <div class="nf-desc">4G核心网"大脑"。负责UE注册、鉴权、移动性管理、寻呼、承载管理。信令面网元，不处理用户数据。<strong>5G演进为AMF</strong>。</div>
+            </div>
+            <div class="nf-card nf-4g">
+              <div class="nf-name">SGW</div>
+              <div class="nf-full">Serving Gateway</div>
+              <div class="nf-desc">服务网关。UE到PGW的中转站，负责数据包路由转发、切换锚点。<strong>CUPS后拆为SGW-C(控制)+SGW-U(转发)</strong>。5G演进为SMF+UPF。</div>
+            </div>
+            <div class="nf-card nf-4g">
+              <div class="nf-name">PGW</div>
+              <div class="nf-full">PDN Gateway</div>
+              <div class="nf-desc">PDN网关。连接外部数据网（互联网），分配IP地址、QoS执行、计费。<strong>CUPS后拆为PGW-C+PGW-U</strong>。5G演进为SMF+UPF。</div>
+            </div>
+            <div class="nf-card nf-4g">
+              <div class="nf-name">HSS</div>
+              <div class="nf-full">Home Subscriber Server</div>
+              <div class="nf-desc">归属用户服务器。存储用户签约数据（IMSI、密钥、业务权限），参与鉴权。Diameter协议。<strong>5G演进为UDM+AUSF</strong>。</div>
+            </div>
+            <div class="nf-card nf-4g">
+              <div class="nf-name">PCRF</div>
+              <div class="nf-full">Policy and Charging Rules Function</div>
+              <div class="nf-desc">策略和计费规则。定义QoS规则、计费策略，下发给PGW执行。<strong>5G演进为PCF</strong>。</div>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>厂商</th><th>EPC产品</th><th>关键特性</th><th>差异化</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-huawei">华为</span></td><td>CloudCore vEPC</td><td>vEPC虚拟化；融合2G/3G/4G；CUPS支持；CloudUA统一用户数据</td><td>融合核心网集成度最高</td></tr>
+              <tr><td><span class="tag tag-ericsson">爱立信</span></td><td>vEPC (Cloud Core)</td><td>虚拟化EPC；双模核心网</td><td>云原生技术成熟</td></tr>
+              <tr><td><span class="tag tag-nokia">诺基亚</span></td><td>CPC (Cloud Packet Core)</td><td>云化EPC；ReefShark加速</td><td>UPF硬件加速</td></tr>
+              <tr><td><span class="tag tag-zte">中兴</span></td><td>Common Core (EPC)</td><td>多模统一平台；SA/NSA</td><td>性价比高</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-content" id="mod-5gc">
+        <div class="card">
+          <h3>5GC核心网元（SBA架构）</h3>
+          <p>5GC控制面拆分为多个独立微服务（NF），通过NRF注册发现，HTTP/2 API交互。用户面统一为UPF，可分布式部署。</p>
+          <div class="dim-grid">
+            <div class="nf-card nf-5g">
+              <div class="nf-name">AMF</div>
+              <div class="nf-full">Access and Mobility Management Function</div>
+              <div class="nf-desc">5G"大门"。UE注册、鉴权、移动性管理、寻呼。从MME演进，但不再处理会话管理（拆给SMF）。<strong>融合AMF/MME可同时管4G/5G用户</strong>。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">SMF</div>
+              <div class="nf-full">Session Management Function</div>
+              <div class="nf-desc">会话管理。PDU会话建立/修改/释放、IP分配、UPF选择、QoS控制。从SGW-C/PGW-C控制面功能演进。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">UPF</div>
+              <div class="nf-full">User Plane Function</div>
+              <div class="nf-desc">用户面转发。数据包路由、QoS执行、流量上报。<strong>核心网最关键网元之一</strong>--可下沉到边缘实现MEC。从SGW-U/PGW-U演进。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">PCF</div>
+              <div class="nf-full">Policy Control Function</div>
+              <div class="nf-desc">策略控制。从PCRF演进，支持切片感知策略、AMBR/QoS控制。服务化接口（Npcf）。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">UDM</div>
+              <div class="nf-full">Unified Data Management</div>
+              <div class="nf-desc">统一数据管理。从HSS演进，存储用户签约数据。配合AUSF做鉴权、UDR存数据。<strong>4G/5G融合HSS+UDM</strong>。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">AUSF</div>
+              <div class="nf-full">Authentication Server Function</div>
+              <div class="nf-desc">鉴权服务。从HSS鉴权功能拆出，独立微服务。支持5G-AKA/EAP-AKA'鉴权。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">NRF</div>
+              <div class="nf-full">Network Repository Function</div>
+              <div class="nf-desc">网络功能注册库。所有NF向NRF注册，通过NRF发现其他NF。SBA架构的"黄页"。<strong>4G无此网元</strong>。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">NSSF</div>
+              <div class="nf-full">Network Slice Selection Function</div>
+              <div class="nf-desc">切片选择。根据UE请求选择合适的网络切片实例。<strong>5GC独有网元</strong>，4G无切片概念。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">NEF</div>
+              <div class="nf-full">Network Exposure Function</div>
+              <div class="nf-desc">能力开放。将5GC能力以API形式开放给第三方（AF）。支持切片管理、QoS定制、事件订阅。<strong>4G无此网元</strong>。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">AF</div>
+              <div class="nf-full">Application Function</div>
+              <div class="nf-desc">应用功能。第三方应用服务器，通过NEF与5GC交互，请求QoS/切片/能力开放。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">SEPP</div>
+              <div class="nf-full">Security Edge Protection Proxy</div>
+              <div class="nf-desc">安全边缘保护代理。所有跨PLMN（漫游）的5GC服务化信令必经SEPP，负责消息过滤、加密、拓扑隐藏。<strong>4G漫游用Diameter代理，5GC用SEPP保护HTTP/2信令</strong>。运营商国际漫游场景绕不开的网元。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">NWDAF</div>
+              <div class="nf-full">Network Data Analytics Function</div>
+              <div class="nf-desc">网络数据分析功能。采集5GC网元运行数据，提供AI/ML分析能力（负载预测、切片SLA监控、异常检测）。<strong>5.5G AI原生核心网的核心网元</strong>，Rel-15引入，Rel-17+持续增强。可向AMF/SMF/PCF输出分析结果驱动自动化决策。</div>
+            </div>
+            <div class="nf-card nf-5g">
+              <div class="nf-name">UDR / UDSF</div>
+              <div class="nf-full">Unified Data Repository / Unstructured Data Storage Function</div>
+              <div class="nf-desc">数据存储层。<strong>UDR</strong>存储结构化签约数据（供UDM/PCF读写）；<strong>UDSF</strong>存储非结构化数据（供任何NF存储上下文）。<strong>5GC数据与逻辑分离的核心</strong>--4G HSS数据封装在网元内部，5GC将数据层独立出来，UDM/UDR、PCF/UDR分离部署，支持数据集中管理和跨网元共享。</div>
+            </div>
+          </div>
+          <div class="callout callout-amber">
+            <strong>客户挑战</strong>：运营商最大痛点是<strong>4G/5G双栈运维</strong>。EPC不能退（VoLTE+存量4G），5GC要新建。华为<strong>融合核心网</strong>（融合AMF/MME、融合SMF/SGW-C-PGW-C、融合HSS/UDM）让一套系统同时管4G和5G用户，省DC资源、省运维。<strong>友商通常EPC和5GC是两套独立系统</strong>。
+          </div>
+        </div>
+        <div class="card">
+          <h3>5GC数据层架构 - 数据与逻辑分离</h3>
+          <table class="data-table">
+            <thead><tr><th>数据层组件</th><th>存储内容</th><th>使用者</th><th>4G对应</th></tr></thead>
+            <tbody>
+              <tr><td>UDR (Unified Data Repository)</td><td>结构化签约数据（SUPI、签约QoS、切片信息、接入限制）</td><td>UDM读签约数据、PCF读策略数据</td><td>HSS内部数据库（不分离）</td></tr>
+              <tr><td>UDSF (Unstructured Data Storage Function)</td><td>非结构化上下文（UE上下文、PDU会话状态、移动性历史）</td><td>任何NF均可存储/读取（如AMF故障后新AMF从UDSF恢复上下文）</td><td>无（4G网元内部存储）</td></tr>
+              <tr><td>FED (Front-End Data)</td><td>UDR前端代理，分布式数据路由</td><td>UDM/PCF通过FED访问后端UDR</td><td>无</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>数据层分离的价值</strong>：①<strong>数据集中</strong>--多套NF实例共享同一份数据，避免数据不一致；②<strong>容灾增强</strong>--NF实例宕机后，新实例从UDSF恢复上下文，用户无感知；③<strong>弹性伸缩</strong>--NF实例可随意增减，数据不丢失。4G HSS数据封装在网元内部，扩容需迁移数据，5GC彻底解耦。
+          </div>
+        </div>
+        <div class="card">
+          <h3>华为5GC vs 友商对比</h3>
+          <table class="data-table">
+            <thead><tr><th>厂商</th><th>5GC产品</th><th>关键特性</th><th>差异化</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-huawei">华为</span></td><td>CloudCore 5GC (CNF版)</td><td>CNF容器化；融合4G/5G；端到端切片；iMaster MAE-CN运维</td><td>融合核心网+ToB方案最成熟</td></tr>
+              <tr><td><span class="tag tag-ericsson">爱立信</span></td><td>5G Core (Dual Mode)</td><td>云原生CNF；双模EPC/5GC</td><td>云原生技术领先、欧美生态</td></tr>
+              <tr><td><span class="tag tag-nokia">诺基亚</span></td><td>magenta Core</td><td>全云化；ReefShark UPF加速</td><td>UPF性能、芯片自研</td></tr>
+              <tr><td><span class="tag tag-zte">中兴</span></td><td>Common Core (5GC)</td><td>融合核心网；SA/NSA</td><td>性价比高</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>华为核心网产品族速查</h3>
+          <table class="data-table">
+            <thead><tr><th>产品名</th><th>定位</th><th>覆盖网元</th><th>部署形态</th></tr></thead>
+            <tbody>
+              <tr><td><strong>CloudCore 5GC</strong> (CNF版)</td><td>5G核心网云原生</td><td>AMF/SMF/UPF/PCF/UDM/AUSF/NRF/NSSF/NEF/SEPP/NWDAF</td><td>CNF容器化（K8s）</td></tr>
+              <tr><td><strong>CloudCore vEPC</strong></td><td>4G虚拟化核心网</td><td>vMME/vSGW/vPGW/vHSS/vPCRF</td><td>VNF虚拟机（KVM）</td></tr>
+              <tr><td><strong>CloudIMS</strong></td><td>IMS语音核心网</td><td>P/I/S-CSCF/SBC/MGCF/ATS</td><td>VNF/CNF混合</td></tr>
+              <tr><td><strong>CloudUA</strong></td><td>统一用户数据</td><td>融合HSS+UDM+UDR+UDSF</td><td>VNF（数据集中存储）</td></tr>
+              <tr><td><strong>CloudBCG</strong></td><td>边界网关</td><td>SEPP（漫游安全）/IP前传</td><td>VNF/CNF</td></tr>
+              <tr><td><strong>UPF硬件加速</strong></td><td>高性能用户面</td><td>UPF on SmartNIC/DPU（自研Solar芯片）</td><td>软硬混合</td></tr>
+              <tr><td><strong>iMaster MAE-CN</strong></td><td>核心网管理自动化</td><td>故障管理/性能监控/配置下发/CI/CD编排</td><td>独立部署</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>产品经理速记</strong>：CloudCore是华为核心网统一品牌（含5GC+EPC），CloudIMS管语音，CloudUA管用户数据，CloudBCG管漫游安全，iMaster MAE-CN管运维自动化。与友商最大的差异：<strong>华为这些产品共享同一套CloudCore平台</strong>，而友商EPC、5GC、IMS通常是独立产品线。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="mod-ims">
+        <div class="card">
+          <h3>IMS核心网元 - 语音控制核心</h3>
+          <p>IMS（IP多媒体子系统）是4G/5G语音（VoLTE/VoNR）的控制核心。<strong>4G和5G共用同一套IMS</strong>，只是接入网和核心网不同。</p>
+          <div class="dim-grid">
+            <div class="nf-card nf-ims">
+              <div class="nf-name">P-CSCF</div>
+              <div class="nf-full">Proxy-CSCF</div>
+              <div class="nf-desc">代理CSCF。UE接入IMS的第一个入口，SIP信令代理。4G时连EPC PGW，5G时连5GC UPF。</div>
+            </div>
+            <div class="nf-card nf-ims">
+              <div class="nf-name">S-CSCF</div>
+              <div class="nf-full">Serving-CSCF</div>
+              <div class="nf-desc">服务CSCF。IMS核心节点，负责SIP注册、会话路由、业务触发。VoLTE/VoNR信令都经此处理。</div>
+            </div>
+            <div class="nf-card nf-ims">
+              <div class="nf-name">I-CSCF</div>
+              <div class="nf-full">Interrogating-CSCF</div>
+              <div class="nf-desc">查询CSCF。漫游时入口，负责查询HSS找到用户注册的S-CSCF。</div>
+            </div>
+            <div class="nf-card nf-ims">
+              <div class="nf-name">SBC</div>
+              <div class="nf-full">Session Border Controller</div>
+              <div class="nf-desc">会话边界控制器。位于IMS网络边缘，负责NAT穿越、安全防护、QoS保障。媒体面处理。</div>
+            </div>
+            <div class="nf-card nf-ims">
+              <div class="nf-name">MGCF</div>
+              <div class="nf-full">Media Gateway Control Function</div>
+              <div class="nf-desc">媒体网关控制。VoLTE与CS域（2G/3G）语音互通时，SIP与ISUP信令转换。SRVCC切换时关键网元。</div>
+            </div>
+            <div class="nf-card nf-ims">
+              <div class="nf-name">HSS (IMS)</div>
+              <div class="nf-full">IMS Home Subscriber Server</div>
+              <div class="nf-desc">IMS用户数据库。存储用户IMS签约（IMPU/IMPI）、业务触发规则。可与EPC/5GC HSS/UDM融合。</div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>华为差异化</strong>：华为<strong>CloudIMS</strong>支持VoLTE/VoNR/SRVCC全语音互操作方案，一套IMS管4G/5G语音（EPS Fallback由5GC/RAN层实现，IMS侧不感知）。CloudIMS与CloudUA（融合HSS+UDM+IMS数据库）统一用户数据管理。全球VoLTE商用超150张网络。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 06 云化与虚拟化 ==================== -->
+    <section class="section" id="sec-cloud">
+      <div class="section-title">云化与虚拟化 · 核心网未来方向</div>
+      <div class="section-subtitle">NFV架构 · VNF vs CNF · 华为CloudCore · 云原生运维</div>
+
+      <div class="card">
+        <h3>NFV架构 - 核心网虚拟化基石</h3>
+        <div class="diagram-box">
+          <svg width="660" height="320" viewBox="0 0 660 320">
+            <rect x="20" y="20" width="620" height="60" rx="8" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1.5"/>
+            <text x="330" y="45" text-anchor="middle" class="svg-title" fill="#8b7cff">OSS/BSS + NFVO + 云管平台</text>
+            <text x="330" y="62" text-anchor="middle" class="svg-mono" fill="#5d6a87">编排管理层（MANO）：网元生命周期管理、资源编排</text>
+            <rect x="20" y="100" width="620" height="60" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="330" y="125" text-anchor="middle" class="svg-title" fill="#2dd4ff">VNF/CNF 层：EPC/5GC/IMS 虚拟化网元</text>
+            <text x="330" y="142" text-anchor="middle" class="svg-mono" fill="#5d6a87">AMF/SMF/UPF/MME/SGW/PGW/HSS/IMS... 以软件形式运行</text>
+            <rect x="20" y="180" width="620" height="60" rx="8" fill="rgba(77,255,158,.06)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="330" y="205" text-anchor="middle" class="svg-title" fill="#4dff9e">虚拟化层：Hypervisor / Container Runtime (K8s)</text>
+            <text x="330" y="222" text-anchor="middle" class="svg-mono" fill="#5d6a87">VM虚拟化（VNF）或 容器化（CNF）</text>
+            <rect x="20" y="260" width="620" height="50" rx="8" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1.5"/>
+            <text x="330" y="285" text-anchor="middle" class="svg-title" fill="#ffb84d">COTS通用硬件层：x86/ARM 服务器 + 存储 + 网络</text>
+            <text x="330" y="302" text-anchor="middle" class="svg-mono" fill="#5d6a87">通用IT硬件替代专用通信设备</text>
+            <line x1="330" y1="80" x2="330" y2="100" stroke="rgba(255,255,255,.1)" stroke-width="1" class="flow-line"/>
+            <line x1="330" y1="160" x2="330" y2="180" stroke="rgba(255,255,255,.1)" stroke-width="1" class="flow-line"/>
+            <line x1="330" y1="240" x2="330" y2="260" stroke="rgba(255,255,255,.1)" stroke-width="1" class="flow-line"/>
+          </svg>
+          <div class="diagram-caption">图 6-1 · NFV四层架构：MANO -> VNF/CNF -> 虚拟化层 -> COTS硬件</div>
+        </div>
+        <div class="callout">
+          <strong>NFV的核心价值</strong>：把网元从"专用硬件盒子"变成"通用服务器上的软件"。好处：①硬件通用化降成本；②网元弹性扩缩容；③新业务快速部署（软件下发）；④统一运维。4G EPC以VNF为主，5GC以CNF为主流方向。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>VNF vs CNF - 虚拟化的两个阶段</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>VNF（虚拟机）</th><th>CNF（容器）</th><th>影响</th></tr></thead>
+          <tbody>
+            <tr><td>运行环境</td><td>VM虚拟机（KVM/VMware）</td><td>容器（Docker/K8s）</td><td>CNF更轻量</td></tr>
+            <tr><td>启动时间</td><td>分钟级（VM启动慢）</td><td>秒级（容器启动快）</td><td>CNF弹性更好</td></tr>
+            <tr><td>资源开销</td><td>每VM需完整OS（~1-2GB）</td><td>共享OS内核（~100MB）</td><td>CNF资源利用率高</td></tr>
+            <tr><td>网元粒度</td><td>一个VM=一个网元（单体）</td><td>网元拆为多个微服务容器</td><td>CNF更灵活</td></tr>
+            <tr><td>扩缩容</td><td>加VM（分钟级）</td><td>加容器Pod（秒级）</td><td>CNF弹性伸缩</td></tr>
+            <tr><td>运维</td><td>传统网管+VNF Manager</td><td>CI/CD + K8s编排</td><td>CNF运维更自动化</td></tr>
+            <tr><td>适用阶段</td><td>4G EPC / 5GC初期</td><td>5GC主流 / 5.5G</td><td>逐步从VNF到CNF</td></tr>
+            <tr><td>华为方案</td><td>CloudCore VNF</td><td>CloudCore CNF</td><td>混合演进</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>客户决策</strong>：不是所有网元都需要CNF。控制面（AMF/SMF）适合CNF（弹性扩缩），用户面（UPF）可用VNF或专用硬件（高性能转发）。<strong>华为混合方案</strong>：控制面CNF化，用户面UPF可软件化也可硬件加速（SmartNIC/DPU）。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 CloudCore 云原生核心网平台</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为 CloudCore</div>
+            <div class="dim-body"><strong>融合架构</strong>：2G/3G/4G/5G/IMS共平台<br><strong>VNF+CNF混合</strong>：按网元特性选择部署形态<br><strong>统一云管</strong>：MANO+K8s+iMaster MAE-CN编排<br><strong>自研Solar芯片</strong>：UPF硬件加速(可选)</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">爱立信 Cloud Core</div>
+            <div class="dim-body"><strong>双模</strong>：EPC+5GC共平台<br><strong>CNF优先</strong>：全云原生路线<br><strong>优势</strong>：云原生技术最成熟<br><strong>劣势</strong>：融合度不如华为</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">诺基亚 Cloud Core</div>
+            <div class="dim-body"><strong>全云化</strong>：VNF/CNF全支持<br><strong>ReefShark</strong>：自研UPF加速芯片<br><strong>优势</strong>：UPF性能强<br><strong>劣势</strong>：产品迭代偏慢</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>华为差异化</strong>：①<strong>融合度最高</strong>--一套平台管5种制式，友商通常2-3种；②<strong>切片端到端</strong>--RAN+CN+MEC全栈切片，友商多只有CN切片；③<strong>UPF灵活部署</strong>--支持软件UPF和硬件加速UPF，适配不同场景。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>云原生运维 - 从手工到自动化</h3>
+        <div class="step-flow">
+          <div class="step-node" style="border-color:var(--accent-amber);"><div style="color:var(--accent-amber);font-weight:600;">物理网元时代</div><div style="font-size:11px;margin-top:4px;">CLI手工配置</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-cyan);"><div style="color:var(--accent-cyan);font-weight:600;">VNF时代</div><div style="font-size:11px;margin-top:4px;">EM网管+脚本</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node active" style="border-color:var(--accent-green);"><div style="color:var(--accent-green);font-weight:600;">CNF时代</div><div style="font-size:11px;margin-top:4px;">CI/CD + K8s自动编排</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-violet);"><div style="color:var(--accent-violet);font-weight:600;">AI自治</div><div style="font-size:11px;margin-top:4px;">AIOps + 意图驱动</div></div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>运维演进价值</strong>：CNF+CI/CD让核心网网元升级从"数月"缩短到"数天"。华为<strong>iMaster MAE-CN</strong>作为核心网管理自动化平台，实现故障自愈、容量自优、意图驱动。配合<strong>Autonomous Network（自治网络）</strong>方案和NWDAF数据分析，向5.5G/6G AI原生运维演进。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 07 关键技术原理 ==================== -->
+    <section class="section" id="sec-tech">
+      <div class="section-title">关键技术原理 · 4G/5G对比</div>
+      <div class="section-subtitle">网络切片 · SBA · CUPS · MEC边缘计算 · 语音互操作 - 全部可视化</div>
+
+      <div class="sub-tabs" id="tech-tabs">
+        <div class="sub-tab active" data-target="tech-slice">网络切片</div>
+        <div class="sub-tab" data-target="tech-sba">SBA服务化</div>
+        <div class="sub-tab" data-target="tech-cups">CUPS分离</div>
+        <div class="sub-tab" data-target="tech-mec">MEC边缘</div>
+        <div class="sub-tab" data-target="tech-voice">语音互操作</div>
+        <div class="sub-tab" data-target="tech-signaling">信令流程</div>
+      </div>
+
+      <div class="sub-content active" id="tech-slice">
+        <div class="card">
+          <h3>网络切片 - 一张物理网分出多个逻辑网</h3>
+          <p>5GC核心网原生支持网络切片：一张物理核心网通过虚拟化分割出多个逻辑切片实例，每个切片有独立的资源和QoS保障，服务于不同业务类型。<strong>4G EPC不支持切片</strong>。</p>
+          <div class="slice-vis">
+            <div class="slice-lane slice-embb">
+              <div class="sl-name">eMBB切片</div>
+              <div class="sl-desc">高带宽<br>手机上网/视频<br><br>3.5GHz 100MHz<br>UPF: 集中DC</div>
+              <div class="slice-pipe" style="background:linear-gradient(90deg,var(--accent-cyan),transparent);"></div>
+            </div>
+            <div class="slice-lane slice-urllc">
+              <div class="sl-name">URLLC切片</div>
+              <div class="sl-desc">超低时延<br>工业控制/自动驾驶<br><br>专用资源<br>UPF: 边缘下沉</div>
+              <div class="slice-pipe" style="background:linear-gradient(90deg,var(--accent-red),transparent);"></div>
+            </div>
+            <div class="slice-lane slice-mmtc">
+              <div class="sl-name">mMTC切片</div>
+              <div class="sl-desc">海量连接<br>物联网传感器<br><br>低速率大连接<br>UPF: 集中DC</div>
+              <div class="slice-pipe" style="background:linear-gradient(90deg,var(--accent-green),transparent);"></div>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>切片类型</th><th>eMBB</th><th>URLLC</th><th>mMTC</th></tr></thead>
+            <tbody>
+              <tr><td>典型业务</td><td>手机上网/4K/8K视频</td><td>工业控制/远程手术/自动驾驶</td><td>智能水表/路灯/传感器</td></tr>
+              <tr><td>关键指标</td><td>下行>10Gbps</td><td>时延<1ms, 可靠性>99.999%</td><td>连接密度>100万/km²</td></tr>
+              <tr><td>UPF部署</td><td>集中DC</td><td>边缘MEC（下沉到园区）</td><td>集中DC</td></tr>
+              <tr><td>资源隔离</td><td>软隔离（共享资源池）</td><td>硬隔离（专用资源）</td><td>软隔离</td></tr>
+              <tr><td>计费模式</td><td>流量计费</td><td>SLA计费（时延/可靠性保障）</td><td>连接数计费</td></tr>
+              <tr><td>4G支持</td><td colspan="3"><span class="tag tag-red">4G不支持切片，只有APN区分业务</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>切片的技术基础</strong>：①SBA架构让网元可按切片实例化；②CUPS让UPF可按切片分布式部署；③NFV/CNF让资源弹性分配。<strong>NSSF负责切片选择</strong>：UE注册时NSSF根据签约和业务选择切片实例。<strong>华为端到端切片</strong>覆盖RAN+CN+MEC，是ToB场景核心竞争力。
+          </div>
+          <h4>切片管理层级 - CSMF/NSMF/NSSMF</h4>
+          <table class="data-table">
+            <thead><tr><th>管理层</th><th>全称</th><th>职责</th><th>对应3GPP</th></tr></thead>
+            <tbody>
+              <tr><td><strong>CSMF</strong></td><td>Communication Service Management Function</td><td>业务需求转化：将企业SLA需求（时延/带宽/可靠性）转化为切片参数，下发给NSMF</td><td>Rel-15+</td></tr>
+              <tr><td><strong>NSMF</strong></td><td>Network Slice Management Function</td><td>切片编排：将切片参数分解为RAN子切片+CN子切片+TN子切片，协调跨域创建</td><td>Rel-15+</td></tr>
+              <tr><td><strong>NSSMF</strong></td><td>Network Slice Subnet Management Function</td><td>子切片管理：各域内具体执行--CN-NSSMF创建5GC网元实例+UPF，RAN-NSSMF配置gNB资源</td><td>Rel-15+</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>切片生命周期</strong>：①<strong>规划</strong>（CSMF定义需求）-> ②<strong>编排</strong>（NSMF分解到子切片）-> ③<strong>实例化</strong>（NSSMF在各域创建资源）-> ④<strong>激活</strong>（NSSF将UE路由到切片）-> ⑤<strong>监控</strong>（NWDAF采集SLA数据）-> ⑥<strong>缩容/释放</strong>。<strong>华为切片管理平台</strong>支持全生命周期自动化，是ToB切片商用的关键。
+          </div>
+          <h4>切片实例化过程可视化</h4>
+          <div class="diagram-box">
+            <svg width="660" height="340" viewBox="0 0 660 340">
+              <path id="slice-path-csmf" d="M 330 55 L 330 90" fill="none" stroke="rgba(255,110,199,.3)" stroke-width="2"/>
+              <path id="slice-path-ran" d="M 330 130 L 120 180 L 120 220" fill="none" stroke="rgba(45,212,255,.25)" stroke-width="1.5"/>
+              <path id="slice-path-cn" d="M 330 130 L 330 220" fill="none" stroke="rgba(77,255,158,.25)" stroke-width="1.5"/>
+              <path id="slice-path-tn" d="M 330 130 L 540 180 L 540 220" fill="none" stroke="rgba(139,124,255,.25)" stroke-width="1.5"/>
+              <rect x="240" y="20" width="180" height="35" rx="8" fill="rgba(255,110,199,.1)" stroke="#ff6ec7" stroke-width="1.5"/>
+              <text x="330" y="38" text-anchor="middle" class="svg-mono" fill="#ff6ec7" style="font-size:11px;font-weight:600;">CSMF</text>
+              <text x="330" y="50" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">企业SLA需求 -> 切片参数</text>
+              <rect x="240" y="95" width="180" height="35" rx="8" fill="rgba(45,212,255,.1)" stroke="#2dd4ff" stroke-width="1.5"/>
+              <text x="330" y="113" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:11px;font-weight:600;">NSMF</text>
+              <text x="330" y="125" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">分解为RAN+CN+TN子切片</text>
+              <rect x="40" y="220" width="160" height="100" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1"/>
+              <text x="120" y="240" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;font-weight:600;">RAN-NSSMF</text>
+              <text x="120" y="258" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">gNB资源分配</text>
+              <text x="120" y="272" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">PRB预留/调度优先级</text>
+              <text x="120" y="286" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">Massive MIMO波束配置</text>
+              <text x="120" y="300" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">-> RAN子切片就绪</text>
+              <rect x="250" y="220" width="160" height="100" rx="8" fill="rgba(77,255,158,.06)" stroke="#4dff9e" stroke-width="1"/>
+              <text x="330" y="240" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:10px;font-weight:600;">CN-NSSMF</text>
+              <text x="330" y="258" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">5GC网元实例化</text>
+              <text x="330" y="272" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">AMF/SMF/UPF切片实例</text>
+              <text x="330" y="286" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">PCF QoS策略下发</text>
+              <text x="330" y="300" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">-> CN子切片就绪</text>
+              <rect x="460" y="220" width="160" height="100" rx="8" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1"/>
+              <text x="540" y="240" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:10px;font-weight:600;">TN-NSSMF</text>
+              <text x="540" y="258" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">传输网资源分配</text>
+              <text x="540" y="272" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">VPN隧道/带宽预留</text>
+              <text x="540" y="286" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">时延保证路由</text>
+              <text x="540" y="300" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">-> TN子切片就绪</text>
+              <rect x="40" y="330" width="580" height="0" rx="4" fill="none"/>
+              <text x="330" y="335" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">NSSF激活 -> NWDAF监控SLA -> UE路由到切片实例</text>
+              <circle r="4" fill="#ff6ec7" opacity="0.9"><animateMotion dur="2.5s" repeatCount="indefinite"><mpath href="#slice-path-csmf"/></animateMotion></circle>
+              <circle r="3" fill="#2dd4ff" opacity="0.8"><animateMotion dur="2s" repeatCount="indefinite" begin="0.5s"><mpath href="#slice-path-ran"/></animateMotion></circle>
+              <circle r="3" fill="#4dff9e" opacity="0.8"><animateMotion dur="2s" repeatCount="indefinite" begin="0.8s"><mpath href="#slice-path-cn"/></animateMotion></circle>
+              <circle r="3" fill="#8b7cff" opacity="0.8"><animateMotion dur="2s" repeatCount="indefinite" begin="1.1s"><mpath href="#slice-path-tn"/></animateMotion></circle>
+            </svg>
+            <div class="diagram-caption">图 7-1b · 切片实例化过程：CSMF需求 -> NSMF编排 -> 三域NSSMF并行创建（动画信令流）</div>
+          </div>
+          <h4>5QI QoS参数 - 切片SLA的技术实现</h4>
+          <table class="data-table">
+            <thead><tr><th>5QI</th><th>资源类型</th><th>优先级</th><th>包时延预算</th><th>丢包率</th><th>典型业务/切片</th></tr></thead>
+            <tbody>
+              <tr><td>5QI=9</td><td>Non-GBR</td><td>低（90）</td><td>300ms</td><td>10<sup>-6</sup></td><td>eMBB切片 - 缓冲视频/网页</td></tr>
+              <tr><td>5QI=8</td><td>Non-GBR</td><td>中（80）</td><td>300ms</td><td>10<sup>-6</sup></td><td>eMBB切片 - TCP业务</td></tr>
+              <tr><td><strong>5QI=1</strong></td><td><strong>GBR</strong></td><td>高（20）</td><td>100ms</td><td>10<sup>-2</sup></td><td>VoNR语音（所有切片共用）</td></tr>
+              <tr><td><strong>5QI=80</strong></td><td><strong>GBR</strong></td><td>高（68）</td><td>10ms</td><td>10<sup>-6</sup></td><td><strong>URLLC切片</strong> - 低时延工业控制</td></tr>
+              <tr><td><strong>5QI=82</strong></td><td><strong>Delay-critical GBR</strong></td><td>高（35）</td><td>10ms</td><td>10<sup>-5</sup></td><td><strong>URLLC切片</strong> - 远程控制/自动驾驶</td></tr>
+              <tr><td>5QI=85</td><td>Delay-critical GBR</td><td>中高（56）</td><td>5ms</td><td>10<sup>-5</sup></td><td>URLLC切片 - V2X</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>QoS Flow与5QI</strong>：5GC用<strong>QoS Flow</strong>替代4G的EPS Bearer，粒度更细。每个QoS Flow由5QI标识，定义了资源类型（GBR/Non-GBR/Delay-critical GBR）、优先级、时延预算和丢包率。<strong>切片内的QoS Flow由PCF下发策略、SMF创建、UPF执行</strong>。URLLC切片使用5QI=80/82保证超低时延，这是4G EPS Bearer无法实现的粒度。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-sba">
+        <div class="card">
+          <h3>SBA服务化架构 - 5GC控制面的"微服务化"</h3>
+          <p>5GC控制面从4G的"固定接口"变为"服务化API"。每个网元（NF）提供一组服务，通过NRF注册发现，其他NF通过HTTP/2 RESTful API调用。</p>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th><span class="tag tag-4g">4G EPC</span></th><th><span class="tag tag-5g">5GC SBA</span></th></tr></thead>
+            <tbody>
+              <tr><td>网元间接口</td><td>点对点固定接口（S6a/S11/S5等）</td><td>服务化接口（Namf/Nsmf/Nudm等）</td></tr>
+              <tr><td>协议</td><td>Diameter/GTP-C/S1AP</td><td>HTTP/2 + JSON</td></tr>
+              <tr><td>发现方式</td><td>预配置（固定IP+端口）</td><td>NRF动态注册发现</td></tr>
+              <tr><td>新增网元</td><td>定义新接口+双方改造</td><td>注册到NRF即可被调用</td></tr>
+              <tr><td>扩容方式</td><td>整体扩容（单体）</td><td>按NF实例水平扩容</td></tr>
+              <tr><td>升级方式</td><td>整体升级（影响大）</td><td>微服务独立升级（影响小）</td></tr>
+              <tr><td>开放性</td><td>封闭（仅运营商内部）</td><td>NEF向第三方开放API</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>SBA的价值</strong>：让核心网从"电信级紧耦合系统"变为"IT级松耦合微服务系统"。<strong>类比</strong>：4G EPC像单体应用（所有功能打包在一起），5GC SBA像微服务架构（每个功能独立部署、独立扩缩、独立升级）。
+          </div>
+          <h4>SBA API调用示例 - 真实的HTTP/2请求</h4>
+          <p>以下展示5GC中4个最核心的SBA服务调用。所有交互均为标准HTTP/2 RESTful API，JSON编码，与4G的Diameter/GTP-C完全不同。</p>
+          <div style="background:rgba(6,10,20,.7);border:1px solid var(--glass-border);border-radius:12px;padding:18px 20px;margin:12px 0;font-family:var(--font-mono);font-size:12px;line-height:1.8;text-align:left;overflow-x:auto;">
+            <div style="color:var(--text-muted);font-size:10px;margin-bottom:8px;">① NF注册 - AMF启动后向NRF注册</div>
+            <div><span style="color:var(--accent-green);font-weight:600;">POST</span> <span style="color:var(--accent-cyan);">/nnrf-nfm/v1/nf-instances</span></div>
+            <div style="color:var(--text-muted);">Content-Type: application/json</div>
+            <div style="color:var(--accent-amber);">{ <span style="color:var(--accent-violet);">"nfType"</span>: <span style="color:var(--accent-green);">"AMF"</span>, <span style="color:var(--accent-violet);">"nfInstanceId"</span>: <span style="color:var(--accent-green);">"550e8400-..."</span>,</div>
+            <div style="color:var(--accent-amber);">&nbsp;&nbsp;<span style="color:var(--accent-violet);">"services"</span>: [<span style="color:var(--accent-green);">"namf-comm"</span>, <span style="color:var(--accent-green);">"namf-mt"</span>] }</div>
+            <div style="color:var(--text-muted);font-size:10px;margin:10px 0 8px;">② NF发现 - AMF需要找UDM时查询NRF</div>
+            <div><span style="color:var(--accent-cyan);font-weight:600;">GET</span> <span style="color:var(--accent-cyan);">/nnrf-disc/v1/nf-instances?nf-type=UDM&amp;service-name=nudm-sdm</span></div>
+            <div style="color:var(--text-muted);font-size:10px;margin:10px 0 8px;">③ 签约数据获取 - AMF从UDM读取用户数据（替代4G Diameter ULA）</div>
+            <div><span style="color:var(--accent-cyan);font-weight:600;">GET</span> <span style="color:var(--accent-cyan);">/nudm-sdm/v2/{supi}/am-data</span></div>
+            <div style="color:var(--accent-amber);">Response: { <span style="color:var(--accent-violet);">"nssai"</span>: [...], <span style="color:var(--accent-violet);">"subscribedUeAmbr"</span>: {<span style="color:var(--accent-violet);">"uplink"</span>:<span style="color:var(--accent-green);">"1 Gbps"</span>} }</div>
+            <div style="color:var(--text-muted);font-size:10px;margin:10px 0 8px;">④ PDU会话创建 - AMF通知SMF建立会话（替代4G GTP-C Create Session）</div>
+            <div><span style="color:var(--accent-green);font-weight:600;">POST</span> <span style="color:var(--accent-cyan);">/nsmf-pdusession/v1/sm-contexts</span></div>
+            <div style="color:var(--accent-amber);">{ <span style="color:var(--accent-violet);">"supi"</span>: <span style="color:var(--accent-green);">"4601100..."</span>, <span style="color:var(--accent-violet);">"dnn"</span>: <span style="color:var(--accent-green);">"internet"</span>, <span style="color:var(--accent-violet);">"pduSessionType"</span>: <span style="color:var(--accent-green);">"IPV4"</span> }</div>
+          </div>
+          <div class="callout">
+            <strong>PM要点</strong>：4G网元间用Diameter/GTP-C（电信专有协议），5GC用HTTP/2+JSON（IT标准协议）。这意味着<strong>5GC可以被任何懂HTTP的开发者集成</strong>--通过NEF开放API，企业应用可以直接请求QoS保障、创建切片、订阅事件。这是5GC ToB变现的技术基础。4G做不到（Diameter不对外开放）。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-cups">
+        <div class="card">
+          <h3>CUPS控制/用户面分离 - MEC的技术基础</h3>
+          <p>CUPS将核心网控制面和用户面物理分离：控制面集中部署（省DC），用户面分布式下沉（降时延）。</p>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th><span class="tag tag-4g">4G (Rel-14 CUPS)</span></th><th><span class="tag tag-5g">5GC (原生CUPS)</span></th></tr></thead>
+            <tbody>
+              <tr><td>控制面</td><td>MME + SGW-C + PGW-C</td><td>AMF + SMF</td></tr>
+              <tr><td>用户面</td><td>SGW-U + PGW-U</td><td>UPF</td></tr>
+              <tr><td>控制/用户面接口</td><td>Sxa(SGW)/Sxb(PGW) - PFCP</td><td>N4 - PFCP</td></tr>
+              <tr><td>用户面位置</td><td>集中DC（可选下沉）</td><td>原生支持分布式UPF下沉</td></tr>
+              <tr><td>用户面数量</td><td>通常1-2级</td><td>可多级（中心DC+区域DC+边缘MEC）</td></tr>
+              <tr><td>MEC支持</td><td>有限（需特殊配置）</td><td>原生支持（UPF+MEP一体化）</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>CUPS核心价值</strong>：①控制面集中--省DC机房和运维成本；②用户面下沉--降低端到端时延（从30ms降到5-10ms）；③本地卸载--企业流量不出园区（数据安全+省传输带宽）。<strong>4G CUPS是可选特性，5GC是原生设计</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-mec">
+        <div class="card">
+          <h3>MEC边缘计算 - UPF下沉 + 本地应用</h3>
+          <div class="diagram-box">
+            <svg width="660" height="280" viewBox="0 0 660 280">
+              <rect x="20" y="100" width="100" height="60" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+              <text x="70" y="130" text-anchor="middle" class="svg-title" fill="#2dd4ff" style="font-size:12px;">UE</text>
+              <text x="70" y="148" text-anchor="middle" class="svg-mono">终端</text>
+              <rect x="160" y="100" width="100" height="60" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+              <text x="210" y="130" text-anchor="middle" class="svg-title" fill="#4dff9e" style="font-size:12px;">gNB</text>
+              <text x="210" y="148" text-anchor="middle" class="svg-mono">基站</text>
+              <line x1="120" y1="130" x2="160" y2="130" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/>
+              <rect x="300" y="40" width="120" height="60" rx="8" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/>
+              <text x="360" y="68" text-anchor="middle" class="svg-title" fill="#8b7cff" style="font-size:12px;">边缘 UPF + MEC</text>
+              <text x="360" y="85" text-anchor="middle" class="svg-mono">园区/边缘DC</text>
+              <line x1="260" y1="120" x2="300" y2="70" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+              <text x="280" y="90" class="svg-mono" fill="#8b7cff" style="font-size:9px;">N3</text>
+              <rect x="300" y="160" width="120" height="60" rx="8" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="360" y="188" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:12px;">中心 UPF</text>
+              <text x="360" y="205" text-anchor="middle" class="svg-mono">中心DC</text>
+              <line x1="260" y1="140" x2="300" y2="180" stroke="rgba(255,184,77,.3)" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="280" y="165" class="svg-mono" fill="#ffb84d" style="font-size:9px;">N3</text>
+              <rect x="480" y="40" width="80" height="60" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+              <text x="520" y="68" text-anchor="middle" class="svg-title" fill="#4dff9e" style="font-size:12px;">本地DN</text>
+              <text x="520" y="85" text-anchor="middle" class="svg-mono">企业内网</text>
+              <line x1="420" y1="70" x2="480" y2="70" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/>
+              <text x="450" y="60" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">N6本地</text>
+              <rect x="480" y="160" width="80" height="60" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="520" y="188" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:12px;">互联网</text>
+              <text x="520" y="205" text-anchor="middle" class="svg-mono">公网</text>
+              <line x1="420" y1="190" x2="480" y2="190" stroke="rgba(45,212,255,.3)" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="450" y="180" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">N6远端</text>
+              <text x="330" y="255" text-anchor="middle" class="svg-mono" fill="#5d6a87">企业流量从边缘UPF本地卸载（N6本地），不上送到中心DC，降时延+保安全</text>
+            </svg>
+            <div class="diagram-caption">图 7-1 · MEC边缘计算：UPF下沉+本地DN卸载，流量不出园区</div>
+          </div>
+          <div class="callout">
+            <strong>MEC核心价值</strong>：①低时延--UPF下沉到园区，端到端时延从30ms降到5-10ms；②本地卸载--企业流量不出园区（数据安全+省传输）；③本地计算--MEC服务器运行行业应用（AI推理/视频分析）。<strong>4G无原生MEC，5GC通过UPF下沉原生支持</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-voice">
+        <div class="card">
+          <h3>语音互操作 - VoLTE/VoNR/EPS Fallback/SRVCC</h3>
+          <table class="data-table">
+            <thead><tr><th>场景</th><th>方案</th><th>流程</th><th>4G/5G</th></tr></thead>
+            <tbody>
+              <tr><td>4G语音</td><td>VoLTE</td><td>UE->eNB->EPC->IMS，语音走IP分组</td><td><span class="tag tag-4g">4G</span></td></tr>
+              <tr><td>5G SA语音（终端支持）</td><td>VoNR</td><td>UE->gNB->5GC->IMS，5G原生语音</td><td><span class="tag tag-5g">5G SA</span></td></tr>
+              <tr><td>5G SA语音（终端不支持）</td><td>EPS Fallback</td><td>5G UE回落到4G，用VoLTE通话，通话结束返回5G</td><td><span class="tag tag-5g">5G SA初期</span></td></tr>
+              <tr><td>5G->4G移动中切换</td><td>SRVCC</td><td>VoNR通话中移出5G覆盖，切换到4G VoLTE不中断</td><td><span class="tag tag-5g">5G->4G</span></td></tr>
+              <tr><td>4G->5G移动中切换</td><td>Reverse SRVCC</td><td>VoLTE通话中进入5G覆盖，切换到VoNR</td><td><span class="tag tag-5g">4G->5G</span></td></tr>
+              <tr><td>4G->2G/3G切换</td><td>SRVCC (4G)</td><td>VoLTE通话中移出4G覆盖，切换到2G/3G CS语音</td><td><span class="tag tag-4g">4G->2G/3G</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>5G SA初期大多数用EPS Fallback</strong>：因为VoNR终端覆盖率低。随着终端普及逐步过渡到VoNR。<strong>IMS是所有语音方案的控制核心</strong>--VoLTE和VoNR共用IMS，只是接入网和核心网不同。华为CloudIMS支持全语音互操作，全球VoLTE商用超150张网。
+          </div>
+          <h4>eSRVCC架构 - ATCF/ATGW的角色</h4>
+          <p>传统SRVCC（5G->4G语音切换）需要IMS信令跨网往返，切换时延可达300ms+，容易导致通话中断。<strong>eSRVCC（Enhanced SRVCC）</strong>通过引入ATCF/ATGW将媒体锚点下沉到接入侧，大幅缩短切换时延。</p>
+          <table class="data-table">
+            <thead><tr><th>组件</th><th>全称</th><th>角色</th><th>位置</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ATCF</strong></td><td>Access Transfer Control Function</td><td>接入切换控制功能。eSRVCC信令锚点，UE切换时ATCF直接处理SIP信令转移，无需远端S-CSCF参与</td><td>IMS接入侧（靠近AMF/MME）</td></tr>
+              <tr><td><strong>ATGW</strong></td><td>Access Transfer Gateway</td><td>接入切换网关。eSRVCC媒体锚点，切换时只需重配ATGW媒体路径，远端媒体服务器不感知</td><td>IMS接入侧（由SBC兼任）</td></tr>
+              <tr><td>SCC AS</td><td>Service Centralization & Continuity AS</td><td>业务集中与连续性服务器。SRVCC/eSRVCC的业务逻辑控制</td><td>IMS核心侧</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>eSRVCC vs SRVCC</strong>：传统SRVCC切换时延~300-500ms（信令需回到S-CSCF/SCC AS远端处理）；eSRVCC通过ATCF/ATGW本地锚定，切换时延降至<strong>~150-200ms</strong>，大幅降低中断概率。<strong>华为CloudIMS的SBC内置ATCF/ATGW功能</strong>，无需额外部署。5G->4G的eSRVCC和4G->2G/3G的eSRVCC原理相同，ATCF/ATGW是统一锚点。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-signaling">
+        <div class="card">
+          <h3>5GC注册流程信令时序图</h3>
+          <p>UE从开机到完成注册的关键信令交互。涉及<strong>主认证（AUSF/UDM）</strong>、<strong>签约数据获取（UDM）</strong>、<strong>会话恢复（SMF）</strong>、<strong>策略获取（PCF）</strong>等SBA服务调用。</p>
+          <div class="diagram-box">
+            <svg width="660" height="460" viewBox="0 0 660 460">
+              <line x1="50" y1="40" x2="50" y2="430" stroke="rgba(45,212,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="140" y1="40" x2="140" y2="430" stroke="rgba(77,255,158,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="240" y1="40" x2="240" y2="430" stroke="rgba(45,212,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="340" y1="40" x2="340" y2="430" stroke="rgba(139,124,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="440" y1="40" x2="440" y2="430" stroke="rgba(255,93,108,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="540" y1="40" x2="540" y2="430" stroke="rgba(77,255,158,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="620" y1="40" x2="620" y2="430" stroke="rgba(255,184,77,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <rect x="20" y="15" width="60" height="25" rx="5" fill="rgba(45,212,255,.1)" stroke="#2dd4ff"/><text x="50" y="32" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;">UE</text>
+              <rect x="110" y="15" width="60" height="25" rx="5" fill="rgba(77,255,158,.1)" stroke="#4dff9e"/><text x="140" y="32" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:10px;">(R)AN</text>
+              <rect x="210" y="15" width="60" height="25" rx="5" fill="rgba(45,212,255,.1)" stroke="#2dd4ff"/><text x="240" y="32" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;">AMF</text>
+              <rect x="310" y="15" width="60" height="25" rx="5" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/><text x="340" y="32" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:10px;">AUSF</text>
+              <rect x="410" y="15" width="60" height="25" rx="5" fill="rgba(255,93,108,.1)" stroke="#ff5d6c"/><text x="440" y="32" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:10px;">UDM</text>
+              <rect x="510" y="15" width="60" height="25" rx="5" fill="rgba(77,255,158,.1)" stroke="#4dff9e"/><text x="540" y="32" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:10px;">SMF</text>
+              <rect x="590" y="15" width="60" height="25" rx="5" fill="rgba(255,184,77,.1)" stroke="#ffb84d"/><text x="620" y="32" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:10px;">PCF</text>
+              <line x1="50" y1="65" x2="140" y2="65" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="95" y="58" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">①RRC连接建立</text>
+              <line x1="140" y1="90" x2="240" y2="90" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/><text x="190" y="83" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">②N2 Initial UE Message</text>
+              <text x="190" y="100" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(Registration Request)</text>
+              <line x1="240" y1="125" x2="340" y2="125" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/><text x="290" y="118" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">③Nausf_UEAuthentication</text>
+              <text x="290" y="135" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(发起主认证)</text>
+              <line x1="340" y1="155" x2="440" y2="155" stroke="#ff5d6c" stroke-width="1.5" class="flow-line"/><text x="390" y="148" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:8px;">④Nudm_UEAuthentication</text>
+              <text x="390" y="165" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(获取鉴权向量)</text>
+              <line x1="240" y1="185" x2="50" y2="185" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="145" y="178" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">⑤鉴权挑战(via N2)</text>
+              <line x1="50" y1="210" x2="240" y2="210" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="145" y="203" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">⑥鉴权响应</text>
+              <line x1="240" y1="240" x2="440" y2="240" stroke="#ff5d6c" stroke-width="1.5" class="flow-line"/><text x="340" y="233" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:8px;">⑦Nudm_SDM_Get</text>
+              <text x="340" y="250" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(获取签约数据/切片信息)</text>
+              <line x1="240" y1="275" x2="540" y2="275" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/><text x="390" y="268" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">⑧Nsmf_PDUSession_Update</text>
+              <text x="390" y="285" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(恢复已有PDU会话)</text>
+              <line x1="240" y1="310" x2="620" y2="310" stroke="#ffb84d" stroke-width="1.5" class="flow-line"/><text x="430" y="303" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">⑨Npcf_UEPolicy_Get</text>
+              <text x="430" y="320" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(获取UE策略/AMBR)</text>
+              <line x1="240" y1="345" x2="50" y2="345" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="145" y="338" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">⑩Registration Accept</text>
+              <text x="145" y="355" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(含SUPI/TAC/Allowed NSSAI)</text>
+              <rect x="20" y="375" width="620" height="65" rx="8" fill="rgba(6,10,20,.6)" stroke="rgba(255,255,255,.06)"/>
+              <text x="330" y="395" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">注册流程要点：①②UE通过RAN接入AMF → ③④⑤⑥5G-AKA主认证(AUSF+UDM) →</text>
+              <text x="330" y="410" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">⑦AMF从UDM获取签约数据和Allowed NSSAI(允许切片) → ⑧恢复已有会话 → ⑨获取策略 → ⑩注册完成</text>
+              <text x="330" y="425" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">所有NF间交互均为SBA HTTP/2 API调用（经NRF发现），非4G点对点接口</text>
+            </svg>
+            <div class="diagram-caption">图 7-2 · 5GC注册流程信令时序（10步完整流程）</div>
+          </div>
+          <div class="callout">
+            <strong>4G vs 5G注册差异</strong>：4G注册是MME向HSS发起Diameter Update-Location-Request（单次请求全部签约数据）；5GC注册是AMF通过多个SBA服务分别获取--Nausf做认证、Nudm获取签约、Nsmf恢复会话、Npcf获取策略。<strong>SBA让流程更灵活但也更复杂</strong>，每个服务调用是独立的HTTP/2请求。
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>PDU会话建立流程信令时序图</h3>
+          <p>UE发起数据连接建立的关键流程。涉及<strong>SMF会话管理</strong>、<strong>PCF策略下发</strong>、<strong>UPF用户面配置</strong>，是5GC最核心的信令流程之一。</p>
+          <div class="diagram-box">
+            <svg width="660" height="400" viewBox="0 0 660 400">
+              <line x1="50" y1="40" x2="50" y2="370" stroke="rgba(45,212,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="170" y1="40" x2="170" y2="370" stroke="rgba(45,212,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="290" y1="40" x2="290" y2="370" stroke="rgba(77,255,158,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="410" y1="40" x2="410" y2="370" stroke="rgba(255,93,108,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="510" y1="40" x2="510" y2="370" stroke="rgba(255,184,77,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="610" y1="40" x2="610" y2="370" stroke="rgba(139,124,255,.15)" stroke-width="1" stroke-dasharray="4 3"/>
+              <rect x="20" y="15" width="60" height="25" rx="5" fill="rgba(45,212,255,.1)" stroke="#2dd4ff"/><text x="50" y="32" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;">UE</text>
+              <rect x="140" y="15" width="60" height="25" rx="5" fill="rgba(45,212,255,.1)" stroke="#2dd4ff"/><text x="170" y="32" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;">AMF</text>
+              <rect x="260" y="15" width="60" height="25" rx="5" fill="rgba(77,255,158,.1)" stroke="#4dff9e"/><text x="290" y="32" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:10px;">SMF</text>
+              <rect x="380" y="15" width="60" height="25" rx="5" fill="rgba(255,93,108,.1)" stroke="#ff5d6c"/><text x="410" y="32" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:10px;">UDM</text>
+              <rect x="480" y="15" width="60" height="25" rx="5" fill="rgba(255,184,77,.1)" stroke="#ffb84d"/><text x="510" y="32" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:10px;">PCF</text>
+              <rect x="580" y="15" width="60" height="25" rx="5" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/><text x="610" y="32" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:10px;">UPF</text>
+              <line x1="50" y1="65" x2="170" y2="65" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="110" y="58" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">①PDU Session Est. Request</text>
+              <text x="110" y="75" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(N1 SM Container)</text>
+              <line x1="170" y1="95" x2="290" y2="95" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/><text x="230" y="88" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">②Nsmf_PDUSession_Create</text>
+              <text x="230" y="105" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(创建SM Context)</text>
+              <line x1="290" y1="125" x2="410" y2="125" stroke="#ff5d6c" stroke-width="1.5" class="flow-line"/><text x="350" y="118" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:8px;">③Nudm_SDM_Get</text>
+              <text x="350" y="135" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(获取SM签约/DNN/SSC)</text>
+              <line x1="290" y1="160" x2="510" y2="160" stroke="#ffb84d" stroke-width="1.5" class="flow-line"/><text x="400" y="153" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">④Npcf_SMPolicyControl</text>
+              <text x="400" y="170" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(获取QoS规则/计费策略)</text>
+              <line x1="290" y1="195" x2="610" y2="195" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/><text x="450" y="188" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">⑤N4 Session Establishment</text>
+              <text x="450" y="205" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(下发转发规则/QoS执行/流量上报)</text>
+              <line x1="290" y1="230" x2="170" y2="230" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/><text x="230" y="223" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">⑥N1 SM Container + N2</text>
+              <text x="230" y="240" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(Accept + RRC重配信息)</text>
+              <line x1="170" y1="265" x2="50" y2="265" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/><text x="110" y="258" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">⑦PDU Session Est. Accept</text>
+              <text x="110" y="275" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">(UE获得IP + QoS参数)</text>
+              <rect x="30" y="295" width="600" height="30" rx="6" fill="rgba(77,255,158,.04)" stroke="rgba(77,255,158,.2)"/>
+              <text x="330" y="315" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">⑧ 数据通路建立：UE ↔ (R)AN ↔ UPF ↔ DN（用户面通）</text>
+              <rect x="20" y="335" width="620" height="50" rx="8" fill="rgba(6,10,20,.6)" stroke="rgba(255,255,255,.06)"/>
+              <text x="330" y="353" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">PDU会话建立要点：UE请求 → AMF选SMF → SMF从UDM取签约 → SMF从PCF取QoS策略</text>
+              <text x="330" y="370" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">→ SMF通过N4配置UPF转发规则 → 用户面通路建立（4G对应：UE→MME→SGW→PGW→DN，非SBA）</text>
+            </svg>
+            <div class="diagram-caption">图 7-3 · PDU会话建立流程信令时序（8步完整流程）</div>
+          </div>
+          <div class="callout callout-amber">
+            <strong>关键差异</strong>：4G默认承载在UE附着时建立（Attach流程合一），5GC将注册和PDU会话建立分离（先注册再建会话）。<strong>SMF通过N4接口(PFCP协议)配置UPF</strong>--下发包检测规则(PDR)、转发规则(FAR)、QoS执行规则(QER)。UPF按这些规则执行转发、限速、计费。
+          </div>
+          <h4>PDU Session类型 - ToB场景关键选型</h4>
+          <table class="data-table">
+            <thead><tr><th>类型</th><th>说明</th><th>4G对应</th><th>典型ToB场景</th></tr></thead>
+            <tbody>
+              <tr><td><strong>IP</strong> (IPv4/IPv6/IPv4v6)</td><td>UE获得IP地址，三层路由</td><td>PDN连接(IP)</td><td>手机上网/视频回传/普通企业VPN</td></tr>
+              <tr><td><strong>Ethernet</strong></td><td>二层透传，UE不分配IP，直接转发以太网帧（Rel-16引入）</td><td><span class="tag tag-red">4G不支持</span></td><td><strong>工业以太网设备直连</strong>/PLC控制器/5G LAN</td></tr>
+              <tr><td><strong>Unstructured</strong></td><td>裸数据透传，无协议封装</td><td><span class="tag tag-red">4G不支持</span></td><td>串口设备/传感器裸数据传输</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>Ethernet PDU Session的价值</strong>：工业场景大量设备使用以太网协议（如PROFINET/EtherCAT），不做IP封装。5GC Ethernet PDU Session让这些设备通过5G网络二层透传，无需改造。这是4G无法实现的<strong>5G ToB核心能力之一</strong>，配合5G LAN-type Service可实现园区内设备点对点通信。
+          </div>
+          <h4>SSC模式 - 会话与业务连续性</h4>
+          <table class="data-table">
+            <thead><tr><th>模式</th><th>行为</th><th>UPF锚点变化</th><th>适用场景</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SSC Mode 1</strong></td><td>UE移动时PDU会话保持，UPF锚点不变</td><td>不变（始终同一UPF）</td><td>手机上网（连续性优先）<br>4G对应：默认保持PGW锚点</td></tr>
+              <tr><td><strong>SSC Mode 2</strong></td><td>UE离开当前UPF服务区时，先断开旧会话再建新会话（break-before-make）</td><td>变（新区域新UPF）</td><td>边缘计算场景（UPF必须跟随UE移动到新边缘节点）</td></tr>
+              <tr><td><strong>SSC Mode 3</strong></td><td>UE移动时先建新会话（新UPF），再断旧会话（make-before-break）</td><td>变（平滑切换UPF）</td><td><strong>MEC业务连续性</strong>（保证切换中业务不中断）</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>SSC模式与MEC的关系</strong>：ToB边缘计算场景中，UE可能在多个MEC节点间移动。SSC Mode 3允许UE先连接新MEC的UPF再断开旧UPF，实现<strong>边缘业务连续性</strong>。4G没有SSC概念（锚点固定在PGW），无法实现UPF动态重锚--这是5GC MEC移动性管理的关键优势。产品经理在ToB方案设计时需根据业务连续性要求选择SSC模式。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 08 部署场景 ==================== -->
+    <section class="section" id="sec-scenario">
+      <div class="section-title">部署场景 · 4G/5G协同</div>
+      <div class="section-subtitle">SA/NSA · 云化DC · 边缘MEC · 行业专网 · 语音演进 - 部署策略</div>
+
+      <div class="sub-tabs" id="sc-tabs">
+        <div class="sub-tab active" data-target="sc-sa">SA/NSA部署</div>
+        <div class="sub-tab" data-target="sc-cloud">云化DC部署</div>
+        <div class="sub-tab" data-target="sc-edge">边缘MEC</div>
+        <div class="sub-tab" data-target="sc-enterprise">行业专网</div>
+      </div>
+
+      <div class="sub-content active" id="sc-sa">
+        <div class="card">
+          <h3>SA vs NSA核心网部署</h3>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th>NSA（非独立组网）</th><th>SA（独立组网）</th></tr></thead>
+            <tbody>
+              <tr><td>核心网</td><td>4G EPC（复用现有）</td><td>5GC（需新建）</td></tr>
+              <tr><td>网络切片</td><td>不支持</td><td>支持</td></tr>
+              <tr><td>MEC边缘计算</td><td>受限</td><td>完整支持</td></tr>
+              <tr><td>URLLC低时延</td><td>不支持</td><td>支持</td></tr>
+              <tr><td>部署成本</td><td>低（复用EPC）</td><td>高（需建5GC）</td></tr>
+              <tr><td>语音方案</td><td>VoLTE（通过EPC+IMS）</td><td>VoNR或EPS Fallback</td></tr>
+              <tr><td>4G/5G互操作接口</td><td>无需（5G锚定EPC）</td><td>N26接口（AMF↔MME），支持EPS Fallback和跨制式切换</td></tr>
+              <tr><td>适用市场</td><td>领先市场初期/新兴市场</td><td>领先市场ToB/行业专网</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>CTO决策逻辑</strong>：NSA是"低成本快速上5G"（复用EPC，ToC提速），SA是"5G全能力"（切片/MEC/URLLC，ToB必需）。<strong>大多数运营商从NSA起步，逐步演进到SA</strong>。但ToB行业客户必须SA。华为融合核心网支持NSA->SA平滑演进，EPC和5GC共平台。
+          </div>
+          <div class="callout callout-amber">
+            <strong>N26接口与4G/5G互操作</strong>：SA部署时5GC与EPC通过<strong>N26接口</strong>（AMF↔MME）实现互操作。这是<strong>EPS Fallback的技术基础</strong>--5G UE语音通话时通过N26接口从5GC切换到EPC，用VoLTE通话，结束后返回5GC。华为融合核心网（融合AMF/MME）天然支持N26接口，无需额外部署。<strong>4G/5G互操作要求终端支持N1 Mode + S1 Mode双模</strong>。
+          </div>
+        </div>
+        <div class="card">
+          <h3>5GC漫游架构 - SEPP与Home Routed</h3>
+          <p>国际漫游是运营商核心收入来源。5GC漫游通过<strong>SEPP</strong>保护跨PLMN信令安全，通过<strong>HR-UPF（Home Routed UPF）</strong>或V-UPF（Local Breakout）控制用户面路由。</p>
+          <div class="diagram-box">
+            <svg width="660" height="280" viewBox="0 0 660 280">
+              <rect x="20" y="20" width="260" height="240" rx="10" fill="rgba(45,212,255,.03)" stroke="rgba(45,212,255,.2)" stroke-dasharray="6 4"/>
+              <text x="150" y="40" text-anchor="middle" class="svg-title" fill="#2dd4ff" style="font-size:12px;">VPLMN（拜访网络）</text>
+              <rect x="50" y="60" width="60" height="35" rx="6" fill="rgba(45,212,255,.06)" stroke="#2dd4ff"/><text x="80" y="82" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">V-AMF</text>
+              <rect x="120" y="60" width="60" height="35" rx="6" fill="rgba(77,255,158,.06)" stroke="#4dff9e"/><text x="150" y="82" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">V-SMF</text>
+              <rect x="190" y="60" width="60" height="35" rx="6" fill="rgba(139,124,255,.06)" stroke="#8b7cff"/><text x="220" y="82" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">V-UPF</text>
+              <rect x="50" y="115" width="60" height="35" rx="6" fill="rgba(255,110,199,.06)" stroke="#ff6ec7" stroke-dasharray="3 2"/><text x="80" y="137" text-anchor="middle" class="svg-mono" fill="#ff6ec7" style="font-size:9px;">V-SEPP</text>
+              <rect x="190" y="170" width="60" height="35" rx="6" fill="rgba(77,255,158,.04)" stroke="#4dff9e" stroke-dasharray="3 2"/><text x="220" y="192" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">本地DN</text>
+              <text x="150" y="230" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">Local Breakout: V-UPF直接连本地DN</text>
+              <rect x="350" y="20" width="290" height="240" rx="10" fill="rgba(255,93,108,.03)" stroke="rgba(255,93,108,.2)" stroke-dasharray="6 4"/>
+              <text x="495" y="40" text-anchor="middle" class="svg-title" fill="#ff5d6c" style="font-size:12px;">HPLMN（归属网络）</text>
+              <rect x="380" y="60" width="60" height="35" rx="6" fill="rgba(255,93,108,.06)" stroke="#ff5d6c"/><text x="410" y="82" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">H-UDM</text>
+              <rect x="450" y="60" width="60" height="35" rx="6" fill="rgba(255,184,77,.06)" stroke="#ffb84d"/><text x="480" y="82" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">H-SMF</text>
+              <rect x="520" y="60" width="60" height="35" rx="6" fill="rgba(139,124,255,.06)" stroke="#8b7cff"/><text x="550" y="82" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">HR-UPF</text>
+              <rect x="590" y="60" width="45" height="35" rx="6" fill="rgba(77,255,158,.04)" stroke="#4dff9e"/><text x="612" y="82" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">DN</text>
+              <rect x="560" y="115" width="60" height="35" rx="6" fill="rgba(255,110,199,.06)" stroke="#ff6ec7" stroke-dasharray="3 2"/><text x="590" y="137" text-anchor="middle" class="svg-mono" fill="#ff6ec7" style="font-size:9px;">H-SEPP</text>
+              <text x="495" y="230" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">Home Routed: 流量回归属网络HR-UPF再出去</text>
+              <line x1="110" y1="132" x2="560" y2="132" stroke="#ff6ec7" stroke-width="2" class="flow-line"/>
+              <text x="335" y="125" text-anchor="middle" class="svg-mono" fill="#ff6ec7" style="font-size:9px;">N32接口（SEPP↔SEPP）</text>
+              <text x="335" y="140" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">跨PLMN信令加密+拓扑隐藏</text>
+              <line x1="250" y1="80" x2="520" y2="80" stroke="rgba(139,124,255,.3)" stroke-width="1.5" stroke-dasharray="6 3" class="flow-line"/>
+              <text x="385" y="72" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">N9（用户面回属）</text>
+              <text x="335" y="260" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">两种模式可共存：普通漫游用Home Routed（计费在归属网），低时延ToB用Local Breakout（本地卸载）</text>
+            </svg>
+            <div class="diagram-caption">图 8-1 · 5GC漫游架构：VPLMN↔HPLMN通过SEPP保护信令，HR-UPF或V-UPF控制用户面</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>模式</th><th>用户面路径</th><th>计费方</th><th>时延</th><th>适用场景</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Home Routed</strong></td><td>V-UPF -> HR-UPF(归属网) -> DN</td><td>归属网络</td><td>高（跨国回传）</td><td>普通国际漫游（归属网控制计费和策略）</td></tr>
+              <tr><td><strong>Local Breakout</strong></td><td>V-UPF -> 本地DN</td><td>拜访网络</td><td>低（本地卸载）</td><td>低时延ToB漫游/MEC漫游</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>SEPP的关键作用</strong>：4G漫游用Diameter Relay Agent保护信令，5GC漫游用SEPP保护HTTP/2 SBI信令。SEPP负责：①消息级加密（PLMN间传输加密）；②拓扑隐藏（不暴露内部NF IP/拓扑）；③消息过滤（IE级过滤，隐藏敏感字段）。<strong>华为CloudBCG内置SEPP功能</strong>，支持4G/5G融合漫游安全代理。
+          </div>
+        </div>
+        <div class="card">
+          <h3>云化DC部署 - 核心网数据中心</h3>
+          <table class="data-table">
+            <thead><tr><th>部署模式</th><th>架构</th><th>华为方案</th><th>适用场景</th></tr></thead>
+            <tbody>
+              <tr><td>集中式DC</td><td>所有网元集中部署在一个DC</td><td>CloudCore集中部署</td><td>小国/运营商初期</td></tr>
+              <tr><td>分布式DC</td><td>中心DC+区域DC多级部署</td><td>CloudCore分布式+UPF下沉</td><td>大国/跨区域运营商</td></tr>
+              <tr><td>混合云</td><td>私有云+公有云混合</td><td>CloudCore+公有云NEF/AF</td><td>ToB场景/云网融合</td></tr>
+              <tr><td>边缘DC</td><td>UPF+MEC下沉到园区</td><td>MEC解决方案</td><td>行业专网/低时延</td></tr>
+            </tbody>
+          </table>
+          <div class="dim-grid">
+            <div class="dim-card dim-huawei"><div class="dim-title">华为差异化</div><div class="dim-body">CloudCore一套平台支持集中/分布/混合云部署；融合EPC/5GC；MANO统一编排</div></div>
+            <div class="dim-card dim-challenge"><div class="dim-title">客户挑战</div><div class="dim-body">DC基础设施薄弱（新兴市场）；云原生运维人才不足；跨厂商互操作复杂</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sc-edge">
+        <div class="card">
+          <h3>边缘MEC部署 - UPF下沉</h3>
+          <table class="data-table">
+            <thead><tr><th>场景</th><th>UPF位置</th><th>时延</th><th>华为方案</th><th>典型业务</th></tr></thead>
+            <tbody>
+              <tr><td>中心DC</td><td>省/国家级DC</td><td>20-50ms</td><td>CloudCore中心UPF</td><td>普通ToC上网</td></tr>
+              <tr><td>区域DC</td><td>地市级DC</td><td>10-20ms</td><td>区域UPF</td><td>ToC+部分ToB</td></tr>
+              <tr><td>边缘DC</td><td>园区/工厂内</td><td>5-10ms</td><td><strong>MEC一体化</strong></td><td>行业专网/工业控制</td></tr>
+              <tr><td>极边缘</td><td>基站侧</td><td>1-5ms</td><td>UPF on gNB（5.5G）</td><td>URLLC极致低时延</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>华为MEC差异化</strong>：UPF+MEP（MEC平台）一体化部署，支持本地应用托管（AI推理/视频分析/AR渲染）。超1000个MEC商用节点。友商MEC方案多只有UPF下沉，缺少本地应用平台。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sc-enterprise">
+        <div class="card">
+          <h3>行业专网（ToB）场景</h3>
+          <table class="data-table">
+            <thead><tr><th>行业</th><th>核心诉求</th><th>核心网方案</th><th>友商</th><th>4G/5G</th></tr></thead>
+            <tbody>
+              <tr><td>智慧矿山</td><td>井下覆盖+数据不出矿+低时延</td><td>5G专网+MEC+UPF下沉+切片隔离</td><td>爱立信Private 5G</td><td>5G SA</td></tr>
+              <tr><td>智慧港口</td><td>远程控制+视频回传</td><td>5G专网+切片+UPF本地</td><td>诺基亚工业5G</td><td>5G SA</td></tr>
+              <tr><td>智能制造</td><td>超低时延+高可靠</td><td>5G LAN+TSN+UPF下沉+URLLC切片</td><td>爱立信Private 5G</td><td>5G SA必须</td></tr>
+              <tr><td>智慧电力</td><td>差动保护+切片硬隔离</td><td>5G硬切片+UPF下沉+差分GPS</td><td>诺基亚Critical Comms</td><td>5G SA</td></tr>
+              <tr><td>医疗</td><td>数据不出院+远程会诊</td><td>5G专网+UPF院内+MEC</td><td>爱立信Private Network</td><td>5G SA</td></tr>
+              <tr><td>油田/管线</td><td>广覆盖+数据采集</td><td>5G专网+mMTC切片+本地MEC</td><td>-</td><td>5G SA</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>4G/5G选择</strong>：行业专网绝大多数需要5G SA（切片/MEC/URLLC），4G无法满足。但部分低要求场景（如园区基础覆盖）可用4G专网降低成本。产品经理需帮客户判断是否必须上5G SA。<strong>华为ToB方案超1000个商用案例</strong>，远超友商。
+          </div>
+        </div>
+        <div class="card">
+          <h3>5G ToB核心能力补充 - SMS over NAS / 5G LAN</h3>
+          <table class="data-table">
+            <thead><tr><th>能力</th><th>Rel</th><th>说明</th><th>4G对应</th><th>ToB场景</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SMS over NAS</strong></td><td>Rel-15+</td><td>5G SA下短信通过NAS信令传输（AMF转发给SMSF），不依赖IMS。NSA模式下短信走EPC</td><td>4G SMS over SGs（MME转发）</td><td>物联网设备短信唤醒/OTP验证码/告警通知。很多ToB场景仍依赖短信</td></tr>
+              <tr><td><strong>5G LAN-type Service</strong></td><td>Rel-19</td><td>同一5G LAN组内UE二层互通（基于Ethernet PDU Session），支持组播/广播。无需UPF做路由，SMF管理组内通信</td><td><span class="tag tag-red">4G不支持</span></td><td>园区内PLC控制器互通/AGV集群通信/工业以太网替代</td></tr>
+              <tr><td><strong>TSN集成</strong></td><td>Rel-16+</td><td>5G URLLC与TSN（时间敏感网络）桥接，支持精确时间同步和确定性时延</td><td><span class="tag tag-red">4G不支持</span></td><td>工业自动化确定性通信/机器视觉同步</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>SMS over NAS的重要性</strong>：很多运营商5G SA部署后发现<strong>短信不可用</strong>（因为NSA时短信走EPC，SA时需要SMSF网元）。企业ToB场景大量依赖短信（OTP/告警/物联网指令）。华为5GC内置SMSF，支持SMS over NAS，无需额外部署。产品经理需提醒客户SA部署时<strong>别忘了规划SMSF</strong>。
+          </div>
+          <div class="callout callout-amber">
+            <strong>5G LAN的价值</strong>：传统工业以太网用物理交换机连接设备。5G LAN-type Service让设备通过5G网络实现二层互通，<strong>无需改造现有工业协议</strong>（PROFINET/EtherCAT等直接跑在5G LAN上）。配合Ethernet PDU Session和SSC Mode 3，实现无线工业以太网。这是5G替代工业WiFi/有线以太网的关键能力。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 09 客户选型策略 ==================== -->
+    <section class="section" id="sec-strategy">
+      <div class="section-title">客户选型策略</div>
+      <div class="section-subtitle">五维决策 · TCO分析 · 融合核心网 · 竞争定位</div>
+
+      <div class="card">
+        <h3>选型决策五大维度</h3>
+        <div class="diagram-box">
+          <svg width="640" height="280" viewBox="0 0 640 280">
+            <circle cx="320" cy="140" r="50" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="320" y="135" text-anchor="middle" class="svg-title">核心网选型</text>
+            <text x="320" y="152" text-anchor="middle" class="svg-mono">4G/5G核心网</text>
+            <circle cx="150" cy="60" r="40" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1"/><text x="150" y="58" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:12px;">① 融合度</text><text x="150" y="73" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">2G/3G/4G/5G共平台</text>
+            <circle cx="490" cy="60" r="40" fill="rgba(77,255,158,.06)" stroke="#4dff9e" stroke-width="1"/><text x="490" y="58" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:12px;">② 云化</text><text x="490" y="73" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">VNF/CNF成熟度</text>
+            <circle cx="120" cy="220" r="40" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1"/><text x="120" y="218" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:12px;">③ 切片</text><text x="120" y="233" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">端到端能力</text>
+            <circle cx="520" cy="220" r="40" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1"/><text x="520" y="218" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:12px;">④ MEC</text><text x="520" y="233" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">UPF下沉+应用</text>
+            <circle cx="320" cy="260" r="40" fill="rgba(255,93,108,.06)" stroke="#ff5d6c" stroke-width="1"/><text x="320" y="258" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:12px;">⑤ TCO</text><text x="320" y="273" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">CAPEX+OPEX</text>
+          </svg>
+          <div class="diagram-caption">图 9-1 · 核心网选型五大维度</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>TCO分析与华为竞争优势</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>华为</th><th>友商</th><th>差异</th></tr></thead>
+          <tbody>
+            <tr><td>初始CAPEX</td><td>中等</td><td>中-高</td><td>华为融合平台省硬件</td></tr>
+            <tr><td>年OPEX（DC电费+运维）</td><td>较低（AI运维自动化）</td><td>中</td><td>华为CNF弹性降资源开销</td></tr>
+            <tr><td>扩容成本</td><td>低（软件扩容）</td><td>低-中</td><td>融合平台复用资源</td></tr>
+            <tr><td>演进成本(4G->5G)</td><td>低（软件升级）</td><td>中（可能需换平台）</td><td>融合核心网保护投资</td></tr>
+            <tr><td>5年TCO</td><td>基准</td><td>+15-25%</td><td>华为融合+自动化省TCO</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>TCO说服法</strong>：不要只比设备价格，用"融合核心网省平台"+"云原生省运维"+"AI自动化省人力"三层逻辑说服客户。华为5年TCO比友商低15-25%。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 vs 友商核心网竞争定位矩阵</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-huawei">华为</span></th><th><span class="tag tag-ericsson">爱立信</span></th><th><span class="tag tag-nokia">诺基亚</span></th><th><span class="tag tag-zte">中兴</span></th></tr></thead>
+          <tbody>
+            <tr><td>融合核心网(2G-5G)</td><td>★★★★★(五模共平台)</td><td>★★★★(双模)</td><td>★★★★</td><td>★★★★(多模)</td></tr>
+            <tr><td>云原生CNF</td><td>★★★★★</td><td>★★★★★(技术领先)</td><td>★★★★</td><td>★★★★</td></tr>
+            <tr><td>端到端切片</td><td>★★★★★(RAN+CN+MEC)</td><td>★★★★(CN为主)</td><td>★★★★</td><td>★★★★</td></tr>
+            <tr><td>MEC方案</td><td>★★★★★(UPF+MEP一体)</td><td>★★★★</td><td>★★★★</td><td>★★★</td></tr>
+            <tr><td>ToB商用案例</td><td>★★★★★(>1000个)</td><td>★★★★</td><td>★★★</td><td>★★★(国内多)</td></tr>
+            <tr><td>UPF性能</td><td>★★★★(软+硬加速)</td><td>★★★★</td><td>★★★★★(ReefShark芯片)</td><td>★★★★</td></tr>
+            <tr><td>5.5G核心网</td><td>★★★★★(AI原生先锋)</td><td>★★★★</td><td>★★★★</td><td>★★★★</td></tr>
+            <tr><td>价格</td><td>★★★(偏高)</td><td>★★(高)</td><td>★★(高)</td><td>★★★★★(性价比)</td></tr>
+            <tr><td>海外准入</td><td>★★(受限)</td><td>★★★★★</td><td>★★★★★</td><td>★★★</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>讲方案三步法</strong>：参数 -> 价值 -> 客户利益。"融合核心网一套平台" -> "省3套DC硬件和运维团队" -> "5年省$5000万+TCO和30%运维人力"。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G/5G核心网投资保护策略</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-customer"><div class="dim-title">客户挑战</div><div class="dim-body">EPC刚虚拟化完5GC又来，担心平台变电子垃圾</div></div>
+          <div class="dim-card dim-huawei"><div class="dim-title">华为方案</div><div class="dim-body">融合核心网一套平台管4G/5G；EPC VNF软件升级支持5GC CNF；5.5G软件平滑演进</div></div>
+          <div class="dim-card dim-competitor"><div class="dim-title">友商方案</div><div class="dim-body">也承诺软件升级，但EPC和5GC通常是独立平台，需双倍DC资源</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 10 典型瓶颈与方案 ==================== -->
+    <section class="section" id="sec-bottleneck">
+      <div class="section-title">典型瓶颈与方案</div>
+      <div class="section-subtitle">信令风暴/时延/容量/语音/云迁移 - 诊断、华为方案、友商对比</div>
+
+      <div class="card">
+        <h3>瓶颈诊断框架</h3>
+        <div class="step-flow">
+          <div class="step-node active" style="border-color:var(--accent-cyan);"><div style="color:var(--accent-cyan);font-weight:600;">客户反馈</div><div style="font-size:11px;margin-top:4px;">"信令风暴/时延高/通话断"</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-amber);"><div style="color:var(--accent-amber);font-weight:600;">瓶颈分类</div><div style="font-size:11px;margin-top:4px;">信令/容量/时延/语音</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-green);"><div style="color:var(--accent-green);font-weight:600;">根因分析</div><div style="font-size:11px;margin-top:4px;">网元/参数/拓扑</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-violet);"><div style="color:var(--accent-violet);font-weight:600;">方案输出</div><div style="font-size:11px;margin-top:4px;">扩容/优化/下沉</div></div>
+        </div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈1：信令风暴 - "核心网CPU飙升、用户掉线"</div>
+        <div class="bk-symptom"><strong>表现</strong>：突发大量信令请求（如地铁站高峰全员切换），AMF/MME CPU飙升，信令排队，用户注册失败/掉线。<br><strong>根因</strong>：大量UE同时触发注册/切换/寻呼；网元容量不足；信令没有削峰填谷。</div>
+        <div class="bk-solution"><strong>方案</strong>：①AMF/MME水平扩容（CNF秒级弹性加实例）；②信令削峰（错峰寻呼、注册排队）；③边缘AMF下沉分担信令<br><strong>量化参考</strong>：单AMF实例约支持100-200万并发用户、5000-10000注册/秒；地铁站高峰单站瞬时切换可达3000+次/分钟<br><strong>4G/5G</strong>：4G MME扩容慢（加VM分钟级）；5GC AMF CNF秒级弹性（10秒内加实例）<br><strong>华为差异化</strong>：CNF弹性扩缩容+AI信令预测（提前15分钟预测信令高峰并自动扩容）；融合AMF 4G/5G信令共分担（双倍容量利用率）</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈2：时延过高 - "工业应用不达标"</div>
+        <div class="bk-symptom"><strong>表现</strong>：ToB工业控制端到端时延>20ms，无法满足URLLC要求（<10ms）。<br><strong>根因</strong>：UPF集中在中心DC，数据往返距离长；核心网处理时延叠加传输时延。</div>
+        <div class="bk-solution"><strong>方案</strong>：①UPF下沉到园区MEC（时延降30ms->5-10ms）；②本地卸载（流量不出园区）；③选择URLLC切片（高优先级调度，5QI=80/82）<br><strong>量化参考</strong>：中心UPF端到端时延20-50ms；边缘MEC UPF端到端5-10ms；极边缘UPF on gNB可达1-5ms<br><strong>4G/5G</strong>：4G EPC UPF（PGW-U）下沉能力有限；5GC原生CUPS支持UPF多级分布式<br><strong>华为差异化</strong>：MEC一体化方案（UPF+MEP+本地应用）；超1000个MEC商用节点；UPF下沉部署周期2周（友商4-6周）</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈3：用户面容量瓶颈 - "高峰期网速暴降"</div>
+        <div class="bk-symptom"><strong>表现</strong>：密集区域高峰期UPF转发能力不足，网速暴降。<br><strong>根因</strong>：UPF吞吐量受限；中心UPF处理所有流量成为瓶颈。</div>
+        <div class="bk-solution"><strong>方案</strong>：①UPF水平扩容（多实例负载分担）；②UPF分布式下沉（分流流量）；③硬件加速UPF（SmartNIC/DPU）<br><strong>量化参考</strong>：软件UPF单实例吞吐~100-200Gbps；硬件加速UPF（Solar芯片）可达~400-800Gbps；CPU利用率从90%降至40%<br><strong>华为差异化</strong>：软件UPF弹性扩容+自研Solar芯片硬件加速UPF（吞吐提升3-4倍）；融合用户面管理支持多UPF实例负载均衡</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈4：语音互操作问题 - "5G通话中断/回落慢"</div>
+        <div class="bk-symptom"><strong>表现</strong>：5G SA用户通话时EPS Fallback慢（2-3秒），或SRVCC切换中断。<br><strong>根因</strong>：5G->4G切换流程长；IMS与5GC/EPC协同不顺畅；终端兼容性问题。</div>
+        <div class="bk-solution"><strong>方案</strong>：①优化EPS Fallback流程（eSRVCC增强）；②4G/5G融合IMS+融合HSS/UDM（用户数据统一）；③终端兼容性测试<br><strong>量化参考</strong>：标准EPS Fallback时延2-3秒（UE重连4G）；优化后可降至1-1.5秒；eSRVCC切换时延~150-200ms（vs 传统SRVCC 300-500ms）<br><strong>华为差异化</strong>：融合核心网+融合CloudIMS，4G/5G语音互操作最成熟；ATCF/ATGW内置SBC，eSRVCC切换<200ms；全球VoLTE商用超150张网</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈5：云化迁移风险 - "虚拟化后性能下降/运维难"</div>
+        <div class="bk-symptom"><strong>表现</strong>：从物理网元迁移到VNF/CNF后，吞吐量下降、时延增加、运维团队不适应。<br><strong>根因</strong>：通用硬件转发性能不如专用芯片；容器化运维门槛高；传统运维团队缺云原生技能。</div>
+        <div class="bk-solution"><strong>方案</strong>：①用户面UPF用硬件加速（SmartNIC）补性能；②控制面CNF化享受弹性；③渐进式迁移（先新业务后存量）；④运维培训+自动化工具<br><strong>量化参考</strong>：物理网元->VNF吞吐损失~10-15%（虚拟化开销）；VNF->CNF吞吐恢复~5-8%（容器更轻量）；硬件加速UPF吞吐超越物理网元~2-3倍<br><strong>华为差异化</strong>：混合方案（控制面CNF+用户面可选Solar硬件加速）；iMaster MAE-CN自动化运维（网元升级从月级缩至天级）；AI运维辅助（故障定位时间降70%）</div>
+      </div>
+
+      <div class="card">
+        <h3>瓶颈方案速查矩阵</h3>
+        <table class="data-table">
+          <thead><tr><th>客户说</th><th>瓶颈</th><th>华为方案</th><th>友商</th></tr></thead>
+          <tbody>
+            <tr><td>"高峰期核心网CPU爆了"</td><td>信令风暴</td><td>CNF弹性扩缩+AI预测</td><td>加VM/限流</td></tr>
+            <tr><td>"工业应用时延不达标"</td><td>时延过高</td><td>UPF下沉MEC+本地卸载</td><td>UPF下沉</td></tr>
+            <tr><td>"高峰期网速暴降"</td><td>用户面容量</td><td>UPF扩容+分布式+硬件加速</td><td>UPF扩容</td></tr>
+            <tr><td>"5G通话中断"</td><td>语音互操作</td><td>融合IMS+优化eSRVCC</td><td>IMS优化</td></tr>
+            <tr><td>"虚拟化后性能降"</td><td>云化迁移</td><td>混合方案+硬件加速UPF</td><td>硬件加速</td></tr>
+            <tr><td>"切片只有试点没规模"</td><td>切片变现</td><td>端到端切片+NEF开放+SLA计费</td><td>CN切片</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 11 产品经理能力地图 ==================== -->
+    <section class="section" id="sec-pm">
+      <div class="section-title">产品经理能力地图</div>
+      <div class="section-subtitle">四层能力模型 · 4G/5G知识体系 · 竞品分析要求 · 学习路径</div>
+
+      <div class="card">
+        <h3>四层能力模型</h3>
+        <div class="diagram-box">
+          <svg width="640" height="320" viewBox="0 0 640 320">
+            <polygon points="320,30 420,70 320,110 220,70" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/><text x="320" y="68" text-anchor="middle" class="svg-title" fill="#ffb84d">L4 行业方案架构</text><text x="320" y="85" text-anchor="middle" class="svg-mono" fill="#5d6a87">能定义ToB切片/MEC方案</text>
+            <polygon points="220,70 420,70 470,130 170,130" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/><text x="320" y="100" text-anchor="middle" class="svg-title" fill="#8b7cff">L3 客户痛点诊断</text><text x="320" y="117" text-anchor="middle" class="svg-mono" fill="#5d6a87">定位瓶颈、出方案</text>
+            <polygon points="170,130 470,130 520,200 120,200" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/><text x="320" y="160" text-anchor="middle" class="svg-title" fill="#4dff9e">L2 产品知识体系</text><text x="320" y="177" text-anchor="middle" class="svg-mono" fill="#5d6a87">EPC/5GC网元/架构/竞品</text>
+            <polygon points="120,200 520,200 570,270 70,270" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/><text x="320" y="230" text-anchor="middle" class="svg-title" fill="#2dd4ff">L1 基础概念</text><text x="320" y="247" text-anchor="middle" class="svg-mono" fill="#5d6a87">核心网标准/架构/演进</text>
+            <text x="600" y="50" text-anchor="end" class="svg-mono" fill="#ffb84d">↑ 高阶</text><text x="600" y="290" text-anchor="end" class="svg-mono" fill="#2dd4ff">↓ 基础</text>
+          </svg>
+          <div class="diagram-caption">图 11-1 · 四层能力模型：从基础概念到行业方案架构</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>各层能力与竞品分析要求</h3>
+        <table class="data-table">
+          <thead><tr><th>层级</th><th>能力</th><th>关键知识</th><th>竞品要求</th><th>验证标准</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag tag-cyan">L1</span></td><td>核心网基础</td><td>2G-5G核心网演进/架构/网元名称</td><td>了解四厂商核心网产品线名称</td><td>能解释"EPC和5GC区别"</td></tr>
+            <tr><td><span class="tag tag-green">L2</span></td><td>产品知识</td><td>EPC/5GC网元/SBA/CUPS/NFV/IMS</td><td>能对比关键特性</td><td>看懂架构图和信令流程</td></tr>
+            <tr><td><span class="tag tag-violet">L3</span></td><td>痛点诊断</td><td>信令风暴/时延/容量/语音/云迁移</td><td>能说华为vs友商方案差异</td><td>30分钟出方案</td></tr>
+            <tr><td><span class="tag tag-amber">L4</span></td><td>方案架构</td><td>切片/MEC/ToB/云原生/竞品</td><td>端到端方案对比+差异化卖点</td><td>独立投标</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>学习路径</h3>
+        <ul>
+          <li><strong>第一步(1-2周)</strong>：通读本手册，建立4G/5G核心网知识框架</li>
+          <li><strong>第二步(2-4周)</strong>：研究华为CloudCore产品资料，把网元和架构对应</li>
+          <li><strong>第三步(1-2月)</strong>：研究3-5个华为核心网商用案例（切片/MEC/融合核心网）</li>
+          <li><strong>第四步(持续)</strong>：跟踪5.5G核心网演进和友商动态</li>
+          <li><strong>第五步(实战)</strong>：参与客户交流和投标，从L2向L3/L4迈进</li>
+        </ul>
+        <div class="callout">
+          <strong>最终目标</strong>：成为"听到问题就能判断瓶颈、看到场景就能设计方案、面对竞品能讲出差异化、面对CTO能谈战略"的核心网产品经理。
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(255,184,77,.2);">
+        <h3 style="color:var(--accent-amber);">L3/L4 实战考核题目</h3>
+        <p>以下题目用于自测是否达到L3（痛点诊断）和L4（方案架构）水平。每题先自己回答，再对照参考要点。</p>
+        <div class="bottleneck-card" style="border-left-color:var(--accent-violet);">
+          <div class="bk-title" style="color:var(--accent-violet);">L3-Q1：语音故障诊断</div>
+          <div class="bk-symptom"><strong>场景</strong>：某运营商5G SA商用后，用户反馈"5G下无法接打电话，但数据正常"。请给出诊断路径。<br><strong>参考要点</strong>：①检查终端是否支持VoNR（不支持则需EPS Fallback）；②检查IMS是否正确连5GC（P-CSCF连UPF的N6是否通）；③检查AMF是否下发了IMS voice支持指示；④检查N26接口是否正常（EPS Fallback依赖）；⑤检查SMSF是否部署（短信问题）；⑥验证VoNR或EPS Fallback端到端流程</div>
+        </div>
+        <div class="bottleneck-card" style="border-left-color:var(--accent-violet);">
+          <div class="bk-title" style="color:var(--accent-violet);">L3-Q2：ToB时延不达标</div>
+          <div class="bk-symptom"><strong>场景</strong>：智慧港口客户反馈远程吊桥控制时延25ms，要求<10ms。当前UPF在省级DC。请给出优化方案。<br><strong>参考要点</strong>：①UPF从省级DC下沉到港口园区MEC（时延20ms->5-8ms）；②本地卸载（N6本地出口，流量不出园区）；③选用URLLC切片（5QI=80/82，高优先级调度）；④检查传输网时延（gNB到MEC的物理距离）；⑤考虑SSC Mode 3保障移动中业务连续性；⑥UPF硬件加速（Solar芯片）降低转发时延</div>
+        </div>
+        <div class="bottleneck-card" style="border-left-color:var(--accent-amber);">
+          <div class="bk-title" style="color:var(--accent-amber);">L4-Q1：智慧港口5G专网方案设计</div>
+          <div class="bk-symptom"><strong>场景</strong>：中东某港口运营商要求设计5G SA专网，覆盖集装箱码头，支持远程吊桥控制+视频回传+AGV调度。请给出核心网方案。<br><strong>参考要点</strong>：①部署模式：5G SA专网+MEC下沉到港口机房；②切片设计：URLLC切片（远程控制，5QI=82，<10ms）+ eMBB切片（视频回传，大带宽）+ mMTC切片（AGV调度，大连接）；③UPF部署：边缘MEC UPF+本地DN（数据不出港口）；④安全：SUCI加密+切片间硬隔离+N3/N9加密；⑤冗余：双UPF热备+SSC Mode 3保障移动连续性；⑥华为方案：CloudCore CNF+MEC一体化+端到端切片+iMaster MAE-CN运维</div>
+        </div>
+        <div class="bottleneck-card" style="border-left-color:var(--accent-amber);">
+          <div class="bk-title" style="color:var(--accent-amber);">L4-Q2：竞标counter策略</div>
+          <div class="bk-symptom"><strong>场景</strong>：某新兴市场运营商招标5GC，爱立信主打"纯CNF云原生技术领先"，诺基亚主打"ReefShark UPF性能"。CTO让你给出华为的竞标策略。<br><strong>参考要点</strong>：①不否认友商单点优势，主攻<strong>融合+端到端</strong>；②华为CloudCore一套平台管2G/3G/4G/5G（友商EPC和5GC分平台，双运维）；③端到端切片RAN+CN+MEC（友商仅CN切片）；④ToB商用>1000案例（友商300-400）；⑤TCO论证：融合省一套平台+AI自动化省运维，5年TCO低15-25%；⑥UPF对等方案（Solar芯片加速~400-800Gbps）；⑦坦诚劣势（价格偏高、部分市场受限），用TCO和ToB生态counter</div>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(45,212,255,.2);">
+        <h3 style="color:var(--accent-cyan);">核心知识卡片速记</h3>
+        <table class="data-table">
+          <thead><tr><th>知识点</th><th>一句话记忆</th></tr></thead>
+          <tbody>
+            <tr><td>EPC vs 5GC核心差异</td><td>5GC = EPC基础上：SBA服务化+CUPS原生分离+切片支持+CNF云原生+UPF分布式</td></tr>
+            <tr><td>EPC/5GC网元对应</td><td>MME->AMF；SGW-C/PGW-C->SMF；SGW-U/PGW-U->UPF；HSS->UDM+AUSF；PCRF->PCF</td></tr>
+            <tr><td>4G/5G共存逻辑</td><td>EPC至少运营到2030年；融合核心网一套平台管4G/5G是核心竞争力</td></tr>
+            <tr><td>SBA核心</td><td>NRF注册发现+HTTP/2 API交互+微服务化独立扩缩升级</td></tr>
+            <tr><td>CUPS价值</td><td>控制面集中省成本+用户面下沉降时延=MEC技术基础</td></tr>
+            <tr><td>网络切片</td><td>eMBB/URLLC/mMTC三类切片；NSSF选择；CSMF/NSMF/NSSMF三层管理；端到端RAN+CN+MEC</td></tr>
+            <tr><td>5QI QoS</td><td>QoS Flow由5QI定义（GBR/Non-GBR/Delay-critical GBR）；URLLC用5QI=80/82保证低时延</td></tr>
+            <tr><td>语音演进</td><td>CS->VoLTE->VoNR；IMS是4G/5G语音统一控制核心；5G初期用EPS Fallback；eSRVCC用ATCF/ATGW缩短切换时延</td></tr>
+            <tr><td>SEPP/NWDAF</td><td>SEPP=漫游安全代理（跨PLMN信令必经）；NWDAF=AI数据分析（5.5G AI原生核心）</td></tr>
+            <tr><td>PDU Session/SSC</td><td>IP/Ethernet/Unstructured三种类型；SSC Mode 1/2/3决定移动时UPF重锚策略；SSC Mode 3用于MEC连续性</td></tr>
+            <tr><td>N26接口</td><td>AMF↔MME接口，4G/5G互操作基础（EPS Fallback必需）</td></tr>
+            <tr><td>数据层</td><td>5GC数据与逻辑分离：UDR存结构化数据+UDSF存非结构化上下文；4G HSS数据封装在网元内部</td></tr>
+            <tr><td>华为vs友商核心差异</td><td>华为：融合核心网(五模)+端到端切片+MEC+ToB案例>1000；友商：海外准入+云原生技术</td></tr>
+            <tr><td>领先vs新兴vs前沿市场</td><td>领先：5GC SA+云原生；新兴：EPC扩容+融合核心网；前沿：3G->4G升级+低成本</td></tr>
+            <tr><td>NSA vs SA</td><td>NSA=5G基站接EPC(ToC够用)；SA=5G端到端(ToB必需)</td></tr>
+            <tr><td>VNF vs CNF</td><td>VNF=VM虚拟机(4G主力)；CNF=容器微服务(5GC主流)；混合演进</td></tr>
+            <tr><td>CTO对话核心</td><td>先判断市场类型->再定核心网投资优先级->给融合/云化/切片方案</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 12 网络演进三场景 ==================== -->
+    <section class="section" id="sec-evolution-scenarios">
+      <div class="section-title">核心网演进三种典型场景</div>
+      <div class="section-subtitle">站在网络全局视角 · 领先型/中庸型/保守型的架构、投资与产品策略</div>
+
+      <div class="card">
+        <h3>为什么要分三种场景思考</h3>
+        <p>全球运营商的核心网演进不存在"一刀切"方案。<strong>不同市场的ARPU、竞争格局、DC基础设施、政策环境差异巨大</strong>，决定了核心网架构、投资节奏和产品选型必须分类施策。作为产品线总裁或高级产品经理，必须能为不同类型的客户画出不同的演进路线图。</p>
+        <div class="stat-row">
+          <div class="stat" style="border-color:rgba(77,255,158,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-green);">领先型</div><div class="stat-label">5GC SA云原生+切片商用<br>中韩日美欧头部运营商</div></div>
+          <div class="stat" style="border-color:rgba(45,212,255,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-cyan);">中庸型</div><div class="stat-label">EPC/5GC融合+NSA为主<br>全球大多数运营商</div></div>
+          <div class="stat" style="border-color:rgba(255,184,77,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-amber);">保守型</div><div class="stat-label">EPC主导+5GC远期<br>非洲/南亚/部分拉美</div></div>
+        </div>
+      </div>
+
+      <div class="scenario-card sc-leading">
+        <h3>场景一：领先型 - "5GC云原生先行者"</h3>
+        <p><strong>典型客户</strong>：中国移动/电信/联通、KT/SK Telecom、NTT DoCoMo、Verizon/T-Mobile、Deutsche Telekom</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>5GC SA为核心；CNF容器化部署；MEC边缘节点广泛部署；网络切片规模商用；EPC逐步减容但VoLTE保留</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>5GC投资前置（CAPEX占比>60%）；5.5G核心网(AI原生)试点；EPC仅维护性投资；2G/3G核心网已退或退网中</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>CloudCore CNF容器化；端到端切片方案；MEC+UPF下沉广泛部署；NEF能力开放ToB生态；融合EPC/5GC过渡</td></tr>
+            <tr><td><strong>云化策略</strong></td><td>CNF容器化为主流；K8s编排；CI/CD自动化运维；AI自治网络推进；混合云(私有+公有)</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>切片变现路径(ToB/SLA计费)；5.5G核心网差异化能力；云原生运维自动化；TCO/节能</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>端到端切片方案、MEC+行业专网、CloudCore CNF、AI自治网络、5.5G核心网先锋</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>ToB：切片+MEC+行业专网创造新收入流；ToC：5GC支撑新业务(AR/VR/云游戏)提ARPU</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年5GC SA CNF规模部署+切片商用 -> 2025-2026年MEC广泛部署+5.5G核心网试点 -> 2026-2027年AI原生核心网+自治网络+6G预研
+        </div>
+      </div>
+
+      <div class="scenario-card sc-middle">
+        <h3>场景二：中庸型 - "EPC/5GC融合发展"</h3>
+        <p><strong>典型客户</strong>：东南亚(泰国AIS/印尼Telkomsel)、中东(沙特STC/阿联酋Etisalat)、拉美(巴西Vivo/墨西哥America Movil)、印度(Jio/Airtel)</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>EPC/5GC NSA共存；融合核心网(EPC+5GC共平台)；MEC在核心城市试点；切片试点不规模；EPC仍是主力</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>EPC/5GC均衡投资(CAPEX 50:50)；5GC先覆盖核心城市再逐步扩展；EPC持续虚拟化扩容；2G/3G启动退网</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>融合核心网(EPC+5GC一套平台)；VNF虚拟化为主；选择性MEC部署；NSA为主SA试点</td></tr>
+            <tr><td><strong>云化策略</strong></td><td>VNF虚拟化为主流；CNF容器化试点；EM网管+部分自动化；DC基础设施逐步完善</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>EPC ROI最大化；5GC投资节奏(什么时候铺到二线城市)；融合核心网降TCO；2G/3G退网策略</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>融合核心网(一套平台管4G/5G)、EPC虚拟化升级、轻量化5GC、选择性MEC</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>EPC持续产生现金流支撑5GC投资；5GC在核心城市做品牌+高端用户分流；ToB试点验证再规模复制</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年EPC虚拟化扩容+5GC核心城市覆盖(NSA) -> 2025-2026年融合核心网升级+5GC SA试点+2G/3G退网 -> 2026-2027年5GC SA规模部署+MEC行业试点
+        </div>
+      </div>
+
+      <div class="scenario-card sc-conservative">
+        <h3>场景三：保守型 - "EPC深耕者"</h3>
+        <p><strong>典型客户</strong>：非洲(MTN/Vodacom/Airtel Africa)、南亚(MTN Bangladesh)、部分拉美运营商</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>EPC为核心(占比>80%)；2G核心网保留(GSM物联网/基础语音)；3G核心网逐步退网；5GC远期规划</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>EPC投资占>80%；5GC仅首都试点(1-2站)或暂不投；2G维护性投资；3G退网释放频段给4G</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>EPC虚拟化(降成本)；融合2G/3G/4G核心网；低功耗DC方案；Mobile Money平台</td></tr>
+            <tr><td><strong>云化策略</strong></td><td>物理网元为主，逐步虚拟化；DC基础设施薄弱；简易运维方案</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>EPC覆盖延伸(农村/偏远)；超低成本建网；移动金融(Mobile Money)变现；DC电力供应</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>融合2G/3G/4G核心网(平滑演进)、低功耗DC方案、Mobile Money平台、超低成本EPC</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>EPC覆盖直接带来新用户和ARPU提升；Mobile Money等数字服务变现；5GC等ARPU提升后再投</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年3G->4G核心网升级+EPC虚拟化 -> 2025-2026年EPC扩容+2G/3G退网 -> 2026-2027年EPC覆盖完善+5GC首都试点
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>三种场景对比总览</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th style="color:var(--accent-green);">领先型</th><th style="color:var(--accent-cyan);">中庸型</th><th style="color:var(--accent-amber);">保守型</th></tr></thead>
+          <tbody>
+            <tr><td>EPC定位</td><td>减容优化、退网准备</td><td>主力承载、持续扩容</td><td>核心网络、建设中</td></tr>
+            <tr><td>5GC定位</td><td>SA CNF规模+切片商用</td><td>NSA为主、核心城市试点</td><td>远期规划/首都试点</td></tr>
+            <tr><td>2G/3G核心网策略</td><td>已退或退网中</td><td>启动退网</td><td>2G保留、3G逐步退</td></tr>
+            <tr><td>虚拟化/云化</td><td>CNF容器化为主</td><td>VNF虚拟化为主</td><td>物理为主、逐步虚拟化</td></tr>
+            <tr><td>MEC部署</td><td>广泛部署+ToB商用</td><td>核心城市试点</td><td>未部署</td></tr>
+            <tr><td>网络切片</td><td>规模商用</td><td>试点</td><td>未部署</td></tr>
+            <tr><td>语音方案</td><td>VoNR为主</td><td>VoLTE为主+EPS Fallback</td><td>VoLTE+CSFB+CS语音</td></tr>
+            <tr><td>单DC CAPEX</td><td>高(5GC CNF+MEC)</td><td>中(EPC/5GC融合)</td><td>低(EPC低成本)</td></tr>
+            <tr><td>年CAPEX占比</td><td>5GC>60%</td><td>EPC/5GC约50:50</td><td>EPC>80%</td></tr>
+            <tr><td>华为核心产品</td><td>CloudCore CNF/切片/MEC</td><td>融合核心网/vEPC</td><td>融合核心网/低功耗DC</td></tr>
+            <tr><td>CTO决策周期</td><td>6-12月(战略)</td><td>12-24月(ROI)</td><td>24-36月(预算)</td></tr>
+          </tbody>
+        </table>
+        <div class="card">
+          <h3>核心网投资占比可视化</h3>
+          <div class="diagram-box">
+            <svg width="660" height="200" viewBox="0 0 660 200">
+              <text x="110" y="20" text-anchor="middle" class="svg-title" fill="var(--accent-green)" style="font-size:12px;">领先型</text>
+              <rect x="20" y="35" width="180" height="24" rx="4" fill="rgba(45,212,255,.15)" stroke="#2dd4ff"/><text x="110" y="52" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">5GC CNF 60%</text>
+              <rect x="20" y="62" width="60" height="24" rx="4" fill="rgba(77,255,158,.15)" stroke="#4dff9e"/><text x="50" y="79" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">MEC 20%</text>
+              <rect x="80" y="62" width="45" height="24" rx="4" fill="rgba(255,184,77,.15)" stroke="#ffb84d"/><text x="102" y="79" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">EPC 15%</text>
+              <rect x="125" y="62" width="15" height="24" rx="4" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/>
+              <text x="110" y="105" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">5GC优先投资</text>
+              <text x="110" y="118" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">切片+MEC规模化</text>
+              <text x="330" y="20" text-anchor="middle" class="svg-title" fill="var(--accent-cyan)" style="font-size:12px;">中庸型</text>
+              <rect x="240" y="35" width="81" height="24" rx="4" fill="rgba(255,184,77,.15)" stroke="#ffb84d"/><text x="280" y="52" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">EPC 45%</text>
+              <rect x="321" y="35" width="63" height="24" rx="4" fill="rgba(45,212,255,.15)" stroke="#2dd4ff"/><text x="352" y="52" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">5GC 35%</text>
+              <rect x="240" y="62" width="36" height="24" rx="4" fill="rgba(77,255,158,.15)" stroke="#4dff9e"/>
+              <rect x="276" y="62" width="36" height="24" rx="4" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/>
+              <text x="330" y="105" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">EPC/5GC均衡投资</text>
+              <text x="330" y="118" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">融合核心网过渡</text>
+              <text x="550" y="20" text-anchor="middle" class="svg-title" fill="var(--accent-amber)" style="font-size:12px;">保守型</text>
+              <rect x="460" y="35" width="144" height="24" rx="4" fill="rgba(255,184,77,.15)" stroke="#ffb84d"/><text x="532" y="52" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">EPC 80%</text>
+              <rect x="460" y="62" width="27" height="24" rx="4" fill="rgba(255,93,108,.12)" stroke="#ff5d6c"/>
+              <rect x="487" y="62" width="9" height="24" rx="4" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/>
+              <text x="550" y="105" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">EPC绝对主导</text>
+              <text x="550" y="118" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">2G/3G退网+4G深耕</text>
+              <line x1="220" y1="15" x2="220" y2="130" stroke="rgba(255,255,255,.05)"/>
+              <line x1="440" y1="15" x2="440" y2="130" stroke="rgba(255,255,255,.05)"/>
+              <text x="330" y="155" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">核心网CAPEX投资占比（含DC硬件+软件许可+实施运维）</text>
+              <text x="330" y="175" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:8px;">注：核心网CAPEX通常占无线总投资的15-20%，但战略价值远超占比</text>
+            </svg>
+            <div class="diagram-caption">图 12-1 · 三场景核心网投资占比对比</div>
+          </div>
+          <h4>3年演进路线甘特图</h4>
+          <div class="diagram-box">
+            <svg width="660" height="220" viewBox="0 0 660 220">
+              <line x1="120" y1="30" x2="120" y2="200" stroke="rgba(255,255,255,.08)"/>
+              <text x="70" y="55" text-anchor="middle" class="svg-mono" fill="var(--accent-green)" style="font-size:11px;font-weight:600;">领先型</text>
+              <text x="70" y="120" text-anchor="middle" class="svg-mono" fill="var(--accent-cyan)" style="font-size:11px;font-weight:600;">中庸型</text>
+              <text x="70" y="185" text-anchor="middle" class="svg-mono" fill="var(--accent-amber)" style="font-size:11px;font-weight:600;">保守型</text>
+              <text x="190" y="20" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">2024-2025</text>
+              <text x="350" y="20" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">2025-2026</text>
+              <text x="510" y="20" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">2026-2027</text>
+              <line x1="120" y1="25" x2="640" y2="25" stroke="rgba(255,255,255,.06)"/>
+              <line x1="270" y1="25" x2="270" y2="200" stroke="rgba(255,255,255,.04)" stroke-dasharray="3 3"/>
+              <line x1="430" y1="25" x2="430" y2="200" stroke="rgba(255,255,255,.04)" stroke-dasharray="3 3"/>
+              <rect x="130" y="40" width="130" height="20" rx="4" fill="rgba(45,212,255,.12)" stroke="#2dd4ff"/><text x="195" y="54" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">5GC SA CNF规模部署</text>
+              <rect x="270" y="40" width="150" height="20" rx="4" fill="rgba(77,255,158,.1)" stroke="#4dff9e"/><text x="345" y="54" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">切片商用+MEC广泛部署</text>
+              <rect x="430" y="40" width="150" height="20" rx="4" fill="rgba(139,124,255,.1)" stroke="#8b7cff"/><text x="505" y="54" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:8px;">5.5G AI原生+自治网络</text>
+              <rect x="130" y="65" width="280" height="14" rx="3" fill="rgba(255,184,77,.06)" stroke="rgba(255,184,77,.3)"/><text x="270" y="76" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:7px;">EPC减容优化 + VoLTE保留</text>
+              <rect x="130" y="83" width="500" height="14" rx="3" fill="rgba(255,93,108,.04)" stroke="rgba(255,93,108,.2)"/><text x="380" y="94" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:7px;">2G/3G核心网退网</text>
+              <rect x="130" y="105" width="130" height="20" rx="4" fill="rgba(255,184,77,.12)" stroke="#ffb84d"/><text x="195" y="119" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">EPC虚拟化扩容</text>
+              <rect x="270" y="105" width="150" height="20" rx="4" fill="rgba(45,212,255,.1)" stroke="#2dd4ff"/><text x="345" y="119" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">融合核心网+5GC SA试点</text>
+              <rect x="430" y="105" width="150" height="20" rx="4" fill="rgba(77,255,158,.08)" stroke="#4dff9e"/><text x="505" y="119" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">5GC SA规模+MEC试点</text>
+              <rect x="130" y="130" width="280" height="14" rx="3" fill="rgba(255,93,108,.04)" stroke="rgba(255,93,108,.2)"/>
+              <rect x="130" y="170" width="130" height="20" rx="4" fill="rgba(255,184,77,.1)" stroke="#ffb84d"/><text x="195" y="184" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">3G->4G升级+EPC虚拟化</text>
+              <rect x="270" y="170" width="150" height="20" rx="4" fill="rgba(255,184,77,.08)" stroke="#ffb84d"/><text x="345" y="184" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">EPC扩容+2G/3G退网</text>
+              <rect x="430" y="170" width="150" height="20" rx="4" fill="rgba(45,212,255,.06)" stroke="#2dd4ff"/><text x="505" y="184" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">EPC完善+5GC首都试点</text>
+            </svg>
+            <div class="diagram-caption">图 12-2 · 三场景3年演进路线甘特图</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>产品经理如何应用三场景框架</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-principle">
+            <div class="dim-title">第一步：判断客户属于哪种场景</div>
+            <div class="dim-body">看三个指标：①5GC SA部署率(>50%领先型，10-50%中庸型，<10%保守型)；②ARPU水平(>$30领先，$5-30中庸，<$5保守)；③2G/3G核心网用户占比(<10%领先，10-40%中庸，>40%保守)</div>
+          </div>
+          <div class="dim-card dim-customer">
+            <div class="dim-title">第二步：匹配对应的演进路线</div>
+            <div class="dim-body">领先型推5GC CNF+切片+MEC方案；中庸型推融合核心网+分阶段5GC扩展；保守型推EPC虚拟化+低成本融合+3G退网</div>
+          </div>
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">第三步：选对华为产品组合</div>
+            <div class="dim-body">领先型：CloudCore CNF+切片+MEC+NEF；中庸型：融合核心网+vEPC+轻量5GC；保守型：融合2G-4G核心网+低功耗DC</div>
+          </div>
+          <div class="dim-card dim-challenge">
+            <div class="dim-title">第四步：用CTO语言讲投资逻辑</div>
+            <div class="dim-body">领先型讲切片变现和5.5G差异化；中庸型讲EPC ROI和融合核心网保护投资；保守型讲EPC覆盖变现和Mobile Money</div>
+          </div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>终极目标</strong>：面对任何区域、任何国家的CTO，<strong>第一步判断市场类型 -> 第二步匹配演进场景 -> 第三步给出产品组合 -> 第四步用TCO和ROI说服投资</strong>。这就是产品线总裁视角下的核心网产品体系化能力。
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach(function(item){
+    item.addEventListener('click',function(){
+      document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+      item.classList.add('active');
+      document.getElementById(item.dataset.target).classList.add('active');
+      document.querySelector('main').scrollTop=0;
+    });
+  });
+  document.querySelectorAll('.sub-tabs').forEach(function(tabGroup){
+    tabGroup.querySelectorAll('.sub-tab').forEach(function(tab){
+      tab.addEventListener('click',function(){
+        tabGroup.querySelectorAll('.sub-tab').forEach(function(t){t.classList.remove('active');});
+        tabGroup.parentElement.querySelectorAll('.sub-content').forEach(function(c){c.classList.remove('active');});
+        tab.classList.add('active');
+        var target=document.getElementById(tab.dataset.target);
+        if(target)target.classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
