@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>无线产品知识体系 · 4G/5G 产品经理进阶手册</title>
+<style>
+  :root {
+    --bg-deep:#060a14; --bg-mid:#0b1220;
+    --accent-cyan:#2dd4ff; --accent-violet:#8b7cff; --accent-amber:#ffb84d;
+    --accent-green:#4dff9e; --accent-red:#ff5d6c; --accent-pink:#ff6ec7;
+    --glass-bg:rgba(255,255,255,0.045); --glass-bg-active:rgba(45,212,255,0.09);
+    --glass-border:rgba(255,255,255,0.08); --glass-border-active:rgba(45,212,255,0.4);
+    --text-primary:#eaf0fb; --text-secondary:#93a1bd; --text-muted:#5d6a87;
+    --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC","Segoe UI",system-ui,sans-serif;
+    --font-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;font-family:var(--font-sans);color:var(--text-primary);
+    background:radial-gradient(circle at 15% 10%,rgba(45,212,255,0.07),transparent 40%),
+      radial-gradient(circle at 85% 90%,rgba(139,124,255,0.06),transparent 45%),
+      linear-gradient(160deg,var(--bg-deep),var(--bg-mid));background-attachment:fixed;overflow:hidden;}
+  body::before{content:"";position:fixed;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,0.035) 1px,transparent 1px);
+    background-size:28px 28px;pointer-events:none;z-index:0;}
+  .app{position:relative;z-index:1;display:flex;height:100vh;}
+  .sidebar{width:264px;flex-shrink:0;display:flex;flex-direction:column;
+    background:var(--glass-bg);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    border-right:1px solid var(--glass-border);}
+  .sidebar-header{padding:28px 24px 20px;border-bottom:1px solid var(--glass-border);}
+  .sidebar-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--accent-cyan);text-transform:uppercase;margin-bottom:6px;}
+  .sidebar-title{font-size:17px;font-weight:600;color:var(--text-primary);line-height:1.4;}
+  .sidebar-meta{margin-top:8px;font-size:12px;color:var(--text-muted);}
+  .nav-list{flex:1;overflow-y:auto;padding:16px 12px;list-style:none;}
+  .nav-group-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;padding:16px 14px 6px;}
+  .nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:11px 14px;margin-bottom:3px;border-radius:10px;border:1px solid transparent;color:var(--text-secondary);font-size:13.5px;cursor:pointer;transition:all .2s ease;}
+  .nav-item:hover{background:var(--glass-bg);color:var(--text-primary);}
+  .nav-item.active{background:var(--glass-bg-active);border-color:var(--glass-border-active);color:var(--text-primary);box-shadow:0 0 0 1px rgba(45,212,255,.08) inset,0 0 22px rgba(45,212,255,.10);}
+  .nav-index{font-family:var(--font-mono);font-size:11px;color:var(--accent-cyan);opacity:.85;flex-shrink:0;}
+  main{flex:1;overflow-y:auto;padding:44px 52px 80px;}
+  .section{display:none;} .section.active{display:block;animation:fadeIn .35s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .section-title{font-size:24px;font-weight:600;margin-bottom:6px;}
+  .section-subtitle{font-size:13px;color:var(--text-muted);margin-bottom:28px;}
+  .card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:20px;}
+  .card h3{font-size:15px;font-weight:600;color:var(--accent-cyan);margin-bottom:12px;}
+  .card h4{font-size:14px;font-weight:600;color:var(--accent-violet);margin:16px 0 8px;}
+  .card p{font-size:14px;line-height:1.85;color:var(--text-secondary);margin-bottom:8px;}
+  .card ul{margin-left:18px;color:var(--text-secondary);font-size:14px;line-height:1.9;}
+  .card ul li{margin-bottom:4px;} .card strong{color:var(--text-primary);font-weight:600;}
+  .stat-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:140px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:18px 20px;}
+  .stat-value{font-family:var(--font-mono);font-size:26px;font-weight:600;color:var(--accent-cyan);}
+  .stat-label{font-size:12px;color:var(--text-muted);margin-top:4px;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;}
+  .data-table th{text-align:left;padding:10px 14px;color:var(--accent-cyan);font-weight:600;border-bottom:1px solid var(--glass-border-active);white-space:nowrap;}
+  .data-table td{padding:10px 14px;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,0.04);line-height:1.6;}
+  .data-table tr:hover td{color:var(--text-primary);background:rgba(45,212,255,0.03);}
+  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);margin:2px 4px 2px 0;}
+  .tag-cyan{background:rgba(45,212,255,.15);color:var(--accent-cyan);}
+  .tag-violet{background:rgba(139,124,255,.15);color:var(--accent-violet);}
+  .tag-amber{background:rgba(255,184,77,.15);color:var(--accent-amber);}
+  .tag-green{background:rgba(77,255,158,.15);color:var(--accent-green);}
+  .tag-red{background:rgba(255,93,108,.15);color:var(--accent-red);}
+  .tag-huawei{background:rgba(255,93,108,.12);color:#ff7a8a;}
+  .tag-ericsson{background:rgba(45,212,255,.12);color:#5db8e8;}
+  .tag-nokia{background:rgba(139,124,255,.12);color:#a89aff;}
+  .tag-zte{background:rgba(77,255,158,.12);color:#5deba0;}
+  .tag-4g{background:rgba(255,184,77,.12);color:var(--accent-amber);}
+  .tag-5g{background:rgba(45,212,255,.12);color:var(--accent-cyan);}
+  .sub-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .sub-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all .2s;}
+  .sub-tab:hover{color:var(--text-primary);}
+  .sub-tab.active{border-color:var(--glass-border-active);background:var(--glass-bg-active);color:var(--accent-cyan);}
+  .sub-content{display:none;} .sub-content.active{display:block;}
+  .diagram-box{background:rgba(6,10,20,.6);border:1px solid var(--glass-border);border-radius:14px;padding:32px;margin:16px 0;text-align:center;}
+  .diagram-caption{font-size:12px;color:var(--text-muted);margin-top:12px;font-style:italic;}
+  .dim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:16px 0;}
+  .dim-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:18px 20px;}
+  .dim-card .dim-title{font-size:13px;font-weight:600;margin-bottom:8px;}
+  .dim-card .dim-body{font-size:13px;line-height:1.7;color:var(--text-secondary);}
+  .dim-huawei{border-left:3px solid var(--accent-red);} .dim-huawei .dim-title{color:#ff7a8a;}
+  .dim-competitor{border-left:3px solid var(--accent-cyan);} .dim-competitor .dim-title{color:var(--accent-cyan);}
+  .dim-customer{border-left:3px solid var(--accent-amber);} .dim-customer .dim-title{color:var(--accent-amber);}
+  .dim-principle{border-left:3px solid var(--accent-green);} .dim-principle .dim-title{color:var(--accent-green);}
+  .dim-challenge{border-left:3px solid var(--accent-violet);} .dim-challenge .dim-title{color:var(--accent-violet);}
+  .callout{border-left:3px solid var(--accent-cyan);background:rgba(45,212,255,.05);border-radius:0 8px 8px 0;padding:14px 18px;margin:12px 0;font-size:13px;color:var(--text-secondary);line-height:1.7;}
+  .callout-amber{border-left-color:var(--accent-amber);background:rgba(255,184,77,.05);}
+  .callout-red{border-left-color:var(--accent-red);background:rgba(255,93,108,.05);}
+  .callout strong{color:var(--text-primary);}
+  .bottleneck-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-left:3px solid var(--accent-red);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
+  .bottleneck-card .bk-title{font-size:15px;font-weight:600;color:var(--accent-red);margin-bottom:10px;}
+  .bottleneck-card .bk-symptom{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}
+  .bottleneck-card .bk-solution{background:rgba(77,255,158,.04);border:1px solid rgba(77,255,158,.15);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text-secondary);line-height:1.7;}
+  .bottleneck-card .bk-solution strong{color:var(--accent-green);}
+  .stack-layer{display:flex;align-items:center;padding:10px 16px;margin:3px 0;border-radius:8px;font-size:13px;border:1px solid;gap:12px;}
+  .stack-layer .layer-name{font-weight:600;min-width:60px;} .stack-layer .layer-desc{color:var(--text-muted);font-size:12px;}
+  .layer-rrc{background:rgba(45,212,255,.08);border-color:rgba(45,212,255,.25);color:var(--accent-cyan);}
+  .layer-sdap{background:rgba(77,255,158,.08);border-color:rgba(77,255,158,.25);color:var(--accent-green);}
+  .layer-pdcp{background:rgba(139,124,255,.08);border-color:rgba(139,124,255,.25);color:var(--accent-violet);}
+  .layer-rlc{background:rgba(255,184,77,.08);border-color:rgba(255,184,77,.25);color:var(--accent-amber);}
+  .layer-mac{background:rgba(255,93,108,.08);border-color:rgba(255,93,108,.25);color:var(--accent-red);}
+  .layer-phy{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--text-primary);}
+  .split-line{height:2px;background:repeating-linear-gradient(90deg,var(--accent-red),var(--accent-red) 6px,transparent 6px,transparent 12px);margin:6px 0;position:relative;}
+  .split-label{position:absolute;right:0;top:-18px;font-size:11px;font-family:var(--font-mono);color:var(--accent-red);}
+  .beam-3d-scene{perspective:1000px;perspective-origin:50% 30%;height:360px;position:relative;display:flex;align-items:center;justify-content:center;}
+  .beam-3d-stage{transform-style:preserve-3d;transform:rotateX(-20deg) rotateY(-15deg);position:relative;width:320px;height:280px;animation:stage-rotate 12s linear infinite;}
+  @keyframes stage-rotate{0%{transform:rotateX(-20deg) rotateY(-15deg);}50%{transform:rotateX(-20deg) rotateY(15deg);}100%{transform:rotateX(-20deg) rotateY(-15deg);}}
+  .antenna-panel{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:80px;height:120px;background:linear-gradient(135deg,rgba(45,212,255,.2),rgba(139,124,255,.15));border:1px solid rgba(45,212,255,.5);border-radius:6px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(8,1fr);gap:2px;padding:4px;transform-style:preserve-3d;}
+  .antenna-element{background:rgba(45,212,255,.3);border-radius:2px;animation:element-pulse 2s ease-in-out infinite;}
+  .antenna-element:nth-child(odd){animation-delay:.5s;} .antenna-element:nth-child(3n){animation-delay:1s;}
+  @keyframes element-pulse{0%,100%{background:rgba(45,212,255,.2);}50%{background:rgba(45,212,255,.6);}}
+  .beam{position:absolute;top:30px;left:50%;transform-origin:top center;border-radius:50% 50% 0 0/100% 100% 0 0;opacity:.25;pointer-events:none;animation:beam-pulse 3s ease-in-out infinite;}
+  @keyframes beam-pulse{0%,100%{opacity:.15;}50%{opacity:.35;}}
+  .beam-1{width:60px;height:200px;transform:translateX(-50%) rotateY(25deg) rotateZ(5deg);background:radial-gradient(ellipse at top,var(--accent-cyan),transparent 70%);}
+  .beam-2{width:50px;height:220px;transform:translateX(-50%) rotateY(-20deg) rotateZ(-8deg);background:radial-gradient(ellipse at top,var(--accent-green),transparent 70%);opacity:.2;}
+  .beam-3{width:45px;height:180px;transform:translateX(-50%) rotateY(0deg) rotateZ(2deg);background:radial-gradient(ellipse at top,var(--accent-violet),transparent 70%);opacity:.18;}
+  .beam-4{width:40px;height:160px;transform:translateX(-50%) rotateY(40deg) rotateZ(12deg);background:radial-gradient(ellipse at top,var(--accent-amber),transparent 70%);opacity:.15;}
+  .user-icon{position:absolute;bottom:10px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;border:2px solid;}
+  .user-1{left:20%;border-color:var(--accent-cyan);color:var(--accent-cyan);}
+  .user-2{left:45%;border-color:var(--accent-green);color:var(--accent-green);}
+  .user-3{left:68%;border-color:var(--accent-violet);color:var(--accent-violet);}
+  .user-4{left:85%;border-color:var(--accent-amber);color:var(--accent-amber);}
+  .ground-plane{position:absolute;bottom:0;left:50%;transform:translateX(-50%) rotateX(90deg);width:280px;height:200px;background:linear-gradient(rgba(45,212,255,.06),transparent);border:1px solid rgba(255,255,255,.06);border-radius:4px;}
+  @keyframes flow-dash{to{stroke-dashoffset:-20;}} .flow-line{stroke-dasharray:6 4;animation:flow-dash 1s linear infinite;}
+  @keyframes ofdm-wave-1{0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
+  .ofdm-carrier-anim{animation:ofdm-wave-1 2s ease-in-out infinite;}
+  .ofdm-carrier-anim-2{animation:ofdm-wave-1 2.5s ease-in-out infinite .3s;}
+  .ofdm-carrier-anim-3{animation:ofdm-wave-1 3s ease-in-out infinite .6s;}
+  @keyframes constellation-twinkle{0%,100%{opacity:.8;}50%{opacity:.3;}}
+  .constellation-point{animation:constellation-twinkle 1.5s ease-in-out infinite;}
+  .step-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0;}
+  .step-node{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:12px 16px;font-size:12px;text-align:center;min-width:100px;position:relative;}
+  .step-node.active{border-color:var(--accent-cyan);background:var(--glass-bg-active);}
+  .step-arrow{width:24px;height:2px;background:var(--text-muted);position:relative;flex-shrink:0;}
+  .step-arrow::after{content:'';position:absolute;right:-4px;top:-3px;width:0;height:0;border-left:6px solid var(--text-muted);border-top:4px solid transparent;border-bottom:4px solid transparent;}
+  @keyframes harq-step{0%,24%{opacity:1;}25%,49%{opacity:.2;}50%,74%{opacity:1;}75%,99%{opacity:.2;}100%{opacity:1;}}
+  .harq-anim-1{animation:harq-step 4s ease-in-out infinite;} .harq-anim-2{animation:harq-step 4s ease-in-out infinite 1s;}
+  .harq-anim-3{animation:harq-step 4s ease-in-out infinite 2s;} .harq-anim-4{animation:harq-step 4s ease-in-out infinite 3s;}
+  .beam-mode-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .2s;}
+  .beam-mode-btn:hover{color:var(--text-primary);}
+  .beam-mode-btn.active{border-color:var(--accent-cyan);background:var(--glass-bg-active);color:var(--accent-cyan);}
+  .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0;}
+  .compare-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:16px 18px;}
+  .compare-card .cc-vendor{font-size:12px;font-weight:600;margin-bottom:8px;font-family:var(--font-mono);}
+  .compare-card .cc-product{font-size:13px;color:var(--text-primary);margin-bottom:6px;}
+  .compare-card .cc-spec{font-size:11px;color:var(--text-muted);line-height:1.6;}
+  .coverage-mode-display{min-height:200px;display:flex;align-items:center;justify-content:center;border:1px solid var(--glass-border);border-radius:12px;background:rgba(6,10,20,.4);margin:12px 0;position:relative;overflow:hidden;}
+  ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;}
+  svg .svg-label{fill:var(--text-secondary);font-size:11px;font-family:var(--font-sans);}
+  svg .svg-title{fill:var(--accent-cyan);font-size:13px;font-weight:600;font-family:var(--font-sans);}
+  svg .svg-mono{fill:var(--text-muted);font-size:10px;font-family:var(--font-mono);}
+  @keyframes ca-flow{0%{stroke-dashoffset:30;}100%{stroke-dashoffset:0;}} .ca-line{stroke-dasharray:8 4;animation:ca-flow 1.5s linear infinite;}
+  .product-3d-scene{perspective:1200px;perspective-origin:50% 35%;width:100%;height:520px;position:relative;overflow:visible;}
+  .product-3d-stage{transform-style:preserve-3d;width:100%;height:100%;position:relative;animation:product-rotate 20s linear infinite;transform:rotateX(-15deg) rotateY(-25deg);}
+  @keyframes product-rotate{0%{transform:rotateX(-15deg) rotateY(-25deg);}25%{transform:rotateX(-15deg) rotateY(5deg);}50%{transform:rotateX(-15deg) rotateY(35deg);}75%{transform:rotateX(-15deg) rotateY(5deg);}100%{transform:rotateX(-15deg) rotateY(-25deg);}}
+  .p3d-ground{position:absolute;width:560px;height:320px;left:50%;top:50%;transform:translate(-50%,-30%) rotateX(90deg);background:linear-gradient(rgba(45,212,255,.04),transparent),repeating-linear-gradient(0deg,rgba(255,255,255,.03) 1px,transparent 40px),repeating-linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 40px);border:1px solid rgba(255,255,255,.06);border-radius:4px;}
+  .p3d-pole{position:absolute;width:8px;height:280px;left:50%;top:20%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(120,130,150,.5),rgba(80,90,110,.6));border-radius:2px;transform-style:preserve-3d;}
+  .p3d-pole::before,.p3d-pole::after{content:'';position:absolute;width:40px;height:3px;background:rgba(100,110,130,.4);left:-16px;}
+  .p3d-pole::before{top:80px;} .p3d-pole::after{top:160px;}
+  .p3d-bbu-cabinet{position:absolute;width:100px;height:160px;left:22%;top:42%;transform-style:preserve-3d;}
+  .p3d-bbu-box{width:100px;height:160px;background:linear-gradient(135deg,rgba(45,212,255,.08),rgba(30,40,60,.6));border:1px solid rgba(45,212,255,.35);border-radius:6px;position:relative;box-shadow:0 0 20px rgba(45,212,255,.08);}
+  .p3d-bbu-slot{position:absolute;left:8px;right:8px;height:22px;background:rgba(20,30,45,.8);border:1px solid rgba(45,212,255,.2);border-radius:3px;display:flex;align-items:center;padding:0 6px;}
+  .p3d-bbu-slot-label{font-size:7px;font-family:var(--font-mono);color:var(--accent-cyan);}
+  .p3d-bbu-slot-led{width:4px;height:4px;border-radius:50%;margin-left:auto;background:var(--accent-green);box-shadow:0 0 4px var(--accent-green);animation:led-blink 2s ease-in-out infinite;}
+  @keyframes led-blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .p3d-bbu-ports{position:absolute;right:-12px;top:20px;width:12px;height:120px;background:rgba(20,30,45,.7);border:1px solid rgba(255,255,255,.08);border-radius:0 4px 4px 0;display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:4px 0;}
+  .p3d-port{width:6px;height:6px;border-radius:50%;border:1px solid;}
+  .p3d-port-fiber{border-color:var(--accent-green);background:rgba(77,255,158,.2);}
+  .p3d-port-power{border-color:var(--accent-amber);background:rgba(255,184,77,.2);}
+  .p3d-port-eth{border-color:var(--accent-cyan);background:rgba(45,212,255,.2);}
+  .p3d-aau{position:absolute;width:80px;height:130px;left:50%;top:10%;transform:translateX(-50%);transform-style:preserve-3d;}
+  .p3d-aau-body{width:80px;height:130px;background:linear-gradient(135deg,rgba(77,255,158,.08),rgba(30,40,60,.6));border:1px solid rgba(77,255,158,.35);border-radius:6px;position:relative;box-shadow:0 0 20px rgba(77,255,158,.08);}
+  .p3d-aau-grid{position:absolute;top:8px;left:8px;right:8px;bottom:24px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(10,1fr);gap:1.5px;padding:3px;background:rgba(0,0,0,.2);border-radius:3px;}
+  .p3d-aau-el{background:rgba(45,212,255,.15);border-radius:1px;animation:aau-el-pulse 2.5s ease-in-out infinite;}
+  .p3d-aau-el:nth-child(3n){animation-delay:.3s;} .p3d-aau-el:nth-child(5n){animation-delay:.6s;}
+  .p3d-aau-el:nth-child(7n){animation-delay:.9s;} .p3d-aau-el:nth-child(11n){animation-delay:1.2s;}
+  @keyframes aau-el-pulse{0%,100%{background:rgba(45,212,255,.1);}50%{background:rgba(45,212,255,.45);}}
+  .p3d-aau-ports{position:absolute;bottom:4px;left:8px;right:8px;height:14px;display:flex;justify-content:space-around;align-items:center;}
+  .p3d-aau-port{width:5px;height:5px;border-radius:50%;border:1px solid;}
+  .p3d-rru{position:absolute;width:50px;height:90px;left:72%;top:28%;transform-style:preserve-3d;}
+  .p3d-rru-body{width:50px;height:90px;background:linear-gradient(135deg,rgba(255,184,77,.08),rgba(30,40,60,.6));border:1px solid rgba(255,184,77,.3);border-radius:5px;position:relative;}
+  .p3d-rru-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:7px;font-family:var(--font-mono);color:var(--accent-amber);}
+  .p3d-antenna{position:absolute;width:60px;height:100px;left:72%;top:8%;}
+  .p3d-antenna-body{width:60px;height:100px;background:linear-gradient(135deg,rgba(139,124,255,.06),rgba(30,40,60,.5));border:1px solid rgba(139,124,255,.25);border-radius:4px;position:relative;}
+  .p3d-antenna-body::before{content:'';position:absolute;top:10px;left:8px;right:8px;bottom:10px;background:repeating-linear-gradient(0deg,rgba(139,124,255,.1) 1px,transparent 6px);border-radius:2px;}
+  .p3d-cables{position:absolute;inset:0;pointer-events:none;z-index:10;}
+  .p3d-label{position:absolute;background:rgba(6,10,20,.85);border:1px solid;border-radius:6px;padding:4px 8px;font-size:11px;font-family:var(--font-mono);white-space:nowrap;z-index:20;backdrop-filter:blur(8px);}
+  .p3d-label-cyan{border-color:var(--accent-cyan);color:var(--accent-cyan);}
+  .p3d-label-green{border-color:var(--accent-green);color:var(--accent-green);}
+  .p3d-label-amber{border-color:var(--accent-amber);color:var(--accent-amber);}
+  .p3d-label-violet{border-color:var(--accent-violet);color:var(--accent-violet);}
+  .p3d-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;justify-content:center;}
+  .p3d-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);}
+  .p3d-legend-dot{width:10px;height:10px;border-radius:50%;border:1px solid;}
+  .evol-timeline{position:relative;padding:20px 0;}
+  .evol-timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--accent-cyan),var(--accent-violet),var(--accent-amber));transform:translateX(-50%);}
+  .evol-item{position:relative;width:50%;padding:12px 24px;margin-bottom:8px;}
+  .evol-item.left{left:0;text-align:right;padding-right:40px;}
+  .evol-item.right{left:50%;padding-left:40px;}
+  .evol-item::before{content:'';position:absolute;top:18px;width:12px;height:12px;border-radius:50%;border:2px solid;background:var(--bg-deep);}
+  .evol-item.left::before{right:-6px;border-color:var(--accent-cyan);}
+  .evol-item.right::before{left:-6px;border-color:var(--accent-violet);}
+  .evol-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .evol-desc{font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .scenario-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:24px 28px;margin-bottom:20px;}
+  .scenario-card.sc-leading{border-left:4px solid var(--accent-green);}
+  .scenario-card.sc-middle{border-left:4px solid var(--accent-cyan);}
+  .scenario-card.sc-conservative{border-left:4px solid var(--accent-amber);}
+  .scenario-card h3{margin-bottom:16px;}
+  .scenario-card.sc-leading h3{color:var(--accent-green);}
+  .scenario-card.sc-middle h3{color:var(--accent-cyan);}
+  .scenario-card.sc-conservative h3{color:var(--accent-amber);}
+  .region-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;padding:18px 20px;margin-bottom:12px;}
+  .region-card .rc-title{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .region-card .rc-body{font-size:13px;color:var(--text-secondary);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-eyebrow">4G/5G WIRELESS · PM</div>
+      <div class="sidebar-title">无线产品<br>知识体系手册</div>
+      <div class="sidebar-meta">华为产品学习 · 增强版<br>4G/5G双制式 · 产品线总裁视角</div>
+    </div>
+    <ul class="nav-list" id="navList">
+      <li class="nav-group-label">宏观篇</li>
+      <li class="nav-item active" data-target="sec-overview"><span class="nav-index">01</span><span>总裁视角全景</span></li>
+      <li class="nav-item" data-target="sec-region"><span class="nav-index">02</span><span>区域市场与CTO对话</span></li>
+      <li class="nav-group-label">演进篇</li>
+      <li class="nav-item" data-target="sec-evolution"><span class="nav-index">03</span><span>无线技术演进</span></li>
+      <li class="nav-group-label">产品篇</li>
+      <li class="nav-item" data-target="sec-architecture"><span class="nav-index">04</span><span>产品架构总览</span></li>
+      <li class="nav-item" data-target="sec-modules"><span class="nav-index">05</span><span>核心模块详解</span></li>
+      <li class="nav-item" data-target="sec-antenna"><span class="nav-index">06</span><span>天线与Massive MIMO</span></li>
+      <li class="nav-group-label">技术篇</li>
+      <li class="nav-item" data-target="sec-tech"><span class="nav-index">07</span><span>关键技术原理</span></li>
+      <li class="nav-group-label">实战篇</li>
+      <li class="nav-item" data-target="sec-scenario"><span class="nav-index">08</span><span>部署场景</span></li>
+      <li class="nav-item" data-target="sec-strategy"><span class="nav-index">09</span><span>客户选型策略</span></li>
+      <li class="nav-item" data-target="sec-bottleneck"><span class="nav-index">10</span><span>典型瓶颈与方案</span></li>
+      <li class="nav-group-label">战略篇</li>
+      <li class="nav-item" data-target="sec-pm"><span class="nav-index">11</span><span>产品经理能力地图</span></li>
+      <li class="nav-item" data-target="sec-evolution-scenarios"><span class="nav-index">12</span><span>网络演进三场景</span></li>
+    </ul>
+  </aside>
+
+  <main>
+
+    <!-- ==================== 01 总裁视角全景 ==================== -->
+    <section class="section active" id="sec-overview">
+      <div class="section-title">产品线总裁视角 · 无线产品全景</div>
+      <div class="section-subtitle">站在产品线总裁高度审视4G/5G产品线 · 投资逻辑 · 客户痛点 · 竞争格局</div>
+
+      <div class="card">
+        <h3>为什么产品经理需要"总裁视角"</h3>
+        <p>无线产品线总裁不关心某个AAU的具体型号，他关心的是：<strong>全球不同区域的客户在4G/5G上怎么花钱？华为的产品组合能不能接住这些需求？友商在抢哪些蛋糕？</strong>作为产品经理，你必须能从总裁视角理解全局，才能在CTO对话中展现战略深度而非仅仅是参数罗列。</p>
+        <div class="dim-grid">
+          <div class="dim-card dim-principle">
+            <div class="dim-title">懂产品知识（基础层）</div>
+            <div class="dim-body">4G/5G全制式产品体系：BBU/AAU/RRU功能、Massive MIMO原理、帧结构、调制编码。能看懂规格书，能解释技术原理。</div>
+          </div>
+          <div class="dim-card dim-customer">
+            <div class="dim-title">懂客户投资策略（战略层）</div>
+            <div class="dim-body">发达市场重5G变现和TCO，新兴市场重4G覆盖和性价比，前沿市场重低成本建网。不同市场4G/5G投资节奏完全不同。</div>
+          </div>
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">能应对CTO问询（实战层）</div>
+            <div class="dim-body">面对不同国家CTO关于"4G还要投多少""5G什么时候上""华为和友商差异在哪"的提问，能给出有数据、有逻辑、有方案的回答。</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>本手册学习路径</strong>：宏观篇（总裁视角/区域市场）-> 演进篇（4G->5G技术路线）-> 产品篇（架构/模块/天线）-> 技术篇（空口原理）-> 实战篇（场景/选型/瓶颈）-> 战略篇（能力地图/网络演进场景）。由浅入深，从战略到执行。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G/5G 全球投资格局 - 产品线总裁看的"大盘"</h3>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-value">~70%</div>
+            <div class="stat-label">全球移动连接仍为4G<br>4G网络至少运营到2030年+</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">~25%</div>
+            <div class="stat-label">全球5G人口覆盖率<br>中韩美日欧领先</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">~5%</div>
+            <div class="stat-label">3G及以下仍存<br>非洲/南亚部分地区</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">$200B+</div>
+            <div class="stat-label">全球无线设备年投资<br>4G+5G合计</div>
+          </div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>总裁视角的关键判断</strong>：<strong>4G不会消失，5G不会立即全面替代</strong>。未来5-7年，4G/5G长期共存是基本盘。产品线必须同时服务两类客户：①"5G先行者"（中韩日美欧，追求5G变现和5.5G演进）；②"4G深耕者"（东南亚/中东/非洲/拉美，追求4G广覆盖和低成本）。<strong>产品组合的4G/5G协同能力是核心竞争壁垒</strong>。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>典型无线基站物理站点方案示意图</h3>
+        <p>以工程侧视图展示典型宏站物理部署：铁塔顶部安装AAU（5G方案）和RRU+无源天线（4G方案），地面机柜内放置BBU和电源。所有线缆走向、接口类型、连接关系一目了然。</p>
+        <div class="diagram-box" style="padding:20px;">
+          <svg width="700" height="560" viewBox="0 0 700 560" style="max-width:100%;">
+            <defs>
+              <linearGradient id="tower-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(100,110,130,0.3)"/><stop offset="50%" stop-color="rgba(120,130,150,0.5)"/><stop offset="100%" stop-color="rgba(100,110,130,0.3)"/>
+              </linearGradient>
+              <linearGradient id="aau-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="rgba(77,255,158,0.12)"/><stop offset="100%" stop-color="rgba(30,40,60,0.7)"/>
+              </linearGradient>
+              <linearGradient id="bbu-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="rgba(45,212,255,0.12)"/><stop offset="100%" stop-color="rgba(30,40,60,0.7)"/>
+              </linearGradient>
+              <linearGradient id="rru-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="rgba(255,184,77,0.12)"/><stop offset="100%" stop-color="rgba(30,40,60,0.7)"/>
+              </linearGradient>
+              <linearGradient id="ant-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="rgba(139,124,255,0.1)"/><stop offset="100%" stop-color="rgba(30,40,60,0.6)"/>
+              </linearGradient>
+              <linearGradient id="pwr-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="rgba(255,93,108,0.1)"/><stop offset="100%" stop-color="rgba(30,40,60,0.7)"/>
+              </linearGradient>
+            </defs>
+
+            <!-- ====== 地面 ====== -->
+            <rect x="0" y="470" width="700" height="90" fill="rgba(45,212,255,0.02)"/>
+            <line x1="0" y1="470" x2="700" y2="470" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <text x="350" y="545" text-anchor="middle" class="svg-mono" fill="#5d6a87" opacity="0.5">Ground Level · 地面</text>
+
+            <!-- ====== 铁塔结构（桁架式） ====== -->
+            <!-- 主柱 -->
+            <line x1="185" y1="60" x2="185" y2="470" stroke="url(#tower-grad)" stroke-width="3"/>
+            <line x1="215" y1="60" x2="215" y2="470" stroke="url(#tower-grad)" stroke-width="3"/>
+            <!-- 横梁 -->
+            <line x1="185" y1="100" x2="215" y2="100" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="150" x2="215" y2="150" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="200" x2="215" y2="200" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="250" x2="215" y2="250" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="300" x2="215" y2="300" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="350" x2="215" y2="350" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="400" x2="215" y2="400" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <line x1="185" y1="450" x2="215" y2="450" stroke="rgba(100,110,130,0.4)" stroke-width="1.5"/>
+            <!-- 交叉斜撑 -->
+            <line x1="185" y1="100" x2="215" y2="150" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="100" x2="185" y2="150" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="150" x2="215" y2="200" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="150" x2="185" y2="200" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="200" x2="215" y2="250" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="200" x2="185" y2="250" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="250" x2="215" y2="300" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="250" x2="185" y2="300" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="300" x2="215" y2="350" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="300" x2="185" y2="350" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="350" x2="215" y2="400" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="350" x2="185" y2="400" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="185" y1="400" x2="215" y2="450" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <line x1="215" y1="400" x2="185" y2="450" stroke="rgba(100,110,130,0.25)" stroke-width="1"/>
+            <text x="200" y="465" text-anchor="middle" class="svg-mono" fill="#5d6a87" opacity="0.4">铁塔</text>
+
+            <!-- ====== AAU（5G方案，塔顶左侧） ====== -->
+            <rect x="130" y="65" width="70" height="95" rx="6" fill="url(#aau-grad)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="165" y="82" text-anchor="middle" class="svg-title" fill="#4dff9e" style="font-size:11px;">AAU</text>
+            <text x="165" y="94" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">64T64R</text>
+            <!-- 天线阵面 -->
+            <g transform="translate(138, 100)">
+              <rect x="0" y="0" width="54" height="40" rx="2" fill="rgba(0,0,0,0.25)"/>
+              <g>
+                <rect x="3" y="3" width="6" height="6" rx="1" fill="rgba(45,212,255,0.3)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite;"/>
+                <rect x="12" y="3" width="6" height="6" rx="1" fill="rgba(45,212,255,0.3)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .3s;"/>
+                <rect x="21" y="3" width="6" height="6" rx="1" fill="rgba(45,212,255,0.3)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .6s;"/>
+                <rect x="30" y="3" width="6" height="6" rx="1" fill="rgba(45,212,255,0.3)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .9s;"/>
+                <rect x="39" y="3" width="6" height="6" rx="1" fill="rgba(45,212,255,0.3)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.2s;"/>
+                <rect x="3" y="12" width="6" height="6" rx="1" fill="rgba(45,212,255,0.25)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .4s;"/>
+                <rect x="12" y="12" width="6" height="6" rx="1" fill="rgba(45,212,255,0.25)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .7s;"/>
+                <rect x="21" y="12" width="6" height="6" rx="1" fill="rgba(45,212,255,0.25)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1s;"/>
+                <rect x="30" y="12" width="6" height="6" rx="1" fill="rgba(45,212,255,0.25)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.3s;"/>
+                <rect x="39" y="12" width="6" height="6" rx="1" fill="rgba(45,212,255,0.25)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.6s;"/>
+                <rect x="3" y="21" width="6" height="6" rx="1" fill="rgba(45,212,255,0.2)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite .8s;"/>
+                <rect x="12" y="21" width="6" height="6" rx="1" fill="rgba(45,212,255,0.2)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.1s;"/>
+                <rect x="21" y="21" width="6" height="6" rx="1" fill="rgba(45,212,255,0.2)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.4s;"/>
+                <rect x="30" y="21" width="6" height="6" rx="1" fill="rgba(45,212,255,0.2)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 1.7s;"/>
+                <rect x="39" y="21" width="6" height="6" rx="1" fill="rgba(45,212,255,0.2)" class="p3d-aau-el" style="animation:aau-el-pulse 2.5s ease-in-out infinite 2s;"/>
+              </g>
+            </g>
+            <!-- AAU底部接口 -->
+            <circle cx="142" cy="152" r="3" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="1"/>
+            <circle cx="152" cy="152" r="3" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="1"/>
+            <circle cx="175" cy="152" r="3" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="1"/>
+            <circle cx="185" cy="152" r="3" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="1"/>
+            <!-- AAU标签 -->
+            <rect x="100" y="40" width="130" height="18" rx="4" fill="rgba(6,10,20,0.85)" stroke="#4dff9e" stroke-width="1"/>
+            <text x="165" y="53" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:10px;">AAU5613 (5G) 64T</text>
+
+            <!-- ====== 无源天线（4G方案，塔顶右侧） ====== -->
+            <rect x="255" y="65" width="65" height="80" rx="5" fill="url(#ant-grad)" stroke="#8b7cff" stroke-width="1.5"/>
+            <text x="287" y="80" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:9px;">天线</text>
+            <text x="287" y="91" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:7px;">8T8R</text>
+            <!-- 天线辐射纹 -->
+            <g transform="translate(263, 97)">
+              <line x1="0" y1="0" x2="49" y2="0" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="5" x2="49" y2="5" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="10" x2="49" y2="10" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="15" x2="49" y2="15" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="20" x2="49" y2="20" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="25" x2="49" y2="25" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="30" x2="49" y2="30" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+              <line x1="0" y1="35" x2="49" y2="35" stroke="rgba(139,124,255,0.12)" stroke-width="1"/>
+            </g>
+            <rect x="240" y="40" width="95" height="18" rx="4" fill="rgba(6,10,20,0.85)" stroke="#8b7cff" stroke-width="1"/>
+            <text x="287" y="53" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:10px;">无源天线 (4G)</text>
+
+            <!-- ====== RRU（4G方案，天线下方） ====== -->
+            <rect x="260" y="165" width="55" height="70" rx="5" fill="url(#rru-grad)" stroke="#ffb84d" stroke-width="1.5"/>
+            <text x="287" y="185" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">RRU</text>
+            <text x="287" y="197" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">RF收发</text>
+            <text x="287" y="207" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">D/A·A/D</text>
+            <!-- RRU底部接口 -->
+            <circle cx="272" cy="225" r="3" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="1"/>
+            <circle cx="287" cy="225" r="3" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="1"/>
+            <circle cx="302" cy="225" r="3" fill="rgba(255,93,108,0.3)" stroke="#ff5d6c" stroke-width="1"/>
+            <rect x="245" y="237" width="85" height="16" rx="4" fill="rgba(6,10,20,0.85)" stroke="#ffb84d" stroke-width="1"/>
+            <text x="287" y="249" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">RRU5258 (4G)</text>
+
+            <!-- ====== BBU机柜（地面左侧） ====== -->
+            <rect x="70" y="340" width="90" height="120" rx="6" fill="url(#bbu-grad)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="115" y="358" text-anchor="middle" class="svg-title" fill="#2dd4ff" style="font-size:11px;">BBU5900</text>
+            <!-- BBU插槽 -->
+            <rect x="78" y="365" width="74" height="16" rx="2" fill="rgba(20,30,45,0.8)" stroke="rgba(45,212,255,0.2)" stroke-width="0.5"/>
+            <text x="86" y="376" class="svg-mono" fill="#2dd4ff" style="font-size:7px;">UMPT主控</text>
+            <circle cx="144" cy="373" r="2" fill="#4dff9e" style="animation:led-blink 2s ease-in-out infinite;"/>
+            <rect x="78" y="385" width="74" height="16" rx="2" fill="rgba(20,30,45,0.8)" stroke="rgba(45,212,255,0.2)" stroke-width="0.5"/>
+            <text x="86" y="396" class="svg-mono" fill="#2dd4ff" style="font-size:7px;">UBBP基带</text>
+            <circle cx="144" cy="393" r="2" fill="#4dff9e" style="animation:led-blink 2s ease-in-out infinite .5s;"/>
+            <rect x="78" y="405" width="74" height="16" rx="2" fill="rgba(20,30,45,0.8)" stroke="rgba(45,212,255,0.2)" stroke-width="0.5"/>
+            <text x="86" y="416" class="svg-mono" fill="#2dd4ff" style="font-size:7px;">UBBP基带</text>
+            <circle cx="144" cy="413" r="2" fill="#ffb84d" style="animation:led-blink 2s ease-in-out infinite 1s;"/>
+            <rect x="78" y="425" width="74" height="16" rx="2" fill="rgba(20,30,45,0.8)" stroke="rgba(45,212,255,0.2)" stroke-width="0.5"/>
+            <text x="86" y="436" class="svg-mono" fill="#2dd4ff" style="font-size:7px;">PEU电源</text>
+            <circle cx="144" cy="433" r="2" fill="#ff5d6c" style="animation:led-blink 2s ease-in-out infinite 1.5s;"/>
+            <!-- BBU右侧接口面板 -->
+            <rect x="160" y="360" width="10" height="80" rx="2" fill="rgba(20,30,45,0.7)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+            <circle cx="165" cy="368" r="2.5" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="0.8"/>
+            <circle cx="165" cy="380" r="2.5" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="0.8"/>
+            <circle cx="165" cy="392" r="2.5" fill="rgba(45,212,255,0.3)" stroke="#2dd4ff" stroke-width="0.8"/>
+            <circle cx="165" cy="404" r="2.5" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="0.8"/>
+            <circle cx="165" cy="416" r="2.5" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="0.8"/>
+            <circle cx="165" cy="428" r="2.5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="0.8"/>
+            <!-- BBU标签 -->
+            <rect x="55" y="320" width="120" height="16" rx="4" fill="rgba(6,10,20,0.85)" stroke="#2dd4ff" stroke-width="1"/>
+            <text x="115" y="332" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:10px;">BBU机柜 (4G/5G共框)</text>
+
+            <!-- ====== 电源柜（地面右侧） ====== -->
+            <rect x="340" y="370" width="70" height="90" rx="6" fill="url(#pwr-grad)" stroke="#ff5d6c" stroke-width="1.5"/>
+            <text x="375" y="390" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">电源柜</text>
+            <text x="375" y="405" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">-48V DC</text>
+            <text x="375" y="418" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">蓄电池</text>
+            <text x="375" y="431" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:7px;">整流器</text>
+            <rect x="330" y="355" width="90" height="16" rx="4" fill="rgba(6,10,20,0.85)" stroke="#ff5d6c" stroke-width="1"/>
+            <text x="375" y="367" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">电源柜 + 电池</text>
+
+            <!-- ================================================================ -->
+            <!-- ====== 线缆连接（所有线缆沿铁塔内侧走线，清晰标注） ====== -->
+            <!-- ================================================================ -->
+
+            <!-- ① eCPRI光纤: BBU右侧光口(170,368) -> 沿塔上行 -> AAU底部光口(165,155) -->
+            <path d="M 170 368 L 195 368 L 195 160 L 165 160 L 165 155" fill="none" stroke="#4dff9e" stroke-width="2.5" stroke-dasharray="8 4" class="flow-line" opacity="0.8"/>
+            <circle r="3" fill="#4dff9e"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#fiber-aau-path"/></animateMotion></circle>
+            <path id="fiber-aau-path" d="M 170 368 L 195 368 L 195 160 L 165 160 L 165 155" fill="none" stroke="none"/>
+            <rect x="205" y="245" width="80" height="16" rx="3" fill="rgba(6,10,20,0.85)" stroke="#4dff9e" stroke-width="0.8"/>
+            <text x="245" y="257" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">① eCPRI光纤</text>
+
+            <!-- ② DC电源线: 电源柜(375,390) -> BBU(160,410) -->
+            <path d="M 340 390 L 250 390 L 250 410 L 170 410" fill="none" stroke="#ffb84d" stroke-width="2" stroke-dasharray="6 3" opacity="0.5"/>
+            <rect x="250" y="370" width="70" height="14" rx="3" fill="rgba(6,10,20,0.85)" stroke="#ffb84d" stroke-width="0.8"/>
+            <text x="285" y="381" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">② DC电源</text>
+
+            <!-- ③ DC电源线: 电源柜(375,370) -> 沿塔上行 -> AAU(185,155) -->
+            <path d="M 375 370 L 375 280 L 210 280 L 210 160 L 185 160 L 185 155" fill="none" stroke="#ffb84d" stroke-width="2" stroke-dasharray="6 3" opacity="0.5"/>
+            <rect x="230" y="285" width="70" height="14" rx="3" fill="rgba(6,10,20,0.85)" stroke="#ffb84d" stroke-width="0.8"/>
+            <text x="265" y="296" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">② DC电源</text>
+
+            <!-- ④ eCPRI/CPRI光纤: BBU右侧(170,380) -> 沿塔上行 -> RRU底部(287,230) -->
+            <path d="M 170 380 L 200 380 L 200 320 L 260 320 L 287 320 L 287 235" fill="none" stroke="#4dff9e" stroke-width="2" stroke-dasharray="8 4" class="flow-line" opacity="0.5"/>
+            <circle r="2.5" fill="#4dff9e" opacity="0.7"><animateMotion dur="3.5s" repeatCount="indefinite" begin="1s"><mpath href="#fiber-rru-path"/></animateMotion></circle>
+            <path id="fiber-rru-path" d="M 170 380 L 200 380 L 200 320 L 260 320 L 287 320 L 287 235" fill="none" stroke="none"/>
+            <rect x="150" y="300" width="80" height="14" rx="3" fill="rgba(6,10,20,0.85)" stroke="#4dff9e" stroke-width="0.8"/>
+            <text x="190" y="311" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">③ eCPRI光纤</text>
+
+            <!-- ⑤ RF馈线: RRU顶部(287,165) -> 无源天线底部(287,145) -->
+            <path d="M 287 165 L 287 145" fill="none" stroke="#ff5d6c" stroke-width="2.5" stroke-dasharray="4 3" opacity="0.7"/>
+            <rect x="295" y="148" width="55" height="14" rx="3" fill="rgba(6,10,20,0.85)" stroke="#ff5d6c" stroke-width="0.8"/>
+            <text x="322" y="159" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:8px;">④ RF馈线</text>
+
+            <!-- ⑥ 回传光纤: BBU左侧(70,375) -> 左侧出站 -> 传输网 -->
+            <path d="M 70 375 L 30 375 L 10 380" fill="none" stroke="#2dd4ff" stroke-width="2.5" stroke-dasharray="8 4" class="flow-line" opacity="0.6"/>
+            <circle r="2.5" fill="#2dd4ff" opacity="0.7"><animateMotion dur="2.5s" repeatCount="indefinite"><mpath href="#backhaul-path"/></animateMotion></circle>
+            <path id="backhaul-path" d="M 70 375 L 30 375 L 10 380" fill="none" stroke="none"/>
+            <rect x="3" y="355" width="60" height="14" rx="3" fill="rgba(6,10,20,0.85)" stroke="#2dd4ff" stroke-width="0.8"/>
+            <text x="33" y="366" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">⑤ 回传光纤</text>
+            <text x="3" y="395" class="svg-mono" fill="#5d6a87" opacity="0.5" style="font-size:8px;">-> 5GC/EPC</text>
+
+            <!-- ⑦ 接地线: BBU底部(115,460) -> 地; 电源柜底部(375,460) -> 地 -->
+            <path d="M 115 460 L 115 475" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <path d="M 375 460 L 375 475" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="125" y="473" class="svg-mono" fill="#5d6a87" opacity="0.4" style="font-size:7px;">⑥ 接地</text>
+
+            <!-- ====== 无线信号波束 ====== -->
+            <!-- AAU信号 -->
+            <g opacity="0.35">
+              <path d="M 130 75 Q 80 55, 30 45" fill="none" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/>
+              <path d="M 130 90 Q 70 85, 20 80" fill="none" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/>
+              <path d="M 130 105 Q 80 120, 40 140" fill="none" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+            </g>
+            <text x="15" y="35" class="svg-mono" fill="#4dff9e" opacity="0.4" style="font-size:8px;">5G信号</text>
+            <!-- 天线信号 -->
+            <g opacity="0.3">
+              <path d="M 320 75 Q 370 55, 420 45" fill="none" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+              <path d="M 320 90 Q 380 85, 440 80" fill="none" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+              <path d="M 320 105 Q 370 120, 420 140" fill="none" stroke="#8b7cff" stroke-width="1.5" class="flow-line"/>
+            </g>
+            <text x="430" y="35" class="svg-mono" fill="#8b7cff" opacity="0.4" style="font-size:8px;">4G信号</text>
+
+            <!-- ====== 接口详情标注（右侧） ====== -->
+            <g transform="translate(440, 60)">
+              <rect x="0" y="0" width="240" height="180" rx="8" fill="rgba(6,10,20,0.5)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <text x="120" y="20" text-anchor="middle" class="svg-title" style="font-size:12px;">接口与线缆说明</text>
+              <line x1="10" y1="28" x2="230" y2="28" stroke="rgba(255,255,255,0.06)"/>
+
+              <circle cx="18" cy="42" r="3" fill="rgba(77,255,158,0.3)" stroke="#4dff9e" stroke-width="1"/>
+              <text x="28" y="45" class="svg-mono" fill="#4dff9e" style="font-size:9px;">① eCPRI光纤 (25G/100G)</text>
+              <text x="28" y="56" class="svg-mono" fill="#5d6a87" style="font-size:8px;">BBU <-> AAU/RRU · 前传数据</text>
+
+              <circle cx="18" cy="70" r="3" fill="rgba(255,184,77,0.3)" stroke="#ffb84d" stroke-width="1"/>
+              <text x="28" y="73" class="svg-mono" fill="#ffb84d" style="font-size:9px;">② DC电源线 (-48V)</text>
+              <text x="28" y="84" class="svg-mono" fill="#5d6a87" style="font-size:8px;">电源柜 -> BBU/AAU/RRU · 供电</text>
+
+              <circle cx="18" cy="98" r="3" fill="rgba(255,93,108,0.3)" stroke="#ff5d6c" stroke-width="1"/>
+              <text x="28" y="101" class="svg-mono" fill="#ff5d6c" style="font-size:9px;">④ RF馈线 (同轴电缆)</text>
+              <text x="28" y="112" class="svg-mono" fill="#5d6a87" style="font-size:8px;">RRU <-> 无源天线 · 损耗3-5dB</text>
+
+              <circle cx="18" cy="126" r="3" fill="rgba(45,212,255,0.3)" stroke="#2dd4ff" stroke-width="1"/>
+              <text x="28" y="129" class="svg-mono" fill="#2dd4ff" style="font-size:9px;">⑤ 回传光纤 (10G/25G/100G)</text>
+              <text x="28" y="140" class="svg-mono" fill="#5d6a87" style="font-size:8px;">BBU <-> 传输网 -> 5GC/EPC</text>
+
+              <circle cx="18" cy="154" r="3" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <text x="28" y="157" class="svg-mono" fill="#93a1bd" style="font-size:9px;">⑥ 接地线</text>
+              <text x="28" y="168" class="svg-mono" fill="#5d6a87" style="font-size:8px;">所有室外设备 -> 接地排 · 防雷</text>
+            </g>
+
+            <!-- ====== 方案对比标注（右侧下方） ====== -->
+            <g transform="translate(440, 260)">
+              <rect x="0" y="0" width="240" height="160" rx="8" fill="rgba(6,10,20,0.5)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <text x="120" y="20" text-anchor="middle" class="svg-title" style="font-size:12px;">两种部署方案对比</text>
+              <line x1="10" y1="28" x2="230" y2="28" stroke="rgba(255,255,255,0.06)"/>
+
+              <rect x="10" y="35" width="100" height="16" rx="3" fill="rgba(77,255,158,0.1)" stroke="#4dff9e" stroke-width="0.8"/>
+              <text x="60" y="47" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:9px;">5G方案: BBU+AAU</text>
+              <text x="10" y="68" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• AAU=RRU+天线一体化</text>
+              <text x="10" y="80" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 无RF馈线(零损耗)</text>
+              <text x="10" y="92" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 支持64T Massive MIMO</text>
+              <text x="10" y="104" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 重量~18kg · 功耗~850W</text>
+
+              <rect x="120" y="35" width="110" height="16" rx="3" fill="rgba(255,184,77,0.1)" stroke="#ffb84d" stroke-width="0.8"/>
+              <text x="175" y="47" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:9px;">4G方案: BBU+RRU+天线</text>
+              <text x="120" y="68" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• RRU与天线分离</text>
+              <text x="120" y="80" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 有RF馈线(3-5dB损耗)</text>
+              <text x="120" y="92" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 通常2T/4T/8T</text>
+              <text x="120" y="104" class="svg-mono" fill="#5d6a87" style="font-size:8px;">• 成本低 · 技术成熟</text>
+
+              <text x="120" y="130" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">华为BBU5900可同时管理</text>
+              <text x="120" y="142" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">4G和5G基带板（四模共框）</text>
+            </g>
+          </svg>
+          <div class="diagram-caption">图 1-1 · 典型宏站物理站点方案示意（侧视图）：铁塔顶部AAU(5G)/RRU+天线(4G)，地面BBU机柜+电源柜，线缆沿塔走线</div>
+        </div>
+        <div class="callout">
+          <strong>4G vs 5G物理差异</strong>：4G典型部署是 BBU+RRU+无源天线（RRU与天线分离，有RF馈线损耗3-5dB）；5G典型部署是 BBU+AAU（AAU一体化，无馈线损耗）。但5G低频广覆盖站也可用RRU+天线方案。<strong>华为BBU5900同时支持4G和5G基带板</strong>，一个机柜管理双制式。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>全球无线设备厂商格局</h3>
+        <div class="compare-grid">
+          <div class="compare-card" style="border-left:3px solid var(--accent-red);">
+            <div class="cc-vendor" style="color:#ff7a8a;">华为 Huawei</div>
+            <div class="cc-product">全频段全系列4G/5G设备</div>
+            <div class="cc-spec">全球份额第一(~30%)<br>优势：全频段、Massive MIMO、节能<br>挑战：部分市场政策限制</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-cyan);">
+            <div class="cc-vendor" style="color:#5db8e8;">爱立信 Ericsson</div>
+            <div class="cc-product">Radio System系列</div>
+            <div class="cc-spec">份额第二(~25%)<br>优势：欧美市场、轻量化AAU<br>挑战：产品线不如华为全</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-violet);">
+            <div class="cc-vendor" style="color:#a89aff;">诺基亚 Nokia</div>
+            <div class="cc-product">AirScale系列</div>
+            <div class="cc-spec">份额第三(~20%)<br>优势：北美、ReefShark自研芯片<br>挑战：产品迭代偏慢</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-green);">
+            <div class="cc-vendor" style="color:#5deba0;">中兴 ZTE</div>
+            <div class="cc-product">UniRAN系列</div>
+            <div class="cc-spec">国内份额第二<br>优势：性价比、国内交付<br>挑战：海外品牌力弱</div>
+          </div>
+          <div class="compare-card" style="border-left:3px solid var(--accent-amber);">
+            <div class="cc-vendor" style="color:#ffb84d;">三星 Samsung</div>
+            <div class="cc-product">5G RAN + vRAN</div>
+            <div class="cc-spec">北美/韩国份额增长快<br>优势：O-RAN先锋、Verizon/SKT供应商<br>挑战：产品线不如华为全、国内无市场</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>厂商格局补充</strong>：除四大传统厂商外，<strong>三星</strong>在北美/韩国5G市场份额快速增长（Verizon/SKT/T-Mobile供应商），是O-RAN路线的最大受益者。此外<strong>Mavenir/Parallel Wireless</strong>等纯软件厂商以O-RAN切入新兴市场。产品经理在海外市场（尤其北美/日本）竞争时，三星是直接竞争对手；在国内市场，竞争主要是华为vs中兴。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>核心术语速查（4G/5G）</h3>
+        <table class="data-table">
+          <thead><tr><th>缩写</th><th>全称</th><th>一句话解释</th><th>4G/5G</th></tr></thead>
+          <tbody>
+            <tr><td>LTE</td><td>Long Term Evolution</td><td>4G无线接入技术标准</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>NR</td><td>New Radio</td><td>5G无线接入技术标准</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>BBU</td><td>Baseband Unit</td><td>基带处理单元，4G一体化，5G拆分CU+DU</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>AAU</td><td>Active Antenna Unit</td><td>有源天线单元=RRU+天线一体化</td><td><span class="tag tag-5g">5G主推</span></td></tr>
+            <tr><td>RRU</td><td>Remote Radio Unit</td><td>射频拉远单元，与天线分离</td><td><span class="tag tag-4g">4G主力</span></td></tr>
+            <tr><td>eCPRI</td><td>evolved CPRI</td><td>5G前传接口，以太网化</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>CPRI</td><td>Common Public Radio Interface</td><td>4G前传接口</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>EPC</td><td>Evolved Packet Core</td><td>4G核心网</td><td><span class="tag tag-4g">4G</span></td></tr>
+            <tr><td>5GC</td><td>5G Core</td><td>5G核心网，支持切片/边缘计算</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>NSA/SA</td><td>Non-Standalone / Standalone</td><td>NSA=5G基站接4G核心网；SA=5G端到端</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>MEC</td><td>Multi-access Edge Computing</td><td>边缘计算，UPF下沉实现低时延</td><td><span class="tag tag-5g">5G</span></td></tr>
+            <tr><td>VoLTE/VoNR</td><td>Voice over LTE/NR</td><td>4G/5G语音方案</td><td><span class="tag tag-4g">4G</span><span class="tag tag-5g">5G</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 02 区域市场与CTO对话 ==================== -->
+    <section class="section" id="sec-region">
+      <div class="section-title">区域市场与CTO对话指南</div>
+      <div class="section-subtitle">不同区域市场的4G/5G投资策略 · CTO关注点 · 典型问答</div>
+
+      <div class="card">
+        <h3>全球三大市场类型与4G/5G投资策略</h3>
+        <div class="region-card" style="border-left:4px solid var(--accent-green);">
+          <div class="rc-title" style="color:var(--accent-green);">领先市场（发达市场）：中国/韩国/日本/美国/西欧</div>
+          <div class="rc-body">
+            <strong>4G/5G状态</strong>：5G已规模商用，4G开始逐步减频但仍是VoLTE主力<br>
+            <strong>CTO关注</strong>：5G变现路径（ToB/ToC新业务）、5.5G演进节奏、TCO/节能、网络切片商用<br>
+            <strong>投资优先级</strong>：5G SA > 5G NSA扩容 > 4G优化 > 2G/3G退网<br>
+            <strong>典型痛点</strong>：5G投资回报不清晰；4G/5G双模运维复杂；毫米波部署成本高<br>
+            <strong>华为机会</strong>：5.5G先锋(ELAA/3CC)、AI节能、全场景ToB方案
+          </div>
+        </div>
+        <div class="region-card" style="border-left:4px solid var(--accent-cyan);">
+          <div class="rc-title" style="color:var(--accent-cyan);">新兴市场：东南亚/中东/拉美/印度</div>
+          <div class="rc-body">
+            <strong>4G/5G状态</strong>：4G为主力（覆盖率50-80%），5G刚起步或试点<br>
+            <strong>CTO关注</strong>：4G广覆盖（农村/偏远）、4G容量提升（城区）、5G试点选址、低成本建网<br>
+            <strong>投资优先级</strong>：4G扩容 > 4G广覆盖 > 2G/3G退网重耕 > 5G试点<br>
+            <strong>典型痛点</strong>：ARPU低（$2-5/月），预算有限；光纤回传匮乏；电力不稳定<br>
+            <strong>华为机会</strong>：RuralStar低成本农村覆盖、4G/5G共模BBU、微波回传方案
+          </div>
+        </div>
+        <div class="region-card" style="border-left:4px solid var(--accent-amber);">
+          <div class="rc-title" style="color:var(--accent-amber);">前沿市场：非洲/南亚/部分拉美</div>
+          <div class="rc-body">
+            <strong>4G/5G状态</strong>：3G/2G仍占30-50%，4G建设中，5G尚未提上日程<br>
+            <strong>CTO关注</strong>：2G/3G退网策略、4G基础覆盖、超低成本建网、移动金融(Mobile Money)<br>
+            <strong>投资优先级</strong>：3G->4G升级 > 2G维护 > 基础宽带 > 5G(远期)<br>
+            <strong>典型痛点</strong>：极端预算约束；无可靠电网（需太阳能供电）；用户终端以2G/3G为主<br>
+            <strong>华为机会</strong>：RuralStar太阳能版、4G最低成本方案、2G/3G/4G共模设备
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CTO对话模拟 - 典型问答</h3>
+        <div class="callout"><strong>场景1：领先市场CTO问</strong>"我们5G NSA已经覆盖了90%人口，但ARPU没涨，5G投资回报看不到。下一步该怎么投？"</div>
+        <p><strong>回答框架</strong>：①5G变现需要从ToC转向ToB（MEC+切片+行业专网）；②5G SA是ToB的基础（NSA无法做切片）；③建议：先在工业园区做SA试点+MEC，用行业专网收入验证ROI，再规模复制；④同时用AI节能降低5G OPEX（功耗是5G最大运营成本）。<br>
+        <strong>华为差异</strong>：5G ToB方案最成熟（超1000个MEC节点），AI节能降25%功耗。</p>
+
+        <div class="callout callout-amber"><strong>场景2：新兴市场CTO问</strong>"我们4G覆盖率才60%，农村建站成本太高。5G要不要现在就开始投？"</div>
+        <p><strong>回答框架</strong>：①4G覆盖是当前最大ROI（农村4G覆盖直接带来新用户和ARPU提升）；②农村用RuralStar方案，单站成本降30%，不需光纤（微波回传）；③5G建议先在首都CBD做试点（1-2个站），为未来ToB需求铺路，但不在农村铺5G；④2G/3G频段重耕为4G提升城区容量。<br>
+        <strong>华为差异</strong>：RuralStar专为新兴市场设计，4G/5G共模BBU保护投资。</p>
+
+        <div class="callout callout-red"><strong>场景3：前沿市场CTO问</strong>"我们3G用户还占40%，退3G用户会流失。但3G运维成本太高，怎么办？"</div>
+        <p><strong>回答框架</strong>：①3G退网是必然趋势，关键是"软退网"策略；②先用4G volte替换3G语音，推动终端补贴让用户换4G手机；③3G频段重耕为4G（900MHz/2100MHz），用一张4G网同时承载语音和数据；④2G暂时保留（物联网/GSM用户），用SDR技术2G/3G/4G共模。<br>
+        <strong>华为差异</strong>：华为SDR基站支持2G/3G/4G/5G四模共框，平滑退网不丢用户。</p>
+
+        <div class="callout"><strong>场景4：任意市场CTO问</strong>"华为设备和爱立信/诺基亚相比，核心差异在哪？"</div>
+        <p><strong>回答框架</strong>：①<strong>全频段最全</strong>：从700MHz到毫米波全覆盖，友商部分频段缺产品；②<strong>AAU最轻最低功耗</strong>：64T仅18kg/850W vs 友商22-25kg/950-1000W；③<strong>4G/5G四模共框</strong>：一个BBU管2G/3G/4G/5G，友商需多框；④<strong>行业定制最强</strong>：防爆/矿用/海事等友商无对应产品；⑤<strong>5.5G领先</strong>：ELAA/3CC商用进度领先1-2年。<strong>劣势坦诚</strong>：价格偏高（用5年TCO说服），部分市场政策受限。</p>
+      </div>
+
+      <div class="card">
+        <h3>不同区域4G/5G投资节奏对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>领先市场</th><th>新兴市场</th><th>前沿市场</th></tr></thead>
+          <tbody>
+            <tr><td>4G投资重心</td><td>减频优化、退网准备</td><td>广覆盖+城区扩容</td><td>3G->4G升级、基础覆盖</td></tr>
+            <tr><td>5G投资节奏</td><td>SA规模部署+5.5G演进</td><td>首都/核心城市试点</td><td>远期规划(3-5年后)</td></tr>
+            <tr><td>2G/3G策略</td><td>已完成或进行中退网</td><td>启动退网、频段重耕</td><td>2G保留、3G逐步退</td></tr>
+            <tr><td>单站CAPEX</td><td>高（5G 64T为主）</td><td>中（4G为主+5G试点）</td><td>低（4G低成本方案）</td></tr>
+            <tr><td>关键华为产品</td><td>AAU5613/ELAA/MEC</td><td>AAU5636/RuralStar/微波</td><td>RuralStar/SDR/最低成本RRU</td></tr>
+            <tr><td>CTO决策周期</td><td>6-12月（战略驱动）</td><td>12-24月（ROI驱动）</td><td>24-36月（预算驱动）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 03 无线技术演进 ==================== -->
+    <section class="section" id="sec-evolution">
+      <div class="section-title">无线技术演进 · 从4G到5G</div>
+      <div class="section-subtitle">3GPP标准路线 · 4G LTE能力边界 · 5G NR关键突破 · 频谱策略</div>
+
+      <div class="card">
+        <h3>3GPP标准演进路线（4G -> 5G -> 5.5G）</h3>
+        <div class="evol-timeline">
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-amber);">4G LTE Rel-8~9 (2010)</div>
+            <div class="evol-desc">OFDMA取代CDMA；峰值下行100Mbps；VoLTE尚未成熟</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-amber);">4G LTE-A Rel-10~12 (2013-2015)</div>
+            <div class="evol-desc">载波聚合(CA)、MIMO 4T4R、峰值1Gbps；VoLTE规模商用</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-amber);">4G LTE-A Pro Rel-13~14 (2016-2017)</div>
+            <div class="evol-desc">NB-IoT、LAA、256QAM下行、Massive MIMO首引入(64T64R试验)</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-cyan);">5G NR Rel-15 (2018)</div>
+            <div class="evol-desc">eMBB基础能力；NSA+SA；Sub-6G+毫米波；峰值10Gbps</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-cyan);">5G NR Rel-16 (2020)</div>
+            <div class="evol-desc">URLLC完善、工业IoT、V2X；5G ToB技术基础</div>
+          </div>
+          <div class="evol-item right">
+            <div class="evol-title" style="color:var(--accent-cyan);">5G NR Rel-17 (2022)</div>
+            <div class="evol-desc">RedCap轻量化、NTN卫星通信、增强定位</div>
+          </div>
+          <div class="evol-item left">
+            <div class="evol-title" style="color:var(--accent-violet);">5.5G Rel-18+ (2024+)</div>
+            <div class="evol-desc">ELAA超大规模天线、3CC聚合、AI空口、通感一体；下行10Gbps->20Gbps+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G vs 5G 核心技术对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-4g">4G LTE</span></th><th><span class="tag tag-5g">5G NR</span></th><th>为什么变</th></tr></thead>
+          <tbody>
+            <tr><td>波形</td><td>OFDMA（CP-OFDM）</td><td>CP-OFDM + DFT-s-OFDM</td><td>5G增加DFT-s-OFDM优化上行覆盖</td></tr>
+            <tr><td>子载波间隔</td><td>固定15kHz</td><td>15/30/60/120/240kHz灵活</td><td>适应不同频段和场景（低时延用大SCS）</td></tr>
+            <tr><td>最大带宽</td><td>20MHz/载波</td><td>100MHz(FR1)/400MHz(FR2)</td><td>5G单载波带宽大幅提升</td></tr>
+            <tr><td>帧结构</td><td>TDD/FDD固定</td><td>灵活时隙配比（DDDSU/DSUUU等）</td><td>适应上下行不对称业务需求</td></tr>
+            <tr><td>天线</td><td>2T2R/4T4R/8T8R为主</td><td>32T/64T Massive MIMO为主</td><td>容量需求驱动多天线</td></tr>
+            <tr><td>调制</td><td>最高64QAM(上行)/256QAM(下行)</td><td>最高256QAM(上行/下行)</td><td>提升频谱效率</td></tr>
+            <tr><td>编码</td><td>Turbo码</td><td>LDPC(数据)+Polar(控制)</td><td>大数据量译码效率更高</td></tr>
+            <tr><td>核心网</td><td>EPC</td><td>5GC（SA）/ EPC（NSA）</td><td>5GC支持切片、边缘计算</td></tr>
+            <tr><td>峰值速率</td><td>~1Gbps（LTE-A CA）</td><td>~10Gbps（5G NR）</td><td>10倍提升</td></tr>
+            <tr><td>时延</td><td>~10ms（空口）</td><td>~1ms（URLLC）</td><td>支撑工业控制等低时延场景</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：5G不是"全新的技术"，而是在4G基础上<strong>全面增强</strong>。OFDM波形相同，但子载波间隔灵活化、带宽扩大10倍、天线从8T升到64T、编码从Turbo换LDPC。<strong>理解4G是理解5G的基础</strong>--很多5G技术（如CA、MIMO、256QAM）在4G后期已经引入，5G只是规模化和极致化。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>频谱策略 - 4G/5G共存与重耕</h3>
+        <table class="data-table">
+          <thead><tr><th>频段</th><th>频率</th><th>当前用途</th><th>重耕方向</th><th>华为设备</th></tr></thead>
+          <tbody>
+            <tr><td>700/800MHz</td><td>低频</td><td>4G广覆盖/5G打底(部分)</td><td>5G打底覆盖</td><td>RRU5258/AAU5313</td></tr>
+            <tr><td>900/1800MHz</td><td>低中频</td><td>2G/3G退网后重耕4G</td><td>4G->5G重耕</td><td>SDR多模RRU</td></tr>
+            <tr><td>2.1GHz</td><td>中频</td><td>3G/4G共存</td><td>4G扩容/5G SUL</td><td>多模RRU/AAU</td></tr>
+            <tr><td>2.6GHz</td><td>中频</td><td>4G主力/5G n41</td><td>4G/5G动态共享</td><td>AAU5613/5639</td></tr>
+            <tr><td>3.5GHz</td><td>中频</td><td>5G n78主力</td><td>5G容量层</td><td>AAU5636/5612</td></tr>
+            <tr><td>4.9GHz</td><td>中高频</td><td>5G n79补充</td><td>行业专网/3CC</td><td>AAU5637</td></tr>
+            <tr><td>26/39GHz</td><td>毫米波</td><td>5G FR2(海外)</td><td>热点容量</td><td>AAU5640(海外)</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>频谱重耕是CTO最关心的问题之一</strong>：2G/3G退网后释放的频段（900MHz/1800MHz/2100MHz）是宝贵资源。重耕为4G可以立即提升覆盖和容量，重耕为5G可以增强打底覆盖。但重耕需要终端支持对应频段，且要平滑迁移存量用户。<strong>华为SDR（软件定义射频）技术可以在同一RRU上通过软件升级切换制式</strong>，无需换硬件，是重耕方案的核心竞争力。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>DSS动态频谱共享 - 4G/5G同频共存的关键技术</h3>
+        <p>当运营商没有新频段给5G，需要在<strong>同一频段上同时跑4G和5G</strong>时，DSS（Dynamic Spectrum Sharing）是关键解决方案。CTO问"现有4G频段能不能同时跑5G？"时必须能回答：</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>原理</td><td>基站根据4G和5G的实时负载，<strong>动态分配子帧资源</strong>。4G用户多时多分4G，5G用户多时多分5G，毫秒级切换</td></tr>
+            <tr><td>关键技术</td><td>4G侧：MBSFN子帧配置（避免CRS干扰5G）；5G侧：Rate Matching around CRS（5G避开4G参考信号位置）</td></tr>
+            <tr><td>优点</td><td>无需等2G/3G退网释放频段，<strong>立即在现有4G频段上叠加5G</strong>，加速5G覆盖</td></tr>
+            <tr><td>代价</td><td>有10-15%的开销损失（MBSFN+CRS避让开销），4G和5G各自峰值速率略降</td></tr>
+            <tr><td>适用场景</td><td>低频段（700/900/1800MHz）4G/5G共存；5G覆盖初期用DSS快速扩展低频5G覆盖</td></tr>
+            <tr><td>替代方案</td><td>重耕（Refarming）：直接将频段从4G切换为5G，但需迁移4G用户，DSS是平滑过渡手段</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：DSS是"<strong>4G/5G同频段共存</strong>"的过渡技术，不是"4G/5G共享频谱"的永久方案。最终目标是频段重耕为5G独占。但DSS让运营商<strong>不必等用户迁移就能开5G</strong>，在5G覆盖初期价值巨大。华为DSS方案支持毫秒级动态切换，开销控制在10%以内，业界领先。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>NSA vs SA - 5G组网模式选择</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>NSA（非独立组网）</th><th>SA（独立组网）</th></tr></thead>
+          <tbody>
+            <tr><td>核心网</td><td>4G EPC</td><td>5GC</td></tr>
+            <tr><td>锚点</td><td>4G LTE基站为锚点</td><td>5G NR基站独立</td></tr>
+            <tr><td>网络切片</td><td>不支持</td><td>支持</td></tr>
+            <tr><td>边缘计算MEC</td><td>受限</td><td>完整支持</td></tr>
+            <tr><td>URLLC低时延</td><td>不支持</td><td>支持</td></tr>
+            <tr><td>部署成本</td><td>低（复用4G核心网）</td><td>高（需建5GC）</td></tr>
+            <tr><td>适用市场</td><td>领先市场初期/新兴市场试点</td><td>领先市场ToB/行业专网</td></tr>
+            <tr><td>4G/5G关系</td><td>5G依赖4G，不可独立</td><td>4G/5G各自独立运营</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>CTO决策逻辑</strong>：NSA是"低成本快速上5G"（复用4G核心网，ToC速率提升），SA是"5G全能力"（支持切片/MEC/URLLC，ToB必需）。<strong>大多数运营商从NSA起步，逐步演进到SA</strong>。但ToB行业客户必须SA。产品经理需要帮客户判断：如果客户目标是ToC提速，NSA够用；如果目标是ToB行业市场，必须上SA。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>EN-DC双连接 - NSA的核心工作原理</h3>
+        <p>NSA模式下，终端同时连接4G LTE（锚点）和5G NR（辅站），称为<strong>EN-DC（E-UTRA-NR Dual Connectivity）</strong>。理解EN-DC是理解NSA的基础：</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>锚点(MCG)</td><td>4G LTE eNB，负责RRC连接、移动性管理、控制面</td></tr>
+            <tr><td>辅站(SCG)</td><td>5G NR gNB，仅承担用户面数据分流，无独立RRC</td></tr>
+            <tr><td>控制面</td><td>经4G LTE传输（UE -> eNB -> EPC）</td></tr>
+            <tr><td>用户面</td><td>可经4G、5G或双路分流（Split Bearer），提升速率</td></tr>
+            <tr><td>切换</td><td>UE移动时先切换4G锚点，5G辅站跟随增删</td></tr>
+            <tr><td>语音</td><td>VoLTE（5G不承载语音），5G断开时语音不受影响</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：NSA的EN-DC意味着<strong>5G性能依赖4G锚点质量</strong>--如果4G信号差，5G速率也会受限（控制面走4G）。同时NSA不支持网络切片和MEC下沉，ToB场景必须SA。这是"为什么NSA够用于ToC但不够用于ToB"的根本原因。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>语音演进路径 - VoLTE -> EPS Fallback -> VoNR</h3>
+        <p>语音是运营商最基础的业务，<strong>CTO必问"5G上语音怎么办"</strong>。4G/5G语音演进有三条路径：</p>
+        <table class="data-table">
+          <thead><tr><th>方案</th><th>原理</th><th>5G组网</th><th>时延</th><th>适用阶段</th><th>客户挑战</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="tag tag-4g">VoLTE</span></td>
+              <td>语音承载在4G LTE上，5G NSA仅承载数据</td>
+              <td>NSA</td>
+              <td>~50ms</td>
+              <td>NSA阶段（5G初期）</td>
+              <td>5G覆盖空洞时语音不受影响（回落4G），但无法享受5G新特性</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-amber">EPS Fallback</span></td>
+              <td>5G SA发起语音呼叫时，回落到4G LTE用VoLTE承载</td>
+              <td>SA（初期）</td>
+              <td>~100ms+（含切换）</td>
+              <td>SA初期（VoNR未规模部署）</td>
+              <td>回落增加呼叫建立时延；5G覆盖区域无法做5G语音；回落成功率是KPI</td>
+            </tr>
+            <tr>
+              <td><span class="tag tag-5g">VoNR</span></td>
+              <td>语音直接承载在5G NR上（5G IMS）</td>
+              <td>SA</td>
+              <td>~40ms</td>
+              <td>SA成熟期（5G覆盖连续后）</td>
+              <td>需要5G连续覆盖保障；VoNR终端渗透率；5G弱覆盖时仍需EPS Fallback兜底</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>CTO对话要点</strong>：运营商从NSA->SA演进时，语音策略是最复杂的迁移问题。建议路线：NSA阶段用VoLTE -> SA初期用EPS Fallback（5G覆盖不连续）-> SA成熟期切换VoNR。<strong>华为差异化</strong>：支持VoNR与VoLTE无缝切换（Fast Return），呼叫接续时延业界最低；5G弱覆盖智能触发EPS Fallback，保障语音连续性。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>5GC核心网架构 - 理解切片与MEC的基础</h3>
+        <p>5G核心网（5GC）采用<strong>SBA服务化架构</strong>，与4G EPC的节点式架构完全不同。理解5GC是理解网络切片和MEC的基础：</p>
+        <table class="data-table">
+          <thead><tr><th>网元</th><th>全称</th><th>功能</th><th>4G对应</th></tr></thead>
+          <tbody>
+            <tr><td>AMF</td><td>Access and Mobility Management Function</td><td>接入和移动性管理（连接、注册、切换）</td><td>MME（部分）</td></tr>
+            <tr><td>SMF</td><td>Session Management Function</td><td>会话管理（建立/修改/释放PDU会话）</td><td>MME/SGW-C（部分）</td></tr>
+            <tr><td>UPF</td><td>User Plane Function</td><td>用户面转发（数据包路由、QoS执行）</td><td>SGW-U/PGW-U</td></tr>
+            <tr><td>PCF</td><td>Policy Control Function</td><td>策略控制（QoS规则、计费策略）</td><td>PCRF</td></tr>
+            <tr><td>UDM</td><td>Unified Data Management</td><td>统一数据管理（用户签约、鉴权）</td><td>HSS</td></tr>
+            <tr><td>AUSF</td><td>Authentication Server Function</td><td>鉴权服务</td><td>HSS（部分）</td></tr>
+            <tr><td>NRF</td><td>NF Repository Function</td><td>网元注册与发现（SBA核心）</td><td>无（4G无SBA）</td></tr>
+            <tr><td>NSSF</td><td>Network Slice Selection Function</td><td>切片选择（5G独有）</td><td>无</td></tr>
+          </tbody>
+        </table>
+        <h4>网络切片实现原理</h4>
+        <p>切片的本质是<strong>同一物理基础设施上虚拟出多个逻辑网络</strong>，每个切片有独立的：</p>
+        <ul>
+          <li><strong>UPF实例</strong>：不同切片的数据走不同UPF（行业专网UPF可下沉到园区内）</li>
+          <li><strong>QoS策略</strong>：URLLC切片配置高优先级低时延QoS；mMTC切片配置低速率大连接QoS</li>
+          <li><strong>计算/存储资源</strong>：切片间资源隔离，互不影响</li>
+          <li><strong>S-NSSAI标识</strong>：每个切片有唯一标识，UE注册时NSSF选择对应切片</li>
+        </ul>
+        <h4>MEC边缘计算部署架构</h4>
+        <ul>
+          <li><strong>UPF下沉</strong>：将UPF部署在园区/基站侧，数据本地转发，不经核心网回传，降低时延</li>
+          <li><strong>MEC平台</strong>：在UPF同址部署边缘计算资源（x86服务器），应用就近运行</li>
+          <li><strong>典型时延</strong>：UPF下沉到园区后，端到端时延可从50ms降至10ms以内</li>
+        </ul>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：5GC的SBA架构让网元可以灵活组合，这是切片的技术基础。<strong>切片≠VPN</strong>--VPN只是网络隧道，切片是端到端资源隔离（无线+传输+核心网）。<strong>MEC的核心是UPF下沉</strong>，不是在基站旁边放台服务器那么简单。CTO问"切片怎么收费"时，回答：切片按SLA等级（时延/带宽/可靠性）差异化定价，URLLC切片溢价3-5倍。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>5.5G关键技术专题（Rel-18+）</h3>
+        <p>5.5G不是营销概念，是3GPP Rel-18/19定义的技术演进。以下技术已在评价中被指出"仅提名字未展开"，现补充技术原理：</p>
+        <h4>通感一体（Integrated Sensing and Communication, ISAC）</h4>
+        <ul>
+          <li><strong>原理</strong>：5G信号本身是电磁波，在通信的同时可做雷达感知。基站发射信号->目标反射->基站接收回波->通过时延/多普勒/角度估计目标位置、速度、形状</li>
+          <li><strong>关键挑战</strong>：通信信号和感知信号复用同一频谱资源，需设计兼顾通信和感知的波形（OFDM-based sensing）</li>
+          <li><strong>典型应用</strong>：无人机检测（低空安防）、车辆测速（智慧交通）、呼吸监测（智慧医疗）、航道监控（海事）</li>
+          <li><strong>华为进展</strong>：2024年演示通感一体在4.9GHz频段实现1km内无人机检测，精度~0.5m</li>
+        </ul>
+        <h4>AI空口（AI/ML for Air Interface）</h4>
+        <ul>
+          <li><strong>信道估计增强</strong>：用AI替代传统插值算法，在高速移动/弱信号场景下提升信道估计精度</li>
+          <li><strong>波束管理</strong>：AI预测终端移动轨迹，提前切换波束，减少波束失败率</li>
+          <li><strong>调度优化</strong>：AI学习业务流量模式，预测性调度资源，降低时延、提升利用率</li>
+          <li><strong>功控优化</strong>：AI预测干扰变化，动态调整发射功率，降低能耗</li>
+          <li><strong>标准化进展</strong>：Rel-18研究项目（SI）已立项，Rel-19进入工作项目（WI），首个AI空口标准预计2025-2026</li>
+        </ul>
+        <h4>RedCap（Reduced Capability, nrRedCap）</h4>
+        <ul>
+          <li><strong>定位</strong>：5G的"轻量化"终端，填补5G eMBB（高速高成本）和NB-IoT（低速低成本）之间的空白</li>
+          <li><strong>关键缩减</strong>：带宽从100MHz降至20MHz；天线从4R降至1R/2R；调制最高64QAM；不支持CA</li>
+          <li><strong>成本降低</strong>：终端模组成本目标降低50-60%（从$200+降至$80-100）</li>
+          <li><strong>典型应用</strong>：工业传感器、视频监控（上行）、可穿戴设备、车联网中速终端</li>
+          <li><strong>4G/5G关系</strong>：RedCap替代4G Cat-4/Cat-1的市场，推动物联网从4G迁移到5G</li>
+        </ul>
+        <div class="callout callout-amber">
+          <strong>CTO对话要点</strong>：5.5G的通感一体是<strong>新收入来源</strong>（低空经济/海事/交通感知服务），不只是技术升级。RedCap是<strong>5G物联网规模化</strong>的关键--只有终端成本降下来，5G才能替代4G Cat-1/Cat-4做物联网。AI空口则是<strong>降本增效</strong>的核心（预计降低15-20%功耗）。产品经理推介5.5G时要讲"新收入+降成本"双逻辑。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>5G QoS体系 - 切片质量保障的底层机制</h3>
+        <p><strong>CTO必问："你说的网络切片怎么保证服务质量？不同切片怎么区分优先级？"</strong> 理解5G QoS是回答这个问题的关键：</p>
+        <h4>QoS分层架构（5G vs 4G关键差异）</h4>
+        <ul>
+          <li><strong>4G</strong>：EPS Bearer（承载）端到端映射QCI，一个承载一个QoS等级</li>
+          <li><strong>5G</strong>：<strong>QoS Flow</strong>取代承载，更细粒度。一个PDU会话可包含多个QoS Flow，每个Flow独立QoS控制</li>
+        </ul>
+        <table class="data-table">
+          <thead><tr><th>5QI</th><th>优先级</th><th>时延预算</th><th>丢包率</th><th>典型业务</th><th>对应切片</th></tr></thead>
+          <tbody>
+            <tr><td>9</td><td>低</td><td>300ms</td><td>10⁻³</td><td>Web浏览/文件传输</td><td>eMBB默认</td></tr>
+            <tr><td>1</td><td>高</td><td>100ms</td><td>10⁻²</td><td>VoNR语音</td><td>VoNR专用</td></tr>
+            <tr><td>85</td><td>高</td><td>5ms</td><td>10⁻⁵</td><td>工业远程控制</td><td>URLLC切片</td></tr>
+            <tr><td>84</td><td>高</td><td>30ms</td><td>10⁻⁵</td><td>电差动保护</td><td>电力切片</td></tr>
+            <tr><td>70</td><td>中</td><td>200ms</td><td>10⁻⁶</td><td>视频监控</td><td>mMTC/视频</td></tr>
+          </tbody>
+        </table>
+        <h4>QoS Flow -> DRB映射机制</h4>
+        <ul>
+          <li><strong>SDAP层</strong>（5G新增）：负责QoS Flow到DRB（数据无线承载）的映射</li>
+          <li><strong>反射映射</strong>：终端根据下行包的QoS Flow ID自动学习上行映射，减少信令开销</li>
+          <li><strong>非保证速率Flow</strong>：不分配GBR，尽力而为（Web/视频）；<strong>保证速率Flow</strong>：分配GBR/MGBR（语音/工业控制）</li>
+        </ul>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：QoS Flow是5G切片质量保障的"最后一公里"。<strong>切片在核心网层做资源隔离，QoS Flow在空口层做优先级保障</strong>。一个URLLC切片内的工业控制业务，5QI=85，时延预算5ms，丢包率10⁻⁵--这就是"切片保证质量"的定量含义。CTO问"切片怎么计费"时，可以按5QI等级差异化定价：URLLC(5QI 84/85)溢价3-5倍，eMBB(5QI 9)基准价。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>移动性管理 - RRC状态与切换机制</h3>
+        <p><strong>CTO必问："用户移动时5G怎么保证业务连续性？切换会不会掉话？"</strong></p>
+        <h4>5G RRC三态（vs 4G两态）</h4>
+        <table class="data-table">
+          <thead><tr><th>RRC状态</th><th>4G</th><th>5G</th><th>特征</th><th>典型时延</th></tr></thead>
+          <tbody>
+            <tr><td>RRC_IDLE</td><td>有</td><td>有</td><td>无RRC连接，无上下文，寻呼唤醒</td><td>连接建立~100ms</td></tr>
+            <tr><td>RRC_INACTIVE</td><td>无</td><td><span class="tag tag-5g">5G新增</span></td><td>保留UE上下文和RAN区域，快速恢复</td><td>恢复~15ms（10x快于IDLE）</td></tr>
+            <tr><td>RRC_CONNECTED</td><td>有</td><td>有</td><td>有RRC连接，有上下文，可传数据</td><td>已连接</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>RRC_INACTIVE的价值</strong>：5G新增INACTIVE态是<strong>节能+低时延的关键创新</strong>。物联网终端大量时间不收发数据但需快速响应，INACTIVE态保留上下文，恢复连接只需15ms（IDLE态需100ms+），同时终端功耗降低90%+。这对mMTC场景（海量物联网终端）至关重要。
+        </div>
+        <h4>切换类型与连续性保障</h4>
+        <table class="data-table">
+          <thead><tr><th>切换类型</th><th>触发条件</th><th>4G/5G</th><th>连续性保障</th></tr></thead>
+          <tbody>
+            <tr><td>站内切换</td><td>同一基站内换扇区/频段</td><td>4G/5G</td><td>无损切换，时延<10ms</td></tr>
+            <tr><td>Xn切换</td><td>基站间直连切换（5G gNB间）</td><td><span class="tag tag-5g">5G</span></td><td>不需核心网参与，时延~30ms</td></tr>
+            <tr><td>N2切换</td><td>经核心网AMF切换</td><td>4G/5G</td><td>跨AMF/跨厂商，时延~50ms</td></tr>
+            <tr><td>条件切换(CHO)</td><td>5G新增，预配置切换条件</td><td><span class="tag tag-5g">5G</span></td><td>终端自主判断切换时机，减少失败率</td></tr>
+            <tr><td>inter-RAT切换</td><td>5G->4G回落（EPS Fallback）</td><td>4G/5G</td><td>语音回落场景，需测量+切换双重时延</td></tr>
+            <tr><td>DAPS切换</td><td>5G新增，源站保持连接直到目标站建立</td><td><span class="tag tag-5g">5G</span></td><td>零中断切换（<0ms中断），URLLC场景</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>CTO对话要点</strong>：5G移动性管理相比4G的三大进步：①RRC_INACTIVE态省电+快恢复；②Xn接口直连切换减少核心网负担；③条件切换(CHO)和DAPS切换降低切换失败率和中断时间。<strong>华为在高铁等高速移动场景的切换优化业界领先</strong>，BookRR+CHO可将350km/h场景的切换成功率从95%提升到99%+。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>5G网络安全架构 - 电力/金融客户必问</h3>
+        <p>行业客户（特别是电力/金融/政府）的安全要求极高，<strong>CTO必问"5G切片怎么隔离？空口怎么加密？"</strong></p>
+        <table class="data-table">
+          <thead><tr><th>安全层</th><th>机制</th><th>4G vs 5G</th><th>产品经理关注</th></tr></thead>
+          <tbody>
+            <tr><td>空口加密</td><td>PDCP层对用户面/控制面数据加密</td><td>4G: NEA1/NEA2; 5G: NEA1/NEA2/NEA3（新增256位国密）</td><td>国内电力客户要求国密算法(SM4)，华为支持NEA3国密</td></tr>
+            <tr><td>完整性保护</td><td>防止数据被篡改</td><td>5G新增用户面完整性保护（4G仅控制面）</td><td>工业控制数据不可篡改，5G补齐4G短板</td></tr>
+            <tr><td>切片隔离</td><td>不同切片间资源/数据隔离</td><td>5G独有</td><td>硬隔离(独立UPF/独立频段) vs 软隔离(共享资源+QoS隔离)</td></tr>
+            <tr><td>二次认证</td><td>切片级独立鉴权</td><td>5G新增</td><td>行业切片可要求二次AAA认证（如企业Radius），公网用户不感知</td></tr>
+            <tr><td>SBA安全</td><td>网元间服务化接口双向认证+加密</td><td>5G独有（SBA架构）</td><td>NRF注册需证书认证，防止伪网元注入</td></tr>
+            <tr><td>用户隐私</td><td>SUCI加密（永久标识加密）</td><td>5G: SUCI加密; 4G: IMSI明文传输</td><td>5G解决4G IMSI嗅探漏洞，防位置追踪</td></tr>
+          </tbody>
+        </table>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为安全差异化</div>
+            <div class="dim-body">支持全套国密算法(SM2/SM3/SM4)；切片硬隔离方案（独立UPF+独立DN）；5G LAN type-c专网完全隔离；通过等保2.0三级认证</div>
+          </div>
+          <div class="dim-card dim-challenge">
+            <div class="dim-title">CTO对话要点</div>
+            <div class="dim-body">电力客户：强调硬切片+国密+二次认证；金融客户：强调SUCI隐私保护+用户面完整性保护；政府客户：强调数据不出院(UPF下沉)+独立DN隔离。<strong>关键句式</strong>："5G的安全架构比4G高一个等级--4G的IMI嗅探漏洞在5G已修复，4G的用户面不加密在5G已补齐"</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 04 产品架构总览 ==================== -->
+    <section class="section" id="sec-architecture">
+      <div class="section-title">产品架构总览 · 4G/5G对比</div>
+      <div class="section-subtitle">4G D-RAN vs 5G C-RAN · CU/DU分离 · 动态信号流 · 厂商架构对比</div>
+
+      <div class="card">
+        <h3>4G vs 5G RAN架构对比</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-4g">4G LTE</span></th><th><span class="tag tag-5g">5G NR</span></th><th>变化原因</th></tr></thead>
+          <tbody>
+            <tr><td>基带架构</td><td>BBU一体化</td><td>BBU拆分CU+DU</td><td>功能分层，支持虚拟化</td></tr>
+            <tr><td>射频架构</td><td>RRU+无源天线（分离）</td><td>AAU(一体化)或RRU+天线</td><td>减少馈线损耗，支持Massive MIMO</td></tr>
+            <tr><td>前传接口</td><td>CPRI</td><td>eCPRI（以太网化）</td><td>Massive MIMO通道暴增，CPRI带宽不够</td></tr>
+            <tr><td>核心网</td><td>EPC</td><td>5GC(SA)或EPC(NSA)</td><td>SA支持切片、边缘计算</td></tr>
+            <tr><td>组网方式</td><td>以D-RAN为主</td><td>C-RAN与D-RAN并存</td><td>C-RAN省机房、支持协作</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>CU/DU分离原理 - 协议栈分层</h3>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;">
+          <div style="flex:1;min-width:280px;">
+            <div class="stack-layer layer-rrc"><span class="layer-name">RRC</span><span class="layer-desc">无线资源控制</span></div>
+            <div class="stack-layer layer-sdap"><span class="layer-name">SDAP</span><span class="layer-desc">QoS流映射（5G新增）</span></div>
+            <div class="stack-layer layer-pdcp"><span class="layer-name">PDCP</span><span class="layer-desc">加密/头压缩</span></div>
+            <div class="split-line"><span class="split-label">CU-DU 分离 (F1)</span></div>
+            <div class="stack-layer layer-rlc"><span class="layer-name">RLC</span><span class="layer-desc">分段/ARQ重传</span></div>
+            <div class="stack-layer layer-mac"><span class="layer-name">MAC</span><span class="layer-desc">调度/HARQ</span></div>
+            <div class="stack-layer layer-phy"><span class="layer-name">PHY</span><span class="layer-desc">编码/调制/MIMO</span></div>
+            <div class="split-line"><span class="split-label">DU-AAU 分离 (eCPRI)</span></div>
+            <div class="stack-layer" style="background:rgba(77,255,158,.08);border-color:rgba(77,255,158,.25);color:var(--accent-green);">
+              <span class="layer-name">RF</span><span class="layer-desc">射频收发+天线</span>
+            </div>
+          </div>
+          <div style="flex:1;min-width:240px;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+            <div style="background:rgba(45,212,255,.06);border:1px solid rgba(45,212,255,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-cyan);">CU 的角色</h4>
+              <p style="font-size:13px;margin:0;">管理多个DU，非实时处理（RRC/PDCP）。可虚拟化。4G无此拆分。</p>
+            </div>
+            <div style="background:rgba(139,124,255,.06);border:1px solid rgba(139,124,255,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-violet);">DU 的角色</h4>
+              <p style="font-size:13px;margin:0;">实时处理（RLC/MAC/PHY-high），靠近AAU部署。</p>
+            </div>
+            <div style="background:rgba(77,255,158,.06);border:1px solid rgba(77,255,158,.2);border-radius:12px;padding:16px;">
+              <h4 style="margin:0 0 8px;color:var(--accent-green);">AAU 的角色</h4>
+              <p style="font-size:13px;margin:0;">PHY-lower + 射频 + 天线一体。4G用RRU+天线分离。</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>4G/5G关键差异</strong>：4G BBU是一体化盒子，无CU/DU拆分；5G引入CU/DU分离，CU可集中虚拟化，DU靠近AAU。<strong>4G前传用CPRI，5G用eCPRI</strong>（带宽需求从10G升至25G/100G）。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>动态数据流：从核心网到终端</h3>
+        <div class="diagram-box">
+          <svg width="660" height="300" viewBox="0 0 660 300">
+            <path id="data-path-arch" d="M 30 150 L 120 150 L 200 150 L 300 150 L 400 150 L 500 150 L 600 150" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+            <rect x="20" y="120" width="80" height="60" rx="8" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/>
+            <text x="60" y="155" text-anchor="middle" class="svg-title" fill="#8b7cff">5GC/EPC</text>
+            <rect x="130" y="120" width="80" height="60" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="170" y="148" text-anchor="middle" class="svg-title" fill="#2dd4ff">CU</text>
+            <text x="170" y="165" text-anchor="middle" class="svg-mono">RRC/SDAP/PDCP</text>
+            <line x1="210" y1="150" x2="270" y2="150" stroke="#ff5d6c" stroke-width="1.5" class="flow-line"/>
+            <text x="240" y="140" text-anchor="middle" class="svg-mono" fill="#ff5d6c">F1</text>
+            <rect x="270" y="120" width="80" height="60" rx="8" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/>
+            <text x="310" y="148" text-anchor="middle" class="svg-title" fill="#ffb84d">DU</text>
+            <text x="310" y="165" text-anchor="middle" class="svg-mono">RLC/MAC/PHY</text>
+            <line x1="350" y1="150" x2="410" y2="150" stroke="#4dff9e" stroke-width="1.5" class="flow-line"/>
+            <text x="380" y="140" text-anchor="middle" class="svg-mono" fill="#4dff9e">eCPRI</text>
+            <rect x="410" y="120" width="80" height="60" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+            <text x="450" y="148" text-anchor="middle" class="svg-title" fill="#4dff9e">AAU</text>
+            <text x="450" y="165" text-anchor="middle" class="svg-mono">RF+天线</text>
+            <line x1="490" y1="150" x2="570" y2="150" stroke="#2dd4ff" stroke-width="1.5" class="flow-line"/>
+            <text x="530" y="140" text-anchor="middle" class="svg-mono" fill="#2dd4ff">Uu空口</text>
+            <rect x="570" y="120" width="60" height="60" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="600" y="155" text-anchor="middle" class="svg-title">UE</text>
+            <circle r="5" fill="#2dd4ff" opacity="0.9"><animateMotion dur="4s" repeatCount="indefinite"><mpath href="#data-path-arch"/></animateMotion></circle>
+            <circle r="4" fill="#4dff9e" opacity="0.7"><animateMotion dur="4s" repeatCount="indefinite" begin="1s"><mpath href="#data-path-arch"/></animateMotion></circle>
+            <circle r="4" fill="#ffb84d" opacity="0.7"><animateMotion dur="4s" repeatCount="indefinite" begin="2s"><mpath href="#data-path-arch"/></animateMotion></circle>
+            <text x="60" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">核心网 ~2-5ms</text>
+            <text x="170" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">CU ~0.5ms</text>
+            <text x="310" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">DU ~0.5ms</text>
+            <text x="450" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">AAU ~0.2ms</text>
+            <text x="600" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">空口 ~1-4ms</text>
+            <text x="330" y="265" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G: EPC->BBU->CPRI->RRU->空口->UE（无CU/DU拆分）</text>
+            <text x="330" y="282" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G: 5GC->CU->F1->DU->eCPRI->AAU->空口->UE</text>
+          </svg>
+          <div class="diagram-caption">图 4-1 · 4G/5G动态数据流对比（数据包动画流动）</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 vs 友商架构方案对比</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为 CloudRAN</div>
+            <div class="dim-body"><strong>CU虚拟化</strong>：CU可运行在通用服务器<br><strong>SuperBAND BBU</strong>：单框多频段<br><strong>GUL一体化</strong>：2G/3G/4G/5G共框<br><strong>4G/5G共模</strong>：一个BBU同时管4G和5G</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">爱立信 Radio System</div>
+            <div class="dim-body"><strong>双模BBU</strong>：5G+4G共框<br><strong>RAN Compute</strong>：CU/DU灵活拆分<br><strong>优势</strong>：模块化、欧美生态<br><strong>劣势</strong>：多频集成度不如华为</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">诺基亚 anyRAN</div>
+            <div class="dim-body"><strong>ReefShark芯片</strong>：自研SoC降功耗<br><strong>Cloud RAN</strong>：支持开放架构<br><strong>优势</strong>：芯片自研、O-RAN<br><strong>劣势</strong>：产品迭代偏慢</div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>客户挑战</strong>：运营商面临"要不要上vRAN（虚拟化RAN）"的决策。vRAN好处是CU软件化，但通用服务器基带效率不如专用芯片。华为方案是"专用+通用"混合：CU可虚拟化，DU保持专用芯片保证实时性能。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>O-RAN/开放架构 - 行业最大争议话题</h3>
+        <p><strong>CTO必问："你怎么看O-RAN？华为支不支持？"</strong> 这是产品经理必须能专业回答的战略问题。</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>传统RAN（华为/爱立信/诺基亚）</th><th>O-RAN（开放架构）</th></tr></thead>
+          <tbody>
+            <tr><td>架构理念</td><td>专用硬件+封闭接口，单一厂商提供端到端</td><td>通用硬件+开放接口，CU/DU/RRU可多厂商混搭</td></tr>
+            <tr><td>关键接口</td><td>厂商私有（CPRI/eCPRI部分开放）</td><td>开放前传（O-RAN WG4）、开放管理（WG10）</td></tr>
+            <tr><td>核心优势</td><td>性能最优、集成度高、责任单一</td><td>避免厂商锁定、降低成本、生态多元</td></tr>
+            <tr><td>核心劣势</td><td>厂商锁定、议价权弱</td><td>性能损失10-20%、集成复杂、责任分散</td></tr>
+            <tr><td>主要推动者</td><td>-</td><td>AT&T、Verizon、DOCOMO、Rakuten</td></tr>
+            <tr><td>主要供应商</td><td>-</td><td>三星、Mavenir、Parallel Wireless、富士通</td></tr>
+          </tbody>
+        </table>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为立场与策略</div>
+            <div class="dim-body">
+              华为不反对开放架构理念，但强调<strong>性能和责任</strong>：①O-RAN开放前传增加时延和功耗；②多厂商集成导致排障困难（"出问题找谁？"）；③华为支持5GC SBA开放接口（已在SA标准中），但RAN空口性能依赖深度集成的专用芯片。<strong>华为策略：在CU层支持虚拟化（vRAN），但DU/AAU保持专用硬件</strong>。
+            </div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">友商立场</div>
+            <div class="dim-body">
+              <strong>爱立信/诺基亚</strong>：加入O-RAN联盟，推出兼容产品但以传统架构为主。诺基亚在anyRAN中支持开放前传；爱立信2023年推出O-RAN兼容的Radio System。<strong>三星</strong>：O-RAN最大受益者，在北美/韩国拿下Verizon/SKT订单。Mavenir等纯软件厂商以O-RAN切入新兴市场。
+            </div>
+          </div>
+          <div class="dim-card dim-challenge">
+            <div class="dim-title">CTO对话要点</div>
+            <div class="dim-body">
+              面对CTO的O-RAN问题，回答框架：①O-RAN适合<strong>非核心层/补充覆盖</strong>场景（如室内小站）；②<strong>宏站主力层建议传统架构</strong>（性能/可靠性优先）；③华为支持5GC层开放和CU虚拟化，RAN层强调深度集成的性能优势；④用TCO数据说明O-RAN设备便宜但集成运维成本高，5年TCO未必优于传统方案。
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>关键认知</strong>：O-RAN不是"华为 vs 开放"的二元对立，而是<strong>"集成度 vs 灵活性"的工程权衡</strong>。产品经理应客观分析利弊，不要一味贬低O-RAN（CTO会觉得你不专业），也不要盲目推崇（华为利益不符）。<strong>用数据说话：性能差10-20%、功耗高15-25%、但CAPEX可能低20-30%</strong>，让客户自己判断。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 05 核心模块详解 ==================== -->
+    <section class="section" id="sec-modules">
+      <div class="section-title">核心模块详解 · BBU/AAU/RRU</div>
+      <div class="section-subtitle">4G/5G模块对比 · 华为产品型号 · 友商规格对比 · 客户选型关注</div>
+
+      <div class="sub-tabs" id="mod-tabs">
+        <div class="sub-tab active" data-target="mod-bbu">BBU (CU/DU)</div>
+        <div class="sub-tab" data-target="mod-aau">AAU</div>
+        <div class="sub-tab" data-target="mod-rru">RRU</div>
+      </div>
+
+      <div class="sub-content active" id="mod-bbu">
+        <div class="card">
+          <h3>BBU - 4G一体化 vs 5G CU+DU</h3>
+          <p>4G BBU是一体化盒子（RRC->PHY全在一个盒子里）。5G拆分为CU（RRC/SDAP/PDCP）和DU（RLC/MAC/PHY），中间通过F1接口连接。可合设（一个物理盒子）或分离部署。</p>
+          <table class="data-table">
+            <thead><tr><th>指标</th><th><span class="tag tag-4g">4G BBU3900</span></th><th><span class="tag tag-5g">5G BBU5900</span></th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>制式支持</td><td>2G/3G/4G</td><td>2G/3G/4G/5G</td><td>5G BBU5900向下兼容4G</td></tr>
+              <tr><td>最大吞吐</td><td>~1Gbps</td><td>~10Gbps+</td><td>5G基带处理能力提升10倍</td></tr>
+              <tr><td>前传接口</td><td>CPRI 10G</td><td>eCPRI 25G/100G</td><td>5G通道数暴增需更大带宽</td></tr>
+              <tr><td>CU/DU拆分</td><td>不支持</td><td>支持（合设或分离）</td><td>5G新增能力</td></tr>
+              <tr><td>功耗</td><td>~200-300W</td><td>~300-600W</td><td>5G基带复杂度更高</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>华为BBU vs 友商对比</h3>
+          <table class="data-table">
+            <thead><tr><th>厂商</th><th>产品</th><th>关键特性</th><th>差异化</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-huawei">华为</span></td><td>BBU5900</td><td>2G/3G/4G/5G共框；基带板灵活混插</td><td>四模共框集成度最高</td></tr>
+              <tr><td><span class="tag tag-ericsson">爱立信</span></td><td>Baseband 6648</td><td>5G+4G双模；支持C-RAN/D-RAN</td><td>模块化，欧美生态成熟</td></tr>
+              <tr><td><span class="tag tag-nokia">诺基亚</span></td><td>AirScale ASIK</td><td>ReefShark自研芯片；支持vRAN</td><td>芯片自研降功耗</td></tr>
+              <tr><td><span class="tag tag-zte">中兴</span></td><td>V9200</td><td>多模统一平台；SA/NSA</td><td>性价比高</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>客户挑战</strong>：运营商最大痛点是<strong>多制式共存</strong>。4G不能退（VoLTE），5G要新建，2G/3G在过渡。华为BBU5900"四代同框"是核心卖点--<strong>一个BBU盒子解决2G/3G/4G/5G</strong>，省机房、省天馈、省运维。友商通常需2个BBU框。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="mod-aau">
+        <div class="card">
+          <h3>AAU - 5G有源天线单元</h3>
+          <p>AAU = <strong>RRU + 天线阵列</strong>一体化，5G最核心最贵模块。4G通常用RRU+无源天线（分离），5G城区容量站用AAU（一体化，无馈线损耗）。</p>
+          <div class="diagram-box">
+            <svg width="640" height="300" viewBox="0 0 640 300">
+              <defs><linearGradient id="signal-grad-mod" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2dd4ff" stop-opacity="0.8"/><stop offset="100%" stop-color="#4dff9e" stop-opacity="0.8"/></linearGradient></defs>
+              <rect x="20" y="120" width="70" height="50" rx="8" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)"/>
+              <text x="55" y="150" text-anchor="middle" class="svg-mono">eCPRI</text>
+              <rect x="120" y="100" width="100" height="90" rx="8" fill="rgba(139,124,255,.08)" stroke="#8b7cff"/>
+              <text x="170" y="135" text-anchor="middle" class="svg-mono" fill="#8b7cff">数字波束赋形</text>
+              <text x="170" y="152" text-anchor="middle" class="svg-mono" fill="#5d6a87">FFT/IFFT</text>
+              <text x="170" y="167" text-anchor="middle" class="svg-mono" fill="#5d6a87">加权计算</text>
+              <rect x="250" y="100" width="90" height="90" rx="8" fill="rgba(255,184,77,.08)" stroke="#ffb84d"/>
+              <text x="295" y="135" text-anchor="middle" class="svg-mono" fill="#ffb84d">收发通道</text>
+              <text x="295" y="152" text-anchor="middle" class="svg-mono" fill="#5d6a87">D/A · A/D</text>
+              <text x="295" y="167" text-anchor="middle" class="svg-mono" fill="#5d6a87">混频滤波</text>
+              <rect x="370" y="100" width="80" height="90" rx="8" fill="rgba(255,93,108,.08)" stroke="#ff5d6c"/>
+              <text x="410" y="140" text-anchor="middle" class="svg-mono" fill="#ff5d6c">功率放大</text>
+              <text x="410" y="157" text-anchor="middle" class="svg-mono" fill="#5d6a87">PA/LNA</text>
+              <rect x="480" y="80" width="120" height="130" rx="8" fill="rgba(45,212,255,.06)" stroke="#2dd4ff"/>
+              <text x="540" y="100" text-anchor="middle" class="svg-title" fill="#2dd4ff">天线阵列</text>
+              <g transform="translate(500, 110)">
+                <rect x="0" y="0" width="12" height="12" rx="2" fill="rgba(45,212,255,.3)"/><rect x="18" y="0" width="12" height="12" rx="2" fill="rgba(45,212,255,.3)"/><rect x="36" y="0" width="12" height="12" rx="2" fill="rgba(45,212,255,.3)"/><rect x="54" y="0" width="12" height="12" rx="2" fill="rgba(45,212,255,.3)"/><rect x="72" y="0" width="12" height="12" rx="2" fill="rgba(45,212,255,.3)"/>
+                <rect x="0" y="18" width="12" height="12" rx="2" fill="rgba(45,212,255,.25)"/><rect x="18" y="18" width="12" height="12" rx="2" fill="rgba(45,212,255,.25)"/><rect x="36" y="18" width="12" height="12" rx="2" fill="rgba(45,212,255,.25)"/><rect x="54" y="18" width="12" height="12" rx="2" fill="rgba(45,212,255,.25)"/><rect x="72" y="18" width="12" height="12" rx="2" fill="rgba(45,212,255,.25)"/>
+                <rect x="0" y="36" width="12" height="12" rx="2" fill="rgba(45,212,255,.2)"/><rect x="18" y="36" width="12" height="12" rx="2" fill="rgba(45,212,255,.2)"/><rect x="36" y="36" width="12" height="12" rx="2" fill="rgba(45,212,255,.2)"/><rect x="54" y="36" width="12" height="12" rx="2" fill="rgba(45,212,255,.2)"/><rect x="72" y="36" width="12" height="12" rx="2" fill="rgba(45,212,255,.2)"/>
+                <rect x="0" y="54" width="12" height="12" rx="2" fill="rgba(45,212,255,.15)"/><rect x="18" y="54" width="12" height="12" rx="2" fill="rgba(45,212,255,.15)"/><rect x="36" y="54" width="12" height="12" rx="2" fill="rgba(45,212,255,.15)"/><rect x="54" y="54" width="12" height="12" rx="2" fill="rgba(45,212,255,.15)"/><rect x="72" y="54" width="12" height="12" rx="2" fill="rgba(45,212,255,.15)"/>
+              </g>
+              <line x1="90" y1="145" x2="120" y2="145" stroke="rgba(255,255,255,.1)"/>
+              <line x1="220" y1="145" x2="250" y2="145" stroke="rgba(255,255,255,.1)"/>
+              <line x1="340" y1="145" x2="370" y2="145" stroke="rgba(255,255,255,.1)"/>
+              <line x1="450" y1="145" x2="480" y2="145" stroke="rgba(255,255,255,.1)"/>
+              <circle r="4" fill="url(#signal-grad-mod)"><animate attributeName="cx" values="55;170;295;410;540" dur="2.5s" repeatCount="indefinite"/><animate attributeName="cy" values="145;145;145;145;145" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;1;0" dur="2.5s" repeatCount="indefinite"/></circle>
+              <text x="320" y="250" text-anchor="middle" class="svg-mono" fill="#5d6a87">eCPRI数字流 -> 波束赋形(FFT+加权) -> D/A+混频 -> 功放 -> 天线辐射</text>
+              <text x="320" y="270" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G RRU无波束赋形模块；5G AAU新增数字波束赋形是核心差异</text>
+            </svg>
+            <div class="diagram-caption">图 5-1 · AAU内部动态信号链路（4G RRU无"数字波束赋形"模块）</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th><span class="tag tag-huawei">华为</span></th><th><span class="tag tag-ericsson">爱立信</span></th><th><span class="tag tag-nokia">诺基亚</span></th><th><span class="tag tag-zte">中兴</span></th></tr></thead>
+            <tbody>
+              <tr><td>64T主力</td><td>AAU5613</td><td>AIR3268</td><td>AEQI</td><td>AAU A9611</td></tr>
+              <tr><td>重量(64T)</td><td>~18kg(最轻)</td><td>~22kg</td><td>~25kg</td><td>~20kg</td></tr>
+              <tr><td>功耗(64T)</td><td>~850W</td><td>~900W</td><td>~1000W</td><td>~880W</td></tr>
+              <tr><td>差异化</td><td>全频段最全、最轻<br>BladeAAU一体化</td><td>模块化设计</td><td>ReefShark芯片</td><td>性价比高</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>客户挑战</strong>：①<strong>64T还是32T</strong>？64T容量大但贵且重；32T性价比高但容量受限。②<strong>重量和功耗</strong>：老旧铁塔承重有限，华为64T仅18kg是核心卖点。功耗直接影响每年数亿电费。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="mod-rru">
+        <div class="card">
+          <h3>RRU - 4G主力/5G广覆盖方案</h3>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th>AAU（一体化）</th><th>RRU+无源天线（分离）</th></tr></thead>
+            <tbody>
+              <tr><td>天线通道</td><td>32T/64T Massive MIMO</td><td>2T/4T/8T</td></tr>
+              <tr><td>馈线损耗</td><td>无（直接连接）</td><td>3~5dB损耗</td></tr>
+              <tr><td>成本</td><td>高</td><td>低</td></tr>
+              <tr><td>4G/5G</td><td>5G城区容量站</td><td>4G主力/5G低频广覆盖</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>选型逻辑</strong>：需要Massive MIMO选AAU，只需广覆盖选RRU+天线省钱。<strong>华为RRU5258（700MHz）</strong>是国内低频打底主力，与爱立信RRU4412竞争。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 06 天线与Massive MIMO ==================== -->
+    <section class="section" id="sec-antenna">
+      <div class="section-title">天线与 Massive MIMO</div>
+      <div class="section-subtitle">4G 2T->8T -> 5G 32T/64T -> 5.5G ELAA · 3D波束赋形 · 交互式波束模式</div>
+
+      <div class="card">
+        <h3>天线技术演进：4G到5.5G</h3>
+        <div class="diagram-box">
+          <svg width="660" height="220" viewBox="0 0 660 220">
+            <text x="90" y="25" text-anchor="middle" class="svg-title" fill="var(--accent-amber)">4G: 2T2R</text>
+            <rect x="75" y="40" width="30" height="80" rx="4" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1"/>
+            <line x1="90" y1="120" x2="60" y2="170" stroke="#ffb84d" stroke-width="1.5" opacity=".5"/>
+            <line x1="90" y1="120" x2="120" y2="170" stroke="#ffb84d" stroke-width="1.5" opacity=".5"/>
+            <text x="90" y="195" text-anchor="middle" class="svg-mono">2路空间流</text>
+            <text x="90" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G初期主力</text>
+
+            <text x="250" y="25" text-anchor="middle" class="svg-title" fill="var(--accent-amber)">4G: 8T8R</text>
+            <rect x="230" y="40" width="40" height="80" rx="4" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1"/>
+            <line x1="250" y1="120" x2="210" y2="170" stroke="#ffb84d" stroke-width="1.2" opacity=".4"/>
+            <line x1="250" y1="120" x2="235" y2="170" stroke="#ffb84d" stroke-width="1.2" opacity=".4"/>
+            <line x1="250" y1="120" x2="270" y2="170" stroke="#ffb84d" stroke-width="1.2" opacity=".4"/>
+            <line x1="250" y1="120" x2="290" y2="170" stroke="#ffb84d" stroke-width="1.2" opacity=".4"/>
+            <text x="250" y="195" text-anchor="middle" class="svg-mono">8路波束</text>
+            <text x="250" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G增强/LTE-A</text>
+
+            <text x="410" y="25" text-anchor="middle" class="svg-title">5G: 32T32R</text>
+            <rect x="390" y="40" width="40" height="80" rx="4" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1"/>
+            <line x1="410" y1="120" x2="365" y2="175" stroke="#8b7cff" stroke-width="1" opacity=".35"/>
+            <line x1="410" y1="120" x2="390" y2="175" stroke="#8b7cff" stroke-width="1" opacity=".35"/>
+            <line x1="410" y1="120" x2="410" y2="175" stroke="#8b7cff" stroke-width="1" opacity=".35"/>
+            <line x1="410" y1="120" x2="430" y2="175" stroke="#8b7cff" stroke-width="1" opacity=".35"/>
+            <line x1="410" y1="120" x2="455" y2="175" stroke="#8b7cff" stroke-width="1" opacity=".35"/>
+            <text x="410" y="195" text-anchor="middle" class="svg-mono">窄波束多流</text>
+            <text x="410" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G性价比方案</text>
+
+            <text x="570" y="25" text-anchor="middle" class="svg-title" fill="#ffb84d">5G/5.5G: 64T/ELAA</text>
+            <rect x="555" y="40" width="30" height="80" rx="4" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1"/>
+            <g opacity=".3">
+              <line x1="570" y1="120" x2="530" y2="175" stroke="#ffb84d" stroke-width=".8"/>
+              <line x1="570" y1="120" x2="550" y2="175" stroke="#ffb84d" stroke-width=".8"/>
+              <line x1="570" y1="120" x2="570" y2="175" stroke="#ffb84d" stroke-width=".8"/>
+              <line x1="570" y1="120" x2="590" y2="175" stroke="#ffb84d" stroke-width=".8"/>
+              <line x1="570" y1="120" x2="610" y2="175" stroke="#ffb84d" stroke-width=".8"/>
+            </g>
+            <text x="570" y="195" text-anchor="middle" class="svg-mono">极致窄波束</text>
+            <text x="570" y="210" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G城区/5.5G</text>
+          </svg>
+          <div class="diagram-caption">图 6-1 · 天线技术演进：4G 2T->8T -> 5G 32T/64T -> 5.5G ELAA</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Massive MIMO 3D 波束赋形（自动旋转）</h3>
+        <div class="diagram-box" style="padding:20px;">
+          <div class="beam-3d-scene">
+            <div class="beam-3d-stage">
+              <div class="ground-plane"></div>
+              <div class="antenna-panel">
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+                <div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div><div class="antenna-element"></div>
+              </div>
+              <div class="beam beam-1"></div><div class="beam beam-2"></div><div class="beam beam-3"></div><div class="beam beam-4"></div>
+              <div class="user-icon user-1">U1</div><div class="user-icon user-2">U2</div><div class="user-icon user-3">U3</div><div class="user-icon user-4">U4</div>
+            </div>
+          </div>
+          <div class="diagram-caption">图 6-2 · Massive MIMO 3D波束赋形（自动旋转）：多窄波束精准指向不同用户</div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>增益</th><th>原理</th><th>效果</th><th>4G vs 5G</th></tr></thead>
+          <tbody>
+            <tr><td>阵列增益</td><td>多天线同相叠加</td><td>提升SNR，扩大覆盖</td><td>4G 8T增益~9dB；5G 64T增益~21dB</td></tr>
+            <tr><td>空间复用</td><td>不同用户占不同流</td><td>成倍提升容量(MU-MIMO)</td><td>4G MU-MIMO受限；5G 64T支持16用户配对</td></tr>
+            <tr><td>干扰抑制</td><td>波束精准指向</td><td>降低小区间干扰</td><td>5G窄波束干扰抑制>20dB，远优于4G</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>4G vs 5G天线核心差异</strong>：4G以2T/8T为主，无数字波束赋形（或仅模拟），容量提升有限。5G 64T Massive MIMO通过数字波束赋形实现3D精准指向，<strong>同样100MHz带宽，4G 8T峰值~1Gbps，5G 64T可达5Gbps+</strong>。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>交互式波束模式对比</h3>
+        <div style="display:flex;gap:8px;margin:12px 0;flex-wrap:wrap;">
+          <button class="beam-mode-btn active" onclick="switchBeamMode('broadcast')">广播波束（4G传统）</button>
+          <button class="beam-mode-btn" onclick="switchBeamMode('narrow')">窄波束（5G Massive MIMO）</button>
+          <button class="beam-mode-btn" onclick="switchBeamMode('adaptive')">自适应MU-MIMO</button>
+        </div>
+        <div class="coverage-mode-display" id="beam-mode-display">
+          <svg width="600" height="240" viewBox="0 0 600 240" id="beam-mode-svg">
+            <rect x="285" y="100" width="30" height="40" fill="rgba(45,212,255,0.2)" stroke="#2dd4ff"/>
+            <text x="300" y="95" text-anchor="middle" class="svg-mono" fill="#2dd4ff">基站</text>
+            <path d="M 300 140 L 100 200 A 220 220 0 0 1 500 200 Z" fill="rgba(45,212,255,0.06)" stroke="rgba(45,212,255,0.3)"/>
+            <text x="300" y="225" text-anchor="middle" class="svg-mono" fill="#5d6a87">广播波束（4G）：宽覆盖、无空间区分、容量低</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 ELAA 超大规模天线（5.5G）</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">华为 ELAA</div>
+            <div class="dim-body">阵子数：192->512+；波束：~8°->~3°；增益+3~6dB；2024年首批商用；适合6GHz新频段和毫米波</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">爱立信 Massive MIMO</div>
+            <div class="dim-body">主力AIR3268(64T)；尚未推出ELAA级别产品；优势：轻量化设计成熟</div>
+          </div>
+          <div class="dim-card dim-competitor">
+            <div class="dim-title">诺基亚 Habrok</div>
+            <div class="dim-body">64T/32T系列；ReefShark芯片驱动；阵子规模与华为相当但ELAA进度落后</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>波束赋形技术原理 - 权值计算与信道估计</h3>
+        <p>3D波束图展示了效果，但<strong>CTO会追问"波束怎么知道用户在哪？怎么计算指向方向？"</strong>以下是产品经理必须理解的波束赋形底层原理：</p>
+        <h4>① 信道估计 - 基站怎么"看到"用户</h4>
+        <ul>
+          <li><strong>上行SRS（Sounding Reference Signal）</strong>：终端周期性发送SRS参考信号，基站接收后估计上行信道状态矩阵H。TDD系统利用<strong>上下行信道互易性</strong>，直接从上行信道推导下行信道（FDD不行，需终端反馈）</li>
+          <li><strong>下行CSI-RS（Channel State Information Reference Signal）</strong>：基站发送CSI-RS，终端测量后通过CQI/PMI/RI反馈信道状态（FDD主要方式，TDD可补充使用）</li>
+          <li><strong>关键参数</strong>：PMI（预编码矩阵指示）、RI（秩指示，决定空间流数）、CQI（信道质量指示，决定调制编码方案）</li>
+        </ul>
+        <h4>② 权值计算 - 怎么形成指向性波束</h4>
+        <ul>
+          <li><strong>线性预编码</strong>：基站根据信道矩阵H计算权值向量W，使W×H的输出在目标用户方向信号最强、其他方向信号最弱</li>
+          <li><strong>常用算法</strong>：ZF（Zero-Forcing，零迫零，彻底消除用户间干扰但噪声放大）、MMSE（最小均方误差，平衡干扰抑制与噪声放大）、SVD分解（最优但计算复杂度高）</li>
+          <li><strong>码本反馈 vs 非码本</strong>：Type I码本（低开销，精度一般）、Type II码本（高开销，精度高，5G新增）、非码本反馈（TDD互易性直接计算，最高精度）</li>
+        </ul>
+        <h4>③ 波束管理 - 用户移动时怎么跟踪</h4>
+        <ul>
+          <li><strong>SSB波束扫描</strong>：基站用不同方向的SSB波束轮发，终端测量最优波束并上报（初始接入/空闲态）</li>
+          <li><strong>CSI-RS波束跟踪</strong>：连接态下持续跟踪波束质量，触发波束切换（L1-RSRP测量）</li>
+          <li><strong>波束失败恢复</strong>：当服务波束质量下降到阈值以下，终端触发BFR（Beam Failure Recovery）流程切换到备选波束</li>
+        </ul>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：TDD系统的<strong>上下行信道互易性</strong>是Massive MIMO高效工作的基础--TDD上下行同频，上行测量的信道可直接用于下行波束赋形，无需终端复杂反馈。这也是<strong>5G TDD（如3.5GHz）比FDD更适合Massive MIMO</strong>的技术原因。CTO问"为什么5G主推TDD"时，这就是答案之一。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 07 关键技术原理 ==================== -->
+    <section class="section" id="sec-tech">
+      <div class="section-title">关键技术原理 · 4G/5G对比</div>
+      <div class="section-subtitle">OFDM · 帧结构 · 调制编码 · HARQ · 载波聚合 - 全部动态可视化</div>
+
+      <div class="sub-tabs" id="tech-tabs">
+        <div class="sub-tab active" data-target="tech-ofdm">OFDM/SCS</div>
+        <div class="sub-tab" data-target="tech-frame">帧结构</div>
+        <div class="sub-tab" data-target="tech-modulation">调制编码</div>
+        <div class="sub-tab" data-target="tech-harq">HARQ</div>
+        <div class="sub-tab" data-target="tech-ca">载波聚合</div>
+      </div>
+
+      <div class="sub-content active" id="tech-ofdm">
+        <div class="card">
+          <h3>OFDM - 4G/5G共用的空口基石（动态波形）</h3>
+          <p>4G和5G都使用OFDM波形，核心区别是<strong>子载波间隔(SCS)</strong>：4G固定15kHz，5G灵活可配15/30/60/120/240kHz。</p>
+          <div class="diagram-box">
+            <svg width="640" height="260" viewBox="0 0 640 260">
+              <g class="ofdm-carrier-anim"><path d="M 60 80 Q 90 40, 120 80 T 180 80 T 240 80 T 300 80 T 360 80 T 420 80 T 480 80 T 540 80 T 600 80" fill="none" stroke="#2dd4ff" stroke-width="2" opacity="0.8"/><text x="40" y="83" text-anchor="end" class="svg-mono" fill="#2dd4ff">f₁</text></g>
+              <g class="ofdm-carrier-anim-2"><path d="M 60 130 Q 85 90, 110 130 T 160 130 T 210 130 T 260 130 T 310 130 T 360 130 T 410 130 T 460 130 T 510 130 T 560 130 T 600 130" fill="none" stroke="#4dff9e" stroke-width="2" opacity="0.7"/><text x="40" y="133" text-anchor="end" class="svg-mono" fill="#4dff9e">f₂</text></g>
+              <g class="ofdm-carrier-anim-3"><path d="M 60 180 Q 80 140, 100 180 T 140 180 T 180 180 T 220 180 T 260 180 T 300 180 T 340 180 T 380 180 T 420 180 T 460 180 T 500 180 T 540 180 T 580 180 T 600 180" fill="none" stroke="#8b7cff" stroke-width="2" opacity="0.6"/><text x="40" y="183" text-anchor="end" class="svg-mono" fill="#8b7cff">f₃</text></g>
+              <line x1="55" y1="50" x2="55" y2="200" stroke="rgba(255,255,255,0.1)" stroke-dasharray="3 3"/>
+              <text x="50" y="45" class="svg-mono" fill="#5d6a87">频率↑</text>
+              <line x1="55" y1="210" x2="610" y2="210" stroke="rgba(255,255,255,0.1)" stroke-dasharray="3 3"/>
+              <text x="615" y="213" class="svg-mono" fill="#5d6a87">->时间</text>
+              <text x="330" y="240" text-anchor="middle" class="svg-mono" fill="#5d6a87">子载波正交（动态振荡）-> 零干扰 -> 紧密排列无需保护频带</text>
+            </svg>
+            <div class="diagram-caption">图 7-1 · OFDM子载波正交原理（动态振荡）</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>SCS</th><th><span class="tag tag-4g">4G LTE</span></th><th><span class="tag tag-5g">5G NR</span></th><th>影响</th></tr></thead>
+            <tbody>
+              <tr><td>15kHz</td><td>唯一选项</td><td>可选(μ=0)</td><td>覆盖最好，时延最大(1ms/时隙)</td></tr>
+              <tr><td>30kHz</td><td>不支持</td><td>可选(μ=1)</td><td>5G中频主力，0.5ms/时隙</td></tr>
+              <tr><td>60kHz</td><td>不支持</td><td>可选(μ=2)</td><td>低时延场景，0.25ms/时隙</td></tr>
+              <tr><td>120kHz</td><td>不支持</td><td>可选(μ=3)</td><td>毫米波，0.125ms/时隙</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>4G/5G差异</strong>：4G只有15kHz一种SCS，时隙固定1ms，无法适配低时延场景。5G灵活SCS让运营商可以根据场景选择：<strong>广覆盖用15kHz，城区平衡用30kHz，工业低时延用60kHz</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-frame">
+        <div class="card">
+          <h3>帧结构 - 4G固定 vs 5G灵活（动态时间游标）</h3>
+          <ul>
+            <li><strong>4G</strong>：TDD配比固定（如DL:UL=2:2或3:1），难以动态调整</li>
+            <li><strong>5G</strong>：时隙内符号级灵活配置(D/U/F)，支持DDDSU/DSUUU等多种配比</li>
+          </ul>
+          <div class="diagram-box">
+            <svg width="660" height="220" viewBox="0 0 660 220">
+              <rect x="20" y="20" width="620" height="30" rx="4" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+              <text x="330" y="40" text-anchor="middle" class="svg-title">1 无线帧 = 10ms</text>
+              <g transform="translate(20, 100)">
+                <rect x="0" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="21" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="44" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="65" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="88" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="109" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="132" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="153" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="176" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="197" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="220" y="0" width="42" height="28" rx="3" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="241" y="18" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:8px;">D</text>
+                <rect x="264" y="0" width="42" height="28" rx="3" fill="rgba(77,255,158,.12)" stroke="rgba(77,255,158,.3)"/><text x="285" y="18" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:8px;">F</text>
+                <rect x="308" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="329" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="352" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="373" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="396" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="417" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="440" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="461" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="484" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="505" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="528" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="549" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+                <rect x="572" y="0" width="42" height="28" rx="3" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="593" y="18" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:8px;">U</text>
+              </g>
+              <rect x="20" y="100" width="2" height="28" fill="#ff5d6c" opacity="0.8"><animate attributeName="x" values="20;612;20" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.8;0.8;0" dur="4s" repeatCount="indefinite"/></rect>
+              <g transform="translate(20, 155)">
+                <rect x="0" y="0" width="14" height="14" rx="2" fill="rgba(45,212,255,.12)" stroke="rgba(45,212,255,.3)"/><text x="20" y="11" class="svg-mono">D=下行</text>
+                <rect x="80" y="0" width="14" height="14" rx="2" fill="rgba(255,184,77,.12)" stroke="rgba(255,184,77,.3)"/><text x="100" y="11" class="svg-mono">U=上行</text>
+                <rect x="160" y="0" width="14" height="14" rx="2" fill="rgba(77,255,158,.12)" stroke="rgba(77,255,158,.3)"/><text x="180" y="11" class="svg-mono">F=灵活</text>
+                <rect x="260" y="2" width="2" height="10" fill="#ff5d6c"/><text x="270" y="11" class="svg-mono" fill="#ff5d6c">时间游标</text>
+              </g>
+              <text x="330" y="200" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G DDDSU配比（4G无法做到符号级灵活配置）</text>
+            </svg>
+            <div class="diagram-caption">图 7-2 · 5G帧结构与动态时间游标</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>配比</th><th>下行:上行:灵活</th><th>特点</th><th>适用</th><th>4G能否支持</th></tr></thead>
+            <tbody>
+              <tr><td>DDDSU</td><td>3:1:1</td><td>下行为主</td><td>普通eMBB</td><td><span class="tag tag-4g">4G类似</span></td></tr>
+              <tr><td>DDSUU</td><td>2:2:1</td><td>上下行均衡</td><td>直播/上传多</td><td><span class="tag tag-red">4G不支持</span></td></tr>
+              <tr><td>DSUUU</td><td>1:3:1</td><td>上行为主</td><td>视频监控</td><td><span class="tag tag-red">4G不支持</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>4G/5G关键差异</strong>：4G LTE-TDD配比通过SIB1信令配置，修改需重新广播系统消息且需评估与邻区共存干扰，操作复杂度高；5G NR支持符号级灵活配置，可通过DCI动态指示时隙格式。<strong>这是ToB客户（如视频监控需要上行）选择5G而非4G的技术原因之一</strong>。但注意：相邻小区配比必须一致，否则上下行交叉干扰。
+          </div>
+          <h4>特殊时隙结构 - DwPTS / GP / UpPTS</h4>
+          <p>TDD模式中，上下行转换之间需要一个<strong>特殊时隙</strong>，包含三部分：</p>
+          <table class="data-table">
+            <thead><tr><th>字段</th><th>全称</th><th>作用</th><th>典型长度(30kHz SCS)</th></tr></thead>
+            <tbody>
+              <tr><td>DwPTS</td><td>Downlink Pilot Time Slot</td><td>下行导频+控制信令+少量下行数据</td><td>10-12个符号</td></tr>
+              <tr><td>GP</td><td>Guard Period</td><td><strong>保护间隔</strong>，防止上下行交叉干扰。必须>最大传播时延</td><td>2-4个符号</td></tr>
+              <tr><td>UpPTS</td><td>Uplink Pilot Time Slot</td><td>上行导频（SRS）+少量上行数据</td><td>0-2个符号</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>产品经理要记住</strong>：GP长度决定了<strong>基站的最大覆盖半径</strong>--GP越长，能支持的覆盖距离越远，但有效传输符号越少（开销增大）。城区站间距小，用短GP（2符号）最大化容量；农村/高铁站间距大，用长GP（4符号）避免交叉干扰。<strong>CTO问"为什么农村TDD配GP不一样"时，这就是答案</strong>。华为支持GP自适应配置，根据站间距自动优化。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-modulation">
+        <div class="card">
+          <h3>调制技术（动态星座图）</h3>
+          <div class="diagram-box">
+            <svg width="660" height="200" viewBox="0 0 660 200">
+              <text x="90" y="20" text-anchor="middle" class="svg-title">QPSK</text>
+              <circle cx="90" cy="100" r="55" fill="none" stroke="rgba(255,255,255,.08)"/>
+              <line x1="35" y1="100" x2="145" y2="100" stroke="rgba(255,255,255,.1)"/>
+              <line x1="90" y1="45" x2="90" y2="155" stroke="rgba(255,255,255,.1)"/>
+              <circle cx="70" cy="80" r="4" fill="#2dd4ff" class="constellation-point"/>
+              <circle cx="110" cy="80" r="4" fill="#2dd4ff" class="constellation-point" style="animation-delay:.3s;"/>
+              <circle cx="70" cy="120" r="4" fill="#2dd4ff" class="constellation-point" style="animation-delay:.6s;"/>
+              <circle cx="110" cy="120" r="4" fill="#2dd4ff" class="constellation-point" style="animation-delay:.9s;"/>
+              <text x="90" y="175" text-anchor="middle" class="svg-mono" fill="#5d6a87">2bit · 4G/5G共用</text>
+              <text x="260" y="20" text-anchor="middle" class="svg-title">16QAM</text>
+              <circle cx="260" cy="100" r="55" fill="none" stroke="rgba(255,255,255,.08)"/>
+              <line x1="205" y1="100" x2="315" y2="100" stroke="rgba(255,255,255,.1)"/>
+              <line x1="260" y1="45" x2="260" y2="155" stroke="rgba(255,255,255,.1)"/>
+              <g fill="#4dff9e"><circle cx="240" cy="72" r="3" class="constellation-point"/><circle cx="260" cy="72" r="3" class="constellation-point" style="animation-delay:.2s;"/><circle cx="280" cy="72" r="3" class="constellation-point" style="animation-delay:.4s;"/><circle cx="240" cy="82" r="3" class="constellation-point" style="animation-delay:.1s;"/><circle cx="260" cy="82" r="3" class="constellation-point" style="animation-delay:.3s;"/><circle cx="280" cy="82" r="3" class="constellation-point" style="animation-delay:.5s;"/><circle cx="240" cy="118" r="3" class="constellation-point" style="animation-delay:.6s;"/><circle cx="260" cy="118" r="3" class="constellation-point" style="animation-delay:.7s;"/><circle cx="280" cy="118" r="3" class="constellation-point" style="animation-delay:.8s;"/><circle cx="240" cy="128" r="3" class="constellation-point" style="animation-delay:.9s;"/><circle cx="260" cy="128" r="3" class="constellation-point" style="animation-delay:1s;"/><circle cx="280" cy="128" r="3" class="constellation-point" style="animation-delay:1.1s;"/></g>
+              <text x="260" y="175" text-anchor="middle" class="svg-mono" fill="#5d6a87">4bit · 4G/5G共用</text>
+              <text x="430" y="20" text-anchor="middle" class="svg-title">64QAM</text>
+              <circle cx="430" cy="100" r="55" fill="none" stroke="rgba(255,255,255,.08)"/>
+              <g fill="#8b7cff"><circle cx="410" cy="65" r="2" class="constellation-point"/><circle cx="422" cy="65" r="2" class="constellation-point" style="animation-delay:.1s;"/><circle cx="434" cy="65" r="2" class="constellation-point" style="animation-delay:.2s;"/><circle cx="446" cy="65" r="2" class="constellation-point" style="animation-delay:.3s;"/><circle cx="410" cy="77" r="2" class="constellation-point" style="animation-delay:.15s;"/><circle cx="422" cy="77" r="2" class="constellation-point" style="animation-delay:.25s;"/><circle cx="434" cy="77" r="2" class="constellation-point" style="animation-delay:.35s;"/><circle cx="446" cy="77" r="2" class="constellation-point" style="animation-delay:.45s;"/><circle cx="410" cy="89" r="2" class="constellation-point" style="animation-delay:.5s;"/><circle cx="422" cy="89" r="2" class="constellation-point" style="animation-delay:.55s;"/><circle cx="434" cy="89" r="2" class="constellation-point" style="animation-delay:.6s;"/><circle cx="446" cy="89" r="2" class="constellation-point" style="animation-delay:.65s;"/><circle cx="410" cy="111" r="2" class="constellation-point" style="animation-delay:.7s;"/><circle cx="422" cy="111" r="2" class="constellation-point" style="animation-delay:.75s;"/><circle cx="434" cy="111" r="2" class="constellation-point" style="animation-delay:.8s;"/><circle cx="446" cy="111" r="2" class="constellation-point" style="animation-delay:.85s;"/><circle cx="410" cy="123" r="2" class="constellation-point" style="animation-delay:.9s;"/><circle cx="422" cy="123" r="2" class="constellation-point" style="animation-delay:.95s;"/><circle cx="434" cy="123" r="2" class="constellation-point" style="animation-delay:1s;"/><circle cx="446" cy="123" r="2" class="constellation-point" style="animation-delay:1.05s;"/><circle cx="410" cy="135" r="2" class="constellation-point" style="animation-delay:1.1s;"/><circle cx="422" cy="135" r="2" class="constellation-point" style="animation-delay:1.15s;"/><circle cx="434" cy="135" r="2" class="constellation-point" style="animation-delay:1.2s;"/><circle cx="446" cy="135" r="2" class="constellation-point" style="animation-delay:1.25s;"/></g>
+              <text x="430" y="175" text-anchor="middle" class="svg-mono" fill="#5d6a87">6bit · 4G下行/5G上下行</text>
+              <text x="580" y="20" text-anchor="middle" class="svg-title">256QAM</text>
+              <circle cx="580" cy="100" r="50" fill="none" stroke="rgba(255,255,255,.08)"/>
+              <g fill="#ffb84d" opacity="0.8"><circle cx="560" cy="62" r="1.5" class="constellation-point"/><circle cx="570" cy="62" r="1.5" class="constellation-point" style="animation-delay:.1s;"/><circle cx="580" cy="62" r="1.5" class="constellation-point" style="animation-delay:.2s;"/><circle cx="590" cy="62" r="1.5" class="constellation-point" style="animation-delay:.3s;"/><circle cx="600" cy="62" r="1.5" class="constellation-point" style="animation-delay:.4s;"/><circle cx="560" cy="72" r="1.5" class="constellation-point" style="animation-delay:.15s;"/><circle cx="570" cy="72" r="1.5" class="constellation-point" style="animation-delay:.25s;"/><circle cx="580" cy="72" r="1.5" class="constellation-point" style="animation-delay:.35s;"/><circle cx="590" cy="72" r="1.5" class="constellation-point" style="animation-delay:.45s;"/><circle cx="600" cy="72" r="1.5" class="constellation-point" style="animation-delay:.55s;"/><circle cx="560" cy="82" r="1.5" class="constellation-point" style="animation-delay:.3s;"/><circle cx="570" cy="82" r="1.5" class="constellation-point" style="animation-delay:.4s;"/><circle cx="580" cy="82" r="1.5" class="constellation-point" style="animation-delay:.5s;"/><circle cx="590" cy="82" r="1.5" class="constellation-point" style="animation-delay:.6s;"/><circle cx="600" cy="82" r="1.5" class="constellation-point" style="animation-delay:.7s;"/><circle cx="560" cy="118" r="1.5" class="constellation-point" style="animation-delay:.5s;"/><circle cx="570" cy="118" r="1.5" class="constellation-point" style="animation-delay:.55s;"/><circle cx="580" cy="118" r="1.5" class="constellation-point" style="animation-delay:.6s;"/><circle cx="590" cy="118" r="1.5" class="constellation-point" style="animation-delay:.65s;"/><circle cx="600" cy="118" r="1.5" class="constellation-point" style="animation-delay:.7s;"/><circle cx="560" cy="128" r="1.5" class="constellation-point" style="animation-delay:.75s;"/><circle cx="570" cy="128" r="1.5" class="constellation-point" style="animation-delay:.8s;"/><circle cx="580" cy="128" r="1.5" class="constellation-point" style="animation-delay:.85s;"/><circle cx="590" cy="128" r="1.5" class="constellation-point" style="animation-delay:.9s;"/><circle cx="600" cy="128" r="1.5" class="constellation-point" style="animation-delay:.95s;"/><circle cx="560" cy="138" r="1.5" class="constellation-point" style="animation-delay:1s;"/><circle cx="570" cy="138" r="1.5" class="constellation-point" style="animation-delay:1.05s;"/><circle cx="580" cy="138" r="1.5" class="constellation-point" style="animation-delay:1.1s;"/><circle cx="590" cy="138" r="1.5" class="constellation-point" style="animation-delay:1.15s;"/><circle cx="600" cy="138" r="1.5" class="constellation-point" style="animation-delay:1.2s;"/></g>
+              <text x="580" y="175" text-anchor="middle" class="svg-mono" fill="#5d6a87">8bit · 4G下行/5G上下行</text>
+            </svg>
+            <div class="diagram-caption">图 7-3 · 调制星座图（动态闪烁）：点越密->比特越多->抗噪越弱->需更高SNR</div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>编码</th><th><span class="tag tag-4g">4G LTE</span></th><th><span class="tag tag-5g">5G NR</span></th></tr></thead>
+            <tbody>
+              <tr><td>数据信道编码</td><td>Turbo码</td><td>LDPC码（大数据量译码效率更高）</td></tr>
+              <tr><td>控制信道编码</td><td>Tail-biting卷积码</td><td>Polar码（短码性能优异）</td></tr>
+              <tr><td>上行最高调制</td><td>64QAM</td><td>256QAM（提升上行速率）</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>AMC自适应调制编码 - 怎么决定用256QAM还是QPSK</h3>
+          <p>5G不是固定用某种调制，而是根据<strong>信道质量动态调整</strong>。CTO问"怎么决定用256QAM还是QPSK"时的回答框架：</p>
+          <table class="data-table">
+            <thead><tr><th>环节</th><th>机制</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>① 信道测量</td><td>终端测量CSI-RS参考信号</td><td>终端持续测量下行信道质量</td></tr>
+              <tr><td>② CQI反馈</td><td>终端上报CQI（0-15）</td><td>CQI反映终端能正确解码的最高MCS等级</td></tr>
+              <tr><td>③ MCS选择</td><td>基站根据CQI查表选择MCS（0-31）</td><td>MCS决定调制方式(QPSK~256QAM)和编码率</td></tr>
+              <tr><td>④ 外环调整</td><td>基站根据HARQ ACK/NACK动态微调</td><td>NACK多则降MCS（保守），ACK多则升MCS（激进）</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>关键理解</strong>：AMC是一个<strong>闭环反馈系统</strong>--终端测量->CQI反馈->基站选MCS->HARQ验证->动态调整。近点SNR高->CQI高->256QAM->8bit/符号->高速率；远点SNR低->CQI低->QPSK->2bit/符号->低速率但不断连。<strong>这就是为什么近点能到1Gbps+而边缘只有50Mbps</strong>。华为AMC算法以快速响应和预测精度著称，能在1ms内完成MCS切换。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-harq">
+        <div class="card">
+          <h3>HARQ - 混合自动重传（动态步骤动画）</h3>
+          <div class="diagram-box">
+            <svg width="640" height="240" viewBox="0 0 640 240">
+              <rect x="20" y="80" width="80" height="50" rx="8" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+              <text x="60" y="110" text-anchor="middle" class="svg-mono" fill="#2dd4ff">gNB(发送)</text>
+              <rect x="540" y="80" width="80" height="50" rx="8" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/>
+              <text x="580" y="110" text-anchor="middle" class="svg-mono" fill="#4dff9e">UE(接收)</text>
+              <line x1="100" y1="95" x2="540" y2="95" stroke="#2dd4ff" stroke-width="1.5" class="flow-line harq-anim-1"/>
+              <circle r="3" fill="#2dd4ff"><animate attributeName="cx" values="100;540" dur="2s" repeatCount="indefinite"/><animate attributeName="cy" values="95;95" dur="2s" repeatCount="indefinite"/></circle>
+              <text x="320" y="88" text-anchor="middle" class="svg-mono" fill="#2dd4ff">① 首次传输 (RV0)</text>
+              <line x1="540" y1="115" x2="100" y2="115" stroke="#ff5d6c" stroke-width="1.5" class="flow-line harq-anim-2"/>
+              <text x="320" y="130" text-anchor="middle" class="svg-mono" fill="#ff5d6c">② NACK (解码失败，缓存数据)</text>
+              <line x1="100" y1="145" x2="540" y2="145" stroke="#ffb84d" stroke-width="1.5" class="flow-line harq-anim-3"/>
+              <circle r="3" fill="#ffb84d"><animate attributeName="cx" values="100;540" dur="2s" repeatCount="indefinite" begin="1s"/><animate attributeName="cy" values="145;145" dur="2s" repeatCount="indefinite" begin="1s"/></circle>
+              <text x="320" y="140" text-anchor="middle" class="svg-mono" fill="#ffb84d">③ 重传 (RV1)</text>
+              <rect x="240" y="165" width="160" height="30" rx="6" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1" class="harq-anim-4"/>
+              <text x="320" y="185" text-anchor="middle" class="svg-mono" fill="#8b7cff">④ 软合并解码 -> 成功</text>
+              <text x="320" y="220" text-anchor="middle" class="svg-mono" fill="#5d6a87">HARQ在MAC层实现，重传时延~4-8ms（4G/5G原理相同）</text>
+            </svg>
+            <div class="diagram-caption">图 7-4 · HARQ动态流程：步骤①②③④依次高亮</div>
+          </div>
+          <div class="callout">
+            <strong>4G/5G差异</strong>：HARQ原理4G和5G基本相同。5G的改进在于：支持更多并发HARQ进程（16个），且URLLC场景可限制重传次数控制最大时延。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tech-ca">
+        <div class="card">
+          <h3>载波聚合(CA) - 4G/5G对比</h3>
+          <p>4G LTE-A引入CA（最多5载波聚合），5G NR支持更多载波和更大带宽聚合。5.5G主推3CC（三载波聚合）。</p>
+          <div class="diagram-box">
+            <svg width="640" height="280" viewBox="0 0 640 280">
+              <rect x="40" y="30" width="140" height="30" rx="4" fill="rgba(255,184,77,.08)" stroke="#ffb84d"/>
+              <text x="110" y="50" text-anchor="middle" class="svg-mono" fill="#ffb84d">4G: 2.6GHz (20M)</text>
+              <rect x="240" y="30" width="140" height="30" rx="4" fill="rgba(255,184,77,.08)" stroke="#ffb84d"/>
+              <text x="310" y="50" text-anchor="middle" class="svg-mono" fill="#ffb84d">4G: 1.8GHz (20M)</text>
+              <line x1="110" y1="60" x2="320" y2="90" stroke="rgba(255,255,255,.15)" stroke-width="1" class="ca-line"/>
+              <line x1="310" y1="60" x2="320" y2="90" stroke="rgba(255,255,255,.15)" stroke-width="1" class="ca-line"/>
+              <rect x="230" y="90" width="180" height="35" rx="6" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/>
+              <text x="320" y="113" text-anchor="middle" class="svg-title" fill="#ffb84d">4G CA: 40MHz</text>
+              <text x="110" y="150" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G峰值: ~400Mbps</text>
+
+              <rect x="40" y="180" width="140" height="30" rx="4" fill="rgba(45,212,255,.08)" stroke="#2dd4ff"/>
+              <text x="110" y="200" text-anchor="middle" class="svg-mono" fill="#2dd4ff">5G: 2.6GHz (100M)</text>
+              <rect x="240" y="180" width="140" height="30" rx="4" fill="rgba(77,255,158,.08)" stroke="#4dff9e"/>
+              <text x="310" y="200" text-anchor="middle" class="svg-mono" fill="#4dff9e">5G: 4.9GHz (100M)</text>
+              <rect x="440" y="180" width="140" height="30" rx="4" fill="rgba(139,124,255,.08)" stroke="#8b7cff"/>
+              <text x="510" y="200" text-anchor="middle" class="svg-mono" fill="#8b7cff">5G: mmWave (400M)</text>
+              <line x1="110" y1="210" x2="320" y2="240" stroke="rgba(255,255,255,.15)" stroke-width="1" class="ca-line"/>
+              <line x1="310" y1="210" x2="320" y2="240" stroke="rgba(255,255,255,.15)" stroke-width="1" class="ca-line"/>
+              <line x1="510" y1="210" x2="320" y2="240" stroke="rgba(255,255,255,.15)" stroke-width="1" class="ca-line"/>
+              <rect x="200" y="240" width="240" height="35" rx="6" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/>
+              <text x="320" y="263" text-anchor="middle" class="svg-title" fill="#ffb84d">5G 3CC: 600MHz</text>
+              <text x="510" y="150" text-anchor="middle" class="svg-mono" fill="#5d6a87">5G峰值: ~5Gbps+</text>
+            </svg>
+            <div class="diagram-caption">图 7-5 · 4G CA vs 5G 3CC载波聚合对比（动态聚合线）</div>
+          </div>
+          <div class="callout">
+            <strong>4G/5G差异</strong>：4G CA最多聚合5个20MHz载波（100MHz）；5G 3CC可聚合3个大带宽载波（600MHz+）。华为5.5G 3CC商用领先友商1-2年。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 08 部署场景 ==================== -->
+    <section class="section" id="sec-scenario">
+      <div class="section-title">部署场景 · 4G/5G协同</div>
+      <div class="section-subtitle">宏站 · 微站 · 室分 · 高铁 · 行业专网 - 4G/5G协同部署策略</div>
+
+      <div class="sub-tabs" id="sc-tabs">
+        <div class="sub-tab active" data-target="sc-macro">宏站</div>
+        <div class="sub-tab" data-target="sc-indoor">室内覆盖</div>
+        <div class="sub-tab" data-target="sc-highspeed">高铁/高速</div>
+        <div class="sub-tab" data-target="sc-enterprise">行业专网</div>
+      </div>
+
+      <div class="sub-content active" id="sc-macro">
+        <div class="card">
+          <h3>宏基站场景 - 4G/5G协同部署</h3>
+          <table class="data-table">
+            <thead><tr><th>维度</th><th>4G城区</th><th>5G城区</th><th>4G农村</th><th>5G农村</th></tr></thead>
+            <tbody>
+              <tr><td>华为设备</td><td>RRU+8T天线</td><td>AAU5613(64T)</td><td>RRU5258(低频)</td><td>AAU5313(低频)</td></tr>
+              <tr><td>频段</td><td>1.8/2.1/2.6GHz</td><td>3.5/2.6GHz</td><td>700/900MHz</td><td>700MHz</td></tr>
+              <tr><td>站间距</td><td>400-800m</td><td>200-400m</td><td>2-5km</td><td>3-8km</td></tr>
+              <tr><td>4G/5G协同</td><td colspan="4">共站部署：BBU5900同时管4G和5G基带；天面共享或独立</td></tr>
+            </tbody>
+          </table>
+          <div class="dim-grid">
+            <div class="dim-card dim-huawei">
+              <div class="dim-title">华为差异化</div>
+              <div class="dim-body">4G/5G共BBU共天面方案；SuperBAND多频协同；AI节能降25%功耗</div>
+            </div>
+            <div class="dim-card dim-challenge">
+              <div class="dim-title">客户挑战</div>
+              <div class="dim-body">4G/5G共站增加天面和设备数量，物业协调难；老旧铁塔承重受限；电费OPEX翻倍</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sc-indoor">
+        <div class="card">
+          <h3>室内覆盖 - 4G/5G协同</h3>
+          <p><strong>70-80%数据发生在室内</strong>。4G室分以DAS为主，5G需要数字化室分支持MIMO。</p>
+          <table class="data-table">
+            <thead><tr><th>方案</th><th>原理</th><th>华为产品</th><th>友商</th><th>4G/5G</th></tr></thead>
+            <tbody>
+              <tr><td>DAS</td><td>信源+馈线+天线</td><td>传统DAS</td><td>爱立信/诺基亚DAS</td><td>4G主力/5G容量受限</td></tr>
+              <tr><td>数字化室分</td><td>BBU+pRRU</td><td><strong>LampSite 5G</strong></td><td>爱立信Radio Dot</td><td>4G/5G共模</td></tr>
+              <tr><td>室外打室内</td><td>宏站定向照射</td><td>大功率AAU</td><td>同方案</td><td>4G/5G均可</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>华为LampSite 5G</strong>：业界最成熟数字化室分，支持4G/5G共模、Massive MIMO；部署超10万站点。爱立信Radio Dot更轻便但5G MIMO能力不如LampSite。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sc-highspeed">
+        <div class="card">
+          <h3>高铁/高速公路场景</h3>
+          <div class="dim-grid">
+            <div class="dim-card dim-challenge"><div class="dim-title">多普勒频移</div><div class="dim-body">350km/h下3.5GHz多普勒偏移~±1134Hz（f_d=v/λ=97.2/0.0857≈1134Hz），破坏子载波正交性</div></div>
+            <div class="dim-card dim-challenge"><div class="dim-title">频繁切换</div><div class="dim-body">高速移动每几秒切换基站</div></div>
+            <div class="dim-card dim-challenge"><div class="dim-title">穿透损耗</div><div class="dim-body">高铁车厢金属屏蔽20-30dB</div></div>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>技术手段</th><th>华为方案</th><th>友商方案</th><th>4G/5G</th></tr></thead>
+            <tbody>
+              <tr><td>多普勒补偿</td><td>自研算法预补偿</td><td>类似算法</td><td>4G/5G</td></tr>
+              <tr><td>超级小区</td><td><strong>BookRR</strong></td><td>爱立信Supercell</td><td>4G/5G</td></tr>
+              <tr><td>专网频段</td><td>2.1GHz低频+大功率RRU</td><td>类似方案</td><td>4G/5G</td></tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>华为差异化</strong>：高铁覆盖是华为传统强项，国内高铁4G/5G覆盖项目华为份额第一。BookRR超级小区和多普勒补偿算法业界领先。
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sc-enterprise">
+        <div class="card">
+          <h3>行业专网（ToB）场景</h3>
+          <table class="data-table">
+            <thead><tr><th>行业</th><th>核心诉求</th><th>华为方案</th><th>友商</th><th>4G/5G</th></tr></thead>
+            <tbody>
+              <tr><td>智慧矿山</td><td>井下覆盖+防爆+低时延</td><td>5G专网+MEC+防爆AAU</td><td>爱立信(无防爆)</td><td>5G为主</td></tr>
+              <tr><td>智慧港口</td><td>远程控制+视频回传</td><td>5G专网+切片+宏微协同</td><td>诺基亚工业5G</td><td>5G</td></tr>
+              <tr><td>智能制造</td><td>超低时延+高可靠</td><td>5G LAN+TSN+UPF下沉</td><td>爱立信Private 5G</td><td>5G SA必须</td></tr>
+              <tr><td>智慧电力</td><td>差动保护+切片隔离</td><td>5G硬切片+差分GPS</td><td>诺基亚Critical Comms</td><td>5G SA</td></tr>
+              <tr><td>医疗</td><td>数据不出院</td><td>5G专网+UPF院内+LampSite</td><td>爱立信Private Network</td><td>5G</td></tr>
+            </tbody>
+          </table>
+          <div class="callout callout-amber">
+            <strong>4G/5G选择</strong>：行业专网绝大多数需要5G SA（切片/MEC/URLLC），4G无法满足。但部分低要求场景（如园区基础覆盖）可用4G专网降低成本。产品经理需帮客户判断是否必须上5G SA。
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>5G专网部署模型 - ToB方案设计的核心决策</h3>
+          <p><strong>CTO必问："5G专网怎么建？用公网还是独立建？"</strong> 5G NPN（Non-Public Network）有三种部署模型，每种的投资/性能/隔离度不同：</p>
+          <table class="data-table">
+            <thead><tr><th>模型</th><th>架构</th><th>隔离度</th><th>成本</th><th>适用</th><th>华为方案</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="tag tag-green">PNI-NPN<br>(公网集成)</span></td>
+                <td>共享公网RAN+共享UPF，通过切片+DNN隔离</td>
+                <td>低（逻辑隔离）</td>
+                <td>最低</td>
+                <td>中小园区、不需要数据本地化</td>
+                <td>切片+专属DNN</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-cyan">PNI-NPN+UPF下沉<br>(公网集成+边缘)</span></td>
+                <td>共享公网RAN+<strong>独立UPF下沉到园区</strong>+MEC</td>
+                <td>中（数据隔离）</td>
+                <td>中</td>
+                <td>中大型园区、数据不出园</td>
+                <td>MEC+UPF下沉+LampSite</td>
+              </tr>
+              <tr>
+                <td><span class="tag tag-amber">SNPN<br>(独立专网)</span></td>
+                <td><strong>独立RAN+独立5GC+独立UPF</strong>，与公网完全物理隔离</td>
+                <td>高（物理隔离）</td>
+                <td>最高</td>
+                <td>矿山/军工/电力高安全场景</td>
+                <td>独立BBU+AAU+轻量5GC</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>5G LAN - 5G专网的"局域网"能力</h4>
+          <ul>
+            <li><strong>5G LAN type</strong>：5G Rel-16引入，让5G网络像局域网一样工作，支持终端间直接通信（不需要经DN路由）</li>
+            <li><strong>类型-a</strong>：同一5G LAN组内终端二层互通（类似VLAN），支持ARP代理</li>
+            <li><strong>类型-b</strong>：跨5G LAN组的三层路由，支持终端间IP通信</li>
+            <li><strong>价值</strong>：工厂内PLC传感器/AGV/机械臂可以直接通过5G网络互通，不需要额外路由器，替代工业以太网</li>
+          </ul>
+          <div class="callout callout-amber">
+            <strong>方案选型逻辑</strong>：①中小园区用<strong>PNI-NPN切片</strong>（最便宜）；②需要数据不出园用<strong>UPF下沉</strong>（中成本，最主流）；③极高安全要求用<strong>SNPN独立</strong>（最贵但完全隔离）。<strong>5G LAN是工业场景替代WiFi/以太网的关键能力</strong>--CTO问"5G能不能替代工厂有线网"时，5G LAN type就是答案。华为支持5G LAN type-a/b全能力，业界领先。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 09 客户选型策略 ==================== -->
+    <section class="section" id="sec-strategy">
+      <div class="section-title">客户选型策略</div>
+      <div class="section-subtitle">五维决策 · TCO分析 · 4G/5G投资保护 · 竞争定位</div>
+
+      <div class="card">
+        <h3>选型决策五大维度</h3>
+        <div class="diagram-box">
+          <svg width="640" height="280" viewBox="0 0 640 280">
+            <circle cx="320" cy="140" r="50" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/>
+            <text x="320" y="135" text-anchor="middle" class="svg-title">选型决策</text>
+            <text x="320" y="152" text-anchor="middle" class="svg-mono">4G/5G设备</text>
+            <circle cx="150" cy="60" r="40" fill="rgba(45,212,255,.06)" stroke="#2dd4ff" stroke-width="1"/><text x="150" y="58" text-anchor="middle" class="svg-mono" fill="#2dd4ff" style="font-size:12px;">① 频段</text><text x="150" y="73" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">n78/n41/4G频段</text>
+            <circle cx="490" cy="60" r="40" fill="rgba(77,255,158,.06)" stroke="#4dff9e" stroke-width="1"/><text x="490" y="58" text-anchor="middle" class="svg-mono" fill="#4dff9e" style="font-size:12px;">② 容量</text><text x="490" y="73" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">通道/带宽</text>
+            <circle cx="120" cy="220" r="40" fill="rgba(255,184,77,.06)" stroke="#ffb84d" stroke-width="1"/><text x="120" y="218" text-anchor="middle" class="svg-mono" fill="#ffb84d" style="font-size:12px;">③ 功耗</text><text x="120" y="233" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">OPEX电费</text>
+            <circle cx="520" cy="220" r="40" fill="rgba(139,124,255,.06)" stroke="#8b7cff" stroke-width="1"/><text x="520" y="218" text-anchor="middle" class="svg-mono" fill="#8b7cff" style="font-size:12px;">④ 部署</text><text x="520" y="233" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">重量/体积</text>
+            <circle cx="320" cy="260" r="40" fill="rgba(255,93,108,.06)" stroke="#ff5d6c" stroke-width="1"/><text x="320" y="258" text-anchor="middle" class="svg-mono" fill="#ff5d6c" style="font-size:12px;">⑤ 成本</text><text x="320" y="273" text-anchor="middle" class="svg-mono" fill="#5d6a87" style="font-size:9px;">CAPEX+TCO</text>
+          </svg>
+          <div class="diagram-caption">图 9-1 · 选型五大维度（适用于4G和5G）</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>TCO分析与华为竞争优势</h3>
+        <table class="data-table">
+          <thead><tr><th>设备</th><th>功耗</th><th>年电费</th><th>5年TCO(10万站)</th><th>华为vs友商</th></tr></thead>
+          <tbody>
+            <tr><td>华为64T AAU</td><td>850W</td><td>~0.74万</td><td>~37亿</td><td>-</td></tr>
+            <tr><td>友商64T AAU</td><td>950W</td><td>~0.83万</td><td>~41.5亿</td><td>华为省4.5亿/5年</td></tr>
+            <tr><td>华为32T AAU</td><td>600W</td><td>~0.52万</td><td>~26亿</td><td>-</td></tr>
+            <tr><td>友商32T AAU</td><td>700W</td><td>~0.61万</td><td>~30.5亿</td><td>华为省4.5亿/5年</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>TCO说服法</strong>：不要只比设备价格，用"5年TCO差"说服客户。华为AI节能技术可再降20-30%功耗。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>华为 vs 友商竞争定位矩阵</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th><span class="tag tag-huawei">华为</span></th><th><span class="tag tag-ericsson">爱立信</span></th><th><span class="tag tag-nokia">诺基亚</span></th><th><span class="tag tag-zte">中兴</span></th></tr></thead>
+          <tbody>
+            <tr><td>频段覆盖</td><td>★★★★★(全频段最全)</td><td>★★★★</td><td>★★★★</td><td>★★★(国内全)</td></tr>
+            <tr><td>4G/5G共模</td><td>★★★★★(四模共框)</td><td>★★★★(双模)</td><td>★★★★</td><td>★★★★</td></tr>
+            <tr><td>Massive MIMO</td><td>★★★★★(最轻最低功耗)</td><td>★★★★(轻量化成熟)</td><td>★★★★(ReefShark芯片)</td><td>★★★★</td></tr>
+            <tr><td>节能技术</td><td>★★★★★(AI功控+5级节能)</td><td>★★★★</td><td>★★★★</td><td>★★★</td></tr>
+            <tr><td>行业定制</td><td>★★★★★(防爆/矿用/海事)</td><td>★★★</td><td>★★★</td><td>★★★</td></tr>
+            <tr><td>5.5G演进</td><td>★★★★★(ELAA/3CC先锋)</td><td>★★★★</td><td>★★★★</td><td>★★★★</td></tr>
+            <tr><td>O-RAN/vRAN开放</td><td>★★★(CU虚拟化/DU专用)</td><td>★★★★(O-RAN兼容)</td><td>★★★★★(O-RAN先锋)</td><td>★★★</td></tr>
+            <tr><td>欧美市场生态</td><td>★★(受限)</td><td>★★★★★</td><td>★★★★★</td><td>★★★</td></tr>
+            <tr><td>价格</td><td>★★★(偏高)</td><td>★★(高)</td><td>★★(高)</td><td>★★★★★(性价比)</td></tr>
+            <tr><td>海外准入</td><td>★★(受限)</td><td>★★★★★</td><td>★★★★★</td><td>★★★</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>讲方案三步法</strong>：参数 -> 价值 -> 客户利益。"AAU 18kg" -> "老旧铁塔不用加固" -> "省3个月工期和10万加固费"。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4G/5G投资保护策略</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-customer"><div class="dim-title">客户挑战</div><div class="dim-body">4G刚投完5G又来，担心设备变电子垃圾</div></div>
+          <div class="dim-card dim-huawei"><div class="dim-title">华为方案</div><div class="dim-body">BBU5900共框管4G/5G；基带板可升级；5.5G软件平滑演进</div></div>
+          <div class="dim-card dim-competitor"><div class="dim-title">友商方案</div><div class="dim-body">也承诺软件升级，但5.5G部分特性需换硬件</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>网络规划方法论 - 链路预算与容量规划</h3>
+        <p>产品经理做方案设计时，必须能用<strong>链路预算</strong>估算覆盖半径，用<strong>容量规划</strong>估算站点容量。这是方案设计的基础工具：</p>
+        <h4>链路预算（Link Budget）- 估算覆盖半径</h4>
+        <table class="data-table">
+          <thead><tr><th>参数</th><th>典型值(下行)</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>发射功率</td><td>46dBm（40W/通道）</td><td>AAU每通道最大发射功率</td></tr>
+            <tr><td>天线增益</td><td>21dBi（64T）</td><td>阵列增益+天线方向性增益</td></tr>
+            <tr><td>路损模型</td><td>3GPP UMa / UMi</td><td>城区宏站/微站传播模型</td></tr>
+            <tr><td>穿透损耗</td><td>15-20dB（3.5GHz穿墙）</td><td>室外到室内覆盖时需考虑</td></tr>
+            <tr><td>馈线损耗</td><td>0dB（AAU）/3-5dB（RRU+天线）</td><td>AAU无馈线损耗是核心优势</td></tr>
+            <tr><td>接收灵敏度</td><td>-95dBm（取决于MCS）</td><td>终端最低接收电平</td></tr>
+            <tr><td><strong>最大允许路损(MAPL)</strong></td><td><strong>~140dB</strong></td><td>= 发射功率+增益-灵敏度-损耗-余量</td></tr>
+            <tr><td><strong>估算覆盖半径</strong></td><td><strong>~400-800m(城区)</strong></td><td>代入路损模型反推距离</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理用法</strong>：客户问"3.5GHz能覆盖多远？"，用链路预算回答：MAPL~140dB代入UMa模型，城区约400-800m，郊区1-2km。700MHz的MAPL比3.5GHz高~12dB（穿透+传播优势），覆盖半径约为3.5GHz的3-4倍。这就是"低频打底覆盖"的定量依据。
+        </div>
+        <h4>容量规划 - 估算小区吞吐率</h4>
+        <ul>
+          <li><strong>理论峰值</strong> = 带宽 × 频谱效率 × 天线流数。例如5G 100MHz × 7.4bit/s/Hz(256QAM) × 4流 ≈ 3Gbps/扇区</li>
+          <li><strong>实际平均</strong> ≈ 理论峰值 × 30-50%（考虑调度效率、信道变化、用户分布）</li>
+          <li><strong>单用户速率</strong> = 小区吞吐率 / 活跃用户数。100用户并发时单用户~30-50Mbps</li>
+          <li><strong>容量瓶颈判断</strong>：PRB利用率>70%为高负载，需考虑扩容（升级MIMO/CA/小区分裂）</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>网络能效详细方案 - 华为核心卖点拆解</h3>
+        <p>"AI节能降25%功耗"是华为核心卖点，但CTO会追问"具体怎么降的？"。以下是华为节能技术的完整拆解：</p>
+        <table class="data-table">
+          <thead><tr><th>节能技术</th><th>原理</th><th>节电幅度</th><th>触发条件</th></tr></thead>
+          <tbody>
+            <tr><td>符号关断</td><td>无数据传输的OFDM符号关闭功放</td><td>5-15%</td><td>低流量时段（如夜间）</td></tr>
+            <tr><td>通道关断</td><td>64T暂时关闭部分通道，降为32T/16T运行</td><td>10-20%</td><td>中等负载，用户少时</td></tr>
+            <tr><td>深度休眠</td><td>AAU射频通道全部关闭，仅保留基带待机</td><td>50-70%（AAU侧）</td><td>极低负载或无用户时</td></tr>
+            <tr><td>载波关断</td><td>多载波小区关闭辅载波，仅保留主载波</td><td>15-25%</td><td>容量层载波低负载时</td></tr>
+            <tr><td>AI功控</td><td>AI预测流量/干扰，动态选择最优节能策略组合</td><td>叠加10-15%</td><td>持续运行，AI自动决策</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-amber">
+          <strong>CTO对话要点</strong>：不要只说"AI节能降25%"，要拆解：<strong>符号关断5-15% + 通道关断10-20% + 深度休眠50-70% + AI叠加10-15%</strong>。实际综合节电取决于网络负载模式--低负载区域（如夜间居民区）节电可达30-40%，高负载区域（如商圈白天）仅5-10%。<strong>5年TCO计算时用加权平均节电率20-25%</strong>是合理的。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>CAPEX对比 - 设备价格区间</h3>
+        <table class="data-table">
+          <thead><tr><th>设备</th><th>华为(参考)</th><th>爱立信</th><th>诺基亚</th><th>中兴</th><th>O-RAN(三星等)</th></tr></thead>
+          <tbody>
+            <tr><td>64T AAU</td><td>¥8-12万</td><td>¥10-14万</td><td>¥10-14万</td><td>¥7-10万</td><td>¥6-9万</td></tr>
+            <tr><td>32T AAU</td><td>¥5-7万</td><td>¥6-8万</td><td>¥6-8万</td><td>¥4-6万</td><td>¥3.5-5万</td></tr>
+            <tr><td>BBU</td><td>¥3-5万</td><td>¥4-6万</td><td>¥4-6万</td><td>¥2.5-4万</td><td>¥2-3.5万(通用硬件)</td></tr>
+            <tr><td>RRU(8T)</td><td>¥1.5-2.5万</td><td>¥2-3万</td><td>¥2-3万</td><td>¥1-2万</td><td>-</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>说明</strong>：以上为行业参考价格区间（非官方报价），实际价格受采购量、市场策略、政策因素影响波动大。<strong>CAPEX维度：中兴/O-RAN最低，华为居中，爱立信/诺基亚最高</strong>。但结合OPEX（功耗/运维）和性能，5年TCO排序可能逆转。产品经理用TCO说服客户时，CAPEX+OPEX缺一不可。
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 10 典型瓶颈与方案 ==================== -->
+    <section class="section" id="sec-bottleneck">
+      <div class="section-title">典型瓶颈与方案</div>
+      <div class="section-subtitle">覆盖/容量/干扰/时延/上行 - 诊断、华为方案、友商对比</div>
+
+      <div class="card">
+        <h3>瓶颈诊断框架</h3>
+        <div class="step-flow">
+          <div class="step-node active" style="border-color:var(--accent-cyan);"><div style="color:var(--accent-cyan);font-weight:600;">客户反馈</div><div style="font-size:11px;margin-top:4px;">"信号差/网速慢"</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-amber);"><div style="color:var(--accent-amber);font-weight:600;">瓶颈分类</div><div style="font-size:11px;margin-top:4px;">覆盖/容量/干扰</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-green);"><div style="color:var(--accent-green);font-weight:600;">根因分析</div><div style="font-size:11px;margin-top:4px;">频段/参数/拓扑</div></div>
+          <div class="step-arrow"></div>
+          <div class="step-node" style="border-color:var(--accent-violet);"><div style="color:var(--accent-violet);font-weight:600;">方案输出</div><div style="font-size:11px;margin-top:4px;">设备+参数+部署</div></div>
+        </div>
+        <h4>关键KPI定量阈值速查（4G/5G通用）</h4>
+        <table class="data-table">
+          <thead><tr><th>KPI指标</th><th>优秀</th><th>正常</th><th>需优化</th><th>严重</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>RSRP（参考信号接收功率）</td><td>≥-85dBm</td><td>-85~-100dBm</td><td>-100~-110dBm</td><td>&lt;-110dBm</td><td>衡量覆盖强度，&lt;-110dBm为弱覆盖</td></tr>
+            <tr><td>SINR（信干噪比）</td><td>≥15dB</td><td>5~15dB</td><td>0~5dB</td><td>&lt;0dB</td><td>衡量信号质量，&lt;0dB边缘干扰严重</td></tr>
+            <tr><td>PRB利用率</td><td>≤30%</td><td>30-50%</td><td>50-70%</td><td>&gt;70%</td><td>衡量负载，&gt;70%需扩容</td></tr>
+            <tr><td>下行吞吐率(5G)</td><td>≥500Mbps</td><td>100-500Mbps</td><td>50-100Mbps</td><td>&lt;50Mbps</td><td>单用户体验速率</td></tr>
+            <tr><td>切换成功率</td><td>≥99.5%</td><td>98-99.5%</td><td>95-98%</td><td>&lt;95%</td><td>移动场景关键指标</td></tr>
+            <tr><td>端到端时延</td><td>≤10ms</td><td>10-30ms</td><td>30-50ms</td><td>&gt;50ms</td><td>URLLC要求≤1ms</td></tr>
+            <tr><td>VoNR MOS分</td><td>≥4.0</td><td>3.5-4.0</td><td>3.0-3.5</td><td>&lt;3.0</td><td>语音质量评分（5分制）</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理用法</strong>：客户说"信号差"时，先问<strong>RSRP和SINR值</strong>。RSRP<-110dBm是覆盖问题（加站/升频段）；SINR<0dB是干扰问题（优化PCI/波束/CoMP）；PRB>70%是容量问题（升64T/CA/分裂）。<strong>定量指标让方案推荐有数据支撑，而非凭感觉</strong>。
+        </div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈1：覆盖不足 - "信号差、没5G/4G"</div>
+        <div class="bk-symptom"><strong>表现</strong>：某区域信号弱、频繁回落、通话断续。<br><strong>根因</strong>：高频穿透损耗大；站间距过大；室内无专项覆盖。</div>
+        <div class="bk-solution"><strong>方案</strong>：室内盲区 -> LampSite/MetroCell；偏远农村 -> 700MHz/900MHz低频RRU或RuralStar；城市阴影 -> 微站补盲<br><strong>4G/5G</strong>：4G用低频重耕扩覆盖；5G用低频打底+中频容量<br><strong>华为差异化</strong>：RuralStar降30%成本；LampSite容量是DAS的5-10倍</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈2：容量不足 - "人多就卡"</div>
+        <div class="bk-symptom"><strong>表现</strong>密集区域高峰网速暴降。<br><strong>根因</strong>：多用户分摊；MU-MIMO配对率低；带宽不够。</div>
+        <div class="bk-solution"><strong>方案</strong>：4G升级8T/载波聚合；5G升64T Massive MIMO+3CC聚合；宏微协同分流<br><strong>华为差异化</strong>：64T MU-MIMO 16用户配对(友商8-12)；3CC领先1-2年</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈3：小区间干扰 - "边缘速率差"</div>
+        <div class="bk-symptom"><strong>表现</strong>：边缘SINR<0dB，频繁掉线。<br><strong>根因</strong>：同频干扰；天线参数不合理；PCI冲突。</div>
+        <div class="bk-solution"><strong>方案</strong>：CoMP协作(C-RAN支持)；天线参数优化；PCI规划；波束零陷<br>
+          <strong>CoMP三种方案详解</strong>：<br>
+          • <strong>JT（联合传输）</strong>：多个基站同时向同一用户发送相同数据，信号叠加增强。增益最大（边缘速率提升50-100%），但对前传带宽和同步要求最高，需C-RAN<br>
+          • <strong>JR（联合接收）</strong>：多个基站联合接收上行信号，合并处理。仅上行增益，实现简单<br>
+          • <strong>CS（协调调度）</strong>：基站间协调资源分配，避免边缘用户使用相同PRB。增益中等（20-30%），无需联合传输，信令开销小，最易部署<br>
+          <strong>选型建议</strong>：城区C-RAN用JT（最大化增益）；D-RAN用CS（简单有效）；上行优化用JR<br>
+          <strong>华为差异化</strong>：C-RAN CoMP部署最成熟；Massive MIMO波束零陷>20dB；支持CS+JT混合模式</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈4：时延过高 - "操作不跟手"</div>
+        <div class="bk-symptom"><strong>表现</strong>：工业控制端到端>50ms。<br><strong>根因</strong>：空口调度+HARQ；核心网传输；服务器远。</div>
+        <div class="bk-solution"><strong>方案</strong>：MEC边缘计算+UPF下沉；增大SCS(60kHz)；mini-slot；减少HARQ重传；上行免调度<br><strong>4G/5G</strong>：4G最低时延~10ms无法满足URLLC；5G可做到<10ms<br><strong>华为差异化</strong>：MEC超1000节点；URLLC端到端<10ms</div>
+      </div>
+
+      <div class="bottleneck-card">
+        <div class="bk-title">瓶颈5：上行不足 - "上传慢、直播卡"</div>
+        <div class="bk-symptom"><strong>表现</strong>：直播/监控上行远低于下行。<br><strong>根因</strong>：TDD配比偏下行；终端功率受限；上行MIMO弱。</div>
+        <div class="bk-solution"><strong>方案</strong>：调整时隙配比(DDDSU->DSUUU)；SUL(下行3.5G+上行1.8G)；高功率CPE；上行CA<br><strong>4G/5G</strong>：4G TDD也有上行不足问题但无法灵活调配比；5G SUL是独有方案<br><strong>华为差异化</strong>：SUL频段组合最丰富；工业CPE产品线最全</div>
+      </div>
+
+      <div class="card">
+        <h3>瓶颈方案速查矩阵</h3>
+        <table class="data-table">
+          <thead><tr><th>客户说</th><th>瓶颈</th><th>华为方案</th><th>友商</th></tr></thead>
+          <tbody>
+            <tr><td>"这里没信号"</td><td>覆盖盲区</td><td>LampSite/RuralStar/低频RRU</td><td>Radio Dot/低频RRU</td></tr>
+            <tr><td>"人多了就卡"</td><td>容量不足</td><td>64T升级/3CC/小区分裂</td><td>64T/CA</td></tr>
+            <tr><td>"边缘网速差"</td><td>小区干扰</td><td>CoMP/波束零陷</td><td>ICIC/参数优化</td></tr>
+            <tr><td>"操作不跟手"</td><td>时延过高</td><td>MEC/大SCS/mini-slot</td><td>MEC/参数</td></tr>
+            <tr><td>"上传太慢"</td><td>上行不足</td><td>SUL/改配比/高功率CPE</td><td>SUL/配比</td></tr>
+            <tr><td>"高铁上断续"</td><td>高速移动</td><td>BookRR/多普勒补偿</td><td>Supercell</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 11 产品经理能力地图 ==================== -->
+    <section class="section" id="sec-pm">
+      <div class="section-title">产品经理能力地图</div>
+      <div class="section-subtitle">四层能力模型 · 4G/5G知识体系 · 竞品分析要求 · 学习路径</div>
+
+      <div class="card">
+        <h3>四层能力模型</h3>
+        <div class="diagram-box">
+          <svg width="640" height="320" viewBox="0 0 640 320">
+            <polygon points="320,30 420,70 320,110 220,70" fill="rgba(255,184,77,.08)" stroke="#ffb84d" stroke-width="1.5"/><text x="320" y="68" text-anchor="middle" class="svg-title" fill="#ffb84d">L4 行业方案架构</text><text x="320" y="85" text-anchor="middle" class="svg-mono" fill="#5d6a87">能定义场景方案</text>
+            <polygon points="220,70 420,70 470,130 170,130" fill="rgba(139,124,255,.08)" stroke="#8b7cff" stroke-width="1.5"/><text x="320" y="100" text-anchor="middle" class="svg-title" fill="#8b7cff">L3 客户痛点诊断</text><text x="320" y="117" text-anchor="middle" class="svg-mono" fill="#5d6a87">定位瓶颈、出方案</text>
+            <polygon points="170,130 470,130 520,200 120,200" fill="rgba(77,255,158,.08)" stroke="#4dff9e" stroke-width="1.5"/><text x="320" y="160" text-anchor="middle" class="svg-title" fill="#4dff9e">L2 产品知识体系</text><text x="320" y="177" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G/5G设备/原理/竞品</text>
+            <polygon points="120,200 520,200 570,270 70,270" fill="rgba(45,212,255,.08)" stroke="#2dd4ff" stroke-width="1.5"/><text x="320" y="230" text-anchor="middle" class="svg-title" fill="#2dd4ff">L1 基础概念</text><text x="320" y="247" text-anchor="middle" class="svg-mono" fill="#5d6a87">4G/5G标准/频谱/架构</text>
+            <text x="600" y="50" text-anchor="end" class="svg-mono" fill="#ffb84d">↑ 高阶</text><text x="600" y="290" text-anchor="end" class="svg-mono" fill="#2dd4ff">↓ 基础</text>
+          </svg>
+          <div class="diagram-caption">图 11-1 · 四层能力模型：从基础概念到行业方案架构</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>各层能力与竞品分析要求</h3>
+        <table class="data-table">
+          <thead><tr><th>层级</th><th>能力</th><th>关键知识</th><th>竞品要求</th><th>验证标准</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag tag-cyan">L1</span></td><td>4G/5G基础</td><td>标准演进/频谱/架构</td><td>了解四厂商产品线名称</td><td>能解释"4G和5G区别"</td></tr>
+            <tr><td><span class="tag tag-green">L2</span></td><td>产品知识</td><td>BBU/AAU/RRU/MIMO/帧结构</td><td>能对比关键规格</td><td>看懂规格书</td></tr>
+            <tr><td><span class="tag tag-violet">L3</span></td><td>痛点诊断</td><td>覆盖/容量/干扰/时延/上行</td><td>能说华为vs友商方案差异</td><td>30分钟出方案</td></tr>
+            <tr><td><span class="tag tag-amber">L4</span></td><td>方案架构</td><td>行业/切片/MEC/竞品</td><td>端到端方案对比+差异化卖点</td><td>独立投标</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>学习路径</h3>
+        <ul>
+          <li><strong>第一步(1-2周)</strong>：通读本手册，建立4G/5G无线产品知识框架</li>
+          <li><strong>第二步(2-4周)</strong>：研究华为产品规格书，把参数和原理对应</li>
+          <li><strong>第三步(1-2月)</strong>：研究3-5个华为4G/5G商用案例</li>
+          <li><strong>第四步(持续)</strong>：跟踪5.5G演进和友商动态</li>
+          <li><strong>第五步(实战)</strong>：参与客户交流和投标，从L2向L3/L4迈进</li>
+        </ul>
+        <div class="callout">
+          <strong>最终目标</strong>：成为"听到问题就能判断瓶颈、看到场景就能设计方案、面对竞品能讲出差异化、面对CTO能谈战略"的无线产品经理。
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(45,212,255,.2);">
+        <h3 style="color:var(--accent-cyan);">核心知识卡片速记</h3>
+        <table class="data-table">
+          <thead><tr><th>知识点</th><th>一句话记忆</th></tr></thead>
+          <tbody>
+            <tr><td>4G vs 5G核心差异</td><td>5G = 4G基础上：SCS灵活化+带宽扩大10倍+天线8T->64T+编码Turbo->LDPC+帧结构灵活化</td></tr>
+            <tr><td>4G/5G共存逻辑</td><td>4G至少运营到2030年；BBU5900四模共框是核心竞争力；频谱重耕连接4G/5G</td></tr>
+            <tr><td>AAU vs RRU</td><td>AAU=RRU+天线+波束赋形(无馈线损耗)；RRU+天线有3-5dB馈线损耗</td></tr>
+            <tr><td>华为vs友商核心差异</td><td>华为：全频段+最轻AAU+最低功耗+四模共框+行业定制；友商：海外准入+价格</td></tr>
+            <tr><td>领先vs新兴vs前沿市场</td><td>领先：5G SA+5.5G；新兴：4G扩容+5G试点；前沿：3G->4G升级</td></tr>
+            <tr><td>NSA vs SA</td><td>NSA=5G接4G核心网(ToC够用)；SA=5G端到端(ToB必需)</td></tr>
+            <tr><td>5.5G核心</td><td>ELAA超大规模天线+3CC载波聚合+通感一体+AI空口</td></tr>
+            <tr><td>CTO对话核心</td><td>先判断市场类型->再定4G/5G投资优先级->给设备+参数+部署方案</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-color:rgba(77,255,158,.2);">
+        <h3 style="color:var(--accent-green);">自测题 - 检验你的知识掌握度</h3>
+        <p>以下问题如果80%以上能即时回答，说明已达到L2-L3水平。如果50%以下能回答，建议重读对应章节。</p>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>问题</th><th>对应章节</th><th>难度</th></tr></thead>
+          <tbody>
+            <tr><td>Q1</td><td>5G比4G快的三个技术原因分别是什么？</td><td>Ch03</td><td><span class="tag tag-green">L1</span></td></tr>
+            <tr><td>Q2</td><td>NSA和SA的核心区别？为什么ToB必须用SA？</td><td>Ch03</td><td><span class="tag tag-green">L1</span></td></tr>
+            <tr><td>Q3</td><td>AAU和RRU+天线的核心差异？为什么5G主推AAU？</td><td>Ch05</td><td><span class="tag tag-green">L1</span></td></tr>
+            <tr><td>Q4</td><td>64T64R vs 32T32R如何选型？分别适合什么场景？</td><td>Ch05/Ch09</td><td><span class="tag tag-amber">L2</span></td></tr>
+            <tr><td>Q5</td><td>波束赋形怎么知道用户在哪个方向？（提示：SRS/互易性）</td><td>Ch06</td><td><span class="tag tag-amber">L2</span></td></tr>
+            <tr><td>Q6</td><td>TDD时隙配比DDDSU和DSUUU分别适合什么客户？改配比有什么约束？</td><td>Ch07</td><td><span class="tag tag-amber">L2</span></td></tr>
+            <tr><td>Q7</td><td>AMC如何决定用256QAM还是QPSK？完整的闭环流程是什么？</td><td>Ch07</td><td><span class="tag tag-amber">L2</span></td></tr>
+            <tr><td>Q8</td><td>客户说"信号差"，你应该先问什么KPI？RSRP和SINR分别低于多少需要处理？</td><td>Ch10</td><td><span class="tag tag-violet">L3</span></td></tr>
+            <tr><td>Q9</td><td>视频监控类ToB客户，上行不足怎么解决？给出3种方案</td><td>Ch10</td><td><span class="tag tag-violet">L3</span></td></tr>
+            <tr><td>Q10</td><td>领先型、中庸型、保守型市场分别推荐什么华为产品组合？</td><td>Ch12</td><td><span class="tag tag-violet">L3</span></td></tr>
+            <tr><td>Q11</td><td>CTO问"O-RAN你怎么看"，你的回答框架是什么？</td><td>Ch04</td><td><span class="tag tag-red">L4</span></td></tr>
+            <tr><td>Q12</td><td>5.5G的通感一体是什么？能给客户带来什么新收入？</td><td>Ch03</td><td><span class="tag tag-red">L4</span></td></tr>
+            <tr><td>Q13</td><td>一个新兴市场运营商，4G覆盖率60%，5G还没开始，你会建议什么3年路线？</td><td>Ch02/Ch12</td><td><span class="tag tag-red">L4</span></td></tr>
+            <tr><td>Q14</td><td>华为vs爱立信64T AAU的核心差异是什么？用5年TCO算给客户看</td><td>Ch05/Ch09</td><td><span class="tag tag-red">L4</span></td></tr>
+            <tr><td>Q15</td><td>VoLTE -> EPS Fallback -> VoNR的演进路径中，每个阶段的语音时延和切换风险是什么？</td><td>Ch03</td><td><span class="tag tag-red">L4</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="border-color:rgba(139,124,255,.2);">
+        <h3 style="color:var(--accent-violet);">A-Z 快速索引（客户现场速查）</h3>
+        <table class="data-table">
+          <thead><tr><th>术语</th><th>一句话</th><th>章节</th></tr></thead>
+          <tbody>
+            <tr><td>5QI</td><td>5G QoS标识，决定时延/丢包/优先级</td><td>Ch03</td></tr>
+            <tr><td>AAU</td><td>有源天线单元=RRU+天线+波束赋形一体化</td><td>Ch05</td></tr>
+            <tr><td>AMC</td><td>自适应调制编码，根据信道质量动态选MCS</td><td>Ch07</td></tr>
+            <tr><td>AMF</td><td>接入和移动性管理功能（5GC网元）</td><td>Ch03</td></tr>
+            <tr><td>BLER</td><td>误块率，HARQ重传触发指标，目标&lt;10%</td><td>Ch07</td></tr>
+            <tr><td>BookRR</td><td>华为超级小区方案，多RRU合并减少切换</td><td>Ch08</td></tr>
+            <tr><td>CAPEX</td><td>资本支出（设备采购+建设）</td><td>Ch09</td></tr>
+            <tr><td>CoMP</td><td>多点协作：JT联合传输/JR联合接收/CS协调调度</td><td>Ch10</td></tr>
+            <tr><td>CPRI</td><td>4G前传接口（10G，专用线缆）</td><td>Ch04</td></tr>
+            <tr><td>C-RAN</td><td>集中式RAN，BBU集中部署，支持CoMP</td><td>Ch04</td></tr>
+            <tr><td>CU/DU</td><td>5G BBU拆分：CU管非实时，DU管实时</td><td>Ch04</td></tr>
+            <tr><td>D-RAN</td><td>分布式RAN，每站独立BBU</td><td>Ch04</td></tr>
+            <tr><td>DSS</td><td>动态频谱共享，4G/5G同频段共存</td><td>Ch03</td></tr>
+            <tr><td>DwPTS/GP/UpPTS</td><td>TDD特殊时隙：下行导频/保护间隔/上行导频</td><td>Ch07</td></tr>
+            <tr><td>ELAA</td><td>超大规模天线阵列（5.5G），阵子512+</td><td>Ch06</td></tr>
+            <tr><td>eCPRI</td><td>增强型CPRI（25G/100G，以太网化）</td><td>Ch04</td></tr>
+            <tr><td>EN-DC</td><td>NSA双连接，4G锚点+5G辅站</td><td>Ch03</td></tr>
+            <tr><td>EPS Fallback</td><td>5G语音回落4G（VoLTE），SA初期方案</td><td>Ch03</td></tr>
+            <tr><td>GBR</td><td>保证比特速率，为VoNR/URLLC分配</td><td>Ch03</td></tr>
+            <tr><td>GP</td><td>保护间隔，决定TDD最大覆盖半径</td><td>Ch07</td></tr>
+            <tr><td>HARQ</td><td>混合ARQ，MAC层快速重传+软合并</td><td>Ch07</td></tr>
+            <tr><td>LampSite</td><td>华为5G数字化室分系统</td><td>Ch08</td></tr>
+            <tr><td>LDPC</td><td>5G数据信道编码（替代4G Turbo码）</td><td>Ch07</td></tr>
+            <tr><td>MEC</td><td>边缘计算，UPF下沉+本地服务器</td><td>Ch03</td></tr>
+            <tr><td>MIMO</td><td>多天线：SU-MIMO提升单用户，MU-MIMO提升容量</td><td>Ch06</td></tr>
+            <tr><td>MORAN/MOCN</td><td>共建共享：共享RAN独立载频/共享载频</td><td>Ch12</td></tr>
+            <tr><td>NSA/SA</td><td>非独立/独立组网，SA支持切片/MEC/URLLC</td><td>Ch03</td></tr>
+            <tr><td>O-RAN</td><td>开放RAN架构，通用硬件+开放接口</td><td>Ch04</td></tr>
+            <tr><td>Polar码</td><td>5G控制信道编码（短码性能优）</td><td>Ch07</td></tr>
+            <tr><td>PRB</td><td>物理资源块，利用率&gt;70%需扩容</td><td>Ch10</td></tr>
+            <tr><td>RedCap</td><td>5G轻量化终端，成本降50%</td><td>Ch03</td></tr>
+            <tr><td>RSRP</td><td>参考信号接收功率，&lt;-110dBm为弱覆盖</td><td>Ch10</td></tr>
+            <tr><td>RuralStar</td><td>华为低成本农村覆盖方案</td><td>Ch08</td></tr>
+            <tr><td>SCS</td><td>子载波间隔：15/30/60/120kHz，越大时延越低</td><td>Ch07</td></tr>
+            <tr><td>SINR</td><td>信干噪比，&lt;0dB为边缘干扰严重</td><td>Ch10</td></tr>
+            <tr><td>SNPN</td><td>独立5G专网，与公网完全物理隔离</td><td>Ch08</td></tr>
+            <tr><td>SUL</td><td>补充上行，下行3.5G+上行低频提升覆盖</td><td>Ch07</td></tr>
+            <tr><td>TCO</td><td>总拥有成本=CAPEX+5年OPEX</td><td>Ch09</td></tr>
+            <tr><td>TSN</td><td>时间敏感网络，5G+TSN实现工业确定性时延</td><td>Ch08</td></tr>
+            <tr><td>UPF</td><td>用户面功能，下沉到园区实现MEC</td><td>Ch03</td></tr>
+            <tr><td>VoNR</td><td>5G语音，直接承载在5G NR上</td><td>Ch03</td></tr>
+            <tr><td>VoLTE</td><td>4G语音，承载在LTE上</td><td>Ch03</td></tr>
+            <tr><td>vRAN</td><td>虚拟化RAN，CU软件化运行在通用服务器</td><td>Ch04</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section" id="sec-evolution-scenarios">
+      <div class="section-title">无线网络演进三种典型场景</div>
+      <div class="section-subtitle">站在网络全局视角 · 领先型/中庸型/保守型的架构、投资与产品策略</div>
+
+      <div class="card">
+        <h3>为什么要分三种场景思考</h3>
+        <p>全球运营商的4G/5G网络演进不存在"一刀切"方案。<strong>不同市场的ARPU、竞争格局、频谱资源、政策环境差异巨大</strong>，决定了网络架构、投资节奏和产品选型必须分类施策。作为产品线总裁或高级产品经理，必须能为不同类型的客户画出不同的演进路线图。</p>
+        <div class="stat-row">
+          <div class="stat" style="border-color:rgba(77,255,158,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-green);">领先型</div><div class="stat-label">5G SA规模部署+5.5G演进<br>中韩日美欧头部运营商</div></div>
+          <div class="stat" style="border-color:rgba(45,212,255,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-cyan);">中庸型</div><div class="stat-label">4G/5G均衡+NSA为主<br>全球大多数运营商</div></div>
+          <div class="stat" style="border-color:rgba(255,184,77,.3);"><div class="stat-value" style="font-size:18px;color:var(--accent-amber);">保守型</div><div class="stat-label">4G主导+5G远期<br>非洲/南亚/部分拉美</div></div>
+        </div>
+      </div>
+
+      <div class="scenario-card sc-leading">
+        <h3>场景一：领先型 - "5G先行者"</h3>
+        <p><strong>典型客户</strong>：中国移动/电信/联通、KT/SK Telecom、NTT DoCoMo、Verizon/T-Mobile、Deutsche Telekom</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>5G SA为核心；C-RAN集中式为主；MEC边缘节点广泛部署；网络切片规模商用；4G逐步减频但VoLTE保留</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>5G投资前置（CAPEX占比>60%）；5.5G(ELAA/3CC)率先商用；4G仅维护性投资；2G/3G已退或退网中</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>64T64R AAU为主力；3CC载波聚合；ELAA超大规模天线试点；vRAN/CU虚拟化推进；LampSite 5G数字化室分；MEC平台</td></tr>
+            <tr><td><strong>频谱策略</strong></td><td>中频(3.5/2.6GHz)连续大带宽；毫米波热点补充；低频重耕为5G打底；4G/5G动态频谱共享</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>5G变现路径(ToB/ToC新业务)；5.5G差异化能力；TCO/节能；网络切片商业化</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>5.5G先锋(ELAA/3CC)、AI节能(降25%功耗)、ToB全场景方案、LampSite 5G</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>ToC：5G新业务(AR/VR/云游戏)提ARPU；ToB：行业专网切片+MEC创造新收入流</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年5G SA规模部署+5.5G试点 -> 2025-2026年5.5G商用(3CC+ELAA) -> 2026-2027年AI空口+通感一体+6G预研
+        </div>
+      </div>
+
+      <div class="scenario-card sc-middle">
+        <h3>场景二：中庸型 - "4G/5G均衡发展"</h3>
+        <p><strong>典型客户</strong>：东南亚(泰国AIS/印尼Telkomsel)、中东(沙特STC/阿联酋Etisalat)、拉美(巴西Vivo/墨西哥America Movil)、印度(Jio/Airtel)</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>4G/5G NSA共存；C-RAN与D-RAN混合；MEC在核心城市部署；切片试点不规模；4G仍是主力承载网</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>4G/5G均衡投资(CAPEX 50:50)；5G先覆盖核心城市再逐步扩展；4G持续扩容和广覆盖；2G/3G启动退网</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>32T32R AAU为主力(性价比)；2CC载波聚合；4G/5G共模BBU5900；选择性MEC部署；微站补盲补热</td></tr>
+            <tr><td><strong>频谱策略</strong></td><td>中频(3.5GHz)5G主力；4G频段(1.8/2.1/2.6GHz)扩容；低频(700/900MHz)4G打底+未来5G重耕；2G/3G频段退网释放</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>4G ROI最大化；5G投资节奏(什么时候铺到二线城市)；4G/5G共站降TCO；2G/3G退网策略</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>4G/5G共模BBU5900(省机房)、32T AAU(性价比)、RuralStar(农村4G覆盖)、微波回传(光纤匮乏区)</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>4G持续产生现金流支撑5G投资；5G在核心城市做品牌+高端用户分流；ToB试点验证再规模复制</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年4G扩容+5G核心城市覆盖(NSA) -> 2025-2026年5G SA试点+2G/3G退网 -> 2026-2027年5G SA规模部署+MEC行业试点
+        </div>
+      </div>
+
+      <div class="scenario-card sc-conservative">
+        <h3>场景三：保守型 - "4G深耕者"</h3>
+        <p><strong>典型客户</strong>：非洲(MTN/Vodacom/Airtel Africa)、南亚(MTN Bangladesh)、部分拉美运营商</p>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>策略</th></tr></thead>
+          <tbody>
+            <tr><td><strong>网络架构</strong></td><td>4G为核心(占比>80%)；D-RAN为主(光纤少)；2G保留(GSM物联网/基础语音)；3G逐步退网；5G远期规划</td></tr>
+            <tr><td><strong>投资节奏</strong></td><td>4G投资占>80%；5G仅首都试点(1-2站)或暂不投；2G维护性投资；3G退网释放频段给4G</td></tr>
+            <tr><td><strong>产品策略</strong></td><td>4T4R/8T8R RRU+无源天线(低成本)；2G/3G/4G SDR共模设备；RuralStar(太阳能农村覆盖)；微波回传；超低成本CPE</td></tr>
+            <tr><td><strong>频谱策略</strong></td><td>低频(900MHz)4G广覆盖；中频(1.8/2.1GHz)4G城区容量；2G(900MHz)暂时保留；3G(2100MHz)退网重耕为4G</td></tr>
+            <tr><td><strong>CTO关注</strong></td><td>4G覆盖延伸(农村/偏远)；超低成本建网；移动金融(Mobile Money)变现；电力供应(无电网地区太阳能)</td></tr>
+            <tr><td><strong>华为机会</strong></td><td>RuralStar太阳能版(无电网覆盖)、SDR四模共框(2G/3G/4G/5G平滑演进)、最低成本4G方案、微波+卫星回传</td></tr>
+            <tr><td><strong>投资回报逻辑</strong></td><td>4G覆盖直接带来新用户和ARPU提升；Mobile Money等数字服务变现；5G等ARPU提升和终端普及后再投</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>3年演进路线</strong>：2024-2025年3G->4G升级+农村4G覆盖 -> 2025-2026年4G城区扩容+2G/3G退网 -> 2026-2027年4G覆盖完善+5G首都试点
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>三种场景对比总览</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th style="color:var(--accent-green);">领先型</th><th style="color:var(--accent-cyan);">中庸型</th><th style="color:var(--accent-amber);">保守型</th></tr></thead>
+          <tbody>
+            <tr><td>4G定位</td><td>减频优化、退网准备</td><td>主力承载、持续扩容</td><td>核心网络、建设中</td></tr>
+            <tr><td>5G定位</td><td>SA规模+5.5G演进</td><td>NSA为主、核心城市</td><td>远期规划/首都试点</td></tr>
+            <tr><td>2G/3G策略</td><td>已退或退网中</td><td>启动退网</td><td>2G保留、3G逐步退</td></tr>
+            <tr><td>主力设备</td><td>64T AAU+ELAA+MEC</td><td>32T AAU+共模BBU</td><td>4T/8T RRU+SDR+RuralStar</td></tr>
+            <tr><td>组网方式</td><td>C-RAN为主</td><td>C-RAN/D-RAN混合</td><td>D-RAN为主</td></tr>
+            <tr><td>5G SA</td><td>规模商用</td><td>试点</td><td>未启动</td></tr>
+            <tr><td>MEC</td><td>广泛部署</td><td>核心城市</td><td>未部署</td></tr>
+            <tr><td>网络切片</td><td>规模商用</td><td>试点</td><td>未部署</td></tr>
+            <tr><td>单站CAPEX</td><td>高(5G 64T)</td><td>中(4G/5G混合)</td><td>低(4G低成本)</td></tr>
+            <tr><td>年CAPEX占比</td><td>5G>60%</td><td>4G/5G约50:50</td><td>4G>80%</td></tr>
+            <tr><td>华为核心产品</td><td>AAU5613/ELAA/3CC/MEC</td><td>AAU5636/BBU5900/微波</td><td>RuralStar/SDR/低成本RRU</td></tr>
+            <tr><td>CTO决策周期</td><td>6-12月(战略)</td><td>12-24月(ROI)</td><td>24-36月(预算)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>产品经理如何应用三场景框架</h3>
+        <div class="dim-grid">
+          <div class="dim-card dim-principle">
+            <div class="dim-title">第一步：判断客户属于哪种场景</div>
+            <div class="dim-body">看三个指标：①5G人口覆盖率(>50%领先型，10-50%中庸型，<10%保守型)；②ARPU水平(>$30领先，$5-30中庸，<$5保守)；③2G/3G用户占比(<10%领先，10-40%中庸，>40%保守)</div>
+          </div>
+          <div class="dim-card dim-customer">
+            <div class="dim-title">第二步：匹配对应的演进路线</div>
+            <div class="dim-body">领先型推5.5G+ToB方案；中庸型推4G/5G共模+分阶段5G扩展；保守型推4G深耕+低成本覆盖+3G退网重耕</div>
+          </div>
+          <div class="dim-card dim-huawei">
+            <div class="dim-title">第三步：选对华为产品组合</div>
+            <div class="dim-body">领先型：AAU5613+ELAA+3CC+MEC+LampSite；中庸型：AAU5636+BBU5900+微波；保守型：RuralStar+SDR+4T RRU</div>
+          </div>
+          <div class="dim-card dim-challenge">
+            <div class="dim-title">第四步：用CTO语言讲投资逻辑</div>
+            <div class="dim-body">领先型讲5G变现和5.5G差异化；中庸型讲4G ROI和5G分阶段投入；保守型讲4G覆盖变现和Mobile Money</div>
+          </div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>终极目标</strong>：面对任何区域、任何国家的CTO，<strong>第一步判断市场类型 -> 第二步匹配演进场景 -> 第三步给出产品组合 -> 第四步用TCO和ROI说服投资</strong>。这就是产品线总裁视角下的无线产品体系化能力。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>共建共享策略 - 全球网络建设新趋势</h3>
+        <p>共建共享（RAN Sharing）是近年来运营商降低建网成本的重要策略，<strong>直接影响设备采购量和方案设计</strong>：</p>
+        <table class="data-table">
+          <thead><tr><th>共享模式</th><th>原理</th><th>典型案例</th><th>对产品方案的影响</th></tr></thead>
+          <tbody>
+            <tr><td>MORAN</td><td>共享RAN设备但各自独立载波/小区</td><td>中国电信+联通3.5GHz共建</td><td>一个AAU跑两个运营商的载波，需BBU支持多运营商基带</td></tr>
+            <tr><td>MOCN</td><td>共享RAN且共享载波（广播多PLMN ID）</td><td>英国O2+Vodafone</td><td>同一小区广播两个PLMN，终端各连各的核心网</td></tr>
+            <tr><td>被动共享</td><td>共享站址/铁塔/电源但设备独立</td><td>铁塔公司模式（中国铁塔）</td><td>仅共享物理设施，设备各自独立</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：共建共享下，<strong>一个物理站点服务两个运营商</strong>，设备采购量可能减半但单站配置更复杂。华为BBU5900支持多PLMN、多运营商基带隔离，是共建共享方案的核心竞争力。CTO问"共享方案怎么选"时：MORAN适合各自品牌独立（中国电信/联通），MOCN适合深度合作（欧洲市场），被动共享适合初期降低站址获取难度。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>6G展望 - 下一代无线技术方向</h3>
+        <p>虽然6G预计2030年左右商用，但作为产品经理需要前瞻了解，CTO可能问"5G之后是什么"：</p>
+        <table class="data-table">
+          <thead><tr><th>方向</th><th>原理</th><th>潜在应用</th><th>当前状态</th></tr></thead>
+          <tbody>
+            <tr><td>太赫兹通信</td><td>使用0.1-10THz频段，超大带宽（数十GHz）</td><td>超高吞吐（100Gbps+）、短距高速通信</td><td>实验室阶段，器件/信道建模挑战大</td></tr>
+            <tr><td>智能超表面(RIS)</td><td>可编程反射面，控制电磁波反射方向，实现"绕墙"传播</td><td>覆盖增强（盲区补盲）、低成本室分替代</td><td>原型验证阶段，3GPP Rel-19研究立项</td></tr>
+            <tr><td>语义通信</td><td>不传原始比特流，传"语义信息"（含义），大幅减少传输量</td><td>超低带宽场景下的智能通信</td><td>学术研究阶段</td></tr>
+            <tr><td>空天地一体</td><td>5G NTN演进+低轨卫星（Starlink模式）+高空平台（HAPS）</td><td>全球无缝覆盖（海洋/沙漠/空中）</td><td>5G Rel-17 NTN已标准化，6G将深度融合</td></tr>
+            <tr><td>原生AI</td><td>AI不只是空口优化工具，而是网络架构的基础组件</td><td>网络自优化、自修复、意图驱动网络</td><td>5.5G AI空口试点，6G将原生集成</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>产品经理要记住</strong>：6G不会颠覆5G的商业逻辑，而是<strong>在5G基础上向更高性能（100Gbps）、更低时延（<0.1ms）、更广覆盖（空天地一体）、更智能（原生AI）演进</strong>。CTO问6G时，重点是展示华为在6G预研的领先性（RIS原型验证、太赫兹信道测量、NTN标准贡献），同时强调<strong>5.5G是通向6G的桥梁</strong>，当前投资5.5G不会浪费。
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach(function(item){
+    item.addEventListener('click',function(){
+      document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+      item.classList.add('active');
+      document.getElementById(item.dataset.target).classList.add('active');
+      document.querySelector('main').scrollTop=0;
+    });
+  });
+  document.querySelectorAll('.sub-tabs').forEach(function(tabGroup){
+    tabGroup.querySelectorAll('.sub-tab').forEach(function(tab){
+      tab.addEventListener('click',function(){
+        tabGroup.querySelectorAll('.sub-tab').forEach(function(t){t.classList.remove('active');});
+        tabGroup.parentElement.querySelectorAll('.sub-content').forEach(function(c){c.classList.remove('active');});
+        tab.classList.add('active');
+        var target=document.getElementById(tab.dataset.target);
+        if(target)target.classList.add('active');
+      });
+    });
+  });
+  function switchBeamMode(mode){
+    document.querySelectorAll('.beam-mode-btn').forEach(function(b){b.classList.remove('active');});
+    event.target.classList.add('active');
+    var svg=document.getElementById('beam-mode-svg');
+    if(!svg)return;
+    if(mode==='broadcast'){
+      svg.innerHTML='<rect x="285" y="100" width="30" height="40" fill="rgba(45,212,255,0.2)" stroke="#2dd4ff"/><text x="300" y="95" text-anchor="middle" class="svg-mono" fill="#2dd4ff">基站(4G)</text><path d="M 300 140 L 100 200 A 220 220 0 0 1 500 200 Z" fill="rgba(45,212,255,0.06)" stroke="rgba(45,212,255,0.3)"/><text x="150" y="190" text-anchor="middle" class="svg-mono" fill="#5d6a87">UE</text><text x="300" y="190" text-anchor="middle" class="svg-mono" fill="#5d6a87">UE</text><text x="450" y="190" text-anchor="middle" class="svg-mono" fill="#5d6a87">UE</text><text x="300" y="225" text-anchor="middle" class="svg-mono" fill="#5d6a87">广播波束（4G）：宽覆盖、无空间区分、容量低</text>';
+    }else if(mode==='narrow'){
+      svg.innerHTML='<rect x="285" y="100" width="30" height="40" fill="rgba(77,255,158,0.2)" stroke="#4dff9e"/><text x="300" y="95" text-anchor="middle" class="svg-mono" fill="#4dff9e">基站(5G 64T)</text><path d="M 300 140 L 130 200 L 160 200 Z" fill="rgba(45,212,255,0.1)" stroke="rgba(45,212,255,0.4)"/><path d="M 300 140 L 230 200 L 260 200 Z" fill="rgba(77,255,158,0.1)" stroke="rgba(77,255,158,0.4)"/><path d="M 300 140 L 330 200 L 360 200 Z" fill="rgba(139,124,255,0.1)" stroke="rgba(139,124,255,0.4)"/><path d="M 300 140 L 430 200 L 460 200 Z" fill="rgba(255,184,77,0.1)" stroke="rgba(255,184,77,0.4)"/><text x="145" y="215" text-anchor="middle" class="svg-mono" fill="#2dd4ff">U1</text><text x="245" y="215" text-anchor="middle" class="svg-mono" fill="#4dff9e">U2</text><text x="345" y="215" text-anchor="middle" class="svg-mono" fill="#8b7cff">U3</text><text x="445" y="215" text-anchor="middle" class="svg-mono" fill="#ffb84d">U4</text><text x="300" y="235" text-anchor="middle" class="svg-mono" fill="#5d6a87">窄波束（5G）：精准指向、空间区分、容量提升</text>';
+    }else if(mode==='adaptive'){
+      svg.innerHTML='<rect x="285" y="100" width="30" height="40" fill="rgba(139,124,255,0.2)" stroke="#8b7cff"/><text x="300" y="95" text-anchor="middle" class="svg-mono" fill="#8b7cff">基站(MU-MIMO)</text><path d="M 300 140 L 120 200 L 150 200 Z" fill="rgba(45,212,255,0.12)" stroke="rgba(45,212,255,0.5)"/><path d="M 300 140 L 180 200 L 210 200 Z" fill="rgba(45,212,255,0.08)" stroke="rgba(45,212,255,0.3)"/><path d="M 300 140 L 240 200 L 270 200 Z" fill="rgba(77,255,158,0.12)" stroke="rgba(77,255,158,0.5)"/><path d="M 300 140 L 300 200 L 330 200 Z" fill="rgba(77,255,158,0.08)" stroke="rgba(77,255,158,0.3)"/><path d="M 300 140 L 360 200 L 390 200 Z" fill="rgba(139,124,255,0.12)" stroke="rgba(139,124,255,0.5)"/><path d="M 300 140 L 420 200 L 450 200 Z" fill="rgba(255,184,77,0.12)" stroke="rgba(255,184,77,0.5)"/><path d="M 300 140 L 480 200 L 510 200 Z" fill="rgba(255,184,77,0.08)" stroke="rgba(255,184,77,0.3)"/><text x="135" y="215" text-anchor="middle" class="svg-mono" fill="#2dd4ff">U1</text><text x="255" y="215" text-anchor="middle" class="svg-mono" fill="#4dff9e">U2</text><text x="375" y="215" text-anchor="middle" class="svg-mono" fill="#8b7cff">U3</text><text x="495" y="215" text-anchor="middle" class="svg-mono" fill="#ffb84d">U4</text><text x="300" y="235" text-anchor="middle" class="svg-mono" fill="#5d6a87">自适应波束（MU-MIMO）：多用户并行、容量最大化</text>';
+    }
+  }
+</script>
+</body>
+</html>
