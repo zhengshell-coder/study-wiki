@@ -77,23 +77,52 @@
   .nrow .nq.orphan{color:#c98a00}
   .nrow .del{border:0;background:transparent;color:#4f7cff;cursor:pointer;font-size:12.5px;padding:4px 6px;border-radius:6px}
   .nrow .del:hover{background:#eef2ff}
+  /* ==== 书香纸墨主题 ==== */
+  :root{--bar:#3E6B63;--ink:#2A2724;--line:#E6DECF;--paper:#FFFDF8;--muted:#8A8378;--serif:"Songti SC","STSong","Noto Serif SC",serif}
+  #bar{background:rgba(251,248,241,.97);border-bottom:1px solid #D8CFBE}
+  #bar a,#bar button{color:#5C564D;font-size:13.5px}
+  #bar a:hover,#bar button:hover{background:#F1EBDF;color:var(--ink)}
+  #backbtn{color:var(--bar)!important}
+  #title{font-family:var(--serif);font-size:15px;letter-spacing:1px;color:var(--ink)}
+  #pct{color:var(--muted)}
+  #progline{height:2px}
+  #loading{color:var(--muted);font-family:var(--serif);letter-spacing:2px}
+  #resume{box-shadow:0 6px 18px rgba(62,107,99,.28);font-weight:500;border-radius:8px}
+  #bmpanel,#npanel{background:var(--paper);border-color:#D8CFBE;border-radius:10px;box-shadow:0 12px 32px rgba(60,45,20,.14)}
+  #bmpanel .addb{border-radius:7px;font-weight:500}
+  #bmpanel .auto{background:var(--paper);border-color:#D8CFBE;border-radius:7px}
+  .bmrow,.nrow{border-top-color:#EFE8DB}
+  .bmrow .bi .bp,#npanel .nhd,.bmempty,#npanel .nempty{color:var(--muted)}
+  .bmrow .del{color:#A5524A} .bmrow .del:hover{background:#F6E8E4}
+  .nrow .del{color:var(--bar)} .nrow .del:hover{background:#E5EDE9}
+  #toast{background:var(--ink);color:#F6F2EA;border-radius:8px}
+  #npill{background:var(--ink);border-radius:8px}
+  #nmask{background:rgba(42,39,36,.34)}
+  #nbox{background:var(--paper);border:1px solid #D8CFBE;border-radius:12px}
+  #nbox h4{font-family:var(--serif);letter-spacing:2px;font-size:16px}
+  #nquote{background:#F6F2EA;border-left-color:var(--bar);border-radius:0;color:#5C564D}
+  #ntext{background:var(--paper);border-color:#D8CFBE;border-radius:8px}
+  #ntext:focus{outline:0;border-color:var(--bar);box-shadow:0 0 0 3px #E5EDE9}
+  #nsave,#ncancel,#ndel{border-radius:7px;font-weight:500}
+  #ncancel{background:#EFE8DB}
+  #ndel{background:#F6E8E4;color:#A5524A}
 </style>
 </head>
 <body>
 <div id="bar">
-  <a href="#" id="backbtn">← 图书馆</a>
+  <a href="#" id="backbtn">‹ 书架</a>
   <div id="title">阅读器</div>
   <span id="pct">0%</span>
-  <button id="nbtn" title="批注">📝 批注</button>
-  <button id="bmbtn" title="书签">🔖 书签</button>
-  <button id="topbtn" title="回到顶部">↑ 顶部</button>
+  <button id="nbtn" title="批注">批注</button>
+  <button id="bmbtn" title="书签">书签</button>
+  <button id="topbtn" title="回到顶部">顶部</button>
 </div>
 <div id="progline"></div>
 <div id="bmpanel"></div>
 <div id="npanel"></div>
 <div id="wrap"><div id="loading">加载中…</div><iframe id="frame"></iframe></div>
 <button id="resume"></button>
-<div id="npill"><button id="npillbtn">🖍 高亮 / 批注</button></div>
+<div id="npill"><button id="npillbtn">高亮 · 批注</button></div>
 <div id="nmask"><div id="nbox">
   <h4 id="ntitle">添加批注</h4>
   <div id="nquote"></div>
@@ -174,7 +203,7 @@ function setupResume(){ const m=metrics(); if(!m||m.max<=0) return;
 /* bookmarks panel */
 const bmpanel=document.getElementById("bmpanel");
 function renderBmPanel(){ const bms=bmList().sort((a,b)=>(a.pct||0)-(b.pct||0)); const sp=savedPct();
-  let h=`<button class="addb" onclick="addBookmark()">➕ 收藏当前位置为书签</button>`;
+  let h=`<button class="addb" onclick="addBookmark()">＋ 收藏当前位置</button>`;
   if(sp>0.005) h+=`<button class="auto" onclick="jumpTo(${sp});toggleBm(false)">↩ 上次自动位置 ${Math.round(sp*100)}%</button>`;
   if(!bms.length) h+=`<div class="bmempty">还没有书签</div>`;
   else h+=bms.map(b=>`<div class="bmrow"><div class="bi" onclick="jumpTo(${b.pct});toggleBm(false)">
@@ -254,7 +283,7 @@ function applyAllNotes(){ const d=dnode(); if(!d) return; ensureHlStyle(); ORPHA
   nList().forEach(it=>{ const r=findRange(it); let ok=false; if(r) ok=wrapRange(r,it.id,it.color||"y"); if(!ok) ORPHANS.add(it.id); });
   nList().forEach(it=>{ if(it.note) d.querySelectorAll('.wiki-hl[data-nid="'+it.id+'"]').forEach(sp=>sp.title=it.note); });
   updateNoteBtn(); }
-function updateNoteBtn(){ const c=nList().length; nbtn.textContent = c?("📝 批注 "+c):"📝 批注"; }
+function updateNoteBtn(){ const c=nList().length; nbtn.textContent = c?("批注 "+c):"批注"; }
 
 /* 选区浮动按钮 */
 function hidePill(){ npill.classList.remove("show"); }
@@ -305,7 +334,7 @@ document.getElementById("ndel").addEventListener("click",()=>{ if(!editingId) re
 /* 汇总面板 */
 function renderNotePanel(){ const items=nList().slice().sort((a,b)=>(a.pct||0)-(b.pct||0));
   let h='<div class="nhd">本文批注 '+items.length+' 条 · 在正文里选一段文字即可新增</div>';
-  if(!items.length) h+='<div class="nempty">还没有批注。<br>选中正文里的文字，点 🖍 高亮 / 批注 试试。</div>';
+  if(!items.length) h+='<div class="nempty">还没有批注。<br>选中正文里的文字，点「高亮 · 批注」试试。</div>';
   else h+=items.map(it=>{ const orphan=ORPHANS.has(it.id);
     const q=escapeHtml((it.exact||"").replace(/\s+/g," ").slice(0,60));
     const body=it.note?escapeHtml(it.note):'<span style="color:#9aa1ad">（仅高亮，无文字）</span>';
