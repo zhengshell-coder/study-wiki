@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>看懂 Agent：概念、能力与团队行动 · V3</title>
+<style>
+  :root {
+    --ink: #1a1c22;
+    --muted: #62656e;
+    --faint: #9a9ca3;
+    --accent: #2e4a7d;
+    --green: #2f7d6b;
+    --blue: #3b5b9e;
+    --amber: #a9741f;
+    --bg: #f2f3f6;
+    --line: rgba(26,28,34,0.12);
+    --serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+    --sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --display: "Archivo", "Helvetica Neue", "PingFang SC", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 52px 36px 88px; }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; pointer-events: none; }
+  .progress i { display: block; height: 100%; width: 20%; background: var(--accent); transition: width .4s ease; }
+
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 26px; }
+  .head .kicker { font-family: var(--display); font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .head h1 { margin: 12px 0 8px; font-family: var(--serif); font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: 0.01em; line-height: 1.3; }
+  .head .tagline { font-size: 15px; color: var(--muted); }
+  .head .meta { text-align: right; font-size: 11.5px; color: #8a8d95; line-height: 1.7; font-family: var(--display); white-space: nowrap; }
+
+  /* 顶部导航：一行不折行 */
+  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; margin-top: 28px; border-bottom: 1px solid var(--line); }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button {
+    display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+    padding: 9px 11px; flex-shrink: 0; white-space: nowrap; border: none; cursor: pointer; font-family: inherit;
+    border-radius: 9px 9px 0 0; margin-bottom: -1px;
+    border-bottom: 2px solid transparent; background: transparent; color: var(--muted);
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button .t-en { font-family: var(--display); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .tabs button .t-zh { font-family: var(--serif); font-size: 14px; font-weight: 600; }
+  .tabs button .t-zh .num { font-family: var(--display); font-size: 11px; color: var(--accent); margin-right: 5px; font-weight: 700; }
+  .tabs button.active { border-bottom-color: var(--accent); background: #fff; color: var(--ink); }
+  .tabs button.active .t-en { color: var(--accent); }
+
+  /* 子章节导航 */
+  .subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 20px; }
+  .subtabs button { padding: 7px 16px; border-radius: 20px; border: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 12.5px; font-family: inherit; cursor: pointer; transition: all .15s; }
+  .subtabs button:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .subtabs button.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, #fff); color: var(--accent); font-weight: 600; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .subpanel { display: none; }
+  .subpanel.active { display: block; min-height: calc(100vh - 380px); }
+  .subpanel.active > * { animation: fadeUp .4s cubic-bezier(.25,.6,.3,1) backwards; }
+  .subpanel.active > *:nth-child(2) { animation-delay: .05s; }
+  .subpanel.active > *:nth-child(3) { animation-delay: .1s; }
+  .subpanel.active > *:nth-child(n+4) { animation-delay: .15s; }
+
+  .spine { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 20px; }
+  .spine .k { font-family: var(--display); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .spine .q { font-family: var(--serif); font-size: 17.5px; font-weight: 600; color: var(--ink); }
+  .sect-label { font-family: var(--display); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin: 30px 0 6px; padding-top: 10px; border-top: 1px dashed var(--line); }
+
+  /* 统一框格体系 */
+  .slide-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 4px 0 14px; }
+  .slide-grid.cols3 { grid-template-columns: repeat(3, 1fr); }
+  .slide-grid > .slide.span2 { grid-column: 1 / -1; }
+  .s-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .slide { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; box-shadow: 0 2px 10px rgba(26,28,34,0.05); min-height: 150px; display: flex; flex-direction: column; transition: box-shadow .18s ease; }
+  .slide:hover { box-shadow: 0 6px 18px rgba(26,28,34,0.08); }
+  .slide.hl { border: 1.5px solid var(--accent); }
+  .s-head { display: flex; gap: 10px; align-items: baseline; margin-bottom: 12px; }
+  .s-num { font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; white-space: nowrap; }
+  .s-title { font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--ink); }
+  .s-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .sub { border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); background: color-mix(in srgb, var(--ink) 3%, #fff); border-radius: 10px; padding: 9px 12px; }
+  .sub .sub-t { font-size: 12.5px; font-weight: 700; color: var(--ink); line-height: 1.55; }
+  .sub .sub-d { font-size: 11.5px; color: var(--muted); line-height: 1.68; margin-top: 2px; }
+  .sub .sub-d b { color: var(--ink); }
+  .sub.t-accent { border-color: color-mix(in srgb, var(--accent) 26%, transparent); background: color-mix(in srgb, var(--accent) 5%, #fff); }
+  .sub.t-accent .sub-t { color: var(--accent); }
+  .sub.t-blue { border-color: color-mix(in srgb, var(--blue) 26%, transparent); background: color-mix(in srgb, var(--blue) 5%, #fff); }
+  .sub.t-blue .sub-t { color: var(--blue); }
+  .sub.t-green { border-color: color-mix(in srgb, var(--green) 26%, transparent); background: color-mix(in srgb, var(--green) 5%, #fff); }
+  .sub.t-green .sub-t { color: var(--green); }
+  .sub.t-amber { border-color: color-mix(in srgb, var(--amber) 26%, transparent); background: color-mix(in srgb, var(--amber) 5%, #fff); }
+  .sub.t-amber .sub-t { color: var(--amber); }
+  .sub.t-ghost { background: transparent; border: 1.5px dashed color-mix(in srgb, var(--ink) 22%, transparent); }
+  .sub.t-ghost .sub-t { color: var(--muted); }
+
+  .fig { margin-top: auto; padding-top: 10px; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig .fig-cap { font-family: var(--display); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-top: 6px; text-align: center; }
+
+  /* 条形图 */
+  .bchart { margin-top: 8px; }
+  .bchart .ct { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .brow { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .brow .bl { width: 150px; flex-shrink: 0; font-size: 11px; color: var(--muted); text-align: right; line-height: 1.35; }
+  .brow .btrack { flex: 1; background: rgba(26,28,34,0.06); border-radius: 6px; height: 18px; }
+  .brow .bfill { height: 100%; border-radius: 6px; background: var(--accent); min-width: 4px; }
+  .brow .bfill.dim { background: rgba(26,28,34,0.30); }
+  .brow .bv { font-size: 11px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .bnote { font-size: 11px; color: var(--accent); font-weight: 700; margin-top: 6px; line-height: 1.65; }
+  .bnote b { color: var(--ink); }
+
+  /* 分层框架图 */
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 4px 0 8px; }
+  .frame-title { font-family: var(--display); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); text-align: center; margin-bottom: 12px; }
+  .fcol { display: flex; flex-direction: column; gap: 6px; }
+  .fbox { border-radius: 10px; padding: 9px 14px; border: 1px solid; }
+  .fbox .fb-h { font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+  .fbox .fb-h .pct { font-family: var(--display); margin-left: 8px; color: var(--accent); }
+  .fbox .fb-d { font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 2px; }
+  .fb-l1 { background: color-mix(in srgb, var(--accent) 16%, #fff); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .fb-l2 { background: color-mix(in srgb, var(--accent) 13%, #fff); border-color: color-mix(in srgb, var(--accent) 36%, transparent); }
+  .fb-l3 { background: color-mix(in srgb, var(--accent) 10%, #fff); border-color: color-mix(in srgb, var(--accent) 32%, transparent); }
+  .fb-l4 { background: color-mix(in srgb, var(--accent) 7%, #fff); border-color: color-mix(in srgb, var(--accent) 28%, transparent); }
+  .fb-l5 { background: color-mix(in srgb, var(--accent) 4%, #fff); border-color: color-mix(in srgb, var(--accent) 24%, transparent); }
+  .farr-v { text-align: center; color: var(--faint); font-size: 12px; line-height: 1.1; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+  .flow .step { background: color-mix(in srgb, var(--accent) 6%, #fff); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); color: var(--accent); padding: 4px 11px; border-radius: 16px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .flow .step.human { background: color-mix(in srgb, var(--amber) 7%, #fff); border-color: color-mix(in srgb, var(--amber) 35%, transparent); color: var(--amber); }
+  .flow .arr { color: var(--faint); font-size: 12px; }
+
+  .hlight { background: color-mix(in srgb, var(--accent) 4%, #fff); border-left: 2.5px solid var(--accent); padding: 15px 20px; border-radius: 0 10px 10px 0; font-family: var(--serif); font-size: 14px; color: #44474f; margin: 10px 0 16px; line-height: 1.9; }
+  .hlight b { color: var(--ink); }
+
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px; box-shadow: 0 2px 10px rgba(26,28,34,0.05); margin-bottom: 16px; }
+  .card .frame-title { margin-bottom: 12px; }
+
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 110px; border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); background: color-mix(in srgb, var(--accent) 4%, #fff); border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .stat .v { font-family: var(--display); font-size: 19px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .cols3 .stats { flex-wrap: nowrap; gap: 6px; }
+  .cols3 .stat { min-width: 0; padding: 8px 6px; }
+  .cols3 .stat .v { font-size: 15px; white-space: nowrap; }
+  .cols3 .stat .l { font-size: 10px; }
+
+  /* 数据表格 */
+  .table-wrap { overflow-x: auto; margin: 10px 0 16px; border: 1px solid var(--line); border-radius: 12px; }
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { background: var(--accent); color: #fff; text-align: left; font-size: 11.5px; padding: 8px 12px; font-weight: 600; white-space: nowrap; }
+  .table td { background: #fff; border-top: 1px solid var(--line); padding: 9px 12px; font-size: 12px; color: #3a3d46; vertical-align: top; line-height: 1.7; }
+  .table td b { color: var(--ink); }
+  .table td .dim { color: var(--faint); font-size: 10.5px; }
+  .table tr.hl-row td { background: color-mix(in srgb, var(--green) 5%, #fff); }
+  .table tr.total td { background: color-mix(in srgb, var(--accent) 8%, #fff); color: var(--accent); font-weight: 700; }
+
+  .src { font-size: 10px; color: var(--faint); margin: 16px 0 0; line-height: 1.6; }
+  .foot { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 11px; color: #6b6e76; line-height: 1.7; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 820px) {
+    .wrap { padding: 30px 18px 60px; }
+    .head { flex-direction: column; align-items: flex-start; }
+    .slide-grid, .slide-grid.cols3, .s-cols { grid-template-columns: 1fr; }
+    .spine .q { font-size: 16px; }
+    .brow .bl { width: 100px; font-size: 10px; }
+  }
+  @media print {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .progress, .tabs, .subtabs { display: none !important; }
+    .panel, .subpanel { display: block !important; }
+    .subpanel + .subpanel { margin-top: 26px; }
+    body { background: #fff; }
+    .wrap { max-width: none; padding: 0; }
+    .slide, .card { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><i id="bar"></i></div>
+
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <div class="kicker">AI Agent Explained · For Teams</div>
+      <h1>看懂 Agent：从概念、能力到团队行动</h1>
+      <div class="tagline">系统回答四个问题——Agent 是什么、现在能做什么、实践现状如何、面向未来团队与模型公司各往哪走</div>
+    </div>
+    <div class="meta">系统讲解 · V3 · 2026-09<br>落地参照：github.com/wangbinquan/agent-workflow</div>
+  </div>
+
+  <!-- 总章页签：一行不折 -->
+  <div class="tabs" id="tabs">
+    <button data-ch="ch0" class="active"><span class="t-en">Course Map</span><span class="t-zh"><span class="num">00</span>框架总览</span></button>
+    <button data-ch="ch1"><span class="t-en">What Is It</span><span class="t-zh"><span class="num">01</span>是什么</span></button>
+    <button data-ch="ch2"><span class="t-en">Capabilities</span><span class="t-zh"><span class="num">02</span>能做什么</span></button>
+    <button data-ch="ch3"><span class="t-en">In Practice</span><span class="t-zh"><span class="num">03</span>实践现状</span></button>
+    <button data-ch="ch4"><span class="t-en">Model Labs</span><span class="t-zh"><span class="num">04</span>模型公司方向</span></button>
+    <button data-ch="ch5"><span class="t-en">Playbook I</span><span class="t-zh"><span class="num">05</span>团队 · 理念落地</span></button>
+    <button data-ch="ch6"><span class="t-en">Playbook II</span><span class="t-zh"><span class="num">06</span>团队 · 设计演进</span></button>
+  </div>
+
+  <!-- ══════════ CH0 · 框架总览 ══════════ -->
+  <div class="panel active" data-panel="ch0">
+    <div class="subtabs"><button data-sub="ch0a" class="active">00 框架总览</button></div>
+    <div class="subpanel active" data-subpanel="ch0a">
+      <div class="spine"><span class="k">00 · 框架总览</span><span class="q">这份材料回答四个问题：Agent 是什么、现在能做什么、实践现状如何、面向未来团队该怎么办（模型公司又在往哪走）。</span></div>
+      <div class="card">
+        <div class="frame-title">Course Map · 四个问题 → 六章 · 一条主线</div>
+        <svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+          <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="rgba(26,28,34,0.4)"/></marker></defs>
+          <rect x="16" y="14" width="304" height="238" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="168" y="36" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 1 · 看懂 AGENT</text>
+          <text x="168" y="56" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">是什么？能做什么？</text>
+          <rect x="26" y="68" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="40" y="89" font-size="12"><tspan fill="#2e4a7d" font-weight="700">01</tspan><tspan dx="8" fill="#1a1c22">是什么 —— 公式 · ReAct · 光谱</tspan></text>
+          <rect x="26" y="106" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="40" y="127" font-size="12"><tspan fill="#2e4a7d" font-weight="700">02</tspan><tspan dx="8" fill="#1a1c22">能做什么 —— 四赛道 · 刻度 · 边界</tspan></text>
+          <text x="168" y="172" text-anchor="middle" fill="#62656e" font-size="10.5">LLM + 上下文 + 工具（+ Harness）</text>
+          <text x="168" y="194" text-anchor="middle" fill="#62656e" font-size="10.5">工作流 ↔ 自主：全文的统一标尺</text>
+          <rect x="348" y="14" width="304" height="238" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="500" y="36" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 2 · 看清现状</text>
+          <text x="500" y="56" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">实践现状如何？</text>
+          <rect x="358" y="68" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="372" y="89" font-size="12"><tspan fill="#2e4a7d" font-weight="700">03</tspan><tspan dx="8" fill="#1a1c22">实践现状 —— 真相 · 失败 · 对策</tspan></text>
+          <text x="500" y="136" text-anchor="middle" fill="#62656e" font-size="10.5">报表 ≠ 真相：单团队样本 + METR 实验锚点</text>
+          <text x="500" y="158" text-anchor="middle" fill="#62656e" font-size="10.5">失败姿势相似，业界对策已收敛</text>
+          <text x="500" y="180" text-anchor="middle" fill="#62656e" font-size="10.5">根因：AI 还是"工具"，不是"参与者"</text>
+          <rect x="680" y="14" width="304" height="238" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="832" y="36" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 3 · 面向未来</text>
+          <text x="832" y="56" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">模型公司与团队各往哪走？</text>
+          <rect x="690" y="68" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="704" y="89" font-size="12"><tspan fill="#2e4a7d" font-weight="700">04</tspan><tspan dx="8" fill="#1a1c22">模型公司方向 —— 模型 · 形态 · 生态</tspan></text>
+          <rect x="690" y="106" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="704" y="127" font-size="12"><tspan fill="#2e4a7d" font-weight="700">05</tspan><tspan dx="8" fill="#1a1c22">团队 · 理念落地 —— 链路 · 三分 · 三阶</tspan></text>
+          <rect x="690" y="144" width="284" height="32" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="704" y="165" font-size="12"><tspan fill="#2e4a7d" font-weight="700">06</tspan><tspan dx="8" fill="#1a1c22">团队 · 设计演进 —— 反问 · 切片 · 契约</tspan></text>
+          <text x="832" y="204" text-anchor="middle" fill="#62656e" font-size="10.5">供给侧：决策权向"自主"右移</text>
+          <text x="832" y="226" text-anchor="middle" fill="#62656e" font-size="10.5">需求侧：以一个开源工作流框架为落地参照</text>
+          <line x1="324" y1="84" x2="342" y2="84" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah)"/>
+          <line x1="656" y1="84" x2="674" y2="84" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah)"/>
+          <rect x="16" y="272" width="968" height="40" rx="10" fill="rgba(26,28,34,0.04)" stroke="rgba(46,74,125,0.22)"/>
+          <text x="500" y="297" text-anchor="middle" font-size="12.5"><tspan fill="#2e4a7d" font-weight="700">主线</tspan><tspan fill="#1a1c22" dx="10">概念地基 → 能力全景 → 落地真相 → 供给方向 → 团队行动（理念落地 → 设计演进）</tspan></text>
+        </svg>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Q1 · 01</span><h3 class="s-title">Agent 是什么？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">一个公式 + 一个循环 + 一条光谱</div><div class="sub-d">LLM+上下文+工具（+Harness）；ReAct 循环；工作流↔自主——见 1.1–1.3</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Q2 · 02</span><h3 class="s-title">Agent 现在能做什么？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">四大赛道跑进生产，成熟度用基准钉刻度</div><div class="sub-d">编码 / 深度调研 / UI 操控 / 企业流程，外加能力边界——见 2.1–2.3</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Q3 · 03</span><h3 class="s-title">Agent 的实践现状是什么？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">报表≠真相；失败姿势相似，业界对策已收敛</div><div class="sub-d">推广现场 + 失败模式图谱 + 业界共识实践 + 根因对照——见 3.1–3.3</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Q4 · 04–06</span><h3 class="s-title">面向未来，各方往哪走？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">04 看模型公司往哪走，05–06 看团队该怎么做</div><div class="sub-d">团队方案以一个开源工作流框架为落地参照：理念三分、三阶递进、三大设计</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">看懂 Agent（01–02）→ 看清现状（03）→ 看明方向（04）→ 走对动作（05–06）——任何一章读不懂，先回这条主线定位。</div>
+      <div class="src">来源：05–06 章主体取自 wangbinquan/agent-workflow 仓库 README 及设计随笔《利用工作流驱动 AI 和人，而不是相反》《Agent Workflow：AI Native 交付工作流的框架落地实践》；01–04 章蒸馏自《Agent 概念与技术发展深度解析》与 Anthropic / OpenAI 公开实践。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH1 · 是什么 ══════════ -->
+  <div class="panel" data-panel="ch1">
+    <div class="subtabs">
+      <button data-sub="ch1a" class="active">1.1 一个公式看懂 Agent</button>
+      <button data-sub="ch1b">1.2 跑起来是 ReAct 循环</button>
+      <button data-sub="ch1c">1.3 工作流 ↔ 自主光谱</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1a">
+      <div class="spine"><span class="k">1.1 · 是什么</span><span class="q">LLM 是被动回答者，Agent 是主动行动者——一个公式看懂所有 Agent 产品。</span></div>
+      <div class="card">
+        <div class="frame-title">Agent = LLM + 上下文 + 工具 ＝ 大脑 + 眼睛 + 手脚；生产级再加 Harness</div>
+        <div class="flow">
+          <span class="step">大脑 · LLM 决策内核</span><span class="arr">+</span>
+          <span class="step">眼睛 · 上下文（每次决策能看到的全部信息）</span><span class="arr">+</span>
+          <span class="step">手脚 · 工具（能改变世界的全部手段）</span><span class="arr">=</span>
+          <span class="step human">Harness · 约束 + 验证 + 纠正</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:16%">维度</th><th style="width:42%">LLM（被动回答者）</th><th style="width:42%">Agent（主动行动者）</th></tr>
+          <tr class="hl-row"><td><b>发起方式</b></td><td>人问一句，答一句</td><td>人给目标，自己拆解、排程、执行</td></tr>
+          <tr><td><b>与世界的连接</b></td><td>只输出文本</td><td>调用工具，读取并改变世界</td></tr>
+          <tr><td><b>过程控制</b></td><td>单轮或少数几轮对话</td><td>ReAct 循环：思考 → 行动 → 观察 → 再思考</td></tr>
+          <tr><td><b>纠错方式</b></td><td>靠人追问纠正</td><td>观察结果、反思、自我修正</td></tr>
+          <tr><td><b>产物</b></td><td>一个答案</td><td>一份任务结果（代码、报告、操作记录）</td></tr>
+          <tr class="total"><td>信任成本</td><td>说错话的成本</td><td>做错事的成本——所以生产级必须加 Harness</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">定义：具备自主闭环能力的智能主体</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">感知 → 规划 → 决策 → 执行 → 反馈迭代</div><div class="sub-d">理解高层次目标、独立拆解为可执行子任务、动态调用外部工具与资源，并在执行中持续反思修正，直至完成复杂目标。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">从 Demo 到生产：Harness 公式</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">Demo = LLM + 工具；生产 = Demo + 约束 + 验证 + 纠正</div><div class="sub-d">约束防越界、验证发现错误、纠正恢复异常——生产级 Agent 的代码大头在后三者，而非工具本身。</div></div>
+            <div class="sub t-accent"><div class="sub-t">模型负责"能做事"，Harness 负责"可靠地做事"</div><div class="sub-d">第 5.2 节的职责三分与第 6.3 节的确定性引擎，都是这句话的展开。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">记住这句：<b>模型负责"能做事"，Harness 负责"可靠地做事"</b>——评估任何 Agent 产品，先看它的 Harness 有多厚。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》01 引言、02 基础架构、06 Harness；Anthropic《Building Effective Agents》亦持相同立场。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1b">
+      <div class="spine"><span class="k">1.2 · 是什么</span><span class="q">Agent 运行时没有魔法——只是一个不断向消息列表末尾追加内容的循环。</span></div>
+      <div class="card">
+        <div class="frame-title">ReAct Loop · 想 → 做 → 看，直至交付</div>
+        <div class="flow">
+          <span class="step">思考 · 该做什么</span><span class="arr">›</span>
+          <span class="step">行动 · 调用工具</span><span class="arr">›</span>
+          <span class="step">观察 · 读取返回</span><span class="arr">⟲</span>
+          <span class="step">再思考 …… 直至交付</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">跑起来就是一个 ReAct 循环</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">想 → 做 → 看，不断向轨迹末尾追加</div><div class="sub-d">模型思考该做什么、调用工具行动、观察返回结果再想下一步，直至交付。</div></div>
+            <div class="sub"><div class="sub-t">越简单越可靠</div><div class="sub-d">警惕不必要的复杂度——多数"Agent 框架"的价值不在循环本身，而在循环之外的工程。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">上下文 = 静态前缀 + 动态轨迹</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">系统提示词与工具定义是静态前缀</div><div class="sub-d">用户消息、模型回复、工具结果是只增不减的轨迹——这解释了成本与压缩的由来。</div></div>
+            <div class="sub t-accent"><div class="sub-t">推论：轨迹只增不减，成本与"腐烂"随之而来</div><div class="sub-d">压缩、隔离、切片都是为此而生——第 6.2 节的切片设计正是这一推论的工作流化解法。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">上下文是 Agent 唯一能看到的世界——<b>管好上下文，就管好了 Agent 的一半</b>。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》02 基础架构。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1c">
+      <div class="spine"><span class="k">1.3 · 是什么</span><span class="q">不是"要不要 Agent"，而是"把多少决策权交给模型"——这是一条光谱。</span></div>
+      <div class="card">
+        <div class="frame-title">Autonomy Spectrum · 决策权从左到右逐格移交</div>
+        <div class="flow">
+          <span class="step">单次调用</span><span class="arr">›</span>
+          <span class="step">提示词链 / 路由</span><span class="arr">›</span>
+          <span class="step">工作流 · 路径预定义</span><span class="arr">›</span>
+          <span class="step human">自主 Agent · 模型定路径</span><span class="arr">›</span>
+          <span class="step human">多 Agent 协作</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">路径可写死用工作流，不可预知才放开自主</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">工作流保可预测，自主换适应性</div><div class="sub-d">路径固定时用工作流，控制流写在代码里、可测试；只有路径不可预知时，才把决策权交给模型；多数生产系统混合使用。</div></div>
+            <div class="sub t-accent"><div class="sub-t">原则：从简单到复杂</div><div class="sub-d">先优化提示词，再考虑工作流，最后才引入自主——这是控制成本与风险最实用的顺序。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">术语对齐：四个高频词</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">工具 Tools</div><div class="sub-d">模型可调用的函数——读文件、跑命令、查接口，是改变世界的手段。</div></div>
+            <div class="sub"><div class="sub-t">技能 Skills</div><div class="sub-d">打包的领域知识与操作流程，按需加载，让通用 Agent 变成领域熟手。</div></div>
+            <div class="sub"><div class="sub-t">MCP</div><div class="sub-d">工具与数据源接入的开放协议，已成事实标准——一次接入，处处可用。</div></div>
+            <div class="sub"><div class="sub-t">子 Agent</div><div class="sub-d">在独立上下文中执行子任务、只回传结论，让主上下文保持干净。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">这条光谱是全文的统一标尺：<b>第 3 章的失败是"放错了格子"，第 5、6 章的设计是"把决策权放在正确的格子"</b>。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》02、11；Anthropic《Building Effective Agents》的工作流/Agent 区分。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH2 · 能做什么 ══════════ -->
+  <div class="panel" data-panel="ch2">
+    <div class="subtabs">
+      <button data-sub="ch2a" class="active">2.1 能力全景：四大赛道</button>
+      <button data-sub="ch2b">2.2 成熟度刻度</button>
+      <button data-sub="ch2c">2.3 能力边界与失败模式</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch2a">
+      <div class="spine"><span class="k">2.1 · 能做什么</span><span class="q">Agent 已在四条赛道跑进生产：编码、深度调研、UI 操控、企业流程——但成熟度并不均匀。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:16%">赛道</th><th style="width:30%">在做什么</th><th style="width:34%">代表产品（美 / 中）</th><th style="width:20%">成熟度</th></tr>
+          <tr class="hl-row"><td><b>💻 编码 Agent</b></td><td>从补全到"需求进、PR 出"，异步云端任务制</td><td>Claude Code · Cursor · Devin / MarsCode · 通义灵码</td><td><b>最成熟</b>：已进主干开发流程</td></tr>
+          <tr><td><b>📚 深度调研</b></td><td>多源检索 + 推理 + 结构化报告，分钟级交付</td><td>Deep Research · Perplexity / Kimi · 秘塔 AI</td><td>次成熟：报告类任务标配</td></tr>
+          <tr><td><b>🖥️ UI 与计算机操控</b></td><td>看屏操作桌面 / 浏览器 / 手机，旧系统免 API 化</td><td>Computer Use · Operator · Mariner / AutoGLM</td><td>快速爬升：可靠性是瓶颈</td></tr>
+          <tr><td><b>🏢 企业流程</b></td><td>审批、客服、ITSM、RPA + LLM</td><td>M365 Copilot · Agentforce / 钉钉 AI · 飞书 AI</td><td>落地最早，自主度最低</td></tr>
+          <tr class="total"><td>共性</td><td colspan="3">越靠近数字世界内部（代码、文本）越成熟；越靠近开放世界长尾（GUI、跨系统）越吃力</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">选赛道比选模型更能决定首期成败</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">成熟赛道吃的是"确定性红利"</div><div class="sub-d">编码与调研的任务边界清晰、结果可验证，Agent 容易跑出正循环。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">落后赛道等的是"可靠性拐点"</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">GUI 与企业流程卡在长尾可靠性上</div><div class="sub-d">不是"能不能做一次"，而是"能不能连续做一百次不出错"——见 2.2 的 pass^k 读数。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">"能做什么"的版图不是均匀的——<b>先选对赛道，再谈投入</b>。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》12–15 应用篇、18 中美对比。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch2b">
+      <div class="spine"><span class="k">2.2 · 能做什么</span><span class="q">用公开基准给"能做什么"钉上刻度：编码最成熟，GUI 与长程可靠性仍在爬坡。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">前沿 Agent 在公开基准的通过率</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">公开基准读数（量级示意，2026 年中口径）</div>
+                <div class="brow"><div class="bl">SWE-bench Verified · 真实 issue 修复</div><div class="btrack"><div class="bfill" style="width:75%;"></div></div><div class="bv">≈75%</div></div>
+                <div class="brow"><div class="bl">GAIA · 通用助理任务</div><div class="btrack"><div class="bfill" style="width:70%;"></div></div><div class="bv">≈70%</div></div>
+                <div class="brow"><div class="bl">OSWorld · 真实桌面操作</div><div class="btrack"><div class="bfill dim" style="width:55%;"></div></div><div class="bv">≈55%（人类约 72%）</div></div>
+                <div class="brow"><div class="bl">τ-bench · 流程任务单次 pass¹</div><div class="btrack"><div class="bfill dim" style="width:60%;"></div></div><div class="bv">≈60%</div></div>
+                <div class="brow"><div class="bl">τ-bench · 连续八次 pass⁸</div><div class="btrack"><div class="bfill dim" style="width:30%;"></div></div><div class="bv">≈30%</div></div>
+                <div class="bnote">单点"能不能"普遍过线后，"连续稳不稳"（pass^k）才是企业落地的真瓶颈。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">读数</span><h3 class="s-title">三个比绝对值更重要的读法</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">读数一：看斜率</div><div class="sub-d">SWE-bench Verified 从 2024 年初的约 40% 爬到约 75%——编码赛道两年从"辅助"跨到"委托"，曲线斜率比绝对值更值得看。</div></div>
+            <div class="sub"><div class="sub-t">读数二：看稳定性</div><div class="sub-d">τ-bench 的 pass¹ 到 pass⁸ 几乎腰斩——"能不能"过线后，"稳不稳定"决定企业上不上。</div></div>
+            <div class="sub t-accent"><div class="sub-t">读数三：基准 ≠ 你的业务现场</div><div class="sub-d">在自己的任务分布上建评估集，是唯一能信的刻度——评估方法见 3.2。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">看产品宣传不如看基准曲线，<b>看基准曲线不如看自己的评估集</b>。</div>
+      <div class="src">各基准公开 leaderboard / 论文口径（SWE-bench、GAIA、OSWorld、τ-bench），量级示意、截至 2026 年中，仅用于建立刻度感，不用于产品间精确比较。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch2c">
+      <div class="spine"><span class="k">2.3 · 能做什么</span><span class="q">知道 Agent 在哪里会摔，比知道它能做什么更重要——四类典型失败模式。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">①</span><h3 class="s-title">幻觉与静默失败</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">错了不报错，错误结论流入下游连环污染</div><div class="sub-d">对策：验证层 + 关键节点人工复核——见 5.4、6.3。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">②</span><h3 class="s-title">上下文腐烂与"躺平"</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">轨迹变长、任务变枯燥，推理质量自然衰减</div><div class="sub-d">表现为只挑显眼几条认真处理、其余草草收尾。对策：切片与独立上下文——见 6.2。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">③</span><h3 class="s-title">长程一致性：连乘衰减</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">多步任务成功率是逐步连乘：单步 99%，50 步只剩约 60%</div><div class="sub-d">对策：确定性引擎 + 收敛循环，把"走偏"挡在节点之间——见 5.3、6.3。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">④</span><h3 class="s-title">安全与权限：爆炸半径</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">提示注入、越权工具调用——自治越大，爆炸半径越大</div><div class="sub-d">对策：最小权限 + 隔离 + 审批关口——见 6.5。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">这些失败模式不是"模型不行"，而是<b>系统设计问题</b>——第 5、6 章的团队方案逐一给出工程对策。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》02、04、06；Anthropic 关于长程 Agent harness 的公开实践。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH3 · 实践现状 ══════════ -->
+  <div class="panel" data-panel="ch3">
+    <div class="subtabs">
+      <button data-sub="ch3a" class="active">3.1 报表与真相</button>
+      <button data-sub="ch3b">3.2 失败模式与业界对策</button>
+      <button data-sub="ch3c">3.3 同一根因</button>
+    </div>
+
+    <!-- 页型 C · 数据页 -->
+    <div class="subpanel" data-subpanel="ch3a">
+      <div class="spine"><span class="k">3.1 · 实践现状</span><span class="q">"使用率 80%"的报表背后，是少数高手偶有亮点、多数人停留浅层、能力无法分发复用。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">真实使用集中在少数人的深水区</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">AI 编码工具的实际使用分布（单一团队调研口径）</div>
+                <div class="brow"><div class="bl">按 Tab 接受补全的浅层试用</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">约 80%</div></div>
+                <div class="brow"><div class="bl">真正用 AI 写功能的人</div><div class="btrack"><div class="bfill dim" style="width:6%;"></div></div><div class="bv">约 5%</div></div>
+                <div class="brow"><div class="bl">用法可被他人复用的</div><div class="btrack"><div class="bfill" style="width:3%;"></div></div><div class="bv">≈ 0</div></div>
+                <div class="bnote">再多培训也改变不了这个分布——这是产品形态的问题，而非培训投入的问题。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">读数</span><h3 class="s-title">能力困在高手的电脑里</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">70%+</div><div class="l">高手的审计提示词能提前发现的问题占比</div></div>
+              <div class="stat"><div class="v">&lt;5%</div><div class="l">两周后仍在沿用该方法的组员占比</div></div>
+              <div class="stat"><div class="v">217 张</div><div class="l">支持团队月均 AI 工单，均为一对一对话</div></div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">工具发出去了，能力没有分发出去</div><div class="sub-d">最佳实践缺少载体、难以沉淀，只能依赖高手手把手传授——而高手经验本身不可复制。</div></div>
+            <div class="sub t-blue"><div class="sub-t">业界锚点：感觉提效 ≠ 实测提效</div><div class="sub-d">METR 2025 随机对照实验：资深开源开发者使用 AI 工具后实际变慢 19%，却自以为变快 20%——"报表与真相"的缺口在实验室里同样存在。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">审计</span><h3 class="s-title">产出不可审计，复盘无据可查</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">AI 生成的代码成了"无主代码"</div><div class="sub-d">故障复盘时，生成依据与关键问答都随会话关闭而消失，结论只能写成"今后需更加审慎"。</div></div>
+            <div class="sub"><div class="sub-t">业界共识：可追溯是规模化的前提</div><div class="sub-d">Anthropic、OpenAI 的 Agent 实践都强调：执行轨迹、工具调用与人工决策必须可记录、可回放，否则评估与定责无从谈起。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">支持侧</span><h3 class="s-title">支持团队缺一张问题全景图</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">217 张工单，就是 217 次单点回复</div><div class="sub-d">没有一条解法被结构化沉淀，同类问题被反复解答，团队做不了系统级优化。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">即便再做三轮培训，结果仍会是同样的分布——问题不在"工具落地不到位"，而在于需要演进到更适配 AI 的研发工程形态。注：本节比例为单一团队样本口径，用于呈现结构而非精确比例。</div>
+      <div class="src">来源：设计随笔上篇《利用工作流驱动 AI 和人，而不是相反》引子与场景 A/B/C；METR RCT (2025)；比例为作者调研口径，工单数据为作者团队自述。</div>
+    </div>
+
+    <!-- 页型 A · 对比表页 -->
+    <div class="subpanel" data-subpanel="ch3b">
+      <div class="spine"><span class="k">3.2 · 实践现状</span><span class="q">推广失败的姿势高度相似，而业界的对策也已经收敛——一张对照表看清。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:26%">常见失败姿势</th><th style="width:46%">业界已收敛的对策</th><th style="width:28%">出处 / 呼应</th></tr>
+          <tr><td><b>① 指望超长提示词一次到位</b></td><td>反问迭代优于静态提示词；按"不确定性 × 不可逆性"决定问或做</td><td>本框架 6.1；设计随笔</td></tr>
+          <tr class="hl-row"><td><b>② 路径固定的任务也上自主</b></td><td>先工作流保可预测，只在路径不可预知时才放开自主</td><td>Anthropic《Building Effective Agents》</td></tr>
+          <tr><td><b>③ 没有评估就优化</b></td><td>评估驱动：Pass@k 看能力上限、Pass^k 看稳定性；失败案例回流评估集</td><td>OpenAI 实践指南；概念篇 07</td></tr>
+          <tr><td><b>④ 过程不留痕、产出"无主"</b></td><td>执行轨迹、工具调用、人工决策全量可记录、可回放</td><td>Anthropic / OpenAI 共识</td></tr>
+          <tr><td><b>⑤ 会话即资产、知识蒸发</b></td><td>记忆工程：提炼 → 审批 → 召回 → 注入，并管"忘"与"冲突"</td><td>记忆基准（MemoryArena 等）；本框架 5.5</td></tr>
+          <tr class="total"><td>共同指向</td><td colspan="2">把 AI 当工程系统管理，而不是当工具分发</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">方法</span><h3 class="s-title">没有评估，优化就是凭感觉</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">区分"能不能"与"稳不稳定"</div><div class="sub-d">Pass@k 答能力上限，Pass^k 答稳定性；回归用后者，探索天花板用前者，混用会掩盖问题。</div></div>
+            <div class="sub"><div class="sub-t">轨迹也要回流成资产</div><div class="sub-d">生产失败案例脱敏后沉淀为回归用例，评估集随产品一起长大。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">归纳</span><h3 class="s-title">对策的共同结构：流程先于模型</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">先定路径与关口，再谈模型多聪明</div><div class="sub-d">五条对策指向同一件事：把路径、验证、留痕、记忆这些"流程设施"先建好，模型能力只是可替换的零件。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">业界共识可以收成十六个字：<b>从简单到复杂 · 评估先行 · 人在回路 · 全程留痕</b>。</div>
+      <div class="src">来源：Anthropic《Building Effective Agents》、OpenAI《A Practical Guide to Building Agents》、概念篇 06–07；评估方法卡回收自原 5.2 节。</div>
+    </div>
+
+    <!-- 页型 A · 对比表页 -->
+    <div class="subpanel" data-subpanel="ch3c">
+      <div class="spine"><span class="k">3.3 · 实践现状</span><span class="q">五个痛点指向同一根因：把 AI 当工具分发，AI 就永远只是某个人在某一刻按下的加速键。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:16%">维度</th><th style="width:42%">工具思维（现状）</th><th style="width:42%">工作流思维（目标）</th></tr>
+          <tr class="hl-row"><td><b>① AI 的角色</b></td><td>工具栏上的按钮：人决定何时调用，结果归调用者所有</td><td>工作流上的节点：被编排、被触发、被记录</td></tr>
+          <tr><td><b>② 过程留痕</b></td><td>会话关闭即消失，产出不可审计</td><td>事件、决策、反问全量结构化入库</td></tr>
+          <tr><td><b>③ 知识去向</b></td><td>困在个体电脑与聊天记录里</td><td>提炼为团队记忆资产，按需召回注入</td></tr>
+          <tr><td><b>④ 流程归属</b></td><td>流程为人制定，AI 被塞进某一格</td><td>流程是可执行引擎，AI 与人都被它编排</td></tr>
+          <tr class="total"><td>效率上限</td><td>被单点工具的强弱锁死</td><td>取决于协作流程的编排能力</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">放任痛点不管，会碎裂成环境治理难题</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">几百套互不一致的"个人 AI 工作站"</div><div class="sub-d">Agent、提示词、模型选型、API Key、技能各人一套，治理无从谈起。</div></div>
+            <div class="sub"><div class="sub-t">支持侧只能停留在单点救火</div><div class="sub-d">没有问题全景，就做不了根因治理与系统级优化。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">效率上限被流程本身锁死</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">决定团队效率的是协作流程的编排</div><div class="sub-d">AI 工具用得再好，流程不变，效率天花板就不变。</div></div>
+            <div class="sub t-accent"><div class="sub-t">打补丁修不出新形态</div><div class="sub-d">加日志、加监控、加报表，都是在已经走偏的产品形态上打补丁。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight"><b>AI 应该是工作流上的节点，而不该是工具栏上的按钮。</b>这是全篇的支点——第 5、6 章看它如何落成团队方案。</div>
+      <div class="src">来源：设计随笔上篇第一节、第二节；痛点归纳为作者调研总结。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH4 · 模型公司方向 ══════════ -->
+  <div class="panel" data-panel="ch4">
+    <div class="subtabs">
+      <button data-sub="ch4a" class="active">4.1 模型层：训练"主体性"</button>
+      <button data-sub="ch4b">4.2 形态层：Agent 成主界面</button>
+      <button data-sub="ch4c">4.3 生态层：协议 · 记忆 · 多 Agent</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch4a">
+      <div class="spine"><span class="k">4.1 · 模型公司方向</span><span class="q">后训练的重心正从"对齐聊天"转向"训练主体性"——让模型学会做事，而不只是回答。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">Agentic 后训练：在真实工具环境中用结果奖励</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">从 RLHF 到 Agentic RL / RLVR</div><div class="sub-d">让模型在真实工具环境里跑完整任务，以任务结果为奖励信号——模型被训练得会规划、会调用、会从失败恢复。</div></div>
+            <div class="sub"><div class="sub-t">各家主线一致</div><div class="sub-d">Claude、OpenAI o 系、DeepSeek、Kimi 等，都把 agentic 能力（工具使用、长程任务）作为后训练的主线方向。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">长程推理：任务时间尺度被拉长</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">test-time compute 从秒级问答到小时级任务</div><div class="sub-d">推理预算换任务长度——"能连续做多长的活"成为新的能力坐标。</div></div>
+            <div class="sub"><div class="sub-t">METR 时间尺度研究</div><div class="sub-d">模型可独立完成的任务长度约每 7 个月翻一倍——若趋势延续，"周级任务"并非遥不可及。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">C</span><h3 class="s-title">对团队的含义：决策权会随模型变强持续右移</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">模型每强一档，"该交给模型的决策权"就往光谱右移一格</div><div class="sub-d">今天写死的路径，明天可能就该交给模型——架构要为右移预留空间（光谱见 1.3，演进见 6.4）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">模型公司的军备竞赛，本质是把光谱上<b>"原本要人写死的路径"，一段段变成模型可自主的区间</b>。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》08 模型后训练、17 演进展望；METR time-horizon 研究（2025）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch4b">
+      <div class="spine"><span class="k">4.2 · 模型公司方向</span><span class="q">产品形态从"聊天框里调用工具"，转向"为 Agent 而生的新界面"——用户从对话者变成派活者。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:20%">形态</th><th style="width:44%">从 → 到</th><th style="width:36%">代表</th></tr>
+          <tr class="hl-row"><td><b>Coding Agent</b></td><td>补全 → 对话 → 终端 Agent → 异步云端多任务：开发者从写代码变成派任务、审结果</td><td>Claude Code · Codex · Devin</td></tr>
+          <tr><td><b>Computer Use</b></td><td>API 集成 → 直接看屏操作既有软件：旧系统免改造也能被 Agent 编排</td><td>Claude Computer Use · Operator · Mariner</td></tr>
+          <tr><td><b>Deep Research</b></td><td>搜索摘要 → 分钟级多源调研报告，引用可溯源，成为助理类标配形态</td><td>OpenAI DR · Perplexity · Gemini DR</td></tr>
+          <tr><td><b>实时多模态</b></td><td>文本轮次 → 语音 / 视频流交互：Agent 边看边做，交互时延逼近人际对话</td><td>GPT 实时语音 · Gemini Live</td></tr>
+          <tr class="total"><td>共同趋势</td><td colspan="2">Agent 从"产品里的一个功能"变成"产品本身的主界面"</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">"派活"需要标准化</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">任务描述、验收标准、过程留痕</div><div class="sub-d">对话可以随意，派活必须规范——这正是团队侧要补的课（第 5 章）。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">界面的背后是工作流</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">异步云端 Agent 的前提是"任务可定义、结果可验收"</div><div class="sub-d">团队谁先把自己的流程标准化，谁就先吃到新形态的红利。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">用户从"与 AI 对话"变成"向 AI 派活"——<b>派活的能力，就是未来团队的基本功</b>。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》10、12–14、17；公开产品资料。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch4c">
+      <div class="spine"><span class="k">4.3 · 模型公司方向</span><span class="q">单打独斗的 Agent 正在连成生态：互通协议、持久记忆、协同分工与社会化基础设施。</span></div>
+      <div class="slide-grid cols3">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">协议</span><h3 class="s-title">互通成本骤降</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">MCP 成工具接入事实标准</div><div class="sub-d">Anthropic 发起，OpenAI、Google 相继采纳——一次接入，处处可用。</div></div>
+            <div class="sub"><div class="sub-t">A2A / AG-UI 补全协作链路</div><div class="sub-d">A2A 解决 Agent 之间的协作，AG-UI 解决 Agent 与前端界面的交互。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">记忆</span><h3 class="s-title">Agent 开始"越用越聪明"</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">跨会话记忆成为标配</div><div class="sub-d">主流助理产品均已内建记忆；经验沉淀、技能库自建正从研究走向产品。</div></div>
+            <div class="sub"><div class="sub-t">自我进化是下一赛段</div><div class="sub-d">团队侧的"受治理版"记忆飞轮见 5.5——比产品功能更重要的是审批与遗忘机制。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">基建</span><h3 class="s-title">多 Agent 与社会化设施</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">主-子 Agent 分工成通用模式</div><div class="sub-d">编排者派任务、子 Agent 在独立上下文执行、只回传结论。</div></div>
+            <div class="sub"><div class="sub-t">沙箱 · 身份 · 支付开始成型</div><div class="sub-d">隔离执行环境、Agent 身份与权限、Agent 支付协议（AP2 / x402）——"Agent 社会"的基础设施在铺设。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">判断</span><h3 class="s-title">供给侧的结论，就是需求侧的起点</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">Agent 正从"功能"变成"主界面"、从"单体"变成"生态"</div><div class="sub-d">当模型公司把 Agent 造得越来越强、越来越便宜、越来越会协作，团队剩下的唯一问题是：你的流程与治理，准备好编排它们了吗？——第 5、6 章给出答案。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">供给侧的方向已经写明：<b>更强、更便宜、更会协作的 Agent 会源源不断到来</b>——团队的护城河不在模型，而在编排能力。</div>
+      <div class="src">蒸馏自《Agent 概念与技术发展深度解析》09–11、17；公开资料梳理（MCP / A2A / AG-UI / AP2 / x402）。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH5 · 团队 · 理念与落地 ══════════ -->
+  <div class="panel" data-panel="ch5">
+    <div class="subtabs">
+      <button data-sub="ch5a" class="active">5.1 节点化交付链路</button>
+      <button data-sub="ch5b">5.2 职责三分</button>
+      <button data-sub="ch5c">5.3 最小闭环</button>
+      <button data-sub="ch5d">5.4 端到端管道</button>
+      <button data-sub="ch5e">5.5 记忆飞轮</button>
+    </div>
+
+    <!-- 页型：flow 页 -->
+    <div class="subpanel" data-subpanel="ch5a">
+      <div class="spine"><span class="k">5.1 · 团队理念</span><span class="q">六类节点分工不同，共同点是 AI 主推、人守关口，反问答案被沉淀。</span></div>
+      <div class="card">
+        <div class="frame-title">AI Native 交付链路 · 每一步都是"AI 节点 + 人工关口"</div>
+        <div class="flow">
+          <span class="step">需求 · AI 拆解对齐</span><span class="arr">›</span>
+          <span class="step">设计 · AI 出多方案</span><span class="arr">›</span>
+          <span class="step">编码 · AI 写实现</span><span class="arr">›</span>
+          <span class="step">审计 · N 个 AI 并发切片</span><span class="arr">›</span>
+          <span class="step">修复 · AI 修到测试通过</span><span class="arr">›</span>
+          <span class="step">文档 · AI 自动生成</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">每步有产物、有审查、有留痕</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">反问答案被结构化记录</div><div class="sub-d">需求节点反问产品经理、编码节点反问开发者，回答沉淀下来而非随手消失。</div></div>
+            <div class="sub"><div class="sub-t">审计由并发切片完成</div><div class="sub-d">多个 AI 各审一份切片，汇总结论后由人工复核关键问题。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">打回不是口头反馈，而是结构化重做指令</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">拒绝理由直接回流上游生成环节</div><div class="sub-d">Agent 无需在自由对话里揣摩语气，直接收到结构化的"重做指令"。</div></div>
+            <div class="sub"><div class="sub-t">人在关键时刻被工作流召唤而来</div><div class="sub-d">不再充当来回搬运数据的人力中转站。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">流程从纸面文档，升级为<b>可拖拽、可版本化、可由事件触发、可不断学习的鲜活工程资产</b>——这才是 AI Native 交付工作流。</div>
+      <div class="src">来源：设计随笔上篇第二节"工具思维的天花板"。</div>
+    </div>
+
+    <!-- 页型 B · 框图页 -->
+    <div class="subpanel" data-subpanel="ch5b">
+      <div class="spine"><span class="k">5.2 · 团队理念</span><span class="q">落到产品上，分工收敛为一句话：AI 推理，框架协调，人类治理。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">职责三分，各守边界</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="frame">
+                <div class="frame-title">Division of Labor · 职责三分</div>
+                <div class="fcol">
+                  <div class="fbox fb-l1"><div class="fb-h">顶 · 人类治理 <span class="pct">Humans Govern</span></div><div class="fb-d">审核 / 澄清显式节点 · 记忆候选审批 · 权限与可见性</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l2"><div class="fb-h">中 · 框架协调 <span class="pct">Framework Coordinates</span></div><div class="fb-d">类型化端口搬运数据 · 状态持久化 · 重试与恢复 · Git 隔离</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l3"><div class="fb-h">底 · AI 推理 <span class="pct">AI Reasons</span></div><div class="fb-d">每个 Agent 独立进程、聚焦上下文，只做任务内推理</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">逐层</span><h3 class="s-title">每一层只负责一件事</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">顶 · 人类治理</div><div class="sub-d">人是一等参与者：审批、澄清、冲突解决是执行路径上常驻的关口。</div></div>
+            <div class="sub"><div class="sub-t">中 · 框架协调</div><div class="sub-d">跨 Agent 的路由、重试、恢复与审批策略不再藏在某个 Agent 私有记忆里，而是显式、可检查的框架能力。</div></div>
+            <div class="sub t-accent"><div class="sub-t">底 · AI 推理</div><div class="sub-d">Agent 是节点而非按钮：以独立进程运行、只聚焦当前任务上下文，而不是一条越聊越长的聊天会话。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">三类职责分开，才能<b>既放开 AI 的手脚，又守住治理的底线</b>——混在同一层，两边都会失守。注意："三分"是职责划分，5.3–5.5 的"三阶"是落地递进，两者不在同一维度。</div>
+      <div class="src">来源：仓库 README "Why Agent Workflow"；AI reasons / framework coordinates / humans govern 为原文表述。</div>
+    </div>
+
+    <!-- 页型：flow 页 -->
+    <div class="subpanel" data-subpanel="ch5c">
+      <div class="spine"><span class="k">5.3 · 落地三阶</span><span class="q">AI Native 工作流的原子单元是 Code→Audit→Fix 闭环：三类 Agent、三份产出、流向单向。</span></div>
+      <div class="card">
+        <div class="frame-title">Minimal Loop · Code → Audit → Fix（循环至收敛）</div>
+        <div class="flow">
+          <span class="step">Code 生成</span><span class="arr">›</span>
+          <span class="step">git diff</span><span class="arr">›</span>
+          <span class="step">Audit ×N 并发</span><span class="arr">›</span>
+          <span class="step">Fix 修复</span><span class="arr">⟲</span>
+          <span class="step">缺陷达标 / 达最大轮次</span><span class="arr">›</span>
+          <span class="step human">人工审核放行</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">Agent 间数据传递是确定性的</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">diff 是天然的数据交换格式</div><div class="sub-d">git diff、审计结果、修复 diff 由框架搬运，不需要上层大模型充当调度员。</div></div>
+            <div class="sub"><div class="sub-t">业界做法：用代码定路径，用模型做判断</div><div class="sub-d">Anthropic 的编排模式（串链、路由、并行、评审-优化）共识是：控制流写在代码里、可测试；模型只在节点内做推理判断。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">闭环可自动运行直至收敛</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">Audit→Fix 循环，直至缺陷数低于阈值</div><div class="sub-d">或达到最大迭代次数后，才转由人工介入。</div></div>
+            <div class="sub t-accent"><div class="sub-t">人无需参与中间搬运</div><div class="sub-d">只需在 Audit 之后的 Review 节点批准放行或打回重做。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">流水线是"代码进、构建出"，工作流是"诉求进、产物出"——<b>中间每一步都有大模型推理与决策，但路径本身是确定的</b>。</div>
+      <div class="src">来源：设计随笔上篇第三节第一层"最小协作单元"。</div>
+    </div>
+
+    <!-- 页型：flow 页 -->
+    <div class="subpanel" data-subpanel="ch5d">
+      <div class="spine"><span class="k">5.4 · 落地三阶</span><span class="q">闭环串成端到端管道：需求进、MR 出，人只在关键节点被召唤，不再充当数据中转站。</span></div>
+      <div class="card">
+        <div class="frame-title">End-to-end Pipeline · 实线通过 · 打回带理由回流上游</div>
+        <div class="flow">
+          <span class="step">需求拆解</span><span class="arr">›</span>
+          <span class="step human">人工审核</span><span class="arr">›</span>
+          <span class="step">方案设计</span><span class="arr">›</span>
+          <span class="step human">人工审核</span><span class="arr">›</span>
+          <span class="step">编码</span><span class="arr">›</span>
+          <span class="step human">人工审核</span><span class="arr">›</span>
+          <span class="step">审计 + 测试</span><span class="arr">›</span>
+          <span class="step human">人工审核</span><span class="arr">›</span>
+          <span class="step">文档 · 交付</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">每个节点一种角色、一份契约</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">角色由系统提示词与技能定义</div><div class="sub-d">节点间数据流由框架搬运，不依赖某个 Agent 的内部记忆来传递。</div></div>
+            <div class="sub"><div class="sub-t">新形态：Workgroup 补上自适应一环</div><div class="sub-d">主干新增 Workgroup（组长分派 / 自由协作 / 动态生成 DAG 再转交引擎）：路径可预知走 Workflow，计划需临场调整走 Workgroup——正是 1.3 光谱的工程化。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">整条管道是团队的工程资产</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">可拖拽、可版本化、可共享复用</div><div class="sub-d">与需求模板、PR 模板一样，成为团队可复用的工程资产，并支持 YAML 导入导出。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight"><b>人不是工作流之外的"管理员"，而是工作流之内的"节点"</b>——人工审核不再是拖慢进度的成本，而是内建的质量门禁。</div>
+      <div class="src">来源：设计随笔上篇第三节第二层"端到端 pipeline"。</div>
+    </div>
+
+    <!-- 页型：flow 页 -->
+    <div class="subpanel" data-subpanel="ch5e">
+      <div class="spine"><span class="k">5.5 · 落地三阶</span><span class="q">静态文档无法自我进化；记忆飞轮让平台每完成一次任务，就积累一分智能。</span></div>
+      <div class="card">
+        <div class="frame-title">Memory Flywheel · 提炼 → 存储 → 召回 → 注入 → 再提炼</div>
+        <div class="flow">
+          <span class="step">任务 N 完成</span><span class="arr">›</span>
+          <span class="step">异步提炼 distill</span><span class="arr">›</span>
+          <span class="step">三类资产入库</span><span class="arr">›</span>
+          <span class="step">下次任务召回注入</span><span class="arr">›</span>
+          <span class="step">任务 N+1 ⟲ 再提炼</span>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">每次任务完成后自动提炼三类资产</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">经验 · 决策 · 反问问答</div><div class="sub-d">易错点、人工在审查节点的判断及依据、Agent 反问与人的回答，全部结构化留存。</div></div>
+            <div class="sub"><div class="sub-t">按 Agent / 仓库 / 工作流多维索引</div><div class="sub-d">新任务启动时按相关性召回，并注入 Agent 上下文。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">记忆被治理，而非被当作真理</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">候选先审批，批准后才注入</div><div class="sub-d">仅在权限范围与预算约束内作为参考上下文，人可修订每一条记忆。</div></div>
+            <div class="sub t-accent"><div class="sub-t">飞轮的转动不依赖某个工程师</div><div class="sub-d">它依赖的是"所有任务都运行在同一平台之上"——这正是工具必须升级为平台的原因。</div></div>
+            <div class="sub"><div class="sub-t">业界提醒：记忆要管"忘"与"冲突"</div><div class="sub-d">记忆基准（MemoryArena 等）显示：只测召回不够，还要管时效、去重、冲突与遗忘，否则旧记忆会污染新任务。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight"><b>运行的任务越多，平台越智能；平台越智能，每个新任务的起点就越高。</b>注意：飞轮与前两阶本质不同——前两阶解决当次交付，飞轮解决持续进化。</div>
+      <div class="src">来源：设计随笔上篇第三节第三层；下篇第七节工程实现；README "Memory is governed" 表述。</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CH6 · 团队 · 关键设计与演进 ══════════ -->
+  <div class="panel" data-panel="ch6">
+    <div class="subtabs">
+      <button data-sub="ch6a" class="active">6.1 反问金矿</button>
+      <button data-sub="ch6b">6.2 切片抗躺平</button>
+      <button data-sub="ch6c">6.3 确定性引擎</button>
+      <button data-sub="ch6d">6.4 三步演进</button>
+      <button data-sub="ch6e">6.5 边界与行动清单</button>
+    </div>
+
+    <!-- 页型 C · 数据页 -->
+    <div class="subpanel" data-subpanel="ch6a">
+      <div class="spine"><span class="k">6.1 · 关键设计</span><span class="q">决定 AI 产出上限的不是提示词长度，而是反问迭代——AI 帮人拓展了问题空间。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">沉淀让反问次数自然收敛</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">同一领域任务的 Agent 反问次数（次）</div>
+                <div class="brow"><div class="bl">第 1 次跑该类任务</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">5 问</div></div>
+                <div class="brow"><div class="bl">第 10 次跑同类任务</div><div class="btrack"><div class="bfill" style="width:20%;"></div></div><div class="bv">1 问</div></div>
+                <div class="bnote">前几问的答案已在历史问答里——沉淀越多，反问越少，这是飞轮可感知的形态。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">对照</span><h3 class="s-title">50 字加反问，胜过 1500 字提示词</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">登录接口的 A / B 两条路径</div><div class="sub-d">A：1500 字提示词一次生成；B：50 字提示词 + 5 个反问（SSO？锁定策略？旧版兼容？），B 的质量远高于 A。</div></div>
+            <div class="sub t-accent"><div class="sub-t">反问的答案才是团队知识</div><div class="sub-d">这些真实约束过去只存在于老员工头脑和过期会议纪要中，反问让隐性知识首次显性化。</div></div>
+            <div class="sub"><div class="sub-t">业界规则：何时问、何时做</div><div class="sub-d">按"不确定性 × 不可逆性"判断：高风险、难回滚先问；低风险、可回滚先做再报备，避免为问而问。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide span2">
+          <div class="s-head"><span class="s-num">闭环</span><h3 class="s-title">捕获、沉淀、注入三步闭环</h3></div>
+          <div class="s-body">
+            <div class="flow"><span class="step">捕获 · 反问与回答记入任务详情，不随会话丢失</span><span class="arr">›</span><span class="step">沉淀 · 异步提炼并归档为约束 / 偏好 / 规范</span><span class="arr">›</span><span class="step">注入 · 同类任务自动携带上下文启动</span></div>
+            <div class="sub"><div class="sub-t">IDE 形态下这一切会随会话关闭一起消失</div><div class="sub-d">平台形态下反问问答成为核心资产（飞轮机制见 5.5）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">提示词写得再好，也覆盖不了开发者自己都没意识到要交代的信息——<b>反问的本质，是 AI 帮我们拓展了问题空间</b>。</div>
+      <div class="src">来源：设计随笔上篇第四节"那座被严重低估的金矿：反问"；反问次数为文中举例口径。</div>
+    </div>
+
+    <!-- 页型 C · 数据页 -->
+    <div class="subpanel" data-subpanel="ch6b">
+      <div class="spine"><span class="k">6.2 · 关键设计</span><span class="q">Fan-out 不是性能优化，而是质量保障：让单个会话吞下超大上下文，模型只会"躺平"应付。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">切片让每个会话只聚焦自己那一份</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">单次审计的上下文承载（量级示意）</div>
+                <div class="brow"><div class="bl">单会话全量处理</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">数百条缺陷</div></div>
+                <div class="brow"><div class="bl">Fan-out · 每片独立会话</div><div class="btrack"><div class="bfill" style="width:7%;"></div></div><div class="bv">每片十余条</div></div>
+                <div class="bnote">以上为量级示意，非实测；"躺平"表现为：只挑显眼几条认真处理，其余以"类似处理"草草收尾。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">读数</span><h3 class="s-title">以独立会话切片对抗"躺平"</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">×N</div><div class="l">审计 Agent 并发数</div></div>
+              <div class="stat"><div class="v">3 种</div><div class="l">切片策略：按文件 / 按 N 文件 / 按目录</div></div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">这是规避该失败模式最可靠的手段</div><div class="sub-d">当上下文压力增大、任务重复度升高，推理质量会自然衰减；任务越枯燥重复，"躺平"来得越快。</div></div>
+            <div class="sub"><div class="sub-t">业界补足：切片要算成本账</div><div class="sub-d">并发带来 token 与时延成本，生产级做法是按难度路由模型、设预算上限，并用聚合节点收敛结论。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">并发</span><h3 class="s-title">只读并发、写入串行</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">以"只读"声明决定并发资格</div><div class="sub-d">审计类只读 Agent 可并发；写入类 Agent 在同一任务内全局串行，无需分布式锁。</div></div>
+            <div class="sub"><div class="sub-t">隔离优于压缩</div><div class="sub-d">大体积中间过程交由子 Agent 在独立上下文完成，只把结论回传，主上下文从源头保持干净。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">待解</span><h3 class="s-title">切到何种粒度仍是开放问题</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">太细会遗漏跨文件问题，太粗又退化为单会话</div><div class="sub-d">作者明确表示：底层原语已经提供，最佳切分配方仍在探索，欢迎早期使用者共同打磨。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">任务越枯燥重复，"躺平"来得越快——<b>质量不能寄托于模型的"自律"，只能寄托于架构的设计</b>。</div>
+      <div class="src">来源：设计随笔上篇第三节"为什么 Audit 必须 ×N"、下篇第八节 Multi-process 节点；承载量为量级示意。</div>
+    </div>
+
+    <!-- 页型 B · 框图页 -->
+    <div class="subpanel" data-subpanel="ch6c">
+      <div class="spine"><span class="k">6.3 · 关键设计</span><span class="q">引擎必须是确定性的，只有节点内部允许非确定——这是整套架构最关键的一次划分。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">契约将非确定性输出收束到端口</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="frame">
+                <div class="frame-title">Determinism Boundary · 确定性边界</div>
+                <div class="fcol">
+                  <div class="fbox fb-l1"><div class="fb-h">工作流引擎 · 确定性</div><div class="fb-d">端口路由 · 重试 · 恢复 · 合并回退——只面对结构化数据</div></div>
+                  <div class="farr-v">▲ 引擎只面对确定性</div>
+                  <div class="fbox fb-l2"><div class="fb-h">接口契约 · XML 信封</div><div class="fb-d">Agent 按声明的端口输出结构化信封，框架按名称分发给下游</div></div>
+                  <div class="farr-v">▲ 输出被契约收束</div>
+                  <div class="fbox fb-l3"><div class="fb-h">Agent 推理 · 非确定性</div><div class="fb-d">每个 Agent 以独立子进程专注处理自己的任务，输出被约束在契约之内</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">逐层</span><h3 class="s-title">没有契约就会退回调度陷阱</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">契约层：不可控输出 → 可控接口</div><div class="sub-d">框架自动注入协议说明，并取标准输出中最后一段完整信封作为有效输出。</div></div>
+            <div class="sub t-accent"><div class="sub-t">否则只能靠上层大模型阅读自然语言、人工搬运</div><div class="sub-d">那正是这套架构一开始就要避免的"上层大模型调度"陷阱。</div></div>
+            <div class="sub"><div class="sub-t">进程与工作区隔离保底</div><div class="sub-d">每个任务拥有独立工作区与配置目录，同一仓库的多任务互不干扰；所有产物持久化入库。</div></div>
+            <div class="sub"><div class="sub-t">Harness 视角：契约只是第一层</div><div class="sub-d">约束防越界、验证发现错误、纠正恢复异常；生产级 Agent 的代码大头在后三者，而非工具本身。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">把不可控的自然语言输出，收束到<b>可控、结构化、确定性的接口契约</b>——引擎从此可以确定性调度。记住边界：Git 隔离保的是任务状态与合并语义，不是操作系统级沙箱。</div>
+      <div class="src">来源：设计随笔下篇第五节"Output XML Envelope"、第四节"工程底座"；Git 隔离非 OS 沙箱以仓库 README"Platform and safety"为准。</div>
+    </div>
+
+    <!-- 页型：SVG 时间轴页 -->
+    <div class="subpanel" data-subpanel="ch6d">
+      <div class="spine"><span class="k">6.4 · 演进路线</span><span class="q">本地、团队、云端三步是同一条连续架构，不是三次重写。</span></div>
+      <div class="card">
+        <div class="frame-title">Evolution Path · Step 1 → Step 2 → Step 3</div>
+        <svg viewBox="0 0 1000 210" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+          <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="rgba(46,74,125,0.55)"/></marker></defs>
+          <line x1="40" y1="96" x2="958" y2="96" stroke="rgba(46,74,125,0.35)" stroke-width="2" marker-end="url(#ah2)"/>
+          <circle cx="170" cy="96" r="7" fill="#2e4a7d"/>
+          <circle cx="500" cy="96" r="7" fill="#2e4a7d"/>
+          <circle cx="830" cy="96" r="7" fill="#2e4a7d"/>
+          <text x="170" y="62" text-anchor="middle" fill="#1a1c22" font-size="13.5" font-weight="700">Step 1 · 本地 daemon</text>
+          <text x="500" y="62" text-anchor="middle" fill="#1a1c22" font-size="13.5" font-weight="700">Step 2 · 团队部署</text>
+          <text x="830" y="62" text-anchor="middle" fill="#1a1c22" font-size="13.5" font-weight="700">Step 3 · 云沙箱 + 事件触发</text>
+          <text x="170" y="128" text-anchor="middle" fill="#62656e" font-size="10.5">单工程师本地多 Agent 进程协作</text>
+          <text x="170" y="147" text-anchor="middle" fill="#62656e" font-size="10.5">闭环跑通 · 适合个体探索期</text>
+          <text x="500" y="128" text-anchor="middle" fill="#62656e" font-size="10.5">Agent / 技能 / 工作流 / 记忆全员共享</text>
+          <text x="500" y="147" text-anchor="middle" fill="#62656e" font-size="10.5">工作流成为团队资产 · 适合 10–50 人</text>
+          <text x="830" y="128" text-anchor="middle" fill="#62656e" font-size="10.5">每任务独立容器 · MR / 发布自动触发</text>
+          <text x="830" y="147" text-anchor="middle" fill="#62656e" font-size="10.5">真正进入交付链路 · 适合数百人</text>
+          <text x="500" y="190" text-anchor="middle" fill="#9a9ca3" font-size="10.5">箭头即依赖：飞轮与治理从 Step 2 起才真正转动，但架构从 Step 1 就为其预留位置</text>
+        </svg>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">A</span><h3 class="s-title">为什么必须一步步走</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">飞轮的前提是任务运行在同一平台</div><div class="sub-d">若记忆分散在各自本地，就等于退化回工具思维；共享存储与审计聚合，只有在共享服务下才存在。</div></div>
+            <div class="sub"><div class="sub-t">只有事件触发，才能真正进入交付链路</div><div class="sub-d">否则价值上限仍会被"有多少人会主动调用 AI"锁死。</div></div>
+            <div class="sub"><div class="sub-t">路径可预知走工作流，临场应变走 Workgroup</div><div class="sub-d">主干新增的 Workgroup（组长分派 / 自由协作 / 动态生成 DAG）补上了自适应一环，但仍受同一控制平面管控。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">B</span><h3 class="s-title">多数团队卡在 Step 1</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">看不清目标形态，就不会提前做架构准备</div><div class="sub-d">进程隔离、每任务独立工作区、确定性引擎、结构化入库这四件事，从第一行代码起就是为云端而设计的。</div></div>
+            <div class="sub"><div class="sub-t">反面案例屡见不鲜</div><div class="sub-d">从"轻量"本地工具起步，两年后想走向团队化、云端化时才发现底层不支持，只能推倒重来。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">架构是连续的，<b>演进才不需要重写</b>——这是路线图中最有价值的一个判断；也呼应 4.1：模型变强会让决策权右移，连续的架构才接得住。</div>
+      <div class="src">来源：设计随笔上篇第五节"从个体能力到组织能力的扩展"。</div>
+    </div>
+
+    <!-- 页型：清单页 -->
+    <div class="subpanel" data-subpanel="ch6e">
+      <div class="spine"><span class="k">6.5 · 边界与行动</span><span class="q">把全篇收成两张卡：什么不该做（边界），第一步做什么（行动）。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">边界</span><h3 class="s-title">三句话划清安全与适用边界</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">Git 隔离 ≠ 操作系统沙箱</div><div class="sub-d">子进程拥有 daemon 账号的文件与网络权限，只运行可信的 Agent、技能与 MCP 定义。</div></div>
+            <div class="sub"><div class="sub-t">不是所有任务都值得上工作流</div><div class="sub-d">单次调用能解决就别上工作流；路径固定用工作流；只有路径不可预知才上自主与 Workgroup——回到 1.3 的光谱定位。</div></div>
+            <div class="sub"><div class="sub-t">自治越大，越要收紧最小权限</div><div class="sub-d">与 2.3 的安全边界呼应：审批关口、预算上限、可回滚，是放权的前提。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">行动</span><h3 class="s-title">落地行动清单：五件事</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">① 选一个高频、路径固定的流程，先跑最小闭环</div><div class="sub-d">从简单到复杂，先在编码域跑通 Code→Audit→Fix（5.3）。</div></div>
+            <div class="sub t-accent"><div class="sub-t">② 先建评估集，再谈优化</div><div class="sub-d">没有评估的优化是凭感觉（3.2）；失败案例回流评估集。</div></div>
+            <div class="sub t-accent"><div class="sub-t">③ 轨迹、决策、反问全量入库</div><div class="sub-d">先可审计，再谈智能（3.1）；留痕是规模化的前提。</div></div>
+            <div class="sub t-accent"><div class="sub-t">④ 记忆先审批后注入，管"忘"与"冲突"</div><div class="sub-d">飞轮要转，但不能乱转（5.5）。</div></div>
+            <div class="sub t-accent"><div class="sub-t">⑤ 按本地 → 团队 → 云端规划演进</div><div class="sub-d">架构从第一天为云端预留，避免推倒重来（6.4）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">从"人带着流程、把 AI 当工具"，到"工作流编排 AI 与人协同"——<b>四个问题看完，剩下的是行动</b>。</div>
+      <div class="src">边界卡回收自原 5.2 节（以仓库 README"Platform and safety"为准）；行动清单综合全篇。</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>口径说明：05–06 章主体取自 wangbinquan/agent-workflow 仓库 README 与 docs/blog 两篇设计随笔；01–04 章蒸馏自《Agent 概念与技术发展深度解析》与 Anthropic / OpenAI 公开实践及公开基准榜单；调研数据（80/5/0、217 工单等）为单一团队样本口径，基准数字为公开榜单量级示意（截至 2026 年中），均不用于精确比较。V3 按"四问"框架重构：01 概念、02 能力、03 现状、04 供给侧方向为新增/扩充，05–06 为原框架内容映射；原 5.2 案例章节已剔除，其评估/边界内容回收至 3.2 与 6.5。</div>
+    <div style="text-align:right;">提示：方向键 ←/→ 翻章；点击页签/胶囊直达；URL 加 #ch1b 可直达任意子章节</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var bar = document.getElementById('bar');
+
+  function visibleTabs() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll('#tabs button'),
+      function (b) { return body.getAttribute('data-mode') === 'int' || !b.classList.contains('internal-only'); }
+    );
+  }
+  function currentTab() { return document.querySelector('#tabs button.active'); }
+  function panelOf(ch) { return document.querySelector('.panel[data-panel="' + ch + '"]'); }
+  function setProgress() {
+    var tv = visibleTabs(), cur = currentTab();
+    var i = tv.indexOf(cur);
+    bar.style.width = (((i < 0 ? 0 : i) + 1) / tv.length * 100) + '%';
+  }
+  function activateSub(panel, sid) {
+    panel.querySelectorAll('.subtabs button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-sub') === sid);
+    });
+    panel.querySelectorAll('.subpanel').forEach(function (p) {
+      p.classList.toggle('active', p.getAttribute('data-subpanel') === sid);
+    });
+    if (history.replaceState) history.replaceState(null, '', '#' + sid);
+  }
+  function activate(ch, scroll) {
+    document.querySelectorAll('#tabs button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-ch') === ch);
+    });
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', p.getAttribute('data-panel') === ch);
+    });
+    var panel = panelOf(ch);
+    if (panel) {
+      var b = panel.querySelector('.subtabs button.active') || panel.querySelector('.subtabs button');
+      if (b) activateSub(panel, b.getAttribute('data-sub'));
+    }
+    setProgress();
+    if (scroll !== false) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function stepChapter(dir) {
+    var tv = visibleTabs(), cur = currentTab();
+    var i = tv.indexOf(cur);
+    activate(tv[(i + dir + tv.length) % tv.length].getAttribute('data-ch'));
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b) return;
+    if (b.closest('#tabs') && b.getAttribute('data-ch')) { activate(b.getAttribute('data-ch')); return; }
+    if (b.hasAttribute('data-sub')) {
+      var panel = b.closest('.panel');
+      if (panel) activateSub(panel, b.getAttribute('data-sub'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { stepChapter(1); }
+    else if (e.key === 'ArrowLeft') { stepChapter(-1); }
+  });
+
+  document.querySelectorAll('.subtabs').forEach(function (st) {
+    if (st.querySelectorAll('button').length < 2) st.style.display = 'none';
+  });
+
+  function openHash() {
+    var h = (location.hash || '').replace('#', '');
+    var m = h.match(/^(ch\d+)([a-z]?)$/);
+    if (!m || !panelOf(m[1])) { activate('ch0', false); return; }
+    activate(m[1], false);
+    if (m[2]) activateSub(panelOf(m[1]), h);
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+</body>
+</html>
