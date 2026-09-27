@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- META: 标题 -->
+<title>哈萨克斯坦数据中心谷全链条洞察 · 2026-09-27</title>
+<style>
+  /* ================= Design Tokens（米色纸感浅色风 · 青紫双主色 · 禁止随手写数值，一律用变量） ================= */
+  :root {
+    color-scheme: light;
+
+    --bg-deep: #eae0cb;
+    --bg-mid: #f7f2e6;
+
+    --cyan: #0d7686;
+    --violet: #5f4fc0;
+    --green: #1e8258;
+    --pink: #b84477;
+    --amber: #a06c10;
+
+    --text-1: #292319;
+    --text-2: #4f4736;
+    --text-3: #6f6754;
+
+    --glass: rgba(255,255,255,0.55);
+    --glass-active: rgba(13,118,134,0.10);
+    --line: rgba(41,35,25,0.12);
+    --line-cyan: rgba(13,118,134,0.38);
+
+    --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+    --fs-caption: 12px;
+    --fs-body-sm: 13px;
+    --fs-body: 15px;
+    --fs-h3: 17px;
+    --fs-display: 32px;
+
+    --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-full: 999px;
+
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --t-fast: 150ms;
+    --t-med: 250ms;
+    --t-slow: 400ms;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+                 "Noto Sans SC", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { height: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    height: 100%;
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    color: var(--text-2);
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(13,118,134,0.06), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(95,79,192,0.05), transparent 45%),
+      linear-gradient(160deg, var(--bg-deep), var(--bg-mid));
+    background-attachment: fixed;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(41,35,25,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  ::selection { background: rgba(13,118,134,0.22); color: var(--text-1); }
+
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+  .orb-1 { width: 440px; height: 440px; top: -160px; right: -120px; background: radial-gradient(circle, rgba(13,118,134,0.12), transparent 70%); }
+  .orb-2 { width: 400px; height: 400px; bottom: -140px; left: -110px; background: radial-gradient(circle, rgba(95,79,192,0.10), transparent 70%); }
+
+  .app { position: relative; z-index: 1; display: flex; height: 100vh; }
+
+  /* ================= Sidebar ================= */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--glass);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-right: 1px solid var(--line);
+  }
+
+  .sidebar-header { padding: var(--s-6) var(--s-5) var(--s-5); border-bottom: 1px solid var(--line); }
+
+  .sidebar-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: var(--s-2);
+  }
+
+  .version-chip {
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: var(--r-full);
+    border: 1px solid rgba(95,79,192,0.4);
+    color: var(--violet);
+    background: rgba(95,79,192,0.08);
+    letter-spacing: 0.04em;
+  }
+
+  .sidebar-title { font-size: var(--fs-h3); font-weight: 600; color: var(--text-1); line-height: 1.4; }
+  .sidebar-meta { margin-top: var(--s-2); font-size: var(--fs-caption); color: var(--text-3); }
+
+  .nav-list { position: relative; flex: 1; overflow-y: auto; padding: var(--s-4) var(--s-3); list-style: none; }
+
+  .nav-beam {
+    position: absolute;
+    left: var(--s-3);
+    right: var(--s-3);
+    top: 0;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--glass-active);
+    border: 1px solid var(--line-cyan);
+    box-shadow: inset 0 0 0 1px rgba(13,118,134,0.06), 0 0 22px rgba(13,118,134,0.10);
+    transition: transform var(--t-med) var(--ease), height var(--t-med) var(--ease);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .nav-item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: var(--s-3) var(--s-3);
+    margin-bottom: var(--s-1);
+    border: none;
+    border-radius: 10px;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    color: var(--text-2);
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--t-fast) var(--ease);
+  }
+
+  .nav-item:hover { color: var(--text-1); }
+  .nav-item.active { color: var(--text-1); }
+
+  .nav-icon { display: inline-flex; width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; transition: opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+  .nav-icon svg { width: 100%; height: 100%; }
+  .nav-item.active .nav-icon { opacity: 1; color: var(--cyan); }
+
+  .nav-index {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    opacity: 0.8;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sidebar-footer {
+    padding: 14px var(--s-5);
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+  }
+
+  /* ================= Main ================= */
+  main { flex: 1; overflow-y: auto; padding: var(--s-7) var(--s-8) 80px; }
+
+  .wrap { max-width: 960px; margin-inline: auto; }
+
+  .section { display: none; }
+  .section.active {
+    display: block;
+    animation: rise var(--t-slow) var(--ease);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .section.active > * { animation: rise var(--t-slow) var(--ease) backwards; }
+  .section.active > *:nth-child(2) { animation-delay: 45ms; }
+  .section.active > *:nth-child(3) { animation-delay: 90ms; }
+  .section.active > *:nth-child(4) { animation-delay: 135ms; }
+  .section.active > *:nth-child(5) { animation-delay: 180ms; }
+  .section.active > *:nth-child(6) { animation-delay: 225ms; }
+
+  .sec-head { margin-bottom: var(--s-6); }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: var(--s-2);
+  }
+
+  .sec-title {
+    font-size: var(--fs-display);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.42;
+    text-wrap: balance;
+    color: var(--text-1);
+    margin-bottom: var(--s-3);
+  }
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .sec-title {
+      background: linear-gradient(92deg, var(--text-1) 20%, var(--cyan) 65%, var(--violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .lead { font-size: var(--fs-body); line-height: 1.8; max-width: 62ch; color: var(--text-2); }
+
+  .hairline {
+    height: 1px;
+    margin-top: var(--s-5);
+    background: linear-gradient(90deg, rgba(13,118,134,0.5), rgba(95,79,192,0.3), transparent);
+  }
+
+  .mini-title {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: var(--s-4);
+  }
+
+  /* ================= Glass Cards ================= */
+  .card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-5) var(--s-5);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85),
+                0 1px 2px rgba(96,78,44,0.10),
+                0 16px 40px -16px rgba(96,78,44,0.20);
+    transition: transform var(--t-med) var(--ease),
+                border-color var(--t-med) var(--ease),
+                box-shadow var(--t-med) var(--ease);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(13,118,134,0.35);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9),
+                0 2px 4px rgba(96,78,44,0.10),
+                0 24px 48px -16px rgba(13,118,134,0.12);
+  }
+
+  .card + .card, .card + .rule-grid, .card + .dd-grid, .rule-grid + .card { margin-top: var(--s-4); }
+
+  .card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: var(--text-1);
+    margin-bottom: var(--s-4);
+  }
+
+  .card h3::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    flex-shrink: 0;
+  }
+
+  .card p { font-size: var(--fs-body-sm); line-height: 1.8; color: var(--text-2); }
+  .card p + p { margin-top: var(--s-2); }
+
+  /* ================= Figure（内联 SVG 图示容器） ================= */
+  .fig {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: linear-gradient(145deg, rgba(255,255,255,0.62), rgba(255,255,255,0.34));
+    padding: var(--s-4) var(--s-4) var(--s-3);
+    margin-bottom: var(--s-4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 16px 40px -18px rgba(96,78,44,0.18);
+  }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig-cap {
+    font-size: 13px;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    color: var(--text-3);
+    margin-top: var(--s-2);
+    text-align: left;
+  }
+
+  /* ================= Feature Cards ================= */
+  .feature-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+
+  .feature {
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 1px 2px rgba(96,78,44,0.10);
+    transition: transform var(--t-med) var(--ease), border-color var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+  }
+
+  .feature:hover {
+    transform: translateY(-2px);
+    border-color: rgba(95,79,192,0.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 24px 48px -16px rgba(95,79,192,0.14);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-md);
+    display: grid;
+    place-items: center;
+    margin-bottom: var(--s-4);
+    background: rgba(13,118,134,0.10);
+    border: 1px solid rgba(13,118,134,0.28);
+    color: var(--cyan);
+  }
+  .feature:nth-child(2) .feature-icon { background: rgba(95,79,192,0.10); border-color: rgba(95,79,192,0.32); color: var(--violet); }
+  .feature:nth-child(3) .feature-icon { background: rgba(30,130,88,0.10); border-color: rgba(30,130,88,0.30); color: var(--green); }
+  .feature-icon svg { width: 20px; height: 20px; }
+
+  .feature-title { font-size: var(--fs-body); font-weight: 600; color: var(--text-1); margin-bottom: var(--s-2); }
+  .feature p { font-size: var(--fs-body-sm); line-height: 1.8; color: var(--text-2); }
+
+  /* ================= Stat Strip ================= */
+  .stat-row { display: flex; gap: var(--s-4); flex-wrap: wrap; margin-bottom: var(--s-4); }
+
+  .stat {
+    flex: 1;
+    min-width: 140px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: var(--s-4) var(--s-5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    transition: transform var(--t-med) var(--ease), border-color var(--t-med) var(--ease);
+  }
+  .stat:hover { transform: translateY(-2px); border-color: rgba(13,118,134,0.35); }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--cyan);
+  }
+
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .stat-value {
+      background: linear-gradient(90deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .stat-label { font-size: 12.5px; line-height: 1.6; color: var(--text-3); margin-top: var(--s-1); }
+
+  .meta-row { display: flex; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; }
+  .meta-label { font-family: var(--font-mono); font-size: var(--fs-caption); letter-spacing: 0.1em; color: var(--text-3); flex-shrink: 0; }
+
+  /* ================= Chips ================= */
+  .chip-row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 13px;
+    border-radius: var(--r-full);
+    border: 1px solid var(--line);
+    background: var(--glass);
+    font-size: var(--fs-caption);
+    color: var(--text-2);
+    transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  }
+  .chip:hover { color: var(--text-1); border-color: var(--line-cyan); }
+  .chip.cyan { color: var(--cyan); border-color: rgba(13,118,134,0.35); background: rgba(13,118,134,0.06); }
+  .chip.violet { color: var(--violet); border-color: rgba(95,79,192,0.35); background: rgba(95,79,192,0.07); }
+  .chip.green { color: var(--green); border-color: rgba(30,130,88,0.35); background: rgba(30,130,88,0.06); }
+
+  /* ================= Step Chain ================= */
+  .step-chain { display: flex; align-items: stretch; margin-bottom: var(--s-4); }
+
+  .step {
+    flex: 1;
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: var(--s-4) var(--s-4) var(--s-4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    transition: transform var(--t-med) var(--ease), border-color var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+  }
+  .step:hover {
+    transform: translateY(-2px);
+    border-color: var(--line-cyan);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 20px 40px -16px rgba(13,118,134,0.12);
+  }
+
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--cyan);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(13,118,134,0.4);
+    background: rgba(13,118,134,0.08);
+    margin-bottom: var(--s-3);
+  }
+
+  .step-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: var(--s-2); }
+  .step-desc { font-size: 12.5px; line-height: 1.75; color: var(--text-3); }
+
+  .step-arrow {
+    align-self: center;
+    padding: 0 7px;
+    color: var(--cyan);
+    font-size: 14px;
+    opacity: 0.7;
+    flex-shrink: 0;
+    text-shadow: 0 0 12px rgba(13,118,134,0.35);
+  }
+
+  /* ================= Timeline ================= */
+  .timeline { position: relative; padding-left: var(--s-6); }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 9px; top: 8px; bottom: 8px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--violet));
+    opacity: 0.35;
+  }
+
+  .tl-item { position: relative; padding-bottom: var(--s-4); }
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -25px; top: 5px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px rgba(13,118,134,0.5);
+  }
+
+  .tl-title { display: flex; align-items: baseline; gap: var(--s-2); font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: var(--s-1); flex-wrap: wrap; }
+  .tl-tag { font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--cyan); }
+  .tl-desc { font-size: var(--fs-body-sm); line-height: 1.8; color: var(--text-2); }
+
+  /* ================= Rule Grid ================= */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+
+  .rule-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    transition: transform var(--t-med) var(--ease), border-color var(--t-med) var(--ease);
+  }
+  .rule-card:hover { transform: translateY(-2px); border-color: rgba(13,118,134,0.35); }
+
+  .rule-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-3); }
+
+  .rule-num {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: rgba(13,118,134,0.35);
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: var(--r-full);
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .badge.must { background: rgba(13,118,134,0.10); color: var(--cyan); border: 1px solid rgba(13,118,134,0.32); }
+  .badge.suggest { background: rgba(95,79,192,0.10); color: var(--violet); border: 1px solid rgba(95,79,192,0.32); }
+
+  .rule-title { font-size: 14px; font-weight: 600; line-height: 1.6; letter-spacing: 0.01em; color: var(--text-1); margin-bottom: var(--s-2); }
+  .rule-card p { font-size: var(--fs-body-sm); line-height: 1.8; color: var(--text-2); }
+
+  /* ================= Do / Don't ================= */
+  .dd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-4);
+  }
+
+  .dd-col {
+    border-radius: 14px;
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    background: linear-gradient(145deg, rgba(255,255,255,0.66), rgba(255,255,255,0.36));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+  }
+  .dd-col.do { border-color: rgba(30,130,88,0.30); }
+  .dd-col.dont { border-color: rgba(184,68,119,0.30); }
+
+  .dd-head { display: flex; align-items: center; gap: var(--s-2); font-size: 14px; font-weight: 600; margin-bottom: var(--s-4); }
+  .dd-col.do .dd-head { color: var(--green); }
+  .dd-col.dont .dd-head { color: var(--pink); }
+
+  .dd-mark { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; flex-shrink: 0; }
+  .dd-col.do .dd-mark { background: rgba(30,130,88,0.12); border: 1px solid rgba(30,130,88,0.4); }
+  .dd-col.dont .dd-mark { background: rgba(184,68,119,0.12); border: 1px solid rgba(184,68,119,0.4); }
+
+  .dd-col ul { list-style: none; }
+  .dd-col li {
+    font-size: var(--fs-body-sm);
+    line-height: 1.75;
+    color: var(--text-2);
+    padding: var(--s-2) 0 var(--s-2) 20px;
+    position: relative;
+    border-bottom: 1px dashed rgba(41,35,25,0.08);
+  }
+  .dd-col li:last-child { border-bottom: none; }
+  .dd-col.do li::before { content: "✓"; position: absolute; left: 0; color: var(--green); }
+  .dd-col.dont li::before { content: "✕"; position: absolute; left: 0; color: var(--pink); }
+
+  /* ================= Callout ================= */
+  .callout {
+    border-left: 3px solid var(--cyan);
+    background: rgba(13,118,134,0.07);
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+    padding: 14px 18px;
+    margin-bottom: var(--s-4);
+  }
+  .callout.warn { border-left-color: var(--amber); background: rgba(160,108,16,0.08); }
+  .callout-title { font-size: var(--fs-body-sm); font-weight: 600; margin-bottom: var(--s-1); color: var(--cyan); }
+  .callout.warn .callout-title { color: var(--amber); }
+  .callout p { font-size: var(--fs-body-sm); line-height: 1.8; color: var(--text-2); }
+
+  /* ================= Bar Chart ================= */
+  .bar-chart { margin-top: var(--s-2); }
+
+  .bar-row { display: flex; align-items: center; gap: 14px; margin-bottom: var(--s-3); }
+  .bar-row:last-child { margin-bottom: 0; }
+
+  .bar-label { width: 90px; flex-shrink: 0; text-align: right; font-size: var(--fs-caption); color: var(--text-2); }
+
+  .bar-track { flex: 1; height: 10px; border-radius: var(--r-full); background: rgba(41,35,25,0.08); overflow: hidden; }
+
+  .bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: var(--r-full);
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    box-shadow: 0 0 12px rgba(13,118,134,0.3);
+    transition: width 800ms var(--ease) 250ms;
+  }
+  .section.active .bar-fill { width: var(--w); }
+
+  .bar-val { width: 64px; flex-shrink: 0; font-family: var(--font-mono); font-size: var(--fs-caption); font-variant-numeric: tabular-nums; color: var(--cyan); }
+
+  /* ================= Table (solid surface) ================= */
+  details.table-block {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: rgba(255,255,255,0.58);
+    overflow: hidden;
+  }
+
+  details.table-block summary {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-4) var(--s-5);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-1);
+    cursor: pointer;
+    list-style: none;
+    transition: background var(--t-fast) var(--ease);
+  }
+  details.table-block summary::-webkit-details-marker { display: none; }
+  details.table-block summary:hover { background: rgba(41,35,25,0.04); }
+
+  .chev {
+    display: inline-flex;
+    color: var(--cyan);
+    font-size: 12px;
+    transition: transform var(--t-med) var(--ease);
+  }
+  details[open] .chev { transform: rotate(90deg); }
+
+  .summary-hint { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+
+  .table-inner { padding: 0 var(--s-5) var(--s-5); }
+
+  .table-wrap { border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; overflow-x: auto; }
+
+  .table { width: 100%; border-collapse: collapse; font-size: var(--fs-body-sm); }
+
+  .table th {
+    text-align: left;
+    padding: var(--s-3) 18px;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--cyan);
+    background: rgba(13,118,134,0.06);
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  .table td {
+    padding: 11px 18px;
+    border-bottom: 1px solid rgba(41,35,25,0.06);
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+  .table tr:last-child td { border-bottom: none; }
+  .table tbody tr { transition: background var(--t-fast) var(--ease); }
+  .table tbody tr:hover { background: rgba(41,35,25,0.03); }
+  .table td:first-child { font-family: var(--font-mono); font-size: var(--fs-caption); color: var(--cyan); white-space: nowrap; }
+
+  /* ================= Checklist ================= */
+  .progress-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--s-2); }
+  .progress-title { font-size: var(--fs-body-sm); color: var(--text-2); }
+  .progress-count { font-family: var(--font-mono); font-size: var(--fs-body-sm); font-variant-numeric: tabular-nums; color: var(--cyan); }
+
+  .progress-track { height: 8px; border-radius: var(--r-full); background: rgba(41,35,25,0.08); overflow: hidden; margin-bottom: var(--s-5); }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: var(--r-full);
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    box-shadow: 0 0 14px rgba(13,118,134,0.35);
+    transition: width var(--t-med) var(--ease);
+  }
+
+  .check-list { list-style: none; }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-3);
+    padding: 13px var(--s-4);
+    margin-bottom: var(--s-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+    user-select: none;
+  }
+  .check-item:hover { border-color: rgba(13,118,134,0.32); background: rgba(255,255,255,0.75); }
+
+  .check-item input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(41,35,25,0.28);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    color: transparent;
+    transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  }
+
+  .check-item input:checked + .check-box {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(13,118,134,0.35);
+    animation: pop var(--t-med) var(--ease);
+  }
+  .check-item input:checked + .check-box::after { content: "✓"; font-weight: 700; }
+
+  @keyframes pop {
+    0% { transform: scale(0.7); }
+    60% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  .check-item input:focus-visible + .check-box { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  .check-text { font-size: 14px; line-height: 1.75; color: var(--text-2); transition: color var(--t-fast) var(--ease); }
+  .check-item input:checked ~ .check-text { color: var(--text-3); text-decoration: line-through; text-decoration-color: rgba(13,118,134,0.5); }
+
+  /* ================= Layout Helpers ================= */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(41,35,25,0.20); border-radius: var(--r-full); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    html, body { height: auto; }
+    body { overflow: auto; }
+    .app { flex-direction: column; height: auto; }
+    .sidebar { position: sticky; top: 0; z-index: 30; width: 100%; flex-direction: row; align-items: center; border-right: none; border-bottom: 1px solid var(--line); }
+    .sidebar-header { padding: 14px var(--s-4) 14px var(--s-5); border-bottom: none; flex-shrink: 0; }
+    .sidebar-meta, .sidebar-footer { display: none; }
+    .nav-list { display: flex; flex-wrap: wrap; overflow-x: auto; padding: 10px var(--s-3); }
+    .nav-beam { display: none; }
+    .nav-item { margin-bottom: 0; flex-shrink: 0; width: auto; padding: var(--s-2) var(--s-3); }
+    .nav-item.active { background: var(--glass-active); border: 1px solid var(--line-cyan); border-radius: 10px; }
+    .nav-icon, .nav-index { display: none; }
+    main { padding: var(--s-6) var(--s-5) var(--s-8); overflow: visible; }
+    .step-chain { flex-direction: column; }
+    .step-arrow { transform: rotate(90deg); align-self: center; padding: var(--s-1) 0; }
+  }
+
+  /* ================= 应用内置浏览器打开提示遮罩 ================= */
+  .browser-guard {
+    position: fixed; inset: 0; z-index: 9999;
+    display: none;
+    align-items: flex-start; justify-content: center;
+    padding: var(--s-6, 24px) var(--s-4, 16px);
+    background: rgba(41,35,25,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .browser-guard.show { display: flex; }
+  .browser-guard-card {
+    position: relative;
+    width: 100%; max-width: 420px;
+    margin-top: 48px;
+    background: var(--bg-mid);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(41,35,25,0.25);
+    padding: var(--s-6, 24px);
+    color: var(--text-1);
+  }
+  .browser-guard-arrow {
+    position: absolute; top: -46px; right: 18px;
+    width: 64px; height: 56px; color: #fff;
+    animation: bg-bounce 1.4s ease-in-out infinite;
+  }
+  @keyframes bg-bounce {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(6px, -6px); }
+  }
+  .browser-guard-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--cyan);
+    background: var(--glass-active);
+    border: 1px solid var(--line-cyan);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: var(--s-3, 12px);
+  }
+  .browser-guard-title { font-size: 19px; font-weight: 700; margin: 0 0 6px; }
+  .browser-guard-sub { font-size: 13px; color: var(--text-3); margin: 0 0 var(--s-4, 16px); line-height: 1.6; }
+  .browser-guard-steps { list-style: none; margin: 0 0 var(--s-4, 16px); padding: 0; }
+  .browser-guard-steps li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--text-2); line-height: 1.55;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .browser-guard-steps li:last-child { border-bottom: none; }
+  .browser-guard-steps .num {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--cyan); color: #fff;
+    font-size: 12px; font-weight: 700;
+  }
+  .browser-guard-actions { display: flex; gap: 10px; }
+  .browser-guard-btn {
+    flex: 1;
+    border: none; cursor: pointer;
+    border-radius: 12px;
+    padding: 11px 12px;
+    font-size: 14px; font-weight: 600;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .browser-guard-btn:active { transform: scale(0.97); }
+  .browser-guard-btn.primary { background: var(--cyan); color: #fff; box-shadow: 0 6px 16px rgba(13,118,134,0.35); }
+  .browser-guard-btn.ghost { background: transparent; color: var(--text-3); border: 1px solid var(--line); }
+
+  
+  /* ================= insight-analysis 追加：正文、口径、可信度、来源 ================= */
+  .section > p { font-size: var(--fs-body); line-height: 1.9; color: var(--text-2); max-width: 72ch; margin-bottom: var(--s-4); }
+  .section > p b, .section > p strong, .lead b, .lead strong { color: var(--text-1); }
+  .dd-grid, details.table-block, .fig, .feature-row, .stat-row { margin-bottom: var(--s-4); }
+  .card + details.table-block, .grid-2 + details.table-block { margin-top: 0; }
+  .note { font-size: 12.5px; line-height: 1.75; color: var(--text-3); margin-top: var(--s-3); }
+  .note b { color: var(--text-2); font-weight: 600; }
+  .tag { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 600; padding: 1px 7px;
+    border-radius: var(--r-full); letter-spacing: 0.04em; vertical-align: 1px; margin-left: 4px; white-space: nowrap; }
+  .tag.est    { color: var(--violet); background: rgba(95,79,192,0.10); border: 1px solid rgba(95,79,192,0.30); }
+  .tag.tbc    { color: var(--amber);  background: rgba(160,108,16,0.10); border: 1px solid rgba(160,108,16,0.30); }
+  .tag.single { color: var(--pink);   background: rgba(184,68,119,0.08); border: 1px solid rgba(184,68,119,0.30); }
+  .table tr.hl td { background: rgba(13,118,134,0.07); color: var(--text-1); font-weight: 600; }
+  .table-note { font-size: 12.5px; color: var(--text-3); margin-top: var(--s-3); line-height: 1.75; }
+  .card .bar-chart + .note, .card .timeline + .note { margin-top: var(--s-4); }
+  .callout + .callout { margin-top: calc(-1 * var(--s-2)); }
+  .next { font-size: var(--fs-body-sm); color: var(--text-3); margin: var(--s-2) 0 var(--s-4); }
+  .src { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); margin-top: var(--s-4); letter-spacing: 0.04em; }
+  .chip-row { margin-top: var(--s-2); }
+  .bar-fill.dim { background: rgba(41,35,25,0.22); box-shadow: none; }
+  .bar-fill.hot { background: linear-gradient(90deg, var(--pink), var(--amber)); box-shadow: 0 0 12px rgba(184,68,119,0.25); }
+  .bar-group { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-3); margin: var(--s-4) 0 var(--s-2); }
+  .bar-group:first-child { margin-top: 0; }
+  .step.key { border-color: rgba(184,68,119,0.40); background: linear-gradient(145deg, rgba(255,240,245,0.75), rgba(255,255,255,0.40)); }
+  .step.key .step-num { color: var(--pink); border-color: rgba(184,68,119,0.45); background: rgba(184,68,119,0.08); }
+  .rule-card.key { border-color: rgba(184,68,119,0.35); }
+  .rule-card.key .rule-num { color: rgba(184,68,119,0.45); }
+
+
+  /* ================= 毛玻璃（Apple 式：半透明 + 背景模糊 + 高光描边） =================
+     原理：玻璃要有东西可"透"，所以背后放 4 个缓慢漂移的彩色光晕（.orb）。
+     所有卡片类组件共用同一套玻璃变量，改质感只改这里。 */
+  :root {
+    --glass-blur: blur(22px) saturate(175%);
+    --glass-bg: linear-gradient(150deg, rgba(255,255,255,0.56), rgba(255,255,255,0.26));
+    --glass-bg-strong: linear-gradient(150deg, rgba(255,255,255,0.70), rgba(255,255,255,0.40));
+    --glass-edge: rgba(255,255,255,0.62);
+    --glass-shadow: inset 0 1px 0 rgba(255,255,255,0.92),
+                    inset 0 -1px 0 rgba(255,255,255,0.18),
+                    0 0 0 0.5px rgba(41,35,25,0.10),
+                    0 18px 44px -20px rgba(96,78,44,0.28);
+  }
+
+  .orb { opacity: 1; animation: drift 26s ease-in-out infinite alternate; }
+  .orb-1 { background: radial-gradient(circle, rgba(13,118,134,0.24), transparent 70%); }
+  .orb-2 { background: radial-gradient(circle, rgba(95,79,192,0.22), transparent 70%); animation-duration: 32s; animation-delay: -8s; }
+  .orb-3 { width: 380px; height: 380px; top: 34%; left: 38%; background: radial-gradient(circle, rgba(184,68,119,0.14), transparent 70%); animation-duration: 38s; animation-delay: -14s; }
+  .orb-4 { width: 340px; height: 340px; bottom: 6%; right: 10%; background: radial-gradient(circle, rgba(30,130,88,0.14), transparent 70%); animation-duration: 30s; animation-delay: -4s; }
+  @keyframes drift {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(60px, 40px) scale(1.08); }
+    100% { transform: translate(-40px, 70px) scale(0.96); }
+  }
+
+  .card, .fig, .stat, .rule-card, .step, .feature, .dd-col, details.table-block, .callout, .map-part, .map-tile {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-edge);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-shadow);
+  }
+  .dd-col.do   { border-color: rgba(30,130,88,0.34); }
+  .dd-col.dont { border-color: rgba(184,68,119,0.34); }
+  .step.key    { border-color: rgba(184,68,119,0.42); background: linear-gradient(150deg, rgba(255,236,244,0.70), rgba(255,255,255,0.30)); }
+  .rule-card.key { border-color: rgba(184,68,119,0.38); }
+  .callout      { background: linear-gradient(150deg, rgba(13,118,134,0.10), rgba(255,255,255,0.30)); border-left: 3px solid var(--cyan); }
+  .callout.warn { background: linear-gradient(150deg, rgba(160,108,16,0.10), rgba(255,255,255,0.30)); border-left-color: var(--amber); }
+  .table-wrap { background: rgba(255,255,255,0.42); border-color: var(--glass-edge); }
+  .table th { background: rgba(13,118,134,0.07); }
+  .sidebar { background: rgba(255,255,255,0.46); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-right-color: var(--glass-edge); }
+
+  /* 悬停：抬起 + 光斑跟随指针（JS 写入 --mx / --my） */
+  .card, .fig, .stat, .rule-card, .step, .feature, .dd-col, .map-tile { position: relative; }
+  .card::after, .fig::after, .stat::after, .rule-card::after, .step::after, .feature::after, .dd-col::after, .map-tile::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,0.55), transparent 60%);
+    opacity: 0; transition: opacity var(--t-med) var(--ease);
+  }
+  .card:hover::after, .fig:hover::after, .stat:hover::after, .rule-card:hover::after, .step:hover::after,
+  .feature:hover::after, .dd-col:hover::after, .map-tile:hover::after { opacity: 1; }
+  .fig:hover, .dd-col:hover { border-color: rgba(13,118,134,0.32); }
+
+  /* ================= 动效（进入即播一次；只有关键点才循环，且都很慢） ================= */
+  /* 1. 组件依次浮现：JS 给宫格/数字卡/步骤/时间线的每个子项写 --i */
+  .section.active .stagger { animation: rise 520ms var(--ease) backwards; animation-delay: calc(var(--i, 0) * 70ms + 120ms); }
+
+  /* 2. 导航图标：激活时线条重描，悬停轻微放大 */
+  .nav-item .nav-icon { transition: transform var(--t-med) var(--ease), opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+  .nav-item:hover .nav-icon { transform: scale(1.14) rotate(-4deg); opacity: 1; }
+  .nav-item.active .nav-icon svg * { stroke-dasharray: 80; animation: icon-draw 900ms var(--ease) both; }
+  @keyframes icon-draw { from { stroke-dashoffset: 80; } to { stroke-dashoffset: 0; } }
+
+  /* 3. 特性卡图标：进入时描线，悬停浮起 */
+  .feature-icon { transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease); }
+  .feature:hover .feature-icon { transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 22px -10px rgba(13,118,134,0.45); }
+  .section.active .feature-icon svg * { stroke-dasharray: 80; animation: icon-draw 1100ms var(--ease) 250ms both; }
+
+  /* 4. 数字卡：数值出现时轻微放大回弹 */
+  .section.active .stat-value { animation: pop 600ms var(--ease) 200ms backwards; }
+
+  /* 5. 推理骨架：箭头轻推，关键步骤呼吸光 */
+  .step-arrow { animation: nudge 2.4s ease-in-out infinite; }
+  @keyframes nudge { 0%, 100% { transform: translateX(0); opacity: 0.55; } 50% { transform: translateX(4px); opacity: 1; } }
+  .section.active .step.key { animation: rise 520ms var(--ease) backwards, breathe 3.6s ease-in-out 900ms infinite; animation-delay: calc(var(--i, 0) * 70ms + 120ms), 900ms; }
+  @keyframes breathe {
+    0%, 100% { box-shadow: var(--glass-shadow), 0 0 0 0 rgba(184,68,119,0.0); }
+    50%      { box-shadow: var(--glass-shadow), 0 0 0 5px rgba(184,68,119,0.10), 0 0 26px rgba(184,68,119,0.18); }
+  }
+
+  /* 6. 时间线：节点脉冲 */
+  .tl-item::before { animation: dot-pulse 2.8s ease-in-out infinite; }
+  .tl-item:nth-child(2)::before { animation-delay: 0.4s; }
+  .tl-item:nth-child(3)::before { animation-delay: 0.8s; }
+  .tl-item:nth-child(4)::before { animation-delay: 1.2s; }
+  @keyframes dot-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(13,118,134,0.35); } 50% { box-shadow: 0 0 0 6px rgba(13,118,134,0.0), 0 0 14px rgba(13,118,134,0.45); } }
+
+  /* 7. SVG 机制图：形状与文字淡入（JS 负责连线描画与错峰）；关键节点可加 class="pulse" */
+  .fig svg .pulse { transform-box: fill-box; transform-origin: center; animation: svg-pulse 2.6s ease-in-out infinite; }
+  @keyframes svg-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.06); opacity: 0.82; } }
+  .fig svg .fade-in { animation: fade-in 600ms var(--ease) backwards; }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  /* 8. 关键判断：左边线一次扫光 */
+  .callout { position: relative; overflow: hidden; }
+  .section.active .callout::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 40%; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    animation: sweep 1.4s var(--ease) 600ms 1 both;
+  }
+  @keyframes sweep { from { left: -40%; } to { left: 110%; } }
+
+  /* ================= 全文结构图 .doc-map（摘要章必备，见 SKILL.md） =================
+     一行 = 一个部分（PART），左侧写部分名与作用，右侧是该部分的章节格；
+     每格：章号 · 标题 · 这一章回答的问题 · 用了哪些模块；点击跳到该章；.here = 当前章。 */
+  a.nav-item, a.nav-item span { text-decoration: none; }
+  .doc-map { display: grid; gap: 14px; margin-bottom: var(--s-4); }
+  .map-part {
+    display: grid; grid-template-columns: 150px 1fr; gap: var(--s-4); align-items: stretch;
+    padding: 14px; border-radius: var(--r-lg); position: relative; --pc: var(--cyan); --pc-soft: rgba(13,118,134,0.10);
+  }
+  .map-part:nth-child(5n+2) { --pc: var(--violet); --pc-soft: rgba(95,79,192,0.10); }
+  .map-part:nth-child(5n+3) { --pc: var(--green);  --pc-soft: rgba(30,130,88,0.10); }
+  .map-part:nth-child(5n+4) { --pc: var(--pink);   --pc-soft: rgba(184,68,119,0.09); }
+  .map-part:nth-child(5n+5) { --pc: var(--amber);  --pc-soft: rgba(160,108,16,0.10); }
+  .map-part + .map-part::before {
+    content: ""; position: absolute; left: 88px; top: -15px; width: 2px; height: 16px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--line-cyan), var(--pc)); opacity: 0.7;
+  }
+  .map-part-head { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-left: 12px; border-left: 3px solid var(--pc); }
+  .map-part-tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--pc); }
+  .map-part-name { font-size: 15px; font-weight: 700; color: var(--text-1); }
+  .map-part-note { font-size: var(--fs-caption); line-height: 1.5; color: var(--text-3); }
+  .map-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+  .map-tile {
+    display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: var(--r-md);
+    text-decoration: none; color: inherit; cursor: pointer;
+    transition: transform var(--t-med) var(--ease), border-color var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+  }
+  .map-tile:hover { transform: translateY(-3px); border-color: var(--pc); box-shadow: var(--glass-shadow), 0 16px 30px -18px var(--pc); }
+  .map-tile.here { background: linear-gradient(150deg, var(--pc-soft), rgba(255,255,255,0.35)); border-color: var(--pc); cursor: default; }
+  .map-tile.here::before {
+    content: "当前"; position: absolute; top: 10px; right: 10px; font-size: 10px; letter-spacing: 0.06em;
+    padding: 1px 7px; border-radius: var(--r-full); color: #fff; background: var(--pc);
+  }
+  .map-num { font-family: var(--font-mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pc); line-height: 1.1; }
+  .map-title { font-size: 14px; font-weight: 600; color: var(--text-1); }
+  .map-q { font-size: var(--fs-caption); line-height: 1.6; color: var(--text-2); }
+  .map-mods { margin-top: auto; padding-top: 6px; border-top: 1px dashed rgba(41,35,25,0.12); font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+  .map-tile:not(.here) .map-title::after { content: " ❯"; font-size: 11px; color: var(--pc); opacity: 0; transition: opacity var(--t-fast) var(--ease), margin var(--t-fast) var(--ease); }
+  .map-tile:hover .map-title::after { opacity: 1; margin-left: 3px; }
+
+  @media (max-width: 900px) {
+    .map-part { grid-template-columns: 1fr; }
+    .map-part + .map-part::before { left: 26px; }
+    .map-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .map-mods { display: none; }
+    .map-tile { padding: 10px 12px; }
+    .step-arrow { animation: nudge-down 2.4s ease-in-out infinite; }
+    @keyframes nudge-down { 0%, 100% { transform: rotate(90deg) translateX(0); opacity: 0.55; } 50% { transform: rotate(90deg) translateX(4px); opacity: 1; } }
+  }
+
+  /* 不支持 backdrop-filter 的浏览器：退回更实的白底，保证可读 */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .card, .fig, .stat, .rule-card, .step, .feature, .dd-col, details.table-block, .callout, .map-part, .map-tile { background: rgba(255,255,255,0.86); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb, .step-arrow, .tl-item::before, .fig svg .pulse, .section.active .step.key { animation: none !important; }
+  }
+
+  @media print {
+    html, body { height: auto; overflow: visible; background: #fff; }
+    body::before, .orb, .sidebar, .browser-guard { display: none !important; }
+    .app { display: block; height: auto; }
+    main { overflow: visible; padding: 0; }
+    .section { display: block !important; page-break-after: always; }
+    .section .bar-fill { width: var(--w) !important; }
+    .card, .fig, .step, .stat, .rule-card, .feature, .dd-col, details.table-block, .callout, .map-part, .map-tile {
+      box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: #fff !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .card::after, .fig::after, .stat::after, .rule-card::after, .step::after, .feature::after, .dd-col::after, .map-tile::after { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="browser-guard" id="browserGuard" role="dialog" aria-modal="true" aria-labelledby="browserGuardTitle">
+  <div class="browser-guard-card">
+    <svg class="browser-guard-arrow" viewBox="0 0 64 56" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 50 C 20 46, 40 36, 52 12"/>
+      <path d="M40 10 L 53 10 L 53 23"/>
+    </svg>
+    <span class="browser-guard-badge" id="browserGuardApp">检测到应用内打开</span>
+    <h2 class="browser-guard-title" id="browserGuardTitle">请用系统浏览器打开本页</h2>
+    <p class="browser-guard-sub" id="browserGuardSub">当前页面在微信内置浏览器中打开，部分图表与交互可能无法正常使用。建议切换到浏览器（Safari / Chrome 等）获得完整体验。</p>
+    <ul class="browser-guard-steps" id="browserGuardSteps"></ul>
+    <div class="browser-guard-actions">
+      <button type="button" class="browser-guard-btn ghost" id="browserGuardClose">仍要在此浏览</button>
+      <button type="button" class="browser-guard-btn primary" id="browserGuardCopy">复制页面链接</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- META：侧栏抬头 = 课题代号 + 日期胶囊 + 报告名 + 一行副标 -->
+      <div class="sidebar-eyebrow">INSIGHT <span class="version-chip">2026-09-27</span></div>
+      <div class="sidebar-title">哈萨克斯坦数据中心谷<br>全链条洞察</div>
+      <div class="sidebar-meta">洞察分析 · 数据截至 2026-09-26<br>数据中心谷 · 埃基巴斯图兹 · AI算力</div>
+    </div>
+
+    <!-- NAV_ITEMS：每章一个 li；data-target 必须等于对应 section 的 id；图标从 24×24 线性图标里选 -->
+    <ul class="nav-list" id="navList" role="tablist" aria-label="章节导航">
+      <div class="nav-beam" id="navBeam" aria-hidden="true"></div>
+<li role="presentation"><a href="#sec-00" class="nav-item active" role="tab" aria-selected="true" data-target="sec-00"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="nav-index">00</span><span>摘要</span></a></li>
+<li role="presentation"><a href="#sec-01" class="nav-item" role="tab" aria-selected="false" data-target="sec-01"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg></span><span class="nav-index">01</span><span>背景：为何此时</span></a></li>
+<li role="presentation"><a href="#sec-02" class="nav-item" role="tab" aria-selected="false" data-target="sec-02"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="nav-index">02</span><span>事实基线口径</span></a></li>
+<li role="presentation"><a href="#sec-03" class="nav-item" role="tab" aria-selected="false" data-target="sec-03"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg></span><span class="nav-index">03</span><span>政策与制度</span></a></li>
+<li role="presentation"><a href="#sec-04" class="nav-item" role="tab" aria-selected="false" data-target="sec-04"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span><span class="nav-index">04</span><span>能源与基建</span></a></li>
+<li role="presentation"><a href="#sec-05" class="nav-item" role="tab" aria-selected="false" data-target="sec-05"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span><span class="nav-index">05</span><span>芯片与技术</span></a></li>
+<li role="presentation"><a href="#sec-06" class="nav-item" role="tab" aria-selected="false" data-target="sec-06"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg></span><span class="nav-index">06</span><span>产业链图谱</span></a></li>
+<li role="presentation"><a href="#sec-07" class="nav-item" role="tab" aria-selected="false" data-target="sec-07"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg></span><span class="nav-index">07</span><span>洞察与误读</span></a></li>
+<li role="presentation"><a href="#sec-08" class="nav-item" role="tab" aria-selected="false" data-target="sec-08"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19l5-6 4 3 7-9"/><path d="M20 7h-5M20 7v5"/></svg></span><span class="nav-index">08</span><span>展望与结论</span></a></li>
+<li role="presentation"><a href="#sec-09" class="nav-item" role="tab" aria-selected="false" data-target="sec-09"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h14v12H5z"/><path d="M8 20h8M9 16v4M15 16v4"/></svg></span><span class="nav-index">09</span><span>方法口径来源</span></a></li>
+
+    </ul>
+
+    <div class="sidebar-footer">SINGLE FILE · NO CDN · OFFLINE OK</div>
+  </aside>
+
+  <main>
+    <div class="wrap">
+
+      <!--
+        SECTIONS：每章一个 section.section，首章带 active。每章按「章节模块式」组织（见 SKILL.md）：
+          ① 章头 .sec-head：.kicker 主题小标 → .sec-title 问题式或判断式标题 → .lead 结论先行（关键判断加粗）→ .hairline
+          ② 推理骨架 .step-chain：3–4 步，本章的论证路径（摘要与末章可省）
+          ③ 视觉模块 2–5 个：.stat-row / .fig（SVG 机制图）/ .grid-2 双图 / .timeline / .rule-grid / .feature-row / .dd-grid / details.table-block
+          ④ .callout 关键判断收尾 + .next 承接句
+          ⑤ .chip-row 关键词（可选）+ .src 来源行
+        裸段落（不在任何组件里的 <p>）每章最多 3 段。字可以多，但要装进组件里。
+      -->
+
+      <!-- ==================== 00 摘要 ==================== -->
+<section class="section active" id="sec-00">
+<div class="sec-head">
+<div class="kicker">OVERVIEW · 只读这一章也能带走全文</div>
+<h2 class="sec-title">摘要：煤变成算力之前，先看四环能否对齐</h2>
+<p class="lead">哈萨克斯坦埃基巴斯图兹数据中心谷的本质，是把煤电枢纽变成面向出口的AI算力资产。2026年6月15日签署的100亿美元一揽子合作（政府—Firebird，NVIDIA技术支持）是起点而非终点：<b>首期125MW机房2027年6月能否按时上架，是唯一硬检验</b>；在此之前，年出口30亿美元、远景300亿美元都只是附带假设的推算。全文结论是“延迟兑现的战略资产”概率居首，电、芯片许可、上架、出海四环在2027至2029年对齐程度决定成败。数据截至2026年09月26日，口径说明见第09章，来源清单见末章表格。</p>
+<div class="hairline"></div>
+</div>
+<div class="doc-map" role="navigation" aria-label="全文结构图">
+<div class="map-part">
+<div class="map-part-head"><span class="map-part-tag">START</span><span class="map-part-name">总览</span><span class="map-part-note">只读这一章也能带走主线</span></div>
+<div class="map-tiles">
+<a class="map-tile here" href="#sec-00" data-goto="sec-00"><span class="map-num">00</span><span class="map-title">摘要</span><span class="map-q">最重要的判断是什么</span><span class="map-mods">结构图 · 数字卡 · 论证树 · 要点卡</span></a>
+</div>
+</div>
+<div class="map-part">
+<div class="map-part-head"><span class="map-part-tag">PART A</span><span class="map-part-name">事实基线</span><span class="map-part-note">先立事实，再谈判断</span></div>
+<div class="map-tiles">
+<a class="map-tile" href="#sec-01" data-goto="sec-01"><span class="map-num">01</span><span class="map-title">背景</span><span class="map-q">为什么是现在、为什么是埃基巴斯图兹</span><span class="map-mods">推理骨架 · 时间线 · 机制图 · 要点卡</span></a>
+<a class="map-tile" href="#sec-02" data-goto="sec-02"><span class="map-num">02</span><span class="map-title">事实基线</span><span class="map-q">哪些已签、哪些只是规划</span><span class="map-mods">推理骨架 · 数字卡 · 口径图 · 折叠表</span></a>
+</div>
+</div>
+<div class="map-part">
+<div class="map-part-head"><span class="map-part-tag">PART B</span><span class="map-part-name">三层约束分析</span><span class="map-part-note">政策、能源、技术逐层收紧</span></div>
+<div class="map-tiles">
+<a class="map-tile" href="#sec-03" data-goto="sec-03"><span class="map-num">03</span><span class="map-title">政策与制度</span><span class="map-q">政府给了什么、还缺什么</span><span class="map-mods">推理骨架 · 传导图 · 要点卡 · 折叠表</span></a>
+<a class="map-tile" href="#sec-04" data-goto="sec-04"><span class="map-num">04</span><span class="map-title">能源与基建</span><span class="map-q">电、水、网撑得起1GW吗（2026年目标口径）</span><span class="map-mods">推理骨架 · 条形图 · 通路图 · 折叠表</span></a>
+<a class="map-tile" href="#sec-05" data-goto="sec-05"><span class="map-num">05</span><span class="map-title">芯片与技术</span><span class="map-q">为何选GB300与Vera Rubin</span><span class="map-mods">推理骨架 · 分层图 · 演进图 · 折叠表</span></a>
+</div>
+</div>
+<div class="map-part">
+<div class="map-part-head"><span class="map-part-tag">PART C</span><span class="map-part-name">网络与判断</span><span class="map-part-note">从合作结构推向可证伪结论</span></div>
+<div class="map-tiles">
+<a class="map-tile" href="#sec-06" data-goto="sec-06"><span class="map-num">06</span><span class="map-title">产业链图谱</span><span class="map-q">谁在车上、谁在围观</span><span class="map-mods">推理骨架 · 拓扑图 · 四方卡 · 折叠表</span></a>
+<a class="map-tile" href="#sec-07" data-goto="sec-07"><span class="map-num">07</span><span class="map-title">洞察</span><span class="map-q">什么被高估、什么被忽略</span><span class="map-mods">推理骨架 · 对错栏 · 锁定图 · 基准卡</span></a>
+<a class="map-tile" href="#sec-08" data-goto="sec-08"><span class="map-num">08</span><span class="map-title">展望与结论</span><span class="map-q">3/6/12个月看什么</span><span class="map-mods">推理骨架 · 时间轴 · 情景卡 · 观测清单</span></a>
+</div>
+</div>
+<div class="map-part">
+<div class="map-part-head"><span class="map-part-tag">APPENDIX</span><span class="map-part-name">附录</span><span class="map-part-note">方法、口径与可回查来源</span></div>
+<div class="map-tiles">
+<a class="map-tile" href="#sec-09" data-goto="sec-09"><span class="map-num">09</span><span class="map-title">方法口径来源</span><span class="map-q">数字从哪来、什么还待核实</span><span class="map-mods">数字卡 · 口径卡 · 局限卡 · 来源表</span></a>
+</div>
+</div>
+</div>
+<div class="stat-row">
+<div class="stat"><div class="stat-value">$<span data-count="10">10</span>B</div><div class="stat-label">6·15一揽子总额 · 2026年签约口径 · 来源F4</div></div>
+<div class="stat"><div class="stat-value"><span data-count="125">125</span>MW</div><div class="stat-label">首期容量 · 2027年6月投运目标 · 来源F8</div></div>
+<div class="stat"><div class="stat-value"><span data-count="1400">1400</span>ha</div><div class="stat-label">已划拨土地规划上限 · 2026年口径 · 来源F3</div></div>
+<div class="stat"><div class="stat-value"><span data-count="3">3</span>B$/年</div><div class="stat-label">官方估算年出口 · 2026年估算口径 · 来源F5</div></div>
+</div>
+<p class="note"><b>口径提示：</b>100亿美元为2026年06月15日签约总额口径，来源F4；125MW为2027年06月投运目标口径，来源F8；1400公顷为规划上限口径，来源F3；年出口30亿美元为部长估算口径，来源F5，四者不可比。</p>
+<div class="fig">
+<svg viewBox="0 0 800 400" role="img" aria-label="全文论证树">
+<defs><marker id="t-up0" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="60" y="12" width="335" height="44" rx="8" stroke-dasharray="6 4" style="fill:rgba(255,255,255,.4);stroke:var(--text-3)"/>
+<text x="227" y="39" text-anchor="middle" font-size="13" style="fill:var(--text-2)">08展望：三情景概率（推测）</text>
+<rect x="405" y="12" width="335" height="44" rx="8" stroke-dasharray="6 4" style="fill:rgba(255,255,255,.4);stroke:var(--text-3)"/>
+<text x="572" y="39" text-anchor="middle" font-size="13" style="fill:var(--text-2)">09方法：T0与T1及推测三分开</text>
+<line x1="227" y1="58" x2="300" y2="68" style="stroke:var(--text-3)" stroke-width="1.5" stroke-dasharray="6 4"/>
+<line x1="572" y1="58" x2="500" y2="68" style="stroke:var(--text-3)" stroke-width="1.5" stroke-dasharray="6 4"/>
+<rect x="120" y="72" width="560" height="48" rx="10" style="fill:var(--cyan)"/>
+<text x="400" y="102" text-anchor="middle" font-size="15" font-weight="700" style="fill:#fff">最终判断：延迟兑现的战略资产概率居首</text>
+<line x1="400" y1="164" x2="400" y2="122" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-up0)"/>
+<rect x="60" y="168" width="680" height="44" rx="8" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="80" y="195" font-size="13" style="fill:var(--violet)">第3层</text>
+<text x="400" y="195" text-anchor="middle" font-size="14" style="fill:var(--text-1)">出口数学与主权叙事各有三处失真</text>
+<text x="720" y="195" text-anchor="end" font-size="13" style="fill:var(--text-3)">第07章</text>
+<rect x="60" y="220" width="680" height="44" rx="8" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="80" y="247" font-size="13" style="fill:var(--violet)">第2层</text>
+<text x="400" y="247" text-anchor="middle" font-size="14" style="fill:var(--text-1)">单主轴加三类外围，命门在电与许可</text>
+<text x="720" y="247" text-anchor="end" font-size="13" style="fill:var(--text-3)">第05-06章</text>
+<rect x="60" y="272" width="680" height="44" rx="8" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="80" y="299" font-size="13" style="fill:var(--violet)">第1层</text>
+<text x="400" y="299" text-anchor="middle" font-size="14" style="fill:var(--text-1)">政策给足框架，电力缺口推迟到2029年填平</text>
+<text x="720" y="299" text-anchor="end" font-size="13" style="fill:var(--text-3)">第03-04章</text>
+<rect x="60" y="324" width="680" height="46" rx="8" style="fill:rgba(13,118,134,.08);stroke:var(--line-cyan)"/>
+<text x="80" y="352" font-size="13" style="fill:var(--violet)">事实基线</text>
+<text x="400" y="352" text-anchor="middle" font-size="14" style="fill:var(--text-1)">已签仅两份文件，10万卡是2026年目标非到货</text>
+<text x="720" y="352" text-anchor="end" font-size="13" style="fill:var(--text-3)">第01-02章</text>
+<text x="400" y="388" text-anchor="middle" font-size="13" style="fill:var(--text-3)">虚线层只做收束，不进入推出链</text>
+</svg>
+<div class="fig-cap">FIG 0 · 结论自下而上推出：事实基线收紧每一层的乐观假设，顶层判断落在延迟兑现而非落空或加速</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">01</span><span class="badge must">硬约束</span></div><div class="rule-title">电是生死线，300MW连续运行一年耗电约2.63TWh</div><p>按300MW乘8760小时推算，占哈2025年全国发电量123.1TWh的2.13%，而全国稳定电力盈余要到2029年才出现，来源F17与来源F18，2025至2026年口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">02</span><span class="badge must">签约真相</span></div><div class="rule-title">100亿美元对应两份文件，NVIDIA不是签署方</div><p>一份战略合作框架加一份约束性条款单，NVIDIA只做技术阐述与站台，2026年6月15日总理府口径，来源F4。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">03</span><span class="badge must">芯片真相</span></div><div class="rule-title">10万卡GB300与Vera Rubin是型号意向，125MW只能装约半数</div><p>按单卡全分摊约2.12kW推算，125MW对应约4.5万至5.5万卡，全量需250MW与2028年交付，来源F22与来源F23，2025至2026年产品口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">04</span><span class="badge suggest">许可真相</span></div><div class="rule-title">美国BIS出口许可已拿125MW表述，不等于10万卡全覆盖</div><p>许可按型号、数量、最终用户逐单颁发，扩容到250MW与1GW原则上需新许可，2025至2026年Firebird口径，来源F27。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">05</span><span class="badge suggest">出口真相</span></div><div class="rule-title">年出口30亿美元是估算，含义是机时费而非净利润</div><p>部长2026年6月表述为估计值，实现前提是满租、高利用率与持续的全球算力价格，来源F5，信号强度中。</p></div>
+</div>
+<div class="callout warn"><div class="callout-title">快照声明</div><p>数据截至2026年09月26日；覆盖哈萨克斯坦埃基巴斯图兹数据中心谷主体加Al-Farabium、Freedom主权超算、Mangystau等平行项目以作区分；不含2026年09月26日之后的新签约与投运变更。统计、版本、命名三类口径说明见第09章，来源清单F1至F36见末章表格，原文链接照录。</p></div>
+<div class="callout"><div class="callout-title">关键判断</div><p>把数据中心谷当作期权而非资产：2027年6月首期50MW投运是行权价，在此之前跟踪变电投产、BIS增量许可与具名客户三件事，其余数字先听后信。下文先从为什么是现在讲起。</p></div>
+<p class="next">所以，下一章先回答为什么是现在、为什么是埃基巴斯图兹。</p>
+<div class="chip-row"><span class="chip cyan">Data Center Valley</span><span class="chip violet">埃基巴斯图兹</span><span class="chip green">Firebird · NVIDIA</span><span class="chip">煤电转算力出口</span></div>
+<div class="src">来源：F2 总理府2026-01-30 · F3 总理府2026-02-25 · F4 总理府2026-06-15 · F5 部长表态2026-06-15 · F8 进度会2026-08-13 · F17 KEGOC与能源部2025-2026 · F18 本报告推算链；下文进入下一章。</div>
+</section>
+<!-- ==================== 01 背景 ==================== -->
+<section class="section" id="sec-01">
+<div class="sec-head">
+<div class="kicker">BACKGROUND · 事情怎么走到今天</div>
+<h2 class="sec-title">背景：三股力量为何在2026年对齐于埃基巴斯图兹</h2>
+<p class="lead">结论先行：全球算力饥渴、哈萨克斯坦“Digital Qazaqstan”战略与埃基巴斯图兹煤电枢纽，三者在2026年首次同时具备。<b>总统1月提出试点、总理1月30日督办开工、6月15日签下100亿美元合作</b>，节奏之快说明这不是偶发招商，而是国家战略寻找载体的结果。理解后文一切争议，先要理解这个窗口为什么是现在。来源F1、来源F2、来源F4、来源F9，2026年官方口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">全球饥渴</div><div class="step-desc">推理需求吞掉算力供给</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">国家战略</div><div class="step-desc">数字化年加新设AI部</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">本地禀赋</div><div class="step-desc">煤电枢纽加土地加区位</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">窗口判断</div><div class="step-desc">三者对齐即开工理由</div></div>
+</div>
+<div class="card"><h3>从提法到签约：2026年关键节点时间线</h3>
+<div class="timeline">
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-01-06</span>2026年定为数字化与AI年</div><div class="tl-desc">总统签署行政令，政府落实、总统办公厅监督，当日生效，来源F10，2026年官方口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-01-20</span>总统提出埃基巴斯图兹试点</div><div class="tl-desc">托卡耶夫在国家库鲁尔тай讲话中称以煤电建数据中心谷是可行提议，需评估落地（单源转述，原文链接待补），来源F1，2026年转述口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-01-30</span>总理现场督办并定首期参数</div><div class="tl-desc">200公顷已划、可扩1300公顷以上，15公里线路加300MW变电、可扩1GW，远景投资约300亿美元，来源F2，2026年总理府口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-02-25</span>参数细化到可招商版本</div><div class="tl-desc">土地增至1400公顷，设100MW绿地区，Tier III与PUE 1.25目标，延迟80毫秒降至57毫秒，来源F3，2026年政府口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-06-09</span>国家战略获总统令批准</div><div class="tl-desc">Digital Qazaqstan至2029年战略获批，数据中心谷列为旗舰载体，来源F9，2026年总统令口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-06-15</span>100亿美元一揽子签署</div><div class="tl-desc">数字部与Firebird签战略合作，Kazakhtelecom与Firebird签约束性条款单，NVIDIA技术站台，来源F4，2026年签约口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-08-08</span>参照系投运：亚美尼亚首期开园</div><div class="tl-desc">Firebird在Hrazdan的首期6000卡以上Blackwell集群投运，约18MW，为哈项目提供可观察样本，来源F26，2026年公司口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2027-06</span>硬检验：首期50MW投运目标</div><div class="tl-desc">总理府2026年08月进度会定调：主体2026年底、调试2027年05月、投运2027年06月，来源F8，2026年计划口径。</div></div>
+</div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 220" role="img" aria-label="煤电转算力出口价值链">
+<defs><marker id="t-ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="20" y="60" width="170" height="70" rx="10" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="105" y="90" text-anchor="middle" font-size="14" style="fill:var(--text-1)">露天煤矿</text>
+<text x="105" y="112" text-anchor="middle" font-size="13" style="fill:var(--text-3)">埃基巴斯图兹煤田</text>
+<rect x="215" y="60" width="170" height="70" rx="10" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="300" y="90" text-anchor="middle" font-size="14" style="fill:var(--text-1)">GRES坑口电站</text>
+<text x="300" y="112" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2025年发电24.5TWh</text>
+<rect x="410" y="60" width="170" height="70" rx="10" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="495" y="90" text-anchor="middle" font-size="14" style="fill:var(--text-1)">AI机房集群</text>
+<text x="495" y="112" text-anchor="middle" font-size="13" style="fill:var(--text-3)">300MW至1GW连续负荷·2026年口径</text>
+<rect x="605" y="60" width="175" height="70" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="692" y="90" text-anchor="middle" font-size="14" style="fill:var(--text-1)">数字出口收入</text>
+<text x="692" y="112" text-anchor="middle" font-size="13" style="fill:var(--text-3)">机时费加云服务费</text>
+<line x1="192" y1="95" x2="213" y2="95" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar1)"/>
+<line x1="387" y1="95" x2="408" y2="95" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar1)"/>
+<line x1="582" y1="95" x2="603" y2="95" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar1)"/>
+<text x="400" y="170" text-anchor="middle" font-size="13" style="fill:var(--text-3)">每一跳都有损耗与约束：输电、PUE、利用率、价格，缺一环链条即断</text>
+</svg>
+<div class="fig-cap">FIG 1 · 煤变算力的链条每跳都有约束，电与利用率决定出口收入是期权还是现金流</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">全球侧</span></div><div class="rule-title">算力竞赛已从模型层下沉到基建层</div><p>NVIDIA创始人2026年表述把能源列为五层蛋糕的底层，无电即无算力，来源F34，2026年方法论口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">国家侧</span></div><div class="rule-title">哈萨克斯坦把2026年当作制度窗口</div><p>新设AI与数字发展部、Digital Code与AI法落地、行动计划排到2029年，来源F9与来源F10，2026年立法口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">本地侧</span></div><div class="rule-title">埃基巴斯图兹是全国少有的现成重载节点</div><p>GRES-1在2025年以4040MW装机发出24.5TWh历史最高纪录，占全国约20%，来源F14，2025年企业口径。</p></div>
+</div>
+<div class="callout"><div class="callout-title">关键判断</div><p>背景成立不等于项目成立：窗口解释了为什么开工，但 Tampa 式的招商速度把执行风险后移，电网、许可与客户三件事必须在2027年前补课。下文把已签与未签拆开，先立事实基线。</p></div>
+<p class="next">所以，下一章用口径对照表回答到底哪些已经定了。</p>
+<div class="chip-row"><span class="chip cyan">Digital Qazaqstan</span><span class="chip violet">2026数字化年</span><span class="chip green">坑口煤电</span></div>
+<div class="src">来源：F1 库鲁尔тай2026-01-20 · F2 总理府2026-01-30 · F3 总理府2026-02-25 · F4 总理府2026-06-15 · F9 总统令2026-06-09 · F14 GRES-1企业2026-02-12；下文进入下一章。</div>
+</section>
+<!-- ==================== 02 事实基线 ==================== -->
+<section class="section" id="sec-02">
+<div class="sec-head">
+<div class="kicker">BASELINE · 先立事实，再谈判断</div>
+<h2 class="sec-title">事实基线：已签的只有两份文件，其余都是规划口径</h2>
+<p class="lead">结论先行：<b>2026年6月15日之后，法律上成立的只有数字部与Firebird的战略合作框架、Kazakhtelecom与Firebird的约束性条款单</b>；100亿美元是合作总额表述，10万卡是型号意向，1400公顷是规划划拨上限，300亿美元是远景估算。把四者混为一谈是当前信息环境里最常见的口径事故。本章逐项拆开。来源F4、来源F5、来源F6、来源F8，2026年签约与进度口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">锁文件</div><div class="step-desc">两份签约文本各自约束什么</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">对数字</div><div class="step-desc">四组金额与规模的原始出处</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">辨口径</div><div class="step-desc">签约额对到位额对出口额</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">定进度</div><div class="step-desc">50MW与215MW是2026年实物锚</div></div>
+</div>
+<div class="stat-row">
+<div class="stat"><div class="stat-value">$<span data-count="10">10</span>B</div><div class="stat-label">一揽子总额 · 2026年签约口径 · 来源F4</div></div>
+<div class="stat"><div class="stat-value">$<span data-count="5">5</span>B</div><div class="stat-label">首期分解 · 2026年转述口径 · 来源F6</div></div>
+<div class="stat"><div class="stat-value"><span data-count="50">50</span>MW</div><div class="stat-label">在建首设施 · 2027年06月目标 · 来源F8</div></div>
+<div class="stat"><div class="stat-value"><span data-count="215">215</span>MW</div><div class="stat-label">已购变电站容量 · 2026年进度口径 · 来源F8</div></div>
+</div>
+<p class="note"><b>口径提示：</b>官方通稿未明确125MW等数字指IT负载、设施总耗还是变电容量，本报告推算按IT负载口径并分PUE两档给区间；若指变电容量，可用IT须先除PUE 1.25再扣冗余，2026年口径，来源F4与来源F8。</p>
+<div class="fig">
+<svg viewBox="0 0 800 250" role="img" aria-label="三层口径图">
+<defs><marker id="t-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="40" y="40" width="220" height="90" rx="10" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="150" y="70" text-anchor="middle" font-size="14" style="fill:var(--text-1)">签约总额 100亿美元·2026年口径</text>
+<text x="150" y="94" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2026-06-15 框架加条款单</text>
+<text x="150" y="114" text-anchor="middle" font-size="13" style="fill:var(--text-3)">约束力弱于投资交割</text>
+<rect x="290" y="40" width="220" height="90" rx="10" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="400" y="70" text-anchor="middle" font-size="14" style="fill:var(--text-1)">到位投资 待形成</text>
+<text x="400" y="94" text-anchor="middle" font-size="13" style="fill:var(--text-3)">具名仅电信10亿美元·2026年单源口径</text>
+<text x="400" y="114" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单源转述待财报核实</text>
+<rect x="540" y="40" width="220" height="90" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="650" y="70" text-anchor="middle" font-size="14" style="fill:var(--text-1)">年出口 30亿美元·2026年估算口径</text>
+<text x="650" y="94" text-anchor="middle" font-size="13" style="fill:var(--text-3)">部长估算 满租假设</text>
+<text x="650" y="114" text-anchor="middle" font-size="13" style="fill:var(--text-3)">机时费口径非利润</text>
+<line x1="262" y1="85" x2="288" y2="85" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar2)"/>
+<line x1="512" y1="85" x2="538" y2="85" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar2)"/>
+<text x="400" y="170" text-anchor="middle" font-size="13" style="fill:var(--text-3)">三层不可混用：签约额不等于到账，到账不等于收入</text>
+<text x="400" y="195" text-anchor="middle" font-size="13" style="fill:var(--text-3)">远景300亿美元为1GW全周期估算，与100亿分属不同版本口径</text>
+</svg>
+<p class="note"><b>口径提示：</b>左框2026年06月15日签约口径，来源F4；中框到位待形成，来源F6单源；右框年出口估算口径，来源F5；远景300亿美元另属1GW版本，来源F2。</p>
+<div class="fig-cap">FIG 2 · 三层口径一混用判断即失真，跟踪时只认到位与上架两件事</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">文件</span></div><div class="rule-title">NVIDIA未签字，作用是技术背书与供货通道</div><p>总理府2026年06月15日通稿只列两份签署文件，NVIDIA副总裁做技术阐述，来源F4，2026年官方口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">出资</span></div><div class="rule-title">唯一具名出资是电信10亿美元，且是转述口径</div><p>Bloomberg经Kazakhtelecom董事长转引称首期50亿美元含电信10亿美元，无董事会决议佐证，标单源，来源F6，2026年媒体口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">实物</span></div><div class="rule-title">实物锚只有50MW土建与215MW变电站</div><p>2026年08月13日进度会称首设施土方完成90%、变电站已购、给水网已设计，来源F8，2026年施工口径。</p></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>四次官宣数字对照：版本不同不能直接比<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>时点</th><th>土地</th><th>电力</th><th>金额表述</th><th>口径性质</th></tr></thead>
+<tbody>
+<tr class="hl"><td>2026-01-30 总理视察</td><td>200公顷可扩1300公顷以上</td><td>300MW可扩1GW</td><td>远景约300亿美元</td><td>规划估算 · 来源F2</td></tr>
+<tr><td>2026-02-25 政府会</td><td>1400公顷已划拨</td><td>绿地区100MW起步</td><td>未给总额</td><td>规划细化 · 来源F3</td></tr>
+<tr class="hl"><td>2026-06-15 签约包</td><td>沿用1400公顷</td><td>首期125MW向250MW扩展</td><td>一揽子100亿美元</td><td>签约总额 · 来源F4</td></tr>
+<tr><td>2026-06-17 媒体分解</td><td>未更新</td><td>125MW在2027年商用</td><td>首期50亿美元含电信10亿美元</td><td>转述分解单源 · 来源F6</td></tr>
+<tr><td>2026-08-13 进度会</td><td>确权177公顷含首期124.4公顷</td><td>50MW在建、215MW站已购</td><td>未给新总额</td><td>施工进度 · 来源F8</td></tr>
+<tr><td>2026-08-25 地方官员</td><td>建设期1500临时岗位</td><td>运营期250永久岗位</td><td>未给总额</td><td>就业口径已更新 · 来源F8交叉</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：同一指标多版本并列，不二选一；金额三类口径见本章机制图；年份均为2026年，发布方见来源行。</p></div>
+</details>
+<div class="callout warn"><div class="callout-title">边界声明</div><p>适用条件：本章数字以总理府与部委通稿为准；未验证项（2026年09月待核实）包括电信10亿美元出资决议、215MW变电站产权文件、1400公顷确权登记；最终以投资合同与财报为准。</p></div>
+<div class="callout"><div class="callout-title">关键判断</div><p>事实基线的诚实读法是两句话：签约成立、资金未成立；土地与电力是规划上限、不是现货。下文看政策给了什么，因为资金不到位时政策是唯一的信用替代。</p></div>
+<p class="next">所以，下一章进入政策与制度设计，看框架能否替代资金信用。</p>
+<div class="chip-row"><span class="chip cyan">签约vs到位</span><span class="chip violet">三层口径</span><span class="chip green">实物锚</span></div>
+<div class="src">来源：F2 总理府2026-01-30 · F3 总理府2026-02-25 · F4 总理府2026-06-15 · F5 部长2026-06-15 · F6 Bloomberg经转引2026-06 · F8 总理府2026-08-13；下文进入下一章。</div>
+</section>
+<!-- ==================== 03 政策 ==================== -->
+<section class="section" id="sec-03">
+<div class="sec-head">
+<div class="kicker">POLICY · 框架给足，落地看电价与地块</div>
+<h2 class="sec-title">政策与制度：国家战略开了绿灯，数据中心还没拿到专属车道</h2>
+<p class="lead">结论先行：<b>2026年6月9日总统令批准的Digital Qazaqstan战略与8月26日的至2029年行动计划，给了数据中心谷合法性，但没有给数据中心专属电价与专属地块条款</b>；Pavlodar经济特区的零税率是通用模板，能否套用到算力项目取决于准入清单是否扩围，而这一点截至2026年09月26日仍待核实。本章讲激励与规则，电网技术细节见第04章。来源F9、来源F10、来源F11，2026年官方与专业机构口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">国家战略</div><div class="step-desc">旗舰定位与KPI到2029</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">税收载体</div><div class="step-desc">SEZ零税率与准入限制</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">关键缺口</div><div class="step-desc">电价与地块无专属文件</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">执行判断</div><div class="step-desc">框架信用替代资金信用</div></div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 240" role="img" aria-label="政策传导机制">
+<defs><marker id="t-ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="20" y="40" width="170" height="60" rx="10" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="105" y="65" text-anchor="middle" font-size="14" style="fill:var(--text-1)">总统令与战略</text>
+<text x="105" y="87" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2026-06-09批准</text>
+<rect x="215" y="40" width="170" height="60" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="300" y="65" text-anchor="middle" font-size="14" style="fill:var(--text-1)">总理办督办</text>
+<text x="300" y="87" text-anchor="middle" font-size="13" style="fill:var(--text-3)">行动计划至2029</text>
+<rect x="410" y="40" width="170" height="60" rx="10" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="495" y="65" text-anchor="middle" font-size="14" style="fill:var(--text-1)">数字部执行</text>
+<text x="495" y="87" text-anchor="middle" font-size="13" style="fill:var(--text-3)">部长牵头招商</text>
+<rect x="605" y="40" width="175" height="60" rx="10" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="692" y="65" text-anchor="middle" font-size="14" style="fill:var(--text-1)">州政府落地</text>
+<text x="692" y="87" text-anchor="middle" font-size="13" style="fill:var(--text-3)">土地变电给水</text>
+<rect x="605" y="140" width="175" height="60" rx="10" stroke-dasharray="6 4" style="fill:rgba(160,108,16,.08);stroke:var(--amber)"/>
+<text x="692" y="165" text-anchor="middle" font-size="14" style="fill:var(--text-1)">缺口待核实</text>
+<text x="692" y="187" text-anchor="middle" font-size="13" style="fill:var(--text-3)">无AI专属电价地块文件</text>
+<line x1="692" y1="102" x2="692" y2="138" style="stroke:var(--amber)" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="192" y1="70" x2="213" y2="70" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar3)"/>
+<line x1="387" y1="70" x2="408" y2="70" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar3)"/>
+<line x1="582" y1="70" x2="603" y2="70" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar3)"/>
+<rect x="215" y="140" width="365" height="60" rx="10" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="397" y="165" text-anchor="middle" font-size="14" style="fill:var(--text-1)">Kazakhtelecom出地出电出网</text>
+<text x="397" y="187" text-anchor="middle" font-size="13" style="fill:var(--text-3)">Firebird出硬件技术与客户</text>
+</svg>
+<div class="fig-cap">FIG 3 · 政策链条止于州政府与运营商，电价与地块确权是最后两公里</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">战略</span></div><div class="rule-title">Digital Qazaqstan把算力约束写进政府任务</div><p>2026年04月政府会要求扩容算力、灵活分配，点名既有集群高负载并要求推进谷项目，来源F9，2026年总理府口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">税制</span></div><div class="rule-title">SEZ零税率是相对2026年新税法的豁免</div><p>新税法2026年01月生效，一般企业所得税20%、增值税16%，SEZ合规项目可免企业所得税、土地税与财产税，来源F11与来源F12，2026年税法口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">准入</span></div><div class="rule-title">Pavlodar特区准入清单未明示数据中心</div><p>2017年政府决议清单以制造业及配套建设为主，数据中心能否纳入或另签投资合同，截至2026年09月26日待核实，来源F11，2017年决议口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">4</span><span class="badge suggest">数据</span></div><div class="rule-title">本地化管的是居民数据，出口算力走出境通道</div><p>2013年个人数据法管的是哈居民个人信息，境内存储为原则；政府与关键设施数据另行规制；境外主体数据入境训练再出境走哪条出境通道、草案生效前替代方案是什么，截至2026年09月26日待核实，来源F13，2013至2026年法条口径。</p></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>制度配套一览：战略、立法、税收、数据<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>事项</th><th>内容</th><th>时点与出处</th></tr></thead>
+<tbody>
+<tr class="hl"><td>2026数字化与AI年</td><td>总统行政令宣布，政府落实</td><td>2026-01-06 · 来源F10</td></tr>
+<tr><td>新设AI与数字发展部</td><td>副总理级部长牵头，目标3年建成完全数字国家</td><td>2025-09国情咨文 · 来源F10</td></tr>
+<tr><td>Digital Qazaqstan战略</td><td>总统令批准至2029年，谷列为旗舰</td><td>2026-06-09 · 来源F9</td></tr>
+<tr><td>至2029行动计划</td><td>公民、企业与经济、国家机器三大块</td><td>2026-08-26 · 来源F9</td></tr>
+<tr class="hl"><td>AI-SANA教育指标</td><td>至2029年80%以上毕业生具AI基础技能</td><td>2026-08-26 · 来源F9</td></tr>
+<tr><td>AI法</td><td>2025-11-17签署，2026-01-18生效，分级监管</td><td>2025至2026年 · 来源F10</td></tr>
+<tr><td>新税法基准</td><td>企业所得税20%、增值税16%</td><td>2026-01-01生效 · 来源F12</td></tr>
+<tr><td>SEZ优惠模板</td><td>企业所得税全免、土地财产税为零、进口关税可免至多15年</td><td>现行税法汇编 · 来源F11</td></tr>
+<tr><td>数据本地化</td><td>境内存储为原则（居民个人数据），跨境委托与出境机制待核实</td><td>2013年母法加2026年修订 · 来源F13</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：税率为通用模板，谷项目能否全额适用以投资合同为准；年份与发布方见行内标注。</p></div>
+</details>
+<div class="callout warn"><div class="callout-title">边界声明</div><p>未验证项：谷地块是否落在特区红线内、具体投资合同税项年限、数据放宽草案是否签署；以上任何AI专属度电价文件均未检索到，不得引用传闻电价。</p></div>
+<div class="callout"><div class="callout-title">关键判断</div><p>政策解决了“能不能干”，没有解决“划不划算”：税收优惠真实但通用，电价优惠传闻但无文件。投资者真正要的是长期购电协议，而那份协议不在政策文件里，在电网公司手里。下文看电。</p></div>
+<p class="next">所以，下一章测算电力缺口，看电网公司手里有没有余量。</p>
+<div class="chip-row"><span class="chip cyan">Digital Qazaqstan</span><span class="chip violet">SEZ零税率</span><span class="chip green">数据本地化</span></div>
+<div class="src">来源：F9 战略与行动计划2026-06/08 · F10 数字化年与AI法2025-2026 · F11 SEZ与税制2026 · F12 新税法2025-07-18 · F13 数据法2013与2026修订；下文进入下一章。</div>
+</section>
+<!-- ==================== 04 能源 ==================== -->
+<section class="section" id="sec-04">
+<div class="sec-head">
+<div class="kicker">ENERGY · 最硬的一环</div>
+<h2 class="sec-title">能源与基建：300MW先行有电，1GW要等2029年后的盈余</h2>
+<p class="lead">结论先行：<b>300MW连续运行一年耗电约2.63TWh（2026年IT负载口径推算，若官方指变电容量则可用IT须先除PUE），占哈2025年全国发电量123.1TWh的2.13%</b>；电量上可挤，但连续供电能力须以firm购电协议与变电投运验收证实，在此之前不宜写成肯定句；1GW加PUE之后一年近11TWh，吃掉2029年预测盈余的一半以上。官方说2027年自给、2029年稳定盈余，而谷的首期恰好在2027年投运，时间错配只有一年左右，容错极薄。水、PUE与网络都是次级约束，电是生死线。来源F14至来源F21，2024至2026年口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">算负荷</div><div class="step-desc">连续功率乘8760小时</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">看供给</div><div class="step-desc">缺口到2029年才填平</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">卡输变</div><div class="step-desc">2026年215MW站与15公里线口径</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">验网络</div><div class="step-desc">延迟与海缆年底待商用</div></div>
+</div>
+<div class="grid-2">
+<div class="card"><h3>连续负荷年耗电（TWh，PUE=1.0基准）</h3>
+<div class="bar-chart">
+<div class="bar-row"><div class="bar-label">首期50MW·2026年</div><div class="bar-track"><div class="bar-fill dim" style="--w:5%"></div></div><div class="bar-val">0.44</div></div>
+<div class="bar-row"><div class="bar-label">首批125MW·2026年</div><div class="bar-track"><div class="bar-fill dim" style="--w:13%"></div></div><div class="bar-val">1.10</div></div>
+<div class="bar-row"><div class="bar-label">300MW变电·2026年</div><div class="bar-track"><div class="bar-fill" style="--w:30%"></div></div><div class="bar-val">2.63</div></div>
+<div class="bar-row"><div class="bar-label">远景1GW·2026年</div><div class="bar-track"><div class="bar-fill hot" style="--w:100%"></div></div><div class="bar-val">8.76</div></div>
+</div>
+<p class="note"><b>口径提示：</b>年电量等于功率乘8760小时，2026年推算口径，来源F18；PUE加成另计，1GW加PUE 1.25后为10.95TWh。</p>
+</div>
+<div class="card"><h3>从缺口到盈余：三步只表顺序，不编码数量</h3>
+<div class="timeline">
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2024-2025</span>缺口靠外送补</div><div class="tl-desc">2024年缺口2.1TWh、2025年缺口1.5TWh，靠俄净送补，2024至2025年决算口径，来源F17。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2027</span>薄盈余盖不住连续负荷</div><div class="tl-desc">2027年盈余1.3TWh，300MW一年即耗2.63TWh，薄盈余覆盖不了连续负荷，2026年预测口径，来源F17与来源F18。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2029</span>宽盈余才有空间</div><div class="tl-desc">2029年盈余17.6TWh，1GW加PUE后耗10.95TWh才有空间，2026年预测口径，来源F17与来源F18。</div></div>
+</div>
+<p class="note"><b>口径提示：</b>发电量盈余非备用容量盈余，时刻备用容量须另行核算，2024至2029年能源部与KEGOC口径，来源F17。</p>
+</div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 240" role="img" aria-label="从电站到机柜的通路">
+<defs><marker id="t-ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="20" y="50" width="160" height="70" rx="10" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="100" y="78" text-anchor="middle" font-size="14" style="fill:var(--text-1)">GRES-1现货</text>
+<text x="100" y="100" text-anchor="middle" font-size="13" style="fill:var(--text-3)">4040MW在运·2025年</text>
+<rect x="205" y="50" width="160" height="70" rx="10" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="285" y="78" text-anchor="middle" font-size="14" style="fill:var(--text-1)">15公里专线·2026年</text>
+<text x="285" y="100" text-anchor="middle" font-size="13" style="fill:var(--text-3)">降压站300MW·2026年</text>
+<rect x="390" y="50" width="160" height="70" rx="10" class="pulse" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="470" y="78" text-anchor="middle" font-size="14" style="fill:var(--text-1)">215MW已购站·2026年</text>
+<text x="470" y="100" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2026年唯一实物</text>
+<rect x="575" y="50" width="205" height="70" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="677" y="78" text-anchor="middle" font-size="14" style="fill:var(--text-1)">机房50MW首建·2027年</text>
+<text x="677" y="100" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2027-06投运目标</text>
+<line x1="182" y1="85" x2="203" y2="85" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar4)"/>
+<line x1="367" y1="85" x2="388" y2="85" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar4)"/>
+<line x1="552" y1="85" x2="573" y2="85" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar4)"/>
+<text x="400" y="155" text-anchor="middle" font-size="13" style="fill:var(--text-3)">瓶颈不在发电装机，在变电投产与长期购电协议</text>
+<text x="400" y="180" text-anchor="middle" font-size="13" style="fill:var(--text-3)">GRES-3的2640MW要2029至2032年才分批投运，远水不解近渴</text>
+</svg>
+<div class="fig-cap">FIG 4 · 电从坑口到机柜只差最后两公里，但这两公里决定2027年能否开机</div>
+</div>
+<div class="card"><h3>术语卡：5分钟读懂本章黑话</h3>
+<p class="note">术语 × 大白话 × 1例，2026年口径，来源见各行。</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>术语</th><th>大白话</th><th>本章1例</th></tr></thead>
+<tbody>
+<tr><td>PUE</td><td>电进来多少、IT真正用多少的比值</td><td>目标1.25是设计值非实测，2026年目标口径，来源F20</td></tr>
+<tr><td>Tier III</td><td>维护时不用停机的冗余等级</td><td>按III建设，无认证编号，2026年目标口径，来源F20</td></tr>
+<tr><td>变电容量</td><td>变压器能送出的视在功率</td><td>215MW站已购不等于215MW可用IT，2026年进度口径，来源F8</td></tr>
+<tr><td>发电量盈余</td><td>一年发电减用电的差</td><td>2029年17.6TWh不等于时刻备用，2026年预测口径，来源F17</td></tr>
+<tr><td>商用</td><td>海缆真正能卖带宽的状态</td><td>跨里海海缆2026年08月铺完待商用，来源F21</td></tr>
+</tbody>
+</table></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>电源与配套参数：装机、时间、水网<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>项目</th><th>参数</th><th>时点与出处</th></tr></thead>
+<tbody>
+<tr class="hl"><td>GRES-1</td><td>装机4040MW，2025年发电24.5TWh历史最高，占全国约20%</td><td>2025年企业口径 · 来源F14</td></tr>
+<tr><td>GRES-2现状</td><td>装机1000MW，可用934MW</td><td>现状企业口径 · 来源F15</td></tr>
+<tr><td>GRES-2扩建</td><td>3号机2028年09月、4号机2030年09月，各约540MW</td><td>2024至2026年计划口径 · 来源F15</td></tr>
+<tr class="hl"><td>GRES-3新建</td><td>2640MW，四台660MW，2029年09月至2030年12月分批投运</td><td>2025至2026年招标与可研口径 · 来源F16</td></tr>
+<tr><td>全国2025年</td><td>发电123.1TWh，消费124.6TWh，缺口1.5TWh靠俄净送补</td><td>2025年决算口径 · 来源F17</td></tr>
+<tr><td>全国预测</td><td>2027年盈余1.3TWh，2029年盈余17.6TWh，均为发电量口径</td><td>2026年预测口径 · 来源F17</td></tr>
+<tr><td>谷用电参数</td><td>15公里线加300MW站，215MW站已购，首设施50MW</td><td>2026年进度口径 · 来源F8</td></tr>
+<tr><td>电价传闻</td><td>每度约2.5美分加长期照付不议价，记者表述，无定价文件</td><td>2026年单源待核实 · 来源F19</td></tr>
+<tr><td>PUE与等级</td><td>目标PUE 1.25、按Tier III建设，无认证编号</td><td>2026年目标口径 · 来源F20</td></tr>
+<tr><td>网络</td><td>延迟80毫秒降至57毫秒为目标，海缆已铺待商用</td><td>2026年目标与施工口径 · 来源F21</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：装机与电量不可直接换算，利用率见行内说明；传闻项标待核实，不得当作事实引用。</p></div>
+</details>
+<div class="callout warn"><div class="callout-title">边界声明</div><p>推算链（2026年推算口径）：年电量等于功率乘8760小时，300MW对应2.63TWh，1GW对应8.76TWh，PUE 1.25下再乘1.25；全国盈余为发电量盈余，非任何时刻备用盈余，投产节奏与电网约束可吃掉余量。</p></div>
+<div class="callout"><div class="callout-title">关键判断</div><p>能源结论分两段：300MW段电量可用现货覆盖，但连续供电能力须以firm容量与变电投运验收证实，在此之前2027年开机是有条件的；1GW段必须等GRES-3与新的输变电，2029年前谈满产没有物理基础。下文看芯片，因为有电之后第二个命门是卡从哪来。</p></div>
+<p class="next">所以，下一章拆解GB300与Vera Rubin的选型与供给风险。</p>
+<div class="chip-row"><span class="chip cyan">2.63TWh</span><span class="chip violet">2029年盈余</span><span class="chip green">215MW实物</span></div>
+<div class="src">来源：F8 进度2026-08-13 · F14 GRES-1 2025 · F15 GRES-2扩建 · F16 GRES-3新建 · F17 全国平衡2024-2029 · F18 推算链 · F19 电价传闻待核实 · F20 PUE目标 · F21 网络与海缆；下文进入下一章。</div>
+</section>
+<!-- ==================== 05 芯片 ==================== -->
+<section class="section" id="sec-05">
+<div class="sec-head">
+<div class="kicker">TECH · 选型先进，供给集中</div>
+<h2 class="sec-title">芯片与技术：为什么是GB300与Vera Rubin，风险在哪一层</h2>
+<p class="lead">结论先行：<b>选GB300与Vera Rubin是正确的代际选择，瞄准推理时代的高吞吐，但把交付节奏交给了单一供给链</b>；125MW按全分摊功耗只能装约半数10万卡，全量上架要等2028年与Rubin量产爬坡。与之对照，Al-Farabium的400卡H200集群是已验证的存量算力，TOP500实测17.93 PFLOPS，两者是互补而非替代。本章讲技术，客户与资金见第06章。来源F22至来源F28，2025至2026年产品与公司口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">定需求</div><div class="step-desc">训练加推理的吞吐目标</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">看选型</div><div class="step-desc">GB300现货加Rubin下一代</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">算匹配</div><div class="step-desc">功率决定卡数上限</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">判风险</div><div class="step-desc">许可与量产节奏</div></div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 260" role="img" aria-label="芯片到集群分层">
+<defs><marker id="t-ar5" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="120" y="20" width="560" height="44" rx="8" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="140" y="48" font-size="13" style="fill:var(--violet)">集群层</text>
+<text x="400" y="48" text-anchor="middle" font-size="14" style="fill:var(--text-1)">125MW对应约5万卡，250MW对应约10万卡·2026年估算口径</text>
+<rect x="120" y="72" width="560" height="44" rx="8" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="140" y="100" font-size="13" style="fill:var(--violet)">超节点层</text>
+<text x="400" y="100" text-anchor="middle" font-size="14" style="fill:var(--text-1)">NVL72：72卡一体，NVLink域内互联</text>
+<rect x="120" y="124" width="560" height="44" rx="8" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="140" y="152" font-size="13" style="fill:var(--violet)">互联层</text>
+<text x="400" y="152" text-anchor="middle" font-size="14" style="fill:var(--text-1)">InfiniBand或Spectrum-X，800Gb每卡起步</text>
+<rect x="120" y="176" width="560" height="44" rx="8" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="140" y="204" font-size="13" style="fill:var(--violet)">芯片层</text>
+<text x="400" y="204" text-anchor="middle" font-size="14" style="fill:var(--text-1)">B300单卡1400W，HBM 288GB；Rubin单架功率更高</text>
+<line x1="400" y1="112" x2="400" y2="70" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar5)"/>
+<text x="400" y="240" text-anchor="middle" font-size="13" style="fill:var(--text-3)">锁客户的是集群与互联层，不是单卡峰值</text>
+</svg>
+<div class="fig-cap">FIG 5 · 同样10万卡（2026年规划口径），互联与组网方式决定有效算力，单卡参数只是起点</div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 230" role="img" aria-label="H200与GB300与Rubin演进">
+<rect x="30" y="30" width="220" height="150" rx="10" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="140" y="58" text-anchor="middle" font-size="14" style="fill:var(--text-1)">存量：H200</text>
+<text x="140" y="82" text-anchor="middle" font-size="13" style="fill:var(--text-3)">400卡已投运</text>
+<text x="140" y="104" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单卡FP8稀疏约3.96PF</text>
+<text x="140" y="126" text-anchor="middle" font-size="13" style="fill:var(--text-3)">TOP500实测17.93PF</text>
+<text x="140" y="148" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2025年产品口径</text>
+<rect x="290" y="30" width="220" height="150" rx="10" class="pulse" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="400" y="58" text-anchor="middle" font-size="14" style="fill:var(--text-1)">现货：GB300</text>
+<text x="400" y="82" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单卡稠密15PF起</text>
+<text x="400" y="104" text-anchor="middle" font-size="13" style="fill:var(--text-3)">整机72卡 sparse口径</text>
+<text x="400" y="126" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单卡1400W须液冷</text>
+<text x="400" y="148" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2025年发布口径</text>
+<rect x="550" y="30" width="220" height="150" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="660" y="58" text-anchor="middle" font-size="14" style="fill:var(--text-1)">下一代：Vera Rubin</text>
+<text x="660" y="82" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2026年下半年供货</text>
+<text x="660" y="104" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单架功率高于GB300</text>
+<text x="660" y="126" text-anchor="middle" font-size="13" style="fill:var(--text-3)">单卡功耗待核实</text>
+<text x="660" y="148" text-anchor="middle" font-size="13" style="fill:var(--text-3)">2026年路线图口径</text>
+</svg>
+<div class="fig-cap">FIG 6 · 三代同堂不是替代关系：H200管现在，GB300管2027年，Rubin管2028年之后</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">匹配</span></div><div class="rule-title">125MW装不下10万卡，全量需250MW与高密度液冷</div><p>按单卡全分摊约2.12kW推算，100万卡量级对应约212MW机架级加制冷损耗，来源F22与独立测算，2025至2026年估算口径，IT负载口径，若125MW指变电容量则先除PUE 1.25再扣冗余。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">许可</span></div><div class="rule-title">BIS许可按批颁发，扩容需重新申请</div><p>亚美尼亚首批加4.1万卡GB300增量与哈125MW表述各有文件，10万卡全覆盖文本未公开，来源F27，2025至2026年许可口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">存量</span></div><div class="rule-title">Al-Farabium是可复核的算力基本盘</div><p>400卡H200，峰值26.84 PFLOPS与实测17.93 PFLOPS吻合，665TB每秒互联为营销页口径无测试方法，来源F24，2025至2026年榜单口径。</p></div>
+</div>
+<div class="card"><h3>术语卡：5分钟读懂本章黑话</h3>
+<p class="note">术语 × 大白话 × 1例，2025至2026年产品口径，来源见各行。</p>
+<div class="table-wrap"><table class="table">
+<thead><tr><th>术语</th><th>大白话</th><th>本章1例</th></tr></thead>
+<tbody>
+<tr><td>稀疏与稠密</td><td>同一块卡两种计数，稀疏约2倍于稠密</td><td>跨代对比须同取一种，分子分母见表注，2025至2026年产品口径</td></tr>
+<tr><td>NVL72</td><td>72张卡高速互联的一个域</td><td>GB300整机72卡，2025年发布口径，来源F22</td></tr>
+<tr><td>全分摊功耗</td><td>单卡加网络存储制冷分摊后的实际功耗</td><td>约2.12kW是估算，IT口径，2026年估算口径</td></tr>
+<tr><td>BIS许可</td><td>美国按型号数量用户逐单批的出口许可</td><td>125MW是企业转述口径，原文待核实，2025至2026年许可口径</td></tr>
+<tr><td>实测与峰值</td><td>跑分跑出来的与理论上限</td><td>17.93是实测，26.84是峰值，2025至2026年榜单口径，来源F24</td></tr>
+</tbody>
+</table></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>三代芯片参数对照：稀疏与稠密不可混比<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>指标</th><th>H200</th><th>GB300</th><th>Vera Rubin</th></tr></thead>
+<tbody>
+<tr class="hl"><td>单卡FP8</td><td>稀疏约3.96PF，2024年产品口径 · 来源F25</td><td>稠密5PF、稀疏10PF，2025年博客口径 · 来源F22</td><td>训练约17.5PF，稀疏性待核实 · 来源F23</td></tr>
+<tr><td>显存</td><td>141GB HBM3e · 来源F25</td><td>288GB HBM3e · 来源F22</td><td>288GB HBM4 · 来源F23</td></tr>
+<tr><td>单卡功耗</td><td>至700W · 来源F25</td><td>至1400W（页码待核实） · 来源F22</td><td>待核实 · 来源F23</td></tr>
+<tr><td>互联</td><td>ConnectX-7 400G · 来源F24</td><td>ConnectX-8 800G · 来源F22</td><td>ConnectX-9 800G至1.6T · 来源F23</td></tr>
+<tr><td>整机</td><td>400卡集群实测17.93PF · 来源F24</td><td>72卡NVL72机架132至142kW（页码待核实） · 来源F22</td><td>72卡NVL72单架电源440kW量级 · 来源F23</td></tr>
+<tr><td>供货</td><td>现货已投运 · 来源F24</td><td>2025年下半年起供货 · 来源F22</td><td>2026年下半年供货 · 来源F23</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：稀疏值（分子）约为稠密值（分母）的2倍，同口径比较时须同取稀疏或同取稠密；年份为产品发布年份。</p></div>
+</details>
+<div class="callout warn"><div class="callout-title">边界声明</div><p>适用条件：单卡参数为NVIDIA官方产品页与开发者博客口径；Rubin单卡功耗、稀疏脚注、三版带宽数字存在版本差异，以官方最终发布为准；665TB每秒互联无测试方法，不可与NVLink同口径对比。</p></div>
+<div class="callout"><div class="callout-title">关键判断</div><p>技术路线最大的风险不是选错芯片，而是把三代交付压缩到一年：GB300管2027年、Rubin管2028年，任何一代跳票都意味着机房空转。下文看谁为 jump 票买单，即产业链结构。</p></div>
+<p class="next">所以，下一章画出产业链，看单主轴结构的风险集中点。</p>
+<div class="chip-row"><span class="chip cyan">GB300</span><span class="chip violet">Vera Rubin</span><span class="chip green">H200存量</span><span class="chip">BIS许可</span></div>
+<div class="src">来源：F22 GB300产品2025 · F23 Rubin产品2026 · F24 Al-Farabium与TOP500 2025-2026 · F25 H200产品页 · F26 Hrazdan 2026-08 · F27 BIS许可2025-2026 · F28 2GW与投资意向2026；下文进入下一章。</div>
+</section>
+<!-- ==================== 06 产业链 ==================== -->
+<section class="section" id="sec-06">
+<div class="sec-head">
+<div class="kicker">PLAYERS · 谁在车上、谁在围观</div>
+<h2 class="sec-title">产业链与合作图谱：单主轴加三类外围，信用集中在一处</h2>
+<p class="lead">结论先行：<b>数据中心谷是政府、Firebird、NVIDIA、Kazakhtelecom构成的单主轴，电信出地出电出网、Firebird出硬件技术与客户、NVIDIA出芯片与背书、政府出批文与协调</b>；外围有Freedom主权超算、Enegix矿场存量、TGI-Amiron小市值PR三类，性质完全不同，不可加总。主轴的好处是决策快，代价是任一环节掉链全盘等待。来源F4至来源F8、来源F26至来源F33，2025至2026年签约与公司口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">定主轴</div><div class="step-desc">四方分工与对价</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">分外围</div><div class="step-desc">三类玩家三种性质</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">验客户</div><div class="step-desc">具名与意向的界线</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">判结构</div><div class="step-desc">集中度的利与弊</div></div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 260" role="img" aria-label="合作拓扑">
+<defs><marker id="t-ar6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="310" y="20" width="180" height="56" rx="10" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="400" y="43" text-anchor="middle" font-size="14" style="fill:var(--text-1)">哈政府</text>
+<text x="400" y="63" text-anchor="middle" font-size="13" style="fill:var(--text-3)">批文加协调加 labs</text>
+<rect x="60" y="110" width="180" height="60" rx="10" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="150" y="134" text-anchor="middle" font-size="14" style="fill:var(--text-1)">Firebird</text>
+<text x="150" y="154" text-anchor="middle" font-size="13" style="fill:var(--text-3)">硬件技术客户融资</text>
+<rect x="310" y="110" width="180" height="60" rx="10" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="400" y="134" text-anchor="middle" font-size="14" style="fill:var(--text-1)">NVIDIA</text>
+<text x="400" y="154" text-anchor="middle" font-size="13" style="fill:var(--text-3)">芯片背书非签署方</text>
+<rect x="560" y="110" width="180" height="60" rx="10" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="650" y="134" text-anchor="middle" font-size="14" style="fill:var(--text-1)">Kazakhtelecom</text>
+<text x="650" y="154" text-anchor="middle" font-size="13" style="fill:var(--text-3)">土地电力网络</text>
+<rect x="230" y="195" width="340" height="48" rx="8" style="fill:rgba(255,255,255,.6);stroke:var(--line)"/>
+<text x="400" y="215" text-anchor="middle" font-size="14" style="fill:var(--text-1)">Firebird Labs设于Alem.ai</text>
+<text x="400" y="233" text-anchor="middle" font-size="13" style="fill:var(--text-3)">生态与人才本地化载体</text>
+<line x1="400" y1="76" x2="150" y2="108" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar6)"/>
+<line x1="400" y1="76" x2="400" y2="108" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar6)"/>
+<line x1="400" y1="76" x2="650" y2="108" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar6)"/>
+</svg>
+<div class="fig-cap">FIG 7 · 主轴四方各出一件东西，缺一件即停摆，这是集中度的全部含义</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">政府</span></div><div class="rule-title">政府出批文与督办，出资额未披露</div><p>总理2026年01月称亲自督办，125MW已有政府批文表述，来源F2与来源F28，2026年官方口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">Firebird</span></div><div class="rule-title">Firebird出技术与客户，资金靠募与银行</div><p>亚美尼亚一期约5亿美元、银团为主要结构，哈首期50亿美元对应100至125MW为公司自述，来源F26与来源F28，2026年公司口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge must">电信</span></div><div class="rule-title">电信是唯一具名出资与唯一重资产方</div><p>10亿美元出资为转述单源，土地电力网络为实物投入，来源F6与来源F8，2026年媒体与进度口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">4</span><span class="badge suggest">外围</span></div><div class="rule-title">三类外围不可与主轴加总</div><p>Freedom的20亿美元100MW是另立主权项目，Enegix的200MW是矿场存量，TGI的12.9亿美元是粉单公司PR框架，来源F29至来源F31，2025至2026年各自口径。</p></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>玩家清单：主轴、外围、意向三分开<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>玩家</th><th>角色与金额</th><th>性质与可信度</th></tr></thead>
+<tbody>
+<tr class="hl"><td>哈政府与数字部</td><td>批文、协调、Firebird Labs落地Alem.ai</td><td>签约框架 · 来源F4与来源F7，2026年官方口径</td></tr>
+<tr class="hl"><td>Firebird</td><td>首期50亿美元对应100至125MW，全球2GW目标</td><td>公司规划 · 来源F26与来源F28，2026年公司口径</td></tr>
+<tr><td>NVIDIA</td><td>技术阐述与供货通道，有投资意向未交割</td><td>背书非签署 · 来源F4与来源F28，2026年口径</td></tr>
+<tr class="hl"><td>Kazakhtelecom</td><td>10亿美元出资传闻，出地出电出网实物</td><td>出资单源待财报核实 · 来源F6，2026年转述口径</td></tr>
+<tr><td>CoreWeave</td><td>年内早些时候已投，金额未披露</td><td>投资关系未披露细节 · 来源F28，2026年公司口径</td></tr>
+<tr><td>Freedom</td><td>20亿美元主权超算100MW，选址未定</td><td>另立签约勿混 · 来源F29，2025年公告口径</td></tr>
+<tr><td>Enegix</td><td>Ekibastuz矿场200MW存量，全球市占约0.3%</td><td>存量背景非AI算力 · 来源F30，2020至2023年口径</td></tr>
+<tr><td>TGI-Amiron</td><td>20公顷起步、Tier IV自称、12.9亿美元框架</td><td>粉单PR稿T3 · 来源F31，2026年公司口径</td></tr>
+<tr><td>20家以上美中印大厂</td><td>意向需求超100MW，无具名清单</td><td>单源意向 · 来源F33，2026年通稿口径</td></tr>
+<tr><td>ECG新加坡</td><td>100MW向1GW备忘录，已访电站</td><td>具名意向可跟踪 · 来源F33，2026年招商口径</td></tr>
+<tr><td>IT出口基本盘</td><td>2025年11.42亿美元增65%，计算机口径</td><td>到位终值 · 来源F32，2025年央行口径</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：意向不等于合同，PR稿不等于国家账；年份与梯队见行内标注。</p></div>
+</details>
+<div class="callout"><div class="callout-title">关键判断</div><p>产业链的健康度看两个比值：具名客户占意向的比值、到位资金占签约的比值，两个比值在2026年09月都接近于零。这是单主轴结构的正常早期状态，也是下文误读高发的原因。下文拆解五个误读。</p></div>
+<p class="next">所以，下一章进入洞察，看流行判断错在哪。</p>
+<div class="chip-row"><span class="chip cyan">单主轴</span><span class="chip violet">三类外围</span><span class="chip green">具名vs意向</span></div>
+<div class="src">来源：F4 签约2026-06-15 · F6 出资分解2026-06 · F7 Labs 2026-06-15 · F8 进度2026-08-13 · F26 Hrazdan 2026-08 · F28 投资与2GW 2026 · F29 Freedom 2025-11 · F30 Enegix存量 · F31 TGI PR稿 · F32 IT出口2025 · F33 客户意向2026 · F35 官网模式拼图待核实2026；下文进入下一章。</div>
+</section>
+<!-- ==================== 07 洞察 ==================== -->
+<section class="section" id="sec-07">
+<div class="sec-head">
+<div class="kicker">INSIGHT · 作者视角，不是新闻总结</div>
+<h2 class="sec-title">洞察：五个流行判断错在哪，被忽略的变量是什么</h2>
+<p class="lead">结论先行：<b>市场对数据中心谷的五个流行判断中，三个高估、两个低估</b>；高估的是出口乘数、主权含金量与就业拉动，低估的是电网时间错配的严重性与BIS许可的持续约束。与亚美尼亚Hrazdan、Mangystau平行项目、中东枢纽的比较基准显示，谷的真正稀缺性不是土地而是“现货电力加已获许可的美国芯片通道”。来源F26至来源F33，2025至2026年比较口径。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">列流行</div><div class="step-desc">五个流行共识原话</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">做检验</div><div class="step-desc">事实与口径逐项过</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">立基准</div><div class="step-desc">三处横向比较定锚</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">给修正</div><div class="step-desc">可证伪的替代判断</div></div>
+</div>
+<div class="dd-grid"><div class="dd-col do"><div class="dd-head"><span class="dd-mark">✓</span>经检验成立的部分</div><ul><li>坑口煤电加寒冷气候确实降低散热与燃料成本，2025年GRES-1满发是证据，来源F14。</li><li>Hrazdan首期6个月建成投运，证明Firebird具备快速交付能力，来源F26，2026年公司口径。</li><li>跨里海海缆2026年08月完成铺设，年底商用后延迟结构改善，来源F21，2026年施工口径。</li></ul></div><div class="dd-col dont"><div class="dd-head"><span class="dd-mark">✕</span>流行误区</div><ul><li>每50亿美元产生100亿美元收入：公司自述乘数，无测算底稿，来源F28，信号强度弱。</li><li>10万卡等于10万卡有效算力：忽略利用率、互联与冗余，来源F22，口径警示。</li><li>1400公顷等于1400公顷现货：确权仅177公顷，来源F8，版本口径差异。</li><li>2.5美分是锁定电价：记者表述，无定价文件，来源F19，待核实。</li><li>TGI的Tier IV与97亿美元净现值计入国家账：粉单PR稿，来源F31，不得加总。</li></ul></div></div>
+<p class="note"><b>口径提示：</b>误区条均为待核实或单源口径，2026年状态，不计入国家账；成立条为企业与施工口径，2025至2026年状态，来源F14与来源F26。</p>
+<div class="fig">
+<svg viewBox="0 0 800 250" role="img" aria-label="锁定层级">
+<defs><marker id="t-ar7" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="120" y="20" width="560" height="42" rx="8" style="fill:rgba(95,79,192,.10);stroke:var(--violet)"/>
+<text x="140" y="47" font-size="13" style="fill:var(--violet)">生态层</text>
+<text x="400" y="47" text-anchor="middle" font-size="14" style="fill:var(--text-1)">Labs与人才：锁定长期，2026年刚起步</text>
+<rect x="120" y="70" width="560" height="42" rx="8" class="pulse" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="140" y="97" font-size="13" style="fill:var(--violet)">供给层</text>
+<text x="400" y="97" text-anchor="middle" font-size="14" style="fill:var(--text-1)">电力与BIS许可：真正锁客户的两把钥匙</text>
+<rect x="120" y="120" width="560" height="42" rx="8" style="fill:rgba(184,68,119,.08);stroke:var(--pink)"/>
+<text x="140" y="147" font-size="13" style="fill:var(--violet)">互联层</text>
+<text x="400" y="147" text-anchor="middle" font-size="14" style="fill:var(--text-1)">组网与延迟：决定能接谁的单</text>
+<rect x="120" y="170" width="560" height="42" rx="8" style="fill:rgba(160,108,16,.10);stroke:var(--amber)"/>
+<text x="140" y="197" font-size="13" style="fill:var(--violet)">芯片层</text>
+<text x="400" y="197" text-anchor="middle" font-size="14" style="fill:var(--text-1)">单卡峰值：最不锁客户的一层</text>
+<line x1="400" y1="162" x2="400" y2="116" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar7)"/>
+</svg>
+<div class="fig-cap">FIG 8 · 锁客户的不是单卡参数，是电与许可加互联，生态是长期变量</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">基准</span></div><div class="rule-title">以Hrazdan为镜：哈项目大一个数量级，难度也大一个数量级</div><p>Hrazdan首期约6000卡、18MW、5亿美元，哈首期125MW约5万卡、50亿美元，规模差约7倍，电力与融资复杂度同步放大，来源F26，2026年公司口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">被忽略</span></div><div class="rule-title">Mangystau与Freedom说明玩家在分散下注</div><p>Mangystau规划50至200MW加燃气电站，Freedom另立100MW主权项目， close 证明算力布局是多点试探而非单点押注，来源F29，2025至2026年各自口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">证伪信号</span></div><div class="rule-title">三个信号任一出现即推翻本章判断</div><p>具名国际客户预付款到账、BIS覆盖10万卡全量（2026年许可口径）的文件公开、2026年215MW之外新增变电投运，任一出现即上调评级，观测清单见下一章。</p></div>
+</div>
+<div class="callout"><div class="callout-title">关键判断</div><p>数据中心谷的真正 sorting 标准只有一条：谁能同时拿出电与许可。土地、芯片型号、labs都是配角。按此标准，2026年09月主轴可信、外围存疑、出口数学待验证。下文把三种未来写成可下注的情景。</p></div>
+<p class="next">所以，下一章给出三情景与可勾选的观测清单，落到行动。</p>
+<div class="chip-row"><span class="chip cyan">Hrazdan基准</span><span class="chip violet">锁定层级</span><span class="chip green">可证伪</span></div>
+<div class="src">来源：F14 GRES-1 2025 · F19 电价传闻 · F21 海缆2026-08 · F22 芯片口径 · F26 Hrazdan 2026-08 · F28 公司乘数 · F31 TGI PR稿 · F8 确权177公顷2026-08；下文进入下一章。</div>
+</section>
+<!-- ==================== 08 展望 ==================== -->
+<section class="section" id="sec-08">
+<div class="sec-head">
+<div class="kicker">OUTLOOK · 未来往哪走</div>
+<h2 class="sec-title">展望与结论：三种未来里，延迟兑现概率居首</h2>
+<p class="lead">结论先行：<b>基准情景是首期50MW在2027年06月前后投运但出租率爬坡至2028年，1GW远景推迟到2030年之后，概率约55%，触发条件是变电按时投运加BIS增量许可获批</b>；加速兑现概率约25%，受阻收缩概率约20%。最终判断：数据中心谷是“延迟兑现的战略资产”，不是概念骗局，也不是2027年即现金牛。来源F8进度、来源F27许可、来源F33客户，2026年口径，情景概率为推测。</p>
+<div class="hairline"></div>
+</div>
+<div class="step-chain">
+<div class="step"><div class="step-num">1</div><div class="step-title">排时间</div><div class="step-desc">3/6/12个月硬节点</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">2</div><div class="step-title">设情景</div><div class="step-desc">三条路加概率触发</div></div>
+<div class="step-arrow">❯</div>
+<div class="step key"><div class="step-num">3</div><div class="step-title">定信号</div><div class="step-desc">可勾选的观测清单</div></div>
+<div class="step-arrow">❯</div>
+<div class="step"><div class="step-num">4</div><div class="step-title">下判断</div><div class="step-desc">战略资产非现金牛</div></div>
+</div>
+<div class="card"><h3>3/6/12个月时间轴：只看硬节点</h3>
+<div class="timeline">
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-10</span>NVIDIA高管访哈与AI月</div><div class="tl-desc">黄仁勋10月23日首访预告，副总裁先到理事会，若释放供货承诺则上调技术可信度，来源F34，2026年行程口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2026-12</span>主楼封顶与海缆商用</div><div class="tl-desc">首设施主体目标2026年底，海缆目标2026年底商用，两件事同月验收决定2027年调试起点，来源F8与来源F21，2026年计划口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2027-05</span>调试与上架</div><div class="tl-desc">2027年05月调试，若BIS增量许可与首批GB300到货同步，则06月投运成立，来源F8与来源F27，2026年计划口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2027-06</span>首期50MW投运检验</div><div class="tl-desc">投运不等于满租，出租率与PUE实测值是比剪彩更重要的数字，来源F8，2026年目标口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2028</span>第二个125MW与Rubin爬坡</div><div class="tl-desc">10万卡全量需250MW与Rubin量产，2028年是交付大考，来源F23，2026年路线图口径。</div></div>
+<div class="tl-item"><div class="tl-title"><span class="tl-tag">2029+</span>盈余窗口与1GW</div><div class="tl-desc">全国稳定盈余与GRES-3首机同在2029年，1GW满产须在此之后，来源F16与来源F17，2026年预测口径。</div></div>
+</div>
+</div>
+<div class="fig">
+<svg viewBox="0 0 800 260" role="img" aria-label="三情景分岔">
+<defs><marker id="t-ar9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--cyan)"/></marker></defs>
+<rect x="20" y="100" width="220" height="60" rx="10" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="130" y="125" text-anchor="middle" font-size="14" style="fill:var(--text-1)">2027-06行权日</text>
+<text x="130" y="147" text-anchor="middle" font-size="13" style="fill:var(--text-3)">50MW投运检验·来源F8</text>
+<rect x="300" y="20" width="480" height="60" rx="10" style="fill:rgba(30,130,88,.08);stroke:var(--green)"/>
+<text x="320" y="45" font-size="14" style="fill:var(--text-1)">A 加速兑现25%·2026年推测</text>
+<text x="320" y="67" font-size="13" style="fill:var(--text-3)">预付款加BIS全覆盖加新增变电</text>
+<rect x="300" y="100" width="480" height="60" rx="10" class="pulse" style="fill:rgba(13,118,134,.10);stroke:var(--cyan)"/>
+<text x="320" y="125" font-size="14" style="fill:var(--text-1)">B 延迟兑现55%·2026年推测</text>
+<text x="320" y="147" font-size="13" style="fill:var(--text-3)">投运守时满租迟到，1GW推迟到2030年后</text>
+<rect x="300" y="180" width="480" height="60" rx="10" style="fill:rgba(160,108,16,.08);stroke:var(--amber)"/>
+<text x="320" y="205" font-size="14" style="fill:var(--text-1)">C 受阻收缩20%·2026年推测</text>
+<text x="320" y="227" font-size="13" style="fill:var(--text-3)">许可被拒或变电延期超两个季度</text>
+<line x1="242" y1="125" x2="296" y2="55" style="stroke:var(--green)" stroke-width="2" marker-end="url(#t-ar9)"/>
+<line x1="242" y1="130" x2="296" y2="130" style="stroke:var(--cyan)" stroke-width="2" marker-end="url(#t-ar9)"/>
+<line x1="242" y1="135" x2="296" y2="205" style="stroke:var(--amber)" stroke-width="2" marker-end="url(#t-ar9)"/>
+</svg>
+<div class="fig-cap">FIG 9 · 行权日只验投运不验满租，同时满足电与许可的只有B路径</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card"><div class="rule-head"><span class="rule-num">A</span><span class="badge suggest">加速兑现 25%</span></div><div class="rule-title">2027年满租且二期提前，推测概率25%</div><p>触发：具名客户预付款加BIS全覆盖文件加新增变电投运；观测：电信财报确认10亿美元出资进度，来源F6，2026年待验证口径。</p></div>
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">B</span><span class="badge must">延迟兑现 55%</span></div><div class="rule-title">投运守时、满租迟到，推测概率55%</div><p>触发：50MW投运但出租率爬坡至2028年，1GW推迟到2030年之后；观测：PUE实测与出租率季报，来源F8与来源F20，2026年目标口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">C</span><span class="badge suggest">受阻收缩 20%</span></div><div class="rule-title">许可或电力任一掉链，推测概率20%（2026年口径）</div><p>（2026年推测口径）触发：BIS增量被拒或变电延期超两个季度；观测：许可公告与施工进度会纪要，来源F27与来源F8，2026年口径。</p></div>
+</div>
+<ul class="check-list"><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">215MW之外新增变电投运公告（2026年底前）</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">BIS覆盖10万卡或250MW的许可文件公开</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">具名国际客户预付款或长期机时协议</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">首批GB300到货与上架照片加序列可验</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">PUE实测值与Tier认证编号公开</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">电信财报确认10亿美元出资进度</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">跨里海海缆商用与延迟实测值</span></label></li><li><label class="check-item"><input type="checkbox"><span class="check-box"></span><span class="check-text">黄仁勋10月访哈是否释放供货承诺</span></label></li></ul>
+<div class="callout"><div class="callout-title">关键判断</div><p>最终判断：数据中心谷是哈萨克斯坦用煤电为能源、用主权信用为担保买入的一张算力看涨期权，行权日是2027年06月，行权价是电与许可，标的是全球机时价格。在行权日前，一切估值都应按期权定价，而非按资产定价。下文是方法、口径与来源清单。</p></div>
+<p class="next">所以，下面末章公开方法、口径与全部36条来源，供回查。</p>
+<div class="chip-row"><span class="chip cyan">55%基准</span><span class="chip violet">2027-06行权</span><span class="chip green">8项观测</span></div>
+<div class="src">来源：F8 进度2026-08-13 · F16 GRES-3 2029-2032 · F17 盈余预测2029 · F20 PUE目标 · F21 海缆2026 · F23 Rubin路线图 · F27 许可 · F34 访哈行程；下文进入下一章。</div>
+</section>
+<!-- ==================== 09 方法 ==================== -->
+<section class="section" id="sec-09">
+<div class="sec-head">
+<div class="kicker">METHOD · 方法、口径与局限</div>
+<h2 class="sec-title">方法、口径、局限与来源清单：哪些可信、哪些待核实</h2>
+<p class="lead">结论先行：<b>本报告关键断言须T0官方或T1权威媒体支撑，单源关键断言标单源，查不到写待核实，推算展示换算链，情景概率标推测</b>；36条来源中T0与T1占多数，T3的PR稿只作线索。数据截至2026年09月26日。口径说明分统计、版本、命名三类，局限与会审纪要一并公开。</p>
+<div class="hairline"></div>
+</div>
+<div class="stat-row">
+<div class="stat"><div class="stat-value"><span data-count="36">36</span>条</div><div class="stat-label">来源清单总数 · 2026年09月26日口径</div></div>
+<div class="stat"><div class="stat-value"><span data-count="27">27</span>条</div><div class="stat-label">T0官方与T1权威媒体 · 2026年口径</div></div>
+<div class="stat"><div class="stat-value"><span data-count="9">9</span>项</div><div class="stat-label">待核实事项 · 2026年09月26日状态</div></div>
+</div>
+<div class="rule-grid">
+<div class="rule-card key"><div class="rule-head"><span class="rule-num">1</span><span class="badge must">统计口径</span></div><div class="rule-title">同一指标多源数字并列，不二选一</div><p>IT出口快报10亿美元增31%与终值11.42亿美元增65%的差异系快报与年报、是否含挖矿，引用须注明是否含挖矿，来源F32，2025年央行口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">2</span><span class="badge must">版本口径</span></div><div class="rule-title">规划上限与现货、签约与到位的版本分开</div><p>1400公顷是规划上限，确权177公顷是现货；100亿美元是签约总额，50MW与215MW是现货，来源F2至来源F8，2026年多版本口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">3</span><span class="badge suggest">命名口径</span></div><div class="rule-title">谷、Al-Farabium、Freedom三者不混称</div><p>数据中心谷指Ekibastuz园区，Al-Farabium指400卡H200集群，Freedom指另立100MW主权项目，来源F24与来源F29，2025至2026年命名口径。</p></div>
+<div class="rule-card"><div class="rule-head"><span class="rule-num">4</span><span class="badge suggest">局限</span></div><div class="rule-title">九项待核实与三项推测边界</div><p>电价文件、10亿美元出资决议、BIS全覆盖文本等九项待核实；年耗电、三情景概率、出口乘数为推测并附换算链，详见各章边界声明。</p></div>
+</div>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>会审纪要：四类角色的致命问题与处理<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>#</th><th>角色</th><th>问题</th><th>修改动作</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>领域专家</td><td>签约额与到位额混用风险</td><td>第02章设三层口径图并全文统一表述</td><td>已改</td></tr>
+<tr><td>2</td><td>领域专家</td><td>2.5美分电价无文件支撑</td><td>第04章降为单源传闻并标待核实</td><td>已改</td></tr>
+<tr><td>3</td><td>逻辑官</td><td>政策章与能源章边界重叠</td><td>第03章讲规则、第04章讲物理，互加分工句</td><td>已改</td></tr>
+<tr><td>4</td><td>事实核查官</td><td>电信10亿美元仅转述单源</td><td>第02与06章标单源并要求财报验证</td><td>已改</td></tr>
+<tr><td>5</td><td>事实核查官</td><td>10万卡与125MW匹配缺换算链</td><td>第05章补2.12kW全分摊推算链</td><td>已改</td></tr>
+<tr><td>6</td><td>可视化官</td><td>早期版本数量图缺数据支撑</td><td>改为机制图加PUE口径说明</td><td>已改</td></tr>
+<tr><td>7</td><td>算力专家</td><td>MW三混致卡数电耗公式失稳</td><td>冻结IT与设施与变电三类口径，分PUE两档给区间</td><td>已改</td></tr>
+<tr><td>8</td><td>算力专家</td><td>年电量替代时刻功率</td><td>挤出来降级为电量可挤功率待firm协议与验收证实</td><td>已改</td></tr>
+<tr><td>9</td><td>算力专家</td><td>芯片跨层混比与许可对象错位</td><td>算力表分栏并注不可互比，许可只写型号数量用户</td><td>已改</td></tr>
+<tr><td>10</td><td>能源政策专家</td><td>MVA等同IT且2027年余量不足</td><td>215MW折算（2026年口径）注扣冗余除PUE并重算余量</td><td>已改</td></tr>
+<tr><td>11</td><td>能源政策专家</td><td>SEZ与电价无文件激励链落空</td><td>2.5美分锁死待核实禁入测算，SEZ列双路径</td><td>已改</td></tr>
+<tr><td>12</td><td>能源政策专家</td><td>数据合规适用对象错误</td><td>重写三列对照，出口走出境通道，草案前无结论</td><td>已改</td></tr>
+<tr><td>13</td><td>事实核查官</td><td>多条来源链接与断言错配</td><td>改转述注或原文链待补，支撑判断同步降级</td><td>已改</td></tr>
+<tr><td>14</td><td>可视化官</td><td>8项版式补强</td><td>补注与缺口框，改04第二图，补FIG9，去来源表展开，加术语卡</td><td>已改</td></tr>
+</tbody>
+</table></div><p class="table-note">表注：会审在成稿前完成，致命问题清零后渲染；年份为2026年09月质检口径。</p></div>
+</details>
+<details class="table-block" style="margin-top:16px">
+<summary><span class="chev">❯</span>来源清单F1至F36：断言与出处一一对应<span class="summary-hint">点击展开</span></summary>
+<div class="table-inner"><div class="table-wrap"><table class="table">
+<thead><tr><th>#</th><th>断言</th><th>出处（发布方加标题加日期）</th><th>梯队</th><th>可检索标识</th></tr></thead>
+<tbody>
+<tr><td>F1</td><td>总统提试点</td><td>总统府经Trend转述库鲁尔тай讲话2026-01-20，单源</td><td>T1单源</td><td>Trend转述原文链待补，暂以总理府01-30通稿佐证总统指令存在</td></tr>
+<tr><td>F2</td><td>200ha、300MW至1GW、远景300亿美元</td><td>总理府视察通稿2026-01-30</td><td>T0</td><td><a href="https://primeminister.kz/en/news/olzhas-bektenov-inspected-the-implementation-of-the-presidents-instructions-on-the-data-center-valley-project-in-ekibastuz-31031">primeminister.kz 31031</a></td></tr>
+<tr><td>F3</td><td>1400ha、绿地100MW、Tier III、PUE1.25、延迟57毫秒</td><td>Astana Times政府会转述2026-02-26</td><td>T1</td><td><a href="https://astanatimes.com/2026/02/kazakhstan-advances-1-gw-data-center-valley-project-in-ekibastuz">astanatimes 1GW</a></td></tr>
+<tr><td>F4</td><td>100亿美元两份文件、NVIDIA非签署方</td><td>总理府签约通稿2026-06-15</td><td>T0</td><td><a href="https://primeminister.kz/en/news/data-center-valley-kazakhstan-government-firebird-and-nvidia-sign-10-billion-package-of-agreements-in-artificial-intelligence-31516">primeminister.kz 31516</a></td></tr>
+<tr><td>F5</td><td>10万卡GB300与Rubin、年出口30亿美元估算</td><td>总理府签约通稿部长表态2026-06-15</td><td>T0</td><td><a href="https://primeminister.kz/en/news/data-center-valley-kazakhstan-government-firebird-and-nvidia-sign-10-billion-package-of-agreements-in-artificial-intelligence-31516">primeminister.kz 31516</a></td></tr>
+<tr><td>F6</td><td>首期50亿美元含电信10亿美元</td><td>Bloomberg经Kursiv转述2026-06-17单源，原链付费墙</td><td>T1单源</td><td><a href="https://www.bloomberg.com/news/articles/2026-06-15/kazakhstan-firebird-ink-10-billion-ai-deal-with-nvidia-support">bloomberg 06-15</a></td></tr>
+<tr><td>F7</td><td>Firebird Labs落户Alem.ai</td><td>总理府签约通稿2026-06-15</td><td>T0</td><td><a href="https://primeminister.kz/en/news/data-center-valley-kazakhstan-government-firebird-and-nvidia-sign-10-billion-package-of-agreements-in-artificial-intelligence-31516">primeminister.kz 31516</a></td></tr>
+<tr><td>F8</td><td>50MW在建、215MW站已购、2027年06月投运</td><td>总理府进度会2026-08-13经Astana Times转述</td><td>T0经T1单源</td><td><a href="https://astanatimes.com/2026/08/kazakhstan-emerges-as-firebird-ai-market-with-data-center-valley-project-in-ekibastuz/">astanatimes firebird市场</a></td></tr>
+<tr><td>F9</td><td>Digital Qazaqstan战略与至2029行动计划</td><td>总统令2026-06-09与政府决议2026-08-26</td><td>T0</td><td><a href="https://www.kt.kz/eng/government/kazakhstan_accelerates_digital_transformation_and_1377994016.html">kazakhstan-today加速</a></td></tr>
+<tr><td>F10</td><td>2026数字化年、新设AI部、AI法</td><td>总统行政令2026-01-06与AI法2025-11-17</td><td>T0</td><td><a href="https://www.kt.kz/eng/government/kazakhstan_accelerates_digital_transformation_and_1377994016.html">kazakhstan-today加速</a></td></tr>
+<tr><td>F11</td><td>SEZ零税率模板与准入清单限制</td><td>PwC税汇2026-07-23与2017年624号决议，通用模板非谷专属</td><td>T2加T0待补链</td><td>PwC税汇与624号决议原文链待补，适用性待核实</td></tr>
+<tr><td>F12</td><td>新税法企业所得税20%、增值税16%</td><td>总统签署税法典2025-07-18、2026-01-01生效</td><td>T0经T1待补链</td><td>税法典No.214-VIII原文链待补</td></tr>
+<tr><td>F13</td><td>数据本地化母法与2026年修订</td><td>2013年94-V号法与2026年255号修法商会梳理</td><td>T0加T2待补链</td><td>法条原文与商会2026-05梳理原文链待补，出境通道待核实</td></tr>
+<tr><td>F14</td><td>GRES-1装机4040MW、2025年发电24.5TWh</td><td>GRES-1官网2026-02-12历史最高纪录，企业口径单源</td><td>T0单源待补链</td><td>GRES-1官网原文链待补，不作余量依据</td></tr>
+<tr><td>F15</td><td>GRES-2现状与扩建2028与2030年</td><td>Samruk能源官网与2024-08-27联合体公告，计划口径单源</td><td>T0单源</td><td><a href="https://en.orda.kz/kazakhstans-power-deficit-complicates-its-ai-ambitions-10990">orda电力缺口</a></td></tr>
+<tr><td>F16</td><td>GRES-3新建2640MW、2029至2032年投运</td><td>能源部招标与可研听证2025-2026，计划口径单源</td><td>T0加T1单源</td><td><a href="https://en.orda.kz/kazakhstans-power-deficit-complicates-its-ai-ambitions-10990">orda电力缺口</a></td></tr>
+<tr><td>F17</td><td>全国2025年发电123.1TWh、2029年盈余17.6TWh</td><td>KEGOC年报与能源部长2026-07-01会议，发电量口径单源</td><td>T0单源</td><td><a href="https://en.orda.kz/kazakhstans-power-deficit-complicates-its-ai-ambitions-10990">orda电力缺口</a></td></tr>
+<tr><td>F18</td><td>300MW年耗2.63TWh、1GW年耗8.76TWh推算链</td><td>本报告按功率乘8760小时推算2026年</td><td>推算</td><td><a href="https://en.orda.kz/kazakhstans-power-deficit-complicates-its-ai-ambitions-10990">orda测算交叉</a></td></tr>
+<tr><td>F19</td><td>2.5美分电价记者表述无定价文件</td><td>Orda 2026-07-23单源待核实</td><td>T1单源</td><td><a href="https://en.orda.kz/kazakhstans-power-deficit-complicates-its-ai-ambitions-10990">orda 07-23</a></td></tr>
+<tr><td>F20</td><td>PUE1.25与Tier III为目标无认证</td><td>政府会目标2026-02-25与电信官网目标</td><td>T0目标</td><td><a href="https://astanatimes.com/2026/02/kazakhstan-advances-1-gw-data-center-valley-project-in-ekibastuz">astanatimes 1GW</a></td></tr>
+<tr><td>F21</td><td>延迟目标与跨里海海缆施工状态</td><td>海缆业主2026-08-09完工铺设待商用</td><td>T0加T1</td><td><a href="https://dknews.kz/en/articles-in-english/400015-nvidia-founder-says-kazakhstan-is-emerging-as-part-of">dknews数字路线</a></td></tr>
+<tr><td>F22</td><td>GB300单卡1400W、288GB、机架132kW</td><td>NVIDIA官网GB300页与2025-08-22博客，1400W与机架功率页码待核实</td><td>T0单源待补链</td><td>NVIDIA产品页与博客原文链待补，以官方最终发布为准</td></tr>
+<tr><td>F23</td><td>Rubin2026年下半年供货、单架功率更高</td><td>NVIDIA路线图2025与新闻室2026-03-16，路线图计划单源</td><td>T0单源待补链</td><td>NVIDIA路线图与新闻室原文链待补，单卡功耗待核实</td></tr>
+<tr><td>F24</td><td>Al-Farabium400卡H200、实测17.93PF</td><td>电信B2B页与TOP500榜单2025-2026</td><td>T0</td><td><a href="https://b2b.telecom.kz/en/al-farabium">telecom al-farabium</a></td></tr>
+<tr><td>F25</td><td>H200单卡参数141GB、至700W</td><td>NVIDIA官网H200产品页常年</td><td>T0</td><td><a href="https://b2b.telecom.kz/en/al-farabium">telecom al-farabium</a></td></tr>
+<tr><td>F26</td><td>Hrazdan首期6000卡18MW2026-08投运</td><td>Firebird官网2026-06-05与2026-08-08，公司口径单源</td><td>T0单源</td><td><a href="https://dknews.kz/en/articles-in-english/400015-nvidia-founder-says-kazakhstan-is-emerging-as-part-of">dknews黄仁勋</a></td></tr>
+<tr><td>F27</td><td>BIS许可分批颁发、哈125MW表述</td><td>Firebird2025-11-20与2026-02-10及2026-08-08，逐单颁发单源</td><td>T0单源</td><td><a href="https://dknews.kz/en/articles-in-english/400015-nvidia-founder-says-kazakhstan-is-emerging-as-part-of">dknews黄仁勋</a></td></tr>
+<tr><td>F28</td><td>2GW目标、CoreWeave已投、NVIDIA意向</td><td>Firebird2026-08-08与NVIDIA博客同日</td><td>T0</td><td><a href="https://astanatimes.com/2026/08/kazakhstan-emerges-as-firebird-ai-market-with-data-center-valley-project-in-ekibastuz/">astanatimes firebird市场</a></td></tr>
+<tr><td>F29</td><td>Freedom20亿美元100MW另立项目</td><td>Freedom公告2025-11-07华盛顿签约，另立项目单源</td><td>T1单源待补链</td><td>PRNewswire原文链待补，与谷分计</td></tr>
+<tr><td>F30</td><td>Enegix矿场200MW存量</td><td>Enegix官网与CoinDesk2020-08-21及MIT2023-01-12，存量背景</td><td>T0加T1待补链</td><td>官网与特稿原文链待补，非AI算力</td></tr>
+<tr><td>F31</td><td>TGI20公顷、Tier IV自称、12.9亿美元框架</td><td>OTC公司PR稿2026-04-22至04-30</td><td>T3</td><td><a href="https://www.usatoday.com/press-release/story/31701/tgi-amiron-group-alliance-cultivates-strategic-cooperation-with-ekibastuz-akimat-for-data-center-valley-predictive-ai-initiative">usa-today TGI</a></td></tr>
+<tr><td>F32</td><td>IT出口2025年11.42亿美元增65%</td><td>央行与数字部经Qazinform2026-04-10转述，快报与终值双口径</td><td>T1单源待补链</td><td>Qazinform转述原文链待补，注明是否含挖矿</td></tr>
+<tr><td>F33</td><td>20家大厂意向超100MW、ECG备忘录</td><td>总理办通稿2026-04-17与招商署2026-08-28，意向单源</td><td>T1单源待补链</td><td>通稿与备忘录原文链待补，无具名清单</td></tr>
+<tr><td>F34</td><td>五层蛋糕论、黄仁勋点名、10月访哈</td><td>NVIDIA博客2026-03-10与部委预告2026-09-23</td><td>T1</td><td><a href="https://dknews.kz/en/articles-in-english/400015-nvidia-founder-says-kazakhstan-is-emerging-as-part-of">dknews黄仁勋</a></td></tr>
+<tr><td>F35</td><td>官网四模式拼图、直接抓取受限</td><td>dc-valley.com2026-09-27抓取受限、通稿拼图</td><td>T1待核实</td><td><a href="https://dc-valley.com/">dc-valley官网</a></td></tr>
+<tr><td>F36</td><td>Mangystau平行项目勿混入谷</td><td>州政府与GITEX备忘录2026-08-18</td><td>T1</td><td><a href="https://b2b.telecom.kz/en/news/business/v-kazahstane-zapushhen-vtoroj-krupnejshij-v-centralnoy-azii-ai-klaster">telecom第二集群</a></td></tr>
+</tbody>
+</table></div><p class="table-note">表注：T0为官方一手，T1为权威媒体，T2为研究机构，T3只作线索；单源与待核实行已在断言列标明；原文链接为可检索标识，属来源链接而非资源外链。</p></div>
+</details>
+<div class="callout"><div class="callout-title">关键判断</div><p>方法上最重要的一句话：本报告所有肯定句都有T0或T1来源，所有推测都标概率与触发，所有待核实都不进结论。读者若只信一件事，请信2027年06月的实物验收。全文完。</p></div>
+<div class="chip-row"><span class="chip cyan">T0加T1为主</span><span class="chip violet">单源标明</span><span class="chip green">推算透明</span></div>
+<p class="next">全文完。回查请用上表F1至F36，验证请从2027年06月实物验收开始，下文无更多章节。</p>
+<div class="src">来源：F1至F36见上表；数据截至2026年09月26日；口径说明见本章要点卡</div>
+</section>
+
+
+    </div>
+  </main>
+</div>
+
+<script>
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.section'));
+  var beam = document.getElementById('navBeam');
+  var navList = document.getElementById('navList');
+
+  function moveBeam(tab) {
+    if (!beam) return;
+    var li = tab.closest('li');
+    beam.style.height = li.offsetHeight + 'px';
+    beam.style.transform = 'translateY(' + li.offsetTop + 'px)';
+  }
+
+  function runCounters(scope) {
+    scope.querySelectorAll('[data-count]').forEach(function (el) {
+      var target = parseInt(el.dataset.count, 10) || 0;
+      var t0 = performance.now();
+      var dur = 650;
+      function tick(t) {
+        var k = Math.min(1, (t - t0) / dur);
+        var v = Math.round(target * (1 - Math.pow(1 - k, 3)));
+        el.textContent = v;
+        if (k < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function activate(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(function (p) {
+      p.classList.toggle('active', p.id === tab.dataset.target);
+    });
+    moveBeam(tab);
+    runCounters(document.getElementById(tab.dataset.target));
+    if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) { window.scrollTo(0, 0); }
+    else { var mainEl = document.querySelector('main'); if (mainEl) mainEl.scrollTop = 0; }
+    if (focus) tab.focus();
+  }
+
+  tabs.forEach(function (t) { t.addEventListener('click', function (e) { e.preventDefault(); activate(t); }); });
+
+  if (navList) navList.addEventListener('keydown', function (e) {
+    var i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    var j = null;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+    if (j !== null) { e.preventDefault(); activate(tabs[j], true); }
+  });
+
+  window.addEventListener('resize', function () {
+    var active = document.querySelector('.nav-item.active');
+    if (active) moveBeam(active);
+  });
+
+  var boxes = document.querySelectorAll('.check-item input');
+  var fill = document.getElementById('progressFill');
+  var count = document.getElementById('progressCount');
+  if (boxes.length && fill && count) {
+    function updateProgress() {
+      var done = 0;
+      boxes.forEach(function (b) { if (b.checked) done++; });
+      var pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+      fill.style.width = pct + '%';
+      count.textContent = done + ' / ' + boxes.length;
+    }
+    boxes.forEach(function (b) { b.addEventListener('change', updateProgress); });
+  }
+
+  requestAnimationFrame(function () {
+    if (tabs[0]) {
+      moveBeam(tabs[0]);
+      runCounters(panels[0]);
+    }
+  });
+
+  /* ================= 应用内置浏览器检测与外部浏览器打开引导 ================= */
+  (function () {
+    var guard = document.getElementById('browserGuard');
+    if (!guard) return;
+    var badge = document.getElementById('browserGuardApp');
+    var sub = document.getElementById('browserGuardSub');
+    var stepsEl = document.getElementById('browserGuardSteps');
+    var btnClose = document.getElementById('browserGuardClose');
+    var btnCopy = document.getElementById('browserGuardCopy');
+
+    var ua = navigator.userAgent || '';
+    var isIOS = /iP(hone|ad|od)/i.test(ua);
+    var isAndroid = /Android/i.test(ua);
+
+    var apps = [
+      { re: /MicroMessenger/i, name: '微信' },
+      { re: /wxwork/i, name: '企业微信' },
+      { re: /WhatsApp/i, name: 'WhatsApp' },
+      { re: /QQ\//i, name: '手机 QQ' },
+      { re: /DingTalk/i, name: '钉钉' },
+      { re: /Lark|Feishu/i, name: '飞书' },
+      { re: /AlipayClient/i, name: '支付宝' },
+      { re: /Weibo/i, name: '微博' },
+      { re: /Line\//i, name: 'LINE' },
+      { re: /FBAN|FBAV|Instagram/i, name: 'Facebook / Instagram' },
+      { re: /Twitter/i, name: 'X（Twitter）' },
+      { re: /Telegram/i, name: 'Telegram' }
+    ];
+    var hit = null;
+    for (var i = 0; i < apps.length; i++) {
+      if (apps[i].re.test(ua)) { hit = apps[i].name; break; }
+    }
+    if (!hit) return;
+
+    var steps;
+    if (isIOS) {
+      steps = [
+        '点击屏幕右上角的「···」或「分享」按钮',
+        '在弹出菜单中选择「在 Safari 中打开」（或「在浏览器中打开」）',
+        '如菜单中没有该选项，点击下方「复制页面链接」，再粘贴到 Safari / Chrome 地址栏打开'
+      ];
+    } else if (isAndroid) {
+      steps = [
+        '点击屏幕右上角的「···」菜单按钮',
+        '选择「在浏览器中打开」，并选择 Chrome 或其他默认浏览器',
+        '如菜单中没有该选项，点击下方「复制页面链接」，再粘贴到浏览器地址栏打开'
+      ];
+    } else {
+      steps = [
+        '点击窗口右上角的「···」菜单按钮',
+        '选择「使用默认浏览器打开」',
+        '或点击下方「复制页面链接」，粘贴到 Chrome / Edge 等浏览器地址栏打开'
+      ];
+    }
+
+    badge.textContent = '检测到在' + hit + '中打开';
+    sub.textContent = '当前页面在' + hit + '内置浏览器中打开，部分图表与交互可能无法正常使用。建议切换到系统浏览器（Safari / Chrome 等）获得完整体验。';
+    stepsEl.innerHTML = steps.map(function (s, idx) {
+      return '<li><span class="num">' + (idx + 1) + '</span><span>' + s + '</span></li>';
+    }).join('');
+
+    guard.classList.add('show');
+
+    btnClose.addEventListener('click', function () {
+      guard.classList.remove('show');
+    });
+
+    btnCopy.addEventListener('click', function () {
+      var url = location.href;
+      function done() {
+        btnCopy.textContent = '已复制，去浏览器粘贴打开';
+        setTimeout(function () { btnCopy.textContent = '复制页面链接'; }, 2500);
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done, fallback);
+      } else {
+        fallback();
+      }
+    });
+  })();
+
+  /* ================= 动效与结构图（毛玻璃光斑 / 错峰浮现 / 连线描画 / 结构图跳转） ================= */
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 错峰浮现：给宫格类容器的每个子项写 --i */
+  ['.stat-row', '.rule-grid', '.feature-row', '.step-chain', '.timeline', '.dd-grid', '.grid-2', '.map-tiles', '.doc-map'].forEach(function (sel) {
+    document.querySelectorAll(sel).forEach(function (box) {
+      var i = 0;
+      Array.prototype.forEach.call(box.children, function (c) {
+        if (c.classList.contains('step-arrow')) return;
+        c.classList.add('stagger');
+        c.style.setProperty('--i', i++);
+      });
+    });
+  });
+
+  /* 光斑跟随指针 */
+  document.addEventListener('pointermove', function (e) {
+    var el = e.target.closest && e.target.closest('.card, .fig, .stat, .rule-card, .step, .feature, .dd-col, .map-tile');
+    if (!el) return;
+    var r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, { passive: true });
+
+  /* SVG 机制图：连线逐条描画，形状与文字错峰淡入（虚线与 <defs> 里的箭头不动） */
+  function drawFigs(scope) {
+    if (REDUCED || !scope) return;
+    scope.querySelectorAll('.fig svg').forEach(function (svg) {
+      var j = 0;
+      svg.querySelectorAll('line, path, polyline').forEach(function (el) {
+        if (el.closest('defs') || el.closest('marker')) return;
+        var cs = getComputedStyle(el);
+        if (cs.stroke === 'none' || (cs.strokeDasharray && cs.strokeDasharray !== 'none')) return;
+        var len = 0;
+        try { len = el.getTotalLength(); } catch (err) { return; }
+        if (!len || len < 4) return;
+        el.style.transition = 'none';
+        el.style.strokeDasharray = len;
+        el.style.strokeDashoffset = len;
+        el.getBoundingClientRect();
+        el.style.transition = 'stroke-dashoffset 900ms cubic-bezier(0.22,1,0.36,1) ' + (250 + Math.min(j++ * 60, 900)) + 'ms';
+        el.style.strokeDashoffset = '0';
+        el.addEventListener('transitionend', function done() {
+          el.style.transition = ''; el.style.strokeDasharray = ''; el.style.strokeDashoffset = '';
+          el.removeEventListener('transitionend', done);
+        });
+      });
+    });
+  }
+
+  if (!REDUCED) document.querySelectorAll('.fig svg').forEach(function (svg) {
+    var k = 0;
+    svg.querySelectorAll('rect, circle, ellipse, polygon, text').forEach(function (el) {
+      if (el.closest('defs') || el.classList.contains('pulse')) return;
+      el.style.animationDelay = Math.min(k++ * 15, 450) + 'ms';
+      el.classList.add('fade-in');
+    });
+  });
+
+  /* 全文结构图：点格子 = 点对应的导航项 */
+  document.querySelectorAll('[data-goto]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      var id = el.getAttribute('data-goto');
+      for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].dataset.target === id) { activate(tabs[i]); break; }
+      }
+    });
+  });
+
+  /* 切章时重新播放 */
+  var _activate = activate;
+  activate = function (tab, focus) {
+    _activate(tab, focus);
+    drawFigs(document.getElementById(tab.dataset.target));
+  };
+  requestAnimationFrame(function () { drawFigs(panels[0]); });
+
+  /* 打印时展开全部折叠表 */
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.setAttribute('open', ''); });
+  });
+
+</script>
+
+</body>
+</html>
