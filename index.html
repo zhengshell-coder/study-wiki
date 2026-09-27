@@ -478,7 +478,7 @@ function renderHome(box){
         <div class="m"><span>${esc(m?m.name:"")}</span><span>已读 ${v}%</span></div><div class="bar"><i style="width:${v}%"></i></div></div>`; }).join("")+`</div></div>`;
   }
   const recent=data.pages.slice().sort((a,b)=>pageTime(b)-pageTime(a)).slice(0,6);
-  h+=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent">`+
+  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent">`+
     recent.map(p=>{ const m=moduleById(p.moduleId);
       return `<div class="ri" onclick="openPage('${p.id}')"><span class="t">${esc(p.title)}</span><span class="c">${esc(m?m.name:"")}</span><span class="d">${fmtDate(p)}</span></div>`; }).join("")+`</div></div>`;
   const mods=data.modules.map(m=>({m,ps:data.pages.filter(p=>p.moduleId===m.id).sort((a,b)=>pageTime(b)-pageTime(a))}))
@@ -491,6 +491,7 @@ function renderHome(box){
       return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
         <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
     `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
+  h+=rh;
   box.innerHTML=h;
 }
 function cardHTML(p){
