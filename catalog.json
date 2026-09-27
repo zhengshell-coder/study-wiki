@@ -83,6 +83,13 @@
       "folder": "文学",
       "icon": "📖",
       "color": "#b5524a"
+    },
+    {
+      "id": "muk3v36hg5gx",
+      "name": "数学",
+      "folder": "数学",
+      "icon": "➗",
+      "color": "#5e7390"
     }
   ],
   "pages": [
