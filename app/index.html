@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>我的图书馆</title>
+<meta name="theme-color" content="#F6F2EA">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="图书馆">
+<style>
+  :root{
+    --bg:#F3EFE7; --paper:#FFFDF8; --paper-2:#FBF8F1;
+    --ink:#2A2724; --ink-2:#5C564D; --muted:#8A8378; --faint:#B3AB9E;
+    --line:#E6DECF; --line-2:#D8CFBE;
+    --accent:#3E6B63; --accent-2:#2F554E; --accent-soft:#E5EDE9;
+    --gold:#A88A5F; --danger:#A5524A; --danger-soft:#F6E8E4;
+    --serif:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif;
+    --r:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased;font-size:15px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:max(34px,env(safe-area-inset-top)) 24px 70px}
+
+  /* ---------- 页头 ---------- */
+  .topbar{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line-2);margin-bottom:24px}
+  .brand h1{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:4px;margin:0;line-height:1.2}
+  .brand p{margin:6px 0 0;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sync{display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:1px 9px 1px 8px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:12px;color:var(--ink-2)}
+  .sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint)}
+  .sync.on::before{background:#5E9A7E}
+  .sync.off{color:#9A6B3C;border-color:#EAD9BF;background:#FBF4E8}
+  .sync.off::before{background:#C9954F}
+  .spacer{flex:1}
+  .nav{display:flex;gap:22px;align-items:center}
+  .nav button{border:0;background:none;padding:6px 0;font-size:15px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-family:var(--serif);letter-spacing:2px}
+  .nav button.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .nav button:hover{color:var(--ink)}
+
+  /* ---------- 按钮 / 表单 ---------- */
+  .btn{border:1px solid transparent;border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent-2)}
+  .btn.ghost{background:var(--paper);border-color:var(--line-2);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--muted)}
+  .btn.sm{padding:5px 11px;font-size:13px;border-radius:7px}
+  .btn.danger{color:var(--danger)}
+  .btn.danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;margin-bottom:6px;color:var(--ink-2)}
+  .field input,.field select{width:100%;border:1px solid var(--line-2);border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit;outline:0;background:var(--paper);color:var(--ink)}
+  .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .resolved{font-size:12.5px;color:var(--muted);margin-top:6px;word-break:break-all}
+  .resolved code{background:var(--accent-soft);color:var(--accent-2);padding:2px 7px;border-radius:5px}
+  input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px}
+
+  /* ---------- 搜索 ---------- */
+  .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:30px}
+  .search{flex:1;display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line-2);border-radius:999px;padding:9px 18px}
+  .search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search svg{flex-shrink:0;color:var(--muted)}
+  .search input{border:0;outline:0;font-size:14.5px;width:100%;background:transparent;color:var(--ink);font-family:inherit}
+  .search input::placeholder{color:var(--faint)}
+
+  /* ---------- 分区标题 ---------- */
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+  .sec-h h2{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:3px;margin:0}
+  .sec-h .rule{flex:1;height:1px;background:var(--line)}
+  .sec-h .aside{font-size:12.5px;color:var(--muted)}
+  .block{margin-bottom:38px}
+
+  /* ---------- 继续阅读 ---------- */
+  .cont{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .ci{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 12px;cursor:pointer;transition:.15s}
+  .ci:hover{border-color:var(--line-2);transform:translateY(-2px)}
+  .ci .t{font-family:var(--serif);font-size:15.5px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ci .m{font-size:12px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between}
+  .bar{height:3px;background:#EEE7DA;border-radius:2px;margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+
+  /* ---------- 最近更新 ---------- */
+  .recent{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2px 18px}
+  .ri{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+  .ri:first-child{border-top:0}
+  .ri .t{flex:1;min-width:0;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ri:hover .t{color:var(--accent)}
+  .ri .c{font-size:12px;color:var(--muted);flex-shrink:0}
+  .ri .d{font-size:12px;color:var(--faint);flex-shrink:0;font-variant-numeric:tabular-nums;width:78px;text-align:right}
+
+  /* ---------- 书目（分类） ---------- */
+  .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 28px}
+  .sh{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+  .sh:hover .sh-n{color:var(--accent)}
+  .seal{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:17px;font-weight:600;flex-shrink:0;border:1px solid}
+  .sh-i{flex:1;min-width:0}
+  .sh-n{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:1px;transition:.15s}
+  .sh-n small{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0;margin-left:8px}
+  .sh-l{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chev{color:var(--faint);font-size:18px}
+  /* 书架 · 书脊 */
+  .bookcase{background:linear-gradient(#EFE8DB,#E9E1D2);border:1px solid var(--line);border-radius:var(--r);padding:26px 22px 0}
+  .spines{display:flex;align-items:flex-end;gap:10px;overflow-x:auto;padding:14px 4px 0;scrollbar-width:thin}
+  .spine{flex-shrink:0;border-radius:3px 3px 0 0;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;
+    padding:14px 0 10px;transition:transform .2s ease, box-shadow .2s ease;box-shadow:inset -3px 0 0 rgba(0,0,0,.07), inset 2px 0 0 rgba(255,255,255,.18)}
+  .spine:hover{transform:translateY(-10px);box-shadow:inset -3px 0 0 rgba(0,0,0,.07), inset 2px 0 0 rgba(255,255,255,.18), 0 8px 16px rgba(60,45,20,.18)}
+  .spine .band{width:70%;height:0;border-top:1px solid rgba(255,255,255,.45);border-bottom:1px solid rgba(0,0,0,.12);margin:0 0 3px}
+  .spine .nm{writing-mode:vertical-rl;font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:4px;flex:1;display:flex;align-items:center;margin:8px 0}
+  .spine .ct{font-size:11px;opacity:.85;font-variant-numeric:tabular-nums}
+  .plank{height:12px;background:#B9AE9C;border-radius:0 0 4px 4px;margin:0 -22px;box-shadow:0 3px 0 #A89C88}
+  .shelf-cap{font-size:12.5px;color:var(--muted);text-align:center;padding:10px 0 12px}
+
+  /* ---------- 分类内 / 搜索结果 ---------- */
+  .crumb{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .crumb a{font-size:13.5px;color:var(--muted);cursor:pointer}
+  .crumb a:hover{color:var(--accent)}
+  .crumb .here{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:2px}
+  .crumb .n{font-size:13px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px 14px;cursor:pointer;transition:.15s;position:relative;display:flex;flex-direction:column;gap:7px;min-height:132px}
+  .card:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:0 6px 18px rgba(80,62,30,.07)}
+  .card .cat{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;padding-right:28px}
+  .card .cat i{width:6px;height:6px;border-radius:50%;display:inline-block}
+  .card h3{margin:0;font-family:var(--serif);font-size:16.5px;font-weight:600;line-height:1.45}
+  .card .desc{margin:0;font-size:13px;color:var(--ink-2);flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .meta{display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+  .card .meta .tg{border:1px solid var(--line);border-radius:4px;padding:0 6px;color:var(--ink-2)}
+  .card .offtag{display:none;color:#5E9A7E}
+  .card.cached .offtag{display:inline}
+  .more{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:6px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .more:hover{background:#F1EBDF;color:var(--ink)}
+  .menu{position:absolute;top:40px;right:10px;background:var(--paper);border:1px solid var(--line-2);border-radius:8px;box-shadow:0 10px 28px rgba(60,45,20,.14);padding:5px;z-index:20;min-width:150px}
+  .menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 11px;border-radius:5px;font-size:13.5px;color:var(--ink);cursor:pointer}
+  .menu button:hover{background:var(--accent-soft);color:var(--accent-2)}
+  .menu .sep{height:1px;background:var(--line);margin:4px 6px}
+
+  .empty{text-align:center;padding:64px 20px;color:var(--muted)}
+  .empty .big{font-family:var(--serif);font-size:20px;color:var(--ink-2);margin-bottom:6px;letter-spacing:2px}
+  .empty button{margin-top:16px}
+
+  /* ---------- 设置 ---------- */
+  .set-h{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:3px;margin:0 0 4px}
+  .set-sub{font-size:13px;color:var(--muted);margin:0 0 22px}
+  details.sec{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+  details.sec>summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;gap:14px}
+  details.sec>summary::-webkit-details-marker{display:none}
+  details.sec>summary .s-t{font-family:var(--serif);font-size:16.5px;font-weight:600;letter-spacing:2px}
+  details.sec>summary .s-d{font-size:12.5px;color:var(--muted);flex:1}
+  details.sec>summary .s-c{color:var(--faint);transition:.2s}
+  details.sec[open]>summary .s-c{transform:rotate(90deg)}
+  details.sec[open]>summary{border-bottom:1px solid var(--line)}
+  details.sec .sb{padding:18px 20px 20px}
+  .sub-h{font-size:14px;font-weight:600;margin:0 0 4px;color:var(--ink)}
+  .hint{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+  .divider{height:1px;background:var(--line);margin:20px 0}
+  .dlbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .pg-grp{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden;background:var(--paper)}
+  .pg-head{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--paper-2)}
+  .pg-hi{flex:1;display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}
+  .pg-ic{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;font-weight:600;flex-shrink:0;border:1px solid}
+  .pg-nm{font-size:14px;font-weight:600}
+  .pg-cnt{font-size:12px;color:var(--muted)}
+  .pg-chev{color:var(--faint);cursor:pointer;padding:4px 6px}
+  .pg-body{border-top:1px solid var(--line)}
+  .pg-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid #F1EBDF}
+  .pg-row:first-child{border-top:0}
+  .pg-row .pg-t{flex:1;min-width:0;font-size:13.5px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pg-row .pg-t:hover{color:var(--accent)}
+  .listrow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line)}
+  .listrow:last-child{border-bottom:0}
+  .listrow .info{flex:1;min-width:0}
+  .listrow .name{font-size:14px;font-weight:600}
+  .listrow .info small{color:var(--muted);font-size:12px}
+  .state{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;font-size:13.5px;margin-bottom:16px}
+  .state.on{background:var(--accent-soft);color:var(--accent-2)}
+  .state.off{background:#FBF4E8;color:#8A5E2E}
+  .install-box{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .install-box .txt{flex:1;min-width:220px}
+
+  /* ---------- 弹窗 / 提示 ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(42,39,36,.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--paper);border:1px solid var(--line-2);border-radius:12px;padding:24px 24px 20px;width:100%;max-width:480px;max-height:90vh;overflow:auto;box-shadow:0 20px 50px rgba(42,39,36,.22)}
+  .modal h3{margin:0 0 4px;font-family:var(--serif);font-size:19px;font-weight:600;letter-spacing:2px}
+  .modal .msub{margin:0 0 18px;font-size:13px;color:var(--muted)}
+  .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#F6F2EA;padding:10px 20px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .footer{text-align:center;color:var(--faint);font-size:12px;margin-top:46px;letter-spacing:1px}
+  .footer a{color:var(--accent);cursor:pointer}
+
+  .lnk{cursor:pointer;color:var(--accent)!important}
+  .review{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .rv{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:.15s}
+  .rv:hover{border-color:var(--line-2);transform:translateY(-2px)}
+  .rv-q{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--ink);border-left:2px solid var(--gold);padding-left:10px}
+  .rv-n{font-size:13px;color:var(--ink-2);margin-top:8px}
+  .rv-b{font-size:12px;color:var(--muted);margin-top:8px;text-align:right}
+  .results{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2px 18px}
+  .sr{padding:14px 0;border-top:1px solid var(--line);cursor:pointer}
+  .sr:first-child{border-top:0}
+  .sr-t{font-family:var(--serif);font-size:16px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+  .sr-t .c{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--muted)}
+  .sr:hover .sr-t{color:var(--accent)}
+  .sr-s{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.75}
+  .sr-m{font-size:11.5px;color:var(--muted);margin-top:4px}
+  mark{background:#F6E3A6;color:inherit;padding:0 1px;border-radius:2px}
+  .ng{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:4px 18px 8px;margin-bottom:14px}
+  .ng-h{display:flex;align-items:baseline;gap:10px;padding:12px 0 10px;border-bottom:1px solid var(--line)}
+  .ng-t{font-family:var(--serif);font-size:16.5px;font-weight:600;letter-spacing:1px}
+  .ng-c{font-size:12px;color:var(--muted)}
+  .nt{padding:12px 0;border-top:1px solid #F1EBDF;cursor:pointer}
+  .ng-h+.nt{border-top:0}
+  .nt:hover .nt-q,.nt:hover .nt-n{color:var(--accent-2)}
+  .nt-q{font-family:var(--serif);font-size:14.5px;line-height:1.8;border-left:3px solid;padding-left:10px}
+  .nt-n{font-size:13.5px;color:var(--ink);margin-top:6px}
+  .nt.bm .nt-n{margin-top:0;color:var(--ink-2)}
+  .nt-d{font-size:11.5px;color:var(--faint);margin-top:4px}
+  .lock{max-width:420px;margin:30px auto;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 28px}
+  .lock-seal{width:54px;height:54px;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:26px;font-weight:600;margin-bottom:14px}
+  .lock h2{font-family:var(--serif);font-size:22px;letter-spacing:3px;margin:0 0 6px}
+  .lock p{font-size:13.5px;color:var(--ink-2);margin:0 0 18px}
+  .lock .btn.primary{width:100%;justify-content:center}
+
+  @media (max-width:620px){
+    .wrap{padding-left:16px;padding-right:16px}
+    .brand h1{font-size:25px}
+    .topbar{align-items:flex-start}
+    .nav{width:100%;gap:26px}
+    .row{grid-template-columns:1fr}
+    .shelf{grid-template-columns:1fr}
+    .ri .d{display:none}
+    .toolbar .btn span.lbl{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>我的图书馆</h1>
+      <p><span id="statLine">与 AI 共读的书架</span><span class="sync" id="syncDot" onclick="goSync()">…</span></p>
+    </div>
+    <div class="spacer"></div>
+    <div class="nav">
+      <button id="tab-browse" class="active" onclick="switchTab('browse')">书架</button>
+      <button id="tab-notes" onclick="switchTab('notes')">批注</button>
+      <button id="tab-settings" onclick="switchTab('settings')">设置</button>
+    </div>
+  </div>
+
+  <!-- ============ 书架 ============ -->
+  <div id="view-browse">
+    <div class="toolbar">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="searchBox" placeholder="搜索书名、标签、简介" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="wiki-search-nofill" readonly onfocus="this.removeAttribute('readonly')" oninput="this.dataset.typed='1';render()">
+      </div>
+      <button class="btn primary" onclick="openUpload()">＋<span class="lbl">上传新书</span></button>
+    </div>
+    <div id="grid"></div>
+  </div>
+
+  <!-- ============ 批注 ============ -->
+  <div id="view-notes" style="display:none">
+    <h2 class="set-h">我的批注</h2>
+    <p class="set-sub" id="notesSum"></p>
+    <div class="toolbar" style="margin-bottom:22px">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="notesQ" placeholder="在批注和书签里搜索" autocomplete="off" oninput="renderNotes()">
+      </div>
+      <button class="btn ghost" onclick="copyNotes()">复制全部</button>
+      <button class="btn primary" onclick="exportNotes()">导出 Markdown</button>
+    </div>
+    <div id="notesBox"></div>
+  </div>
+
+  <!-- ============ 解锁 ============ -->
+  <div id="view-lock" style="display:none">
+    <div class="lock">
+      <div class="lock-seal">藏</div>
+      <h2>私人图书馆</h2>
+      <p>这里的书只对你开放。请输入你的 GitHub 令牌解锁，每台设备只需要一次。</p>
+      <div class="field"><label>仓库</label><input id="lk_repo" value="zhengshell-coder/study-wiki"></div>
+      <div class="field"><label>访问令牌</label><input id="lk_token" type="password" placeholder="github_pat_…" onkeydown="if(event.key==='Enter')unlock()"></div>
+      <button class="btn primary" onclick="unlock()">解锁</button>
+      <div class="resolved" id="lk_status" style="margin-top:10px"></div>
+      <p class="hint" style="margin-top:16px">手机上：在 Mac 上复制令牌，iPhone 上直接粘贴即可（同一 Apple ID 自带"通用剪贴板"）。</p>
+    </div>
+  </div>
+
+  <!-- ============ 设置 ============ -->
+  <div id="view-settings" style="display:none">
+    <h2 class="set-h">设置</h2>
+    <p class="set-sub">管理你的藏书、分类、同步与安装。点开每一项查看详情。</p>
+
+    <details class="sec" id="sec-docs" open>
+      <summary><span class="s-t">文档管理</span><span class="s-d">批量下载 · 编辑 · 删除</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="dlbar">
+          <label style="display:flex;align-items:center;gap:7px;font-size:13.5px;cursor:pointer"><input type="checkbox" id="selAll" onchange="toggleSelectAll(this.checked)"> 全选</label>
+          <span id="selCount" style="font-size:12.5px;color:var(--muted)">未选择</span>
+          <span style="flex:1"></span>
+          <button class="btn primary sm" onclick="downloadSelectedZip()">下载所选（ZIP）</button>
+          <button class="btn ghost sm" onclick="downloadRepoZip()">整库压缩包</button>
+        </div>
+        <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
+        <div id="pageGroups"></div>
+        <div class="divider"></div>
+        <p class="sub-h">全文搜索索引</p>
+        <p class="hint">上传、更新时会自动把正文加进索引。如果搜不到某本书的内容，点一下重建。</p>
+        <div class="dlbar"><button class="btn ghost sm" onclick="rebuildSearchIndex()">重建全文索引</button><span id="idxStatus" class="resolved" style="margin:0"></span></div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-cats">
+      <summary><span class="s-t">分类</span><span class="s-d">新建或删除书目分类</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="row">
+          <div class="field"><label>名称</label><input id="m_name" placeholder="例如：音乐"></div>
+          <div class="field"><label>类别（选一个常用分类）</label><select id="m_icon" onchange="iconPicked()"></select></div>
+        </div>
+        <div class="field" style="max-width:200px"><label>标识色</label><input id="m_color" type="color" value="#3E6B63" style="height:40px;padding:4px"></div>
+        <button class="btn primary" onclick="addModule()">新建分类</button>
+        <div class="divider"></div>
+        <div id="moduleList"></div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-sync">
+      <summary><span class="s-t">同步与备份</span><span class="s-d" id="syncSum">GitHub 连接 · 目录备份</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="state" id="syncState"></div>
+        <p class="sub-h">GitHub 连接</p>
+        <p class="hint">令牌是这座私人图书馆的钥匙：没有它看不到书，也不能上传。它只保存在这台设备的这个浏览器里。</p>
+        <div class="field"><label>仓库（用户名/仓库名）</label><input id="gh_repo" placeholder="yourname/study-wiki"></div>
+        <div class="row">
+          <div class="field"><label>分支</label><input id="gh_branch" placeholder="main"></div>
+          <div class="field"><label>访问令牌 Token</label><input id="gh_token" type="password" placeholder="github_pat_…"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" onclick="ghStore()">保存</button>
+          <button class="btn ghost" onclick="ghTest()">测试连接</button>
+        </div>
+        <div class="resolved" id="gh_status" style="margin-top:10px"></div>
+        <div style="margin-top:12px"><button class="btn ghost sm danger" onclick="lockDevice()">在这台设备上退出（清除令牌和离线缓存）</button></div>
+        <div class="divider"></div>
+        <p class="sub-h">目录备份</p>
+        <p class="hint">导出目录为 catalog.json 留存；换设备或出错时导入恢复。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn ghost" onclick="exportData()">导出备份</button>
+          <button class="btn ghost" onclick="document.getElementById('importFile').click()">导入备份</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-install">
+      <summary><span class="s-t">安装与离线</span><span class="s-d">装到桌面 · 断网也能看</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <p class="sub-h">安装到桌面</p>
+        <div class="install-box">
+          <div class="txt"><p class="hint" id="installHint" style="margin:0">装好后像独立 App 一样打开，图标出现在启动台和程序坞。</p></div>
+          <button class="btn primary" id="installBtn" onclick="installApp()">安装到桌面</button>
+        </div>
+        <div class="resolved" id="installHow" style="margin-top:10px"></div>
+        <div class="divider"></div>
+        <p class="sub-h">离线阅读</p>
+        <p class="hint">联网时点一次，把整个书架缓存到本设备，之后断网也能看全部。单本也可以在书卡的「⋯」里存离线。</p>
+        <button class="btn ghost" onclick="cacheAllOffline()">缓存全部供离线</button>
+        <div class="resolved" id="offlineStatus" style="margin-top:10px"></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="footer" id="footer"></div>
+</div>
+
+<!-- ===== 上传 / 编辑 弹窗 ===== -->
+<div class="modal-bg" id="pageModal">
+  <div class="modal">
+    <h3 id="pmTitle">上传新书</h3>
+    <p class="msub" id="pmSub">选 HTML 文件 → 选分类 → 同步发布</p>
+    <input type="hidden" id="pm_id">
+    <div class="field" id="pm_filewrap">
+      <label id="pm_filelabel">选择 HTML 文件</label>
+      <input type="file" id="pm_file" accept=".html,.htm" onchange="pmPick()">
+    </div>
+    <div class="field"><label>书名</label><input id="pm_title" placeholder="例如：二战全景时间线"></div>
+    <div class="field"><label>放入哪个分类</label><select id="pm_module" onchange="pmResolved()"></select></div>
+    <div class="resolved" id="pm_resolved"></div>
+    <div class="field" style="margin-top:14px"><label>标签（可选，逗号分隔）</label><input id="pm_tags" placeholder="时间线, 复习"></div>
+    <div class="field"><label>简介（可选）</label><input id="pm_desc" placeholder="一句话说明"></div>
+    <div class="resolved" id="pm_status"></div>
+    <div class="actions">
+      <button class="btn ghost" onclick="closeModal()">取消</button>
+      <button class="btn primary" id="pm_save" onclick="savePage()">上传并同步</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LS_KEY="learningWiki.working.v1";
+const GH_KEY="learningWiki.github.v1";
+const SEED={
+  modules:[
+    {id:"hist", name:"历史", folder:"历史", icon:"🏛️", color:"#c08457"},
+    {id:"tcm",  name:"中医", folder:"中医", icon:"🌿", color:"#4a9d6f"},
+    {id:"pol",  name:"政治", folder:"政治", icon:"⚖️", color:"#5566cc"},
+    {id:"econ", name:"经济", folder:"经济", icon:"📈", color:"#d98a3d"},
+    {id:"tech", name:"科技", folder:"科技", icon:"🔬", color:"#3aa6b9"}
+  ],
+  pages:[
+    {id:"sample1", moduleId:"hist", title:"二战关键时间线（示例）", file:"示例-二战时间线.html",
+     desc:"演示页：看看上传后的页面长什么样，可随时删除。", tags:["示例","时间线"], date:"2026-05-31"}
+  ]
+};
+
+let data = JSON.parse(JSON.stringify(SEED));
+let activeModule = "all";
+let sourceMode = "seed";
+let modalMode = "add";
+let RP={}, RB={}, RN={};
+let selPages=new Set(), expandedMod=new Set();
+
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function safeName(s){ return (s||"").replace(/[#?%&\\:*<>"|]/g,"").replace(/\s+/g," ").trim(); }
+function moduleById(id){ return data.modules.find(m=>m.id===id); }
+function esc(s){ return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2400); }
+function ghCfg(){ try{ return JSON.parse(localStorage.getItem(GH_KEY)||"{}"); }catch(e){ return {}; } }
+function ghOn(){ const c=ghCfg(); return !!(c.repo && c.token); }
+function errMsg(e){ const m=(e&&e.message)||String(e);
+  if(/Failed to fetch|NetworkError|load failed/i.test(m))
+    return "无法连接 GitHub。请在已上线的网址版（不要双击本地文件）下操作，并确认：已联网、仓库与令牌已正确填写。";
+  return m; }
+async function retry(fn, tries){ tries=tries||3; let last; for(let i=0;i<tries;i++){ try{ return await fn(); }catch(e){ last=e; if(i<tries-1) await new Promise(r=>setTimeout(r,800*(i+1))); } } throw last; }
+
+/* ---------- boot ---------- */
+async function boot(){
+  if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  document.getElementById("footer").innerHTML='我的图书馆 · 私人书房<span id="footInstall" style="display:none"> · <a onclick="installApp()">安装到桌面</a></span>';
+  updateInstallUI();
+  if(!ghOn()){ showLock(""); return; }
+  showApp();
+  let loaded=false;
+  try{ const j=JSON.parse(await ghText("catalog.json"));
+    if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="file"; loaded=true; saveLocal(); } }
+  catch(e){ if(/ 401$/.test(e.message||"")){ showLock("令牌已失效（过期或被撤销），请换一个新令牌解锁。"); return; } }
+  if(!loaded){ let l=null; try{ l=localStorage.getItem(LS_KEY); }catch(e){}
+    if(l){ try{ const j=JSON.parse(l); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="local"; toast("当前离线：显示上次保存的书架"); } }catch(e){} } }
+  const _sb=document.getElementById("searchBox"); if(_sb) _sb.value="";
+  render();
+  setTimeout(()=>{ const s=document.getElementById("searchBox"); if(s && s.value && !s.dataset.typed){ s.value=""; render(); } }, 400);
+  pullReading().then(()=>render()).catch(()=>{});
+  checkToken();
+}
+function showLock(msg){
+  ["view-browse","view-settings","view-notes"].forEach(i=>document.getElementById(i).style.display="none");
+  document.getElementById("view-lock").style.display="block";
+  document.querySelector(".topbar .nav").style.visibility="hidden";
+  document.getElementById("syncDot").style.display="none";
+  document.getElementById("statLine").textContent="私人书房 · 需要解锁";
+  const c=ghCfg(); document.getElementById("lk_repo").value=c.repo||"zhengshell-coder/study-wiki";
+  document.getElementById("lk_status").textContent=msg||"";
+}
+function showApp(){
+  document.getElementById("view-lock").style.display="none";
+  document.querySelector(".topbar .nav").style.visibility="";
+  document.getElementById("syncDot").style.display="";
+  document.getElementById("view-browse").style.display="block";
+}
+async function unlock(){
+  const repo=document.getElementById("lk_repo").value.trim(), token=document.getElementById("lk_token").value.trim(), st=document.getElementById("lk_status");
+  if(!repo||!token){ st.textContent="请填写仓库和令牌"; return; }
+  st.textContent="正在验证…";
+  try{ const r=await fetch("https://api.github.com/repos/"+repo,{headers:{Authorization:"Bearer "+token,Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok){ st.textContent= r.status===401?"令牌无效或已过期。":(r.status===404?"找不到这个仓库，或令牌没有访问它的权限。":"验证失败："+r.status); return; }
+    const c=ghCfg(); localStorage.setItem(GH_KEY, JSON.stringify({repo, branch:c.branch||"main", token}));
+    document.getElementById("lk_token").value=""; st.textContent=""; boot();
+  }catch(e){ st.textContent="网络错误，请稍后再试"; }
+}
+async function lockDevice(){
+  if(!confirm("在这台设备上退出？\n\n会清除这里保存的令牌和离线缓存，下次打开需要重新输入令牌。你的书和批注不受影响。")) return;
+  const c=ghCfg(); localStorage.setItem(GH_KEY, JSON.stringify({repo:c.repo, branch:c.branch}));
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  try{ await caches.delete(DOC_CACHE); }catch(e){}
+  SIDX=null; SIDX_loading=null; CACHED=new Set();
+  showLock("已在这台设备上退出。");
+}
+
+/* ---------- tabs ---------- */
+function switchTab(w){
+  ["browse","settings","notes"].forEach(k=>{ document.getElementById("view-"+k).style.display = w===k?"block":"none";
+    const t=document.getElementById("tab-"+k); if(t) t.classList.toggle("active", w===k); });
+  closeMenus();
+  if(w==="settings") renderSettings(); else if(w==="notes") renderNotes(); else render();
+  window.scrollTo(0,0);
+}
+
+/* ---------- browse ---------- */
+let CACHED=new Set(), openMenuId=null;
+function tone(m){ const c=(m&&m.color)||"#8A8378"; return "color-mix(in srgb, "+c+" 58%, #8A8378)"; }
+function sealChar(name){ const s=(name||"").replace(/^AI[-\s]*/i,""); const mm=s.match(/[一-龥]/); return mm?mm[0]:((s[0]||"书").toUpperCase()); }
+function sealHTML(m,cls){ const t=tone(m); return `<span class="${cls||'seal'}" style="color:${t};border-color:color-mix(in srgb, ${t} 45%, transparent);background:color-mix(in srgb, ${t} 9%, #FFFDF8)">${esc(sealChar(m&&m.name))}</span>`; }
+function pageTime(p){ return p.rev||(p.date?Date.parse(p.date):0)||0; }
+function progOf(p){ const r=RP[relPath(p)]; return r&&r.pct?r.pct:0; }
+function fmtDate(p){ if(p.rev){ const d=new Date(p.rev); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); } return p.date||""; }
+let ghState="none"; /* none | checking | ok | bad */
+async function checkToken(){
+  if(!ghOn()){ ghState="none"; updateSync(); return; }
+  ghState="checking"; updateSync();
+  try{ const c=ghCfg(); const r=await fetch("https://api.github.com/repos/"+c.repo,{headers:ghHeaders(),cache:"no-store"});
+    ghState=(r.status===401||r.status===403||r.status===404)?"bad":(r.ok?"ok":"checking");
+  }catch(e){ ghState="checking"; }
+  updateSync(); if(document.getElementById("view-settings").style.display!=="none") renderSettings();
+}
+function updateSync(){
+  const d=document.getElementById("syncDot"); if(!d) return;
+  if(!ghOn()) ghState="none";
+  const S={none:["off","未连接 · 只能看","这个浏览器还没连接 GitHub，点这里去连接"],
+    bad:["off","令牌已失效 · 点此更新","GitHub 令牌过期或被撤销：上传、更新、删除会失败"],
+    checking:["on","已连接同步","正在确认 GitHub 连接"],
+    ok:["on","已连接同步","GitHub 已连接：上传、更新会自动同步到你的所有设备"]}[ghState]||["off","未连接",""];
+  d.className="sync "+S[0]; d.textContent=S[1]; d.title=S[2];
+  const s=document.getElementById("statLine");
+  if(s) s.textContent="藏书 "+data.pages.length+" 本 · "+data.modules.filter(m=>data.pages.some(p=>p.moduleId===m.id)).length+" 类";
+}
+function goSync(){ switchTab("settings"); const s=document.getElementById("sec-sync"); if(s){ s.open=true; setTimeout(()=>s.scrollIntoView({behavior:"smooth",block:"start"}),60); } }
+
+function render(){
+  RP=readPos(); RB=readBm(); RN=readNotes(); openMenuId=null;
+  updateSync();
+  const _sb0=document.getElementById("searchBox");
+  const q=(_sb0 && _sb0.dataset.typed)?(_sb0.value||"").toLowerCase().trim():"";
+  const box=document.getElementById("grid");
+  if(!data.pages.length){ box.innerHTML=emptyHTML("书架还空着","上传第一本 HTML 学习页面，它会出现在这里。"); return; }
+  if(q){ renderSearch(box,q); return; }
+  if(activeModule!=="all"){
+    const m=moduleById(activeModule);
+    const pages=data.pages.filter(p=>p.moduleId===activeModule).sort((a,b)=>pageTime(b)-pageTime(a));
+    box.innerHTML=`<div class="crumb"><a onclick="setModule('all')">‹ 书目</a><span class="here">${esc(m?m.name:"")}</span><span class="n">${pages.length} 本</span></div>`+
+      (pages.length?`<div class="grid">${pages.map(cardHTML).join("")}</div>`:emptyHTML("这个分类还没有书","上传时选这个分类，书就会放到这里。"));
+    markCachedStates(); return;
+  }
+  renderHome(box);
+}
+function emptyHTML(t,s,noBtn){ return `<div class="empty"><div class="big">${t}</div><div>${s}</div>${noBtn?"":`<button class="btn primary" onclick="openUpload()">＋ 上传新书</button>`}</div>`; }
+function clearSearch(){ const s=document.getElementById("searchBox"); s.value=""; delete s.dataset.typed; render(); }
+function renderHome(box){
+  let h="";
+  const reading=data.pages.map(p=>({p,pct:progOf(p),ts:((RP[relPath(p)]||{}).ts)||0}))
+    .filter(x=>x.pct>0.02&&x.pct<0.97).sort((a,b)=>b.ts-a.ts).slice(0,4);
+  if(reading.length){
+    h+=`<div class="block"><div class="sec-h"><h2>继续阅读</h2><span class="rule"></span></div><div class="cont">`+
+      reading.map(({p,pct})=>{ const m=moduleById(p.moduleId); const v=Math.round(pct*100);
+        return `<div class="ci" onclick="openPage('${p.id}')"><div class="t">${esc(p.title)}</div>
+        <div class="m"><span>${esc(m?m.name:"")}</span><span>已读 ${v}%</span></div><div class="bar"><i style="width:${v}%"></i></div></div>`; }).join("")+`</div></div>`;
+  }
+  const rv=reviewPicks();
+  if(rv.length){
+    h+=`<div class="block"><div class="sec-h"><h2>今日回顾</h2><span class="rule"></span><a class="aside lnk" onclick="reviewShift++;render()">换一批</a></div><div class="review">`+
+      rv.map(({x,g})=>`<div class="rv" onclick="openNote('${g.p.id}','note','${x.id}')"><div class="rv-q">${esc(clip(x.exact,110))}</div>${x.note?`<div class="rv-n">${esc(clip(x.note,90))}</div>`:""}<div class="rv-b">——《${esc(g.p.title)}》</div></div>`).join("")+`</div></div>`;
+  }
+  const recent=data.pages.slice().sort((a,b)=>pageTime(b)-pageTime(a)).slice(0,6);
+  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent">`+
+    recent.map(p=>{ const m=moduleById(p.moduleId);
+      return `<div class="ri" onclick="openPage('${p.id}')"><span class="t">${esc(p.title)}</span><span class="c">${esc(m?m.name:"")}</span><span class="d">${fmtDate(p)}</span></div>`; }).join("")+`</div></div>`;
+  const mods=data.modules.map(m=>({m,ps:data.pages.filter(p=>p.moduleId===m.id).sort((a,b)=>pageTime(b)-pageTime(a))}))
+    .filter(x=>x.ps.length).sort((a,b)=>b.ps.length-a.ps.length);
+  h+=`<div class="block"><div class="sec-h"><h2>书目</h2><span class="rule"></span><span class="aside">${mods.length} 类 · ${data.pages.length} 本</span></div>
+    <div class="bookcase"><div class="spines">`+
+    mods.map(({m,ps},i)=>{ const c=(m.color||"#8A8378");
+      const w=46+Math.min(ps.length,12)*2, code=(m.name||"").charCodeAt(0)||0, hgt=176+((code+i*3)%5)*10;
+      const bg=`color-mix(in srgb, ${c} 36%, #ABA293)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
+      return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
+        <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
+    `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
+  h+=rh;
+  box.innerHTML=h;
+}
+function cardHTML(p){
+  const m=moduleById(p.moduleId)||{name:"未分类",color:"#8A8378"};
+  const tags=(p.tags||[]).slice(0,2).map(t=>`<span class="tg">${esc(t)}</span>`).join("");
+  const pct=Math.round(progOf(p)*100);
+  const bm=RB[relPath(p)]; const nbm=(bm&&bm.items)?bm.items.length:0;
+  const no=RN[relPath(p)]; const nnote=(no&&no.items)?no.items.length:0;
+  const d=fmtDate(p);
+  const meta=(d?`<span>${d}</span>`:"")+(pct>0?`<span>已读 ${pct}%</span>`:"")+(nbm?`<span>书签 ${nbm}</span>`:"")+(nnote?`<span>批注 ${nnote}</span>`:"")+`<span class="offtag">已离线</span>`;
+  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" onclick="openPage('${p.id}')">
+    <div class="cat"><i style="background:${tone(m)}"></i>${esc(m.name)}</div>
+    <button class="more" aria-label="更多操作" title="更新 / 离线 / 编辑" onclick="event.stopPropagation();toggleMenu('${p.id}',this)">⋯</button>
+    <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="color:var(--faint)">暂无简介</p>`}
+    <div class="meta">${tags}${meta}</div>
+    ${pct>0?`<div class="bar"><i style="width:${pct}%;background:${tone(m)}"></i></div>`:""}</div>`;
+}
+function toggleMenu(id,btn){
+  const was=openMenuId===id; closeMenus(); if(was) return;
+  openMenuId=id; const card=btn.closest(".card"); card.style.zIndex="30";
+  const mn=document.createElement("div"); mn.className="menu"; mn.onclick=e=>e.stopPropagation();
+  mn.innerHTML=`<button onclick="closeMenus();updateDoc('${id}')">更新正文…</button>
+    <button onclick="closeMenus();cacheOne('${id}')">${CACHED.has(id)?"重新存离线":"存为离线"}</button>
+    <div class="sep"></div><button onclick="closeMenus();openEdit('${id}')">编辑信息</button>`;
+  card.appendChild(mn);
+}
+function closeMenus(){ document.querySelectorAll(".menu").forEach(x=>{ const c=x.closest(".card"); if(c) c.style.zIndex=""; x.remove(); }); openMenuId=null; }
+document.addEventListener("click",()=>{ if(document.querySelector(".menu")) closeMenus(); });
+function setModule(id){ activeModule=id; render(); window.scrollTo(0,0); }
+async function cacheOne(id){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  if(!("caches" in window) || !location.protocol.startsWith("http")){ toast("请在网址版里使用离线缓存"); return; }
+  try{
+    toast("正在存离线：《"+p.title+"》…");
+    try{ const sc=await caches.open("library-shell-v1"); await sc.add("./reader.html"); }catch(e){}
+    const cache=await caches.open(DOC_CACHE);
+    const res=await ghRaw(relPath(p));
+    if(res.ok){ await cache.put(docKey(p), new Response(await res.text(),{headers:{"Content-Type":"text/html; charset=utf-8"}})); CACHED.add(p.id);
+      const c=document.querySelector('.card[data-id="'+p.id+'"]'); if(c) c.classList.add("cached");
+      toast("已存到本机，断网也能看"); }
+    else toast("缓存失败（文件可能不存在）");
+  }catch(e){ toast("缓存失败"); }
+}
+async function markCachedStates(){
+  if(!("caches" in window)) return;
+  let cache; try{ cache=await caches.open(DOC_CACHE); }catch(e){ return; }
+  for(const p of data.pages){
+    try{ const hit=await cache.match(docKey(p));
+      if(hit){ CACHED.add(p.id); const c=document.querySelector('.card[data-id="'+p.id+'"]'); if(c) c.classList.add("cached"); }
+    }catch(e){}
+  }
+}
+
+/* ---------- 安装到桌面 ---------- */
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredPrompt=e; updateInstallUI(); });
+window.addEventListener("appinstalled",()=>{ deferredPrompt=null; toast("已安装到桌面"); updateInstallUI(); });
+function isStandalone(){ return (window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true; }
+function installGuide(){ const ua=navigator.userAgent;
+  if(/iPhone|iPad/.test(ua)) return "iPhone/iPad：在 Safari 里点底部「分享」→「添加到主屏幕」。";
+  if(/Safari/.test(ua)&&!/Chrome|Chromium|Edg/.test(ua)) return "Mac Safari：菜单栏「文件」→「添加到程序坞」。";
+  return "Chrome：点地址栏右侧的「安装」小图标；或右上角 ⋮ →「投放、保存和共享」→「将页面安装为应用」。如果那里显示「打开」，说明已经装过了，去启动台找「图书馆」即可。"; }
+function updateInstallUI(){
+  const b=document.getElementById("installBtn"), h=document.getElementById("installHint"), how=document.getElementById("installHow");
+  const f=document.getElementById("footInstall"); if(f) f.style.display=(deferredPrompt&&!isStandalone())?"":"none";
+  if(!b) return;
+  if(isStandalone()){ b.style.display="none"; h.textContent="你现在就在已安装的 App 里，启动台和程序坞里都有图标。"; how.textContent=""; return; }
+  b.style.display=""; b.textContent=deferredPrompt?"安装到桌面":"查看安装方法";
+  h.textContent=deferredPrompt?"一键装成独立 App，图标出现在启动台和程序坞，也可以拖到桌面。":"装好后像独立 App 一样打开，图标出现在启动台和程序坞。";
+}
+async function installApp(){
+  if(deferredPrompt){ deferredPrompt.prompt(); try{ const r=await deferredPrompt.userChoice; if(r&&r.outcome==="accepted") toast("正在安装…"); }catch(e){} deferredPrompt=null; updateInstallUI(); }
+  else { const how=document.getElementById("installHow"); if(how) how.textContent=installGuide(); if(document.getElementById("view-settings").style.display==="none") goInstall(); }
+}
+function goInstall(){ switchTab("settings"); const s=document.getElementById("sec-install"); if(s){ s.open=true; setTimeout(()=>s.scrollIntoView({behavior:"smooth",block:"start"}),60); } }
+function docVer(p){ return p&&p.rev?("?v="+p.rev):""; }
+function pathFor(p){ const m=moduleById(p.moduleId); return "./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file)+docVer(p); }
+function relPath(p){ const m=moduleById(p.moduleId); return (m?m.folder:"")+"/"+p.file; }
+function readPos(){ try{ return JSON.parse(localStorage.getItem("wikiReadPos.v1")||"{}"); }catch(e){ return {}; } }
+function readBm(){ try{ return JSON.parse(localStorage.getItem("wikiBookmarks.v1")||"{}"); }catch(e){ return {}; } }
+function readNotes(){ try{ return JSON.parse(localStorage.getItem("wikiNotes.v1")||"{}"); }catch(e){ return {}; } }
+function rDeriveRepo(){ const c=ghCfg(); if(c.repo) return c.repo; const h=location.hostname, o=(h.indexOf(".github.io")>0)?h.split(".")[0]:""; const seg=location.pathname.split("/").filter(Boolean)[0]; return (o&&seg)?(o+"/"+seg):""; }
+function rMerge(a,b){ const out=Object.assign({},a||{}); const o=b||{}; for(const k in o){ if(!out[k]||((o[k].ts||0)>(out[k].ts||0))) out[k]=o[k]; } return out; }
+async function pullReading(){ if(!ghOn()) return;
+  try{ const d=JSON.parse(await ghText("reading.json"));
+    localStorage.setItem("wikiReadPos.v1", JSON.stringify(rMerge(readPos(), d.positions||{})));
+    localStorage.setItem("wikiBookmarks.v1", JSON.stringify(rMerge(readBm(), d.bookmarks||{})));
+    localStorage.setItem("wikiNotes.v1", JSON.stringify(rMerge(readNotes(), d.notes||{})));
+  }catch(e){} }
+function openPage(id, extra){ const p=data.pages.find(x=>x.id===id); if(!p) return;
+  window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title)+(extra||""),"_blank"); }
+async function updateDoc(id){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  if(!ghOn()){ toast("更新需要先连接 GitHub（设置里填一次令牌）"); switchTab('settings'); return; }
+  let inp=document.getElementById("quickUpd");
+  if(!inp){ inp=document.createElement("input"); inp.type="file"; inp.accept=".html,.htm"; inp.id="quickUpd"; inp.style.display="none"; document.body.appendChild(inp); }
+  inp.value="";
+  inp.onchange=async()=>{ const f=inp.files[0]; if(!f) return;
+    if(!/\.html?$/i.test(f.name)){ toast("请选择 HTML 文件"); return; }
+    const m=moduleById(p.moduleId); const path=(m?m.folder:"")+"/"+p.file;
+    if(!confirm("用新文件覆盖《"+p.title+"》？\n\n原文件 "+path+" 的内容会被替换（旧版可在 GitHub 历史找回）。\n链接、阅读进度、书签、批注都保留。")) return;
+    try{ toast("正在更新《"+p.title+"》…");
+      const text=await f.text();
+      const ex=await ghGet(path);
+      await ghPut(path, utf8b64(text), "更新正文："+p.title, ex&&ex.sha);
+      p.rev=Date.now(); p.date=new Date().toISOString().slice(0,10);
+      try{ if("caches" in window){ const c=await caches.open(DOC_CACHE); await c.delete(docKey(p)); CACHED.delete(p.id); } }catch(e){}
+      saveLocal(); await pushCatalog("更新正文："+p.title); render(); indexDoc(p.id, text);
+      toast("✅ 已更新《"+p.title+"》，点开即是新内容");
+    }catch(e){ toast("更新失败："+errMsg(e)); }
+  };
+  inp.click();
+}
+
+/* ---------- modal: upload + edit ---------- */
+function fillModuleSelect(sel){ sel.innerHTML=data.modules.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join(""); }
+function openUpload(){
+  modalMode="add";
+  document.getElementById("pmTitle").textContent="上传新书";
+  document.getElementById("pmSub").textContent= ghOn()? "选 HTML 文件 → 选分类 → 同步到线上和手机"
+                                                       : "选 HTML 文件 → 选分类（未连接 GitHub，仅暂存本地）";
+  document.getElementById("pm_filewrap").style.display="block";
+  document.getElementById("pm_filelabel").textContent="选择 HTML 文件";
+  document.getElementById("pm_save").textContent="上传并同步";
+  fillModuleSelect(document.getElementById("pm_module"));
+  ["pm_id","pm_title","pm_tags","pm_desc"].forEach(i=>document.getElementById(i).value="");
+  document.getElementById("pm_file").value="";
+  document.getElementById("pm_status").innerHTML="";
+  if(activeModule!=="all") document.getElementById("pm_module").value=activeModule;
+  pmResolved();
+  document.getElementById("pageModal").classList.add("show");
+}
+function openEdit(id){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  modalMode="edit";
+  document.getElementById("pmTitle").textContent="编辑 / 更新页面";
+  document.getElementById("pmSub").textContent="改标题/标签/分类；如需更新正文，可选一个新 HTML 覆盖原文（链接、阅读进度、书签、批注都保留）";
+  document.getElementById("pm_filewrap").style.display="block";
+  document.getElementById("pm_filelabel").textContent="（可选）更新正文：重新选 HTML 覆盖原文";
+  document.getElementById("pm_file").value="";
+  document.getElementById("pm_save").textContent= ghOn()? "保存并同步":"保存";
+  fillModuleSelect(document.getElementById("pm_module"));
+  document.getElementById("pm_id").value=p.id;
+  document.getElementById("pm_title").value=p.title;
+  document.getElementById("pm_module").value=p.moduleId;
+  document.getElementById("pm_tags").value=(p.tags||[]).join(", ");
+  document.getElementById("pm_desc").value=p.desc||"";
+  document.getElementById("pm_status").innerHTML="";
+  pmResolved();
+  document.getElementById("pageModal").classList.add("show");
+}
+function closeModal(){ document.getElementById("pageModal").classList.remove("show"); }
+function curFileName(){
+  if(modalMode==="edit"){ const p=data.pages.find(x=>x.id===document.getElementById("pm_id").value); return p?p.file:""; }
+  const f=document.getElementById("pm_file").files[0]; if(!f) return "";
+  let n=safeName(f.name); if(!/\.html?$/i.test(n)) n+=".html"; return n;
+}
+function pmPick(){
+  const f=document.getElementById("pm_file").files[0]; if(!f) return;
+  if(!document.getElementById("pm_title").value) document.getElementById("pm_title").value=f.name.replace(/\.html?$/i,"");
+  pmResolved();
+}
+function pmResolved(){
+  const m=moduleById(document.getElementById("pm_module").value);
+  const fn=curFileName(); const el=document.getElementById("pm_resolved");
+  if(!fn||!m){ el.innerHTML=""; return; }
+  const hasNew=document.getElementById("pm_file").files[0];
+  const verb = modalMode==="edit" ? (hasNew?"更新正文到":"当前文件") : "将放入";
+  el.innerHTML=`${verb}：<code>${esc(m.folder)}/${esc(fn)}</code>`;
+}
+async function savePage(){
+  const title=document.getElementById("pm_title").value.trim();
+  if(!title){ toast("请填写标题"); return; }
+  const moduleId=document.getElementById("pm_module").value;
+  const mod=moduleById(moduleId);
+  if(!mod){ toast("请选择模块"); return; }
+  const tags=document.getElementById("pm_tags").value.split(",").map(s=>s.trim()).filter(Boolean);
+  const desc=document.getElementById("pm_desc").value.trim();
+  const st=document.getElementById("pm_status");
+
+  if(modalMode==="edit"){
+    const p=data.pages.find(x=>x.id===document.getElementById("pm_id").value);
+    if(!p){ toast("找不到该页面"); return; }
+    const oldMod=moduleById(p.moduleId);
+    const newFile=document.getElementById("pm_file").files[0];
+    const oldPath=(oldMod?oldMod.folder:"")+"/"+p.file;
+    const targetPath=mod.folder+"/"+p.file;
+    if(newFile && !/\.html?$/i.test(newFile.name)){ toast("请选择 HTML 文件"); return; }
+    if(newFile && !ghOn()){ toast("更新正文需要先连接 GitHub"); return; }
+    try{
+      if(ghOn()){
+        if(newFile){
+          st.textContent="读取新文件…";
+          const text=await newFile.text();
+          const exists=await ghGet(targetPath);
+          st.innerHTML="更新正文 <b>"+esc(targetPath)+"</b> …";
+          await ghPut(targetPath, utf8b64(text), "更新正文："+title, exists&&exists.sha);
+          indexDoc(p.id, text);
+          if(oldPath!==targetPath){ const og=await ghGet(oldPath); if(og) await ghDelete(oldPath, og.sha, "移除旧位置："+p.file); }
+        } else if(oldMod && oldMod.folder!==mod.folder){
+          st.textContent="把文件搬到新分类…";
+          const got=await ghGet(oldPath);
+          if(got){ const exists=await ghGet(targetPath);
+            await ghPut(targetPath, (got.content||"").replace(/\s/g,""), "改分类搬移："+title, exists&&exists.sha);
+            await ghDelete(oldPath, got.sha, "移除旧位置："+p.file); }
+        }
+      }
+      Object.assign(p,{title,moduleId,tags,desc}); if(newFile){ p.date=new Date().toISOString().slice(0,10); p.rev=Date.now(); }
+      saveLocal(); render(); renderSettings();
+      if(ghOn()){ st.textContent="更新目录…"; await pushCatalog("编辑："+title); toast(newFile?"✅ 正文已更新并同步":"已保存并同步"); }
+      else toast("已保存（本地）");
+      closeModal();
+    }catch(e){ st.textContent="同步出错："+errMsg(e); }
+    return;
+  }
+
+  // add
+  const f=document.getElementById("pm_file").files[0];
+  if(!f){ toast("请选择一个 HTML 文件"); return; }
+  let fname=safeName(f.name); if(!/\.html?$/i.test(fname)) fname+=".html";
+  if(!fname || fname===".html"){ toast("文件名无效"); return; }
+  if(!confirm(`确认把《${title}》放入「${mod.name}」文件夹` + (ghOn()?"，并同步到线上和手机吗？":"吗？（当前未配置 GitHub，仅暂存本地）"))) return;
+
+  if(ghOn()){
+    try{
+      st.textContent="读取文件…";
+      const text=await f.text();
+      let path=mod.folder+"/"+fname;
+      st.textContent="检查重名…";
+      let ex=await ghGet(path); let overwrite=false;
+      if(ex){
+        const baseN=fname.replace(/\.html?$/i,"");
+        overwrite = confirm("「"+mod.folder+"/"+fname+"」已存在。\n\n确定 = 用新文件覆盖它（更新内容，推荐）\n取消 = 另存为副本（自动改名 "+baseN+"-2.html）");
+        if(!overwrite){ let i=2; while(ex){ fname=baseN+"-"+i+".html"; path=mod.folder+"/"+fname; ex=await ghGet(path); i++; if(i>50) break; } }
+      }
+      st.innerHTML=(overwrite?"覆盖 ":"上传 ")+"<b>"+esc(path)+"</b> …";
+      await ghPut(path, utf8b64(text), (overwrite?"覆盖更新：":"上传页面：")+title, (overwrite&&ex)?ex.sha:null);
+      const _exist = overwrite ? data.pages.find(pp=>{ const mm=moduleById(pp.moduleId); return mm && (mm.folder+"/"+pp.file)===path; }) : null;
+      if(_exist){ Object.assign(_exist,{title,moduleId,desc,tags,date:new Date().toISOString().slice(0,10),rev:Date.now()}); }
+      else { data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10), rev:Date.now()}); }
+      st.textContent="更新目录…";
+      await pushCatalog("上传页面："+title);
+      { const _pg=_exist||data.pages[data.pages.length-1]; if(_pg) indexDoc(_pg.id, text); }
+      saveLocal(); render(); renderSettings();
+      st.innerHTML="✅ 已发布！几十秒后线上/手机刷新可见。";
+      toast("上传并同步成功"); setTimeout(closeModal,900);
+    }catch(e){ st.textContent="出错："+errMsg(e); }
+  }else{
+    data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10)});
+    saveLocal(); render(); renderSettings();
+    toast("已暂存本地（配置 GitHub 后即可同步）"); closeModal();
+  }
+}
+
+/* ---------- settings ---------- */
+function renderSettings(){
+  ghLoadInputs(); fillIconSelect(); updateSync(); updateInstallUI();
+  const on=ghOn()&&ghState!=="bad", c=ghCfg();
+  const st=document.getElementById("syncState");
+  st.className="state "+(on?"on":"off");
+  st.textContent= ghState==="bad" ? "令牌已失效（过期或被撤销）：现在上传 / 更新 / 删除都会失败。去 GitHub 重新生成一个令牌，粘贴到下面并保存即可。"
+                : on ? "已连接 "+c.repo+"：上传、更新、删除会自动同步到线上和你的其他设备。"
+                     : "这个浏览器还没连接 GitHub：可以看书，但上传 / 更新 / 删除不会同步。填好下面的仓库和令牌即可。";
+  document.getElementById("syncSum").textContent= ghState==="bad" ? "令牌已失效 · 需要更新" : on ? "已连接 · "+c.repo : "未连接 · 点开填写令牌";
+  renderPageGroups();
+  const ml=document.getElementById("moduleList");
+  ml.innerHTML=data.modules.map(m=>{ const n=data.pages.filter(p=>p.moduleId===m.id).length;
+    return `<div class="listrow">${sealHTML(m,"pg-ic")}
+      <div class="info"><div class="name">${esc(m.name)}</div><small>${esc(m.folder)}/ · ${n?n+" 本":"空分类（首页不显示）"}</small></div>
+      <button class="btn ghost sm danger" onclick="delModule('${m.id}')">删除</button></div>`; }).join("");
+}
+function renderPageGroups(){
+  const box=document.getElementById("pageGroups"); if(!box) return;
+  const mods=data.modules.filter(m=>data.pages.some(p=>p.moduleId===m.id));
+  if(!data.pages.length){ box.innerHTML=`<p style="color:#9aa1ad;font-size:13px">还没有页面。</p>`; updateSelBar(); return; }
+  box.innerHTML=mods.map(m=>{
+    const ps=data.pages.filter(p=>p.moduleId===m.id);
+    const open=expandedMod.has(m.id);
+    const allSel=ps.every(p=>selPages.has(p.id));
+    const rows=open?ps.map(p=>`<div class="pg-row">
+        <input type="checkbox" ${selPages.has(p.id)?"checked":""} onchange="togglePageSel('${p.id}',this.checked)">
+        <div class="pg-t" onclick="openPage('${p.id}')">${esc(p.title)}</div>
+        <button class="btn ghost sm" onclick="openEdit('${p.id}')">编辑</button>
+        <button class="btn ghost sm danger" onclick="delPage('${p.id}')">删除</button></div>`).join(""):"";
+    return `<div class="pg-grp">
+      <div class="pg-head">
+        <input type="checkbox" ${allSel?"checked":""} onchange="toggleGroupSel('${m.id}',this.checked)">
+        <div class="pg-hi" onclick="toggleGroup('${m.id}')">${sealHTML(m,"pg-ic")}
+          <span class="pg-nm">${esc(m.name)}</span><span class="pg-cnt">${ps.length} 本</span></div>
+        <span class="pg-chev" onclick="toggleGroup('${m.id}')">${open?"▾":"▸"}</span>
+      </div>${open?`<div class="pg-body">${rows}</div>`:""}</div>`;
+  }).join("");
+  updateSelBar();
+}
+function updateSelBar(){ const n=selPages.size, total=data.pages.length;
+  const sc=document.getElementById("selCount"); if(sc) sc.textContent = n?("已选 "+n+" 篇"):"未选择";
+  const sa=document.getElementById("selAll"); if(sa) sa.checked = total>0 && n===total; }
+function toggleGroup(id){ if(expandedMod.has(id)) expandedMod.delete(id); else expandedMod.add(id); renderPageGroups(); }
+function togglePageSel(id,ch){ if(ch) selPages.add(id); else selPages.delete(id); renderPageGroups(); }
+function toggleGroupSel(mid,ch){ data.pages.filter(p=>p.moduleId===mid).forEach(p=>{ if(ch) selPages.add(p.id); else selPages.delete(p.id); }); renderPageGroups(); }
+function toggleSelectAll(ch){ selPages = new Set(ch?data.pages.map(p=>p.id):[]); renderPageGroups(); }
+async function downloadSelectedZip(){
+  const pages=data.pages.filter(p=>selPages.has(p.id));
+  const st=document.getElementById("dlStatus");
+  if(!pages.length){ toast("请先勾选要下载的文档"); return; }
+  if(!location.protocol.startsWith("http")){ alert("请在网址版下使用打包下载。"); return; }
+  const fname="我的图书馆_"+new Date().toISOString().slice(0,10)+".zip";
+  let handle=null;
+  if(window.showSaveFilePicker){ try{ handle=await window.showSaveFilePicker({suggestedName:fname, types:[{description:"ZIP 压缩包",accept:{"application/zip":[".zip"]}}]}); }
+    catch(e){ if(e&&e.name==="AbortError"){ toast("已取消"); return; } handle=null; } }
+  st.textContent="准备打包工具…";
+  try{ await ensureJSZip(); }catch(e){ st.textContent="加载打包工具失败，请检查网络后重试。"; return; }
+  const zip=new JSZip(); let ok=0, fail=0, failed=[];
+  for(let i=0;i<pages.length;i++){ const p=pages[i]; const m=moduleById(p.moduleId);
+    st.innerHTML="正在打包 <b>"+(i+1)+"/"+pages.length+"</b>："+esc(p.title);
+    try{ const r=await ghRaw(relPath(p)); if(r.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await r.blob()); ok++; } else { fail++; failed.push(p.title); } }
+    catch(e){ fail++; failed.push(p.title); } }
+  if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
+  st.textContent="生成压缩包…";
+  const blob=await zip.generateAsync({type:"blob"});
+  if(handle){ try{ const w=await handle.createWritable(); await w.write(blob); await w.close();
+    st.innerHTML="✅ 已保存 <b>"+ok+"</b> 篇到你选择的位置"+(fail?("，"+fail+" 篇失败"):"")+"。"; toast("已保存到所选位置"); return; }catch(e){} }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+  st.innerHTML="✅ 已打包 <b>"+ok+"</b> 篇"+(fail?("，"+fail+" 篇失败"):"")+"，已下载到默认下载文件夹。"; toast("打包完成，开始下载");
+}
+async function delPage(id){
+  const p=data.pages.find(x=>x.id===id); if(!p) return;
+  const m=moduleById(p.moduleId); const path=(m?m.folder:"")+"/"+p.file;
+  if(!ghOn()){
+    if(!confirm("从列表移除《"+p.title+"》？（未连接 GitHub，仅改本地登记）")) return;
+    data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings(); toast("已从列表移除"); return;
+  }
+  if(!confirm("删除《"+p.title+"》？\n\n将彻底删除原文件：\n"+path+"\n并从图书馆移除。\n\n（如有需要，仍可在 GitHub 提交历史中找回）")) return;
+  try{
+    toast("正在删除…");
+    let got=null; try{ got=await ghGet(path); }catch(e){}
+    if(got){ await ghDelete(path, got.sha, "删除文件："+p.file); }
+    data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings();
+    await pushCatalog("删除："+p.title); unindexDoc(p.id);
+    toast(got?"已删除文件并同步":"原文件不在，已移除登记");
+  }catch(e){ toast("删除出错："+errMsg(e)); }
+}
+const CATS=[
+  {icon:"📚",name:"综合通识",color:"#8A8378"},{icon:"🏛️",name:"历史",color:"#A07A55"},
+  {icon:"📖",name:"文学",color:"#A0625A"},{icon:"⚖️",name:"政治法律",color:"#6A7699"},
+  {icon:"📈",name:"经济金融",color:"#B08A57"},{icon:"💼",name:"商业管理",color:"#9C8A5E"},
+  {icon:"🧠",name:"哲学",color:"#7D6E96"},{icon:"📿",name:"宗教",color:"#8E7390"},
+  {icon:"🤖",name:"AI-技术",color:"#4F7F86"},{icon:"🔌",name:"AI-芯片硬件",color:"#5A7194"},{icon:"📊",name:"AI-商业趋势",color:"#A6835A"},
+  {icon:"➗",name:"数学",color:"#5E7390"},{icon:"🔬",name:"科学",color:"#58868C"},
+  {icon:"🌿",name:"中医医学",color:"#5E8B6F"},{icon:"📝",name:"工作总结",color:"#6E7B86"}
+];
+function fillIconSelect(){
+  const s=document.getElementById("m_icon"); if(!s||s.dataset.filled) return;
+  s.innerHTML=CATS.map(c=>`<option value="${c.icon}" data-name="${esc(c.name)}" data-color="${c.color}">${esc(c.name)}</option>`).join("");
+  s.dataset.filled="1";
+}
+function iconPicked(){
+  const s=document.getElementById("m_icon"); const o=s.options[s.selectedIndex]; if(!o) return;
+  const nameEl=document.getElementById("m_name");
+  if(nameEl && !nameEl.value.trim()) nameEl.value=o.getAttribute("data-name")||"";
+  const col=o.getAttribute("data-color"); if(col) document.getElementById("m_color").value=col;
+}
+function addModule(){
+  const name=document.getElementById("m_name").value.trim();
+  const folder=safeName(name);
+  const icon=document.getElementById("m_icon").value.trim()||"📁";
+  const color=document.getElementById("m_color").value;
+  if(!name){ toast("请填写模块名称"); return; }
+  if(!folder){ toast("名称含特殊字符，请换一个"); return; }
+  if(data.modules.some(m=>m.folder===folder)){ toast("已有同名分类"); return; }
+  data.modules.push({id:uid(), name, folder, icon, color}); saveLocal(); render(); renderSettings();
+  document.getElementById("m_name").value=""; document.getElementById("m_icon").selectedIndex=0;
+  if(ghOn()){ pushCatalog("新增模块："+name).then(()=>toast("已新建并同步")).catch(e=>toast("本地已建，同步失败")); }
+  else toast("已新建模块（本地）");
+}
+async function delModule(id){
+  const n=data.pages.filter(p=>p.moduleId===id).length;
+  if(n>0){ toast("该模块下还有 "+n+" 个页面，先移除它们"); return; }
+  if(!confirm("删除这个模块？")) return;
+  data.modules=data.modules.filter(m=>m.id!==id); saveLocal(); render(); renderSettings();
+  if(ghOn()){ try{ await pushCatalog("删除模块"); toast("已删除并同步"); }catch(e){ toast("本地已删"); } }
+  else toast("已删除模块");
+}
+
+/* ---------- GitHub ---------- */
+function ghHeaders(){ const c=ghCfg(); return {Authorization:"Bearer "+(c.token||""), Accept:"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"}; }
+function ghEncPath(p){ return p.split("/").map(encodeURIComponent).join("/"); }
+function utf8b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+function b64utf8(b){ return decodeURIComponent(escape(atob((b||"").replace(/\s/g,"")))); }
+function ghLoadInputs(){ const c=ghCfg(); const r=document.getElementById("gh_repo");
+  if(r){ r.value=c.repo||""; document.getElementById("gh_branch").value=c.branch||"main"; document.getElementById("gh_token").value=c.token||""; } }
+function ghStore(){ const cfg={repo:document.getElementById("gh_repo").value.trim(), branch:document.getElementById("gh_branch").value.trim()||"main", token:document.getElementById("gh_token").value.trim()};
+  localStorage.setItem(GH_KEY, JSON.stringify(cfg)); toast("已保存 GitHub 连接"); renderSettings(); ghTest(); checkToken(); }
+async function ghTest(){ const c=ghCfg(); const st=document.getElementById("gh_status");
+  if(!c.repo||!c.token){ st.textContent="请先填写仓库和令牌"; return; }
+  try{ const res=await fetch("https://api.github.com/repos/"+c.repo,{headers:ghHeaders()});
+    if(res.ok){ const j=await res.json(); st.innerHTML="✅ 连接成功："+esc(j.full_name)+(j.private?"（私有）":"（公开）"); }
+    else st.textContent= res.status===401 ? "令牌无效：多半是已过期或被撤销，请在 GitHub 重新生成一个再保存。" : "连接失败："+res.status+"（检查 用户名/仓库名 与令牌的 Contents 读写权限）";
+  }catch(e){ st.textContent="连接失败："+e.message; } }
+async function ghGet(path){ const c=ghCfg();
+  const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path)+"?ref="+encodeURIComponent(c.branch||"main");
+  return retry(async()=>{
+    const res=await fetch(url,{headers:ghHeaders(),cache:"no-store"});
+    if(res.status===404) return null;
+    if(!res.ok) throw new Error("读取 "+path+" 失败 "+res.status);
+    return await res.json();
+  });
+}
+async function ghPut(path, contentB64, message, sha){ const c=ghCfg();
+  const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path);
+  return retry(async()=>{
+    const body={message, content:contentB64, branch:c.branch||"main"}; if(sha) body.sha=sha;
+    const res=await fetch(url,{method:"PUT",headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:JSON.stringify(body)});
+    if(!res.ok){ let t=""; try{t=(await res.json()).message||"";}catch(e){} throw new Error("写入失败 "+res.status+" "+t); }
+    return await res.json();
+  });
+}
+async function ghDelete(path, sha, message){ const c=ghCfg();
+  const url="https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path);
+  return retry(async()=>{
+    const res=await fetch(url,{method:"DELETE",headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:JSON.stringify({message:message||"删除",sha,branch:c.branch||"main"})});
+    if(!res.ok) throw new Error("删除失败 "+res.status);
+    return await res.json();
+  });
+}
+async function pushCatalog(message){
+  if(!data||!Array.isArray(data.modules)||!Array.isArray(data.pages)) throw new Error("目录数据异常，已取消同步以防损坏");
+  const cat=await ghGet("catalog.json");
+  await ghPut("catalog.json", utf8b64(JSON.stringify(data,null,2)), message||"更新目录", cat&&cat.sha);
+}
+
+/* ---------- offline + backup ---------- */
+async function cacheAllOffline(){
+  if(!("caches" in window)){ alert("这个浏览器不支持离线缓存。"); return; }
+  const st=document.getElementById("offlineStatus"); let ok=0,fail=0;
+  try{ const sc=await caches.open("library-shell-v1"); for(const u of ["./","./index.html","./reader.html","./manifest.webmanifest"]){ try{ await sc.add(u); }catch(e){} } }catch(e){}
+  const dc=await caches.open(DOC_CACHE);
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; st.innerHTML=`正在缓存 <b>${i+1}/${data.pages.length}</b>：${esc(p.title)}`;
+    try{ const t=await ghText(relPath(p)); await dc.put(docKey(p), new Response(t,{headers:{"Content-Type":"text/html; charset=utf-8"}})); CACHED.add(p.id); ok++; }catch(e){ fail++; } }
+  try{ await loadIndex(true); }catch(e){}
+  saveLocal();
+  st.innerHTML=`✅ 已缓存 <b>${ok}</b> 本${fail?`，<b>${fail}</b> 本失败`:""}。断网也能看、也能搜。`; toast("离线缓存完成");
+}
+function exportData(){ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="catalog.json"; a.click(); toast("已导出备份"); }
+function importData(e){ const file=e.target.files[0]; if(!file) return; const r=new FileReader();
+  r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(!obj||!Array.isArray(obj.modules)||!Array.isArray(obj.pages)) throw 0;
+    if(!confirm("导入将覆盖当前目录，确定？")) return; data=obj; saveLocal(); render(); renderSettings(); switchTab("browse"); toast("已导入"); }
+    catch(err){ alert("文件格式不对，导入失败。"); } }; r.readAsText(file); e.target.value=""; }
+
+/* ---------- 批量下载 / 迁移 ---------- */
+function ensureJSZip(){ return new Promise((resolve,reject)=>{ if(window.JSZip) return resolve();
+  const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+  s.onload=()=>resolve(); s.onerror=()=>reject(new Error("load fail")); document.head.appendChild(s); }); }
+async function downloadAllZip(){
+  const st=document.getElementById("dlStatus");
+  if(!data.pages.length){ toast("还没有页面可下载"); return; }
+  if(!location.protocol.startsWith("http")){ alert("请在网址版下使用打包下载。"); return; }
+  st.textContent="准备打包工具…";
+  try{ await ensureJSZip(); }catch(e){ st.textContent="加载打包工具失败，请检查网络后重试。"; return; }
+  const zip=new JSZip(); let ok=0, fail=0, failed=[];
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; const m=moduleById(p.moduleId);
+    st.innerHTML="正在打包 <b>"+(i+1)+"/"+data.pages.length+"</b>："+esc(p.title);
+    try{ const res=await ghRaw(relPath(p));
+      if(res.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await res.blob()); ok++; } else { fail++; failed.push(p.title); } }
+    catch(e){ fail++; failed.push(p.title); } }
+  if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
+  st.textContent="生成压缩包…";
+  const blob=await zip.generateAsync({type:"blob"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="我的图书馆_"+new Date().toISOString().slice(0,10)+".zip"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),8000);
+  st.innerHTML="✅ 已打包 <b>"+ok+"</b> 篇"+(fail?("，"+fail+" 篇失败："+esc(failed.join("、"))):"")+"，已开始下载。";
+  toast("打包完成，开始下载");
+}
+function downloadRepoZip(){ const repo=rDeriveRepo(); if(!repo){ toast("无法确定仓库"); return; }
+  const br=(ghCfg().branch||"main");
+  window.open("https://github.com/"+repo+"/archive/refs/heads/"+encodeURIComponent(br)+".zip","_blank");
+  const st=document.getElementById("dlStatus"); if(st) st.textContent="已请求整库压缩包下载（含全部文件与框架）。"; }
+
+/* ---------- 私有内容读取（带令牌） ---------- */
+const DOC_CACHE="library-docs-v1";
+function repoURL(path){ const c=ghCfg(); return "https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path)+"?ref="+encodeURIComponent(c.branch||"main"); }
+async function ghRaw(path){
+  const r=await fetch(repoURL(path)+"&t="+Date.now(),{headers:Object.assign({},ghHeaders(),{Accept:"application/vnd.github.raw"}),cache:"no-store"});
+  if(r.status===401){ ghState="bad"; updateSync(); }
+  if(!r.ok) throw new Error("读取 "+path+" 失败 "+r.status);
+  return r;
+}
+async function ghText(path){ return await (await ghRaw(path)).text(); }
+async function ghSha(path){
+  const r=await fetch(repoURL(path)+"&t="+Date.now(),{headers:Object.assign({},ghHeaders(),{Accept:"application/vnd.github.object"}),cache:"no-store"});
+  if(r.status===404) return null; if(!r.ok) throw new Error("读取 "+path+" 失败 "+r.status);
+  return (await r.json()).sha;
+}
+function docKey(p){ return "./__doc/"+encodeURI(relPath(p)); }
+
+/* ---------- 全文索引 ---------- */
+const IDX_PATH="search-index.json"; let SIDX=null, SIDX_loading=null;
+function htmlToText(html){ try{ const d=new DOMParser().parseFromString(html,"text/html");
+  d.querySelectorAll("script,style,noscript,svg,template").forEach(x=>x.remove());
+  return ((d.body&&d.body.textContent)||"").replace(/\s+/g," ").trim().slice(0,40000); }catch(e){ return ""; } }
+async function loadIndex(force){
+  if(SIDX&&!force) return SIDX;
+  if(SIDX_loading&&!force) return SIDX_loading;
+  SIDX_loading=(async()=>{
+    try{ const t=await ghText(IDX_PATH); SIDX=JSON.parse(t);
+      try{ const c=await caches.open(DOC_CACHE); await c.put("./__index", new Response(t,{headers:{"Content-Type":"application/json"}})); }catch(e){} }
+    catch(e){ try{ const c=await caches.open(DOC_CACHE); const r=await c.match("./__index"); SIDX=r?await r.json():{v:1,docs:{}}; }catch(e2){ SIDX={v:1,docs:{}}; } }
+    if(!SIDX||!SIDX.docs) SIDX={v:1,docs:{}};
+    return SIDX; })();
+  return SIDX_loading;
+}
+async function saveIndex(msg){ const sha=await ghSha(IDX_PATH); await ghPut(IDX_PATH, utf8b64(JSON.stringify(SIDX)), msg||"更新全文索引", sha); }
+async function indexDoc(id, html){ try{ await loadIndex(true); SIDX.docs[id]={t:htmlToText(html), at:Date.now()}; await saveIndex("全文索引：更新 "+id); }catch(e){ console.warn("索引更新失败",e); } }
+async function unindexDoc(id){ try{ await loadIndex(true); if(SIDX.docs[id]){ delete SIDX.docs[id]; await saveIndex("全文索引：移除 "+id); } }catch(e){} }
+async function rebuildSearchIndex(){
+  const st=document.getElementById("idxStatus"); if(!ghOn()){ toast("需要先连接 GitHub"); return; }
+  const docs={}; let ok=0, fail=0;
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; st.textContent="正在建立索引 "+(i+1)+"/"+data.pages.length+"：《"+p.title+"》";
+    try{ docs[p.id]={t:htmlToText(await ghText(relPath(p))), at:Date.now()}; ok++; }catch(e){ fail++; } }
+  SIDX={v:1,docs}; SIDX_loading=null; st.textContent="正在保存索引…";
+  try{ await saveIndex("重建全文索引（"+ok+" 本）"); st.textContent="✅ 已为 "+ok+" 本书建立全文索引"+(fail?("，"+fail+" 本失败"):"")+"。"; toast("全文索引已更新"); }
+  catch(e){ st.textContent="保存失败："+errMsg(e); }
+}
+
+/* ---------- 搜索结果 ---------- */
+function curQuery(){ const s=document.getElementById("searchBox"); return (s&&s.dataset.typed)?(s.value||"").toLowerCase().trim():""; }
+function reEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+function markHTML(text,q){ const parts=text.split(new RegExp("("+reEsc(q)+")","ig")); return parts.map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join(""); }
+function makeSnip(t,i,ql,q){ const a=Math.max(0,i-38), b=Math.min(t.length,i+ql+70); return (a>0?"…":"")+markHTML(t.slice(a,b),q)+(b<t.length?"…":""); }
+function renderSearch(box,q){
+  const res=[];
+  data.pages.forEach(p=>{ const m=moduleById(p.moduleId);
+    const meta=(p.title+" "+(p.desc||"")+" "+(p.tags||[]).join(" ")+" "+(m?m.name:"")).toLowerCase().includes(q);
+    let n=0, snip=""; const e=SIDX&&SIDX.docs[p.id];
+    if(e&&e.t){ const low=e.t.toLowerCase(); let i=low.indexOf(q); if(i>=0){ snip=makeSnip(e.t,i,q.length,q); let j=i; while(j>=0&&n<99){ n++; j=low.indexOf(q,j+q.length); } } }
+    if(meta||n) res.push({p,m,meta,n,snip}); });
+  res.sort((a,b)=>(b.meta-a.meta)||(b.n-a.n)||(pageTime(b.p)-pageTime(a.p)));
+  const loading=!SIDX;
+  box.innerHTML=`<div class="crumb"><a onclick="clearSearch()">‹ 返回书架</a><span class="here">搜索</span><span class="n">“${esc(q)}” · ${res.length} 本${loading?" · 正在加载正文索引…":""}</span></div>`+
+    (res.length?`<div class="results">`+res.map(r=>`<div class="sr" onclick="openPage('${r.p.id}','&q=${encodeURIComponent(q).replace(/'/g,"%27")}')">
+      <div class="sr-t">${markHTML(r.p.title,q)}<span class="c">${esc(r.m?r.m.name:"")}</span></div>
+      ${r.snip?`<div class="sr-s">${r.snip}</div>`:(r.p.desc?`<div class="sr-s">${markHTML(r.p.desc,q)}</div>`:"")}
+      <div class="sr-m">${r.n?`正文 ${r.n>=99?"99+":r.n} 处`:""}${r.n&&r.meta?" · ":""}${r.meta?"书名 / 标签 / 简介匹配":""}</div></div>`).join("")+`</div>`
+      : (loading?"":emptyHTML("没有找到","正文里也没有这个词，换个说法试试。",true)));
+  if(loading) loadIndex().then(()=>{ if(curQuery()===q) render(); });
+}
+
+/* ---------- 批注总览 ---------- */
+const NCOL={ y:"#E3C15A", g:"#7FB98F", b:"#86A9D9", p:"#DE97B4", o:"#E0A869" };
+function fmtTs(ts){ if(!ts) return ""; const d=new Date(ts); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function clip(s,n){ s=(s||"").replace(/\s+/g," "); return s.length>n?s.slice(0,n)+"…":s; }
+function allAnnotations(){
+  const N=readNotes(), B=readBm(); const byPath={}; data.pages.forEach(p=>byPath[relPath(p)]=p);
+  const groups=[]; new Set([...Object.keys(N),...Object.keys(B)]).forEach(path=>{
+    const notes=((N[path]||{}).items)||[], bms=((B[path]||{}).items)||[]; if(!notes.length&&!bms.length) return;
+    const p=byPath[path];
+    groups.push({path,p,title:p?p.title:path.split("/").pop().replace(/\.html?$/i,""),notes,bms,
+      last:Math.max(0,...notes.map(x=>x.ts||0),...bms.map(x=>x.ts||0))}); });
+  return groups.sort((a,b)=>b.last-a.last);
+}
+function openNote(pid,kind,val){ if(!pid){ toast("这本书已不在书架上"); return; } openPage(pid,"&"+kind+"="+encodeURIComponent(val)); }
+function renderNotes(){
+  const qv=(document.getElementById("notesQ").value||"").toLowerCase().trim();
+  const gs=allAnnotations(); let nN=0,nB=0; gs.forEach(g=>{ nN+=g.notes.length; nB+=g.bms.length; });
+  document.getElementById("notesSum").textContent=`共 ${nN} 条批注、${nB} 个书签，来自 ${gs.length} 本书。点任意一条回到原文。`;
+  const box=document.getElementById("notesBox");
+  if(!gs.length){ box.innerHTML=emptyHTML("还没有批注","在阅读器里选中一段文字，点「高亮 · 批注」，它就会出现在这里。",true); return; }
+  let h="";
+  gs.forEach(g=>{ const m=g.p?moduleById(g.p.moduleId):null; const pid=g.p?g.p.id:"";
+    const ns=g.notes.filter(x=>!qv||((x.exact||"")+" "+(x.note||"")+" "+g.title).toLowerCase().includes(qv)).sort((a,b)=>(a.pct||0)-(b.pct||0));
+    const bs=g.bms.filter(x=>!qv||((x.label||"")+" "+g.title).toLowerCase().includes(qv)).sort((a,b)=>(a.pct||0)-(b.pct||0));
+    if(!ns.length&&!bs.length) return;
+    h+=`<div class="ng"><div class="ng-h"><span class="ng-t">${esc(g.title)}</span><span class="ng-c">${esc(m?m.name:(g.p?"":"已不在书架"))}</span></div>`+
+      ns.map(x=>`<div class="nt" onclick="openNote('${pid}','note','${x.id}')"><div class="nt-q" style="border-color:${NCOL[x.color]||NCOL.y}">${esc(x.exact||"")}</div>${x.note?`<div class="nt-n">${esc(x.note)}</div>`:""}<div class="nt-d">${fmtTs(x.ts)}</div></div>`).join("")+
+      bs.map(x=>`<div class="nt bm" onclick="openNote('${pid}','pct','${x.pct}')"><div class="nt-n">书签 · ${esc(x.label||"位置")}</div><div class="nt-d">读到 ${Math.round((x.pct||0)*100)}% · ${fmtTs(x.ts)}</div></div>`).join("")+`</div>`; });
+  box.innerHTML=h||emptyHTML("没有匹配的批注","换个关键词试试。",true);
+}
+function notesMarkdown(){
+  let md="# 我的批注\n\n*导出于 "+fmtTs(Date.now())+"*\n\n";
+  allAnnotations().forEach(g=>{ const m=g.p?moduleById(g.p.moduleId):null;
+    md+="## 《"+g.title+"》"+(m?"（"+m.name+"）":"")+"\n\n";
+    g.notes.slice().sort((a,b)=>(a.pct||0)-(b.pct||0)).forEach(x=>{ md+="> "+(x.exact||"").replace(/\s+/g," ")+"\n\n"; if(x.note) md+=x.note+"\n\n"; md+="*— "+fmtTs(x.ts)+"*\n\n"; });
+    if(g.bms.length){ md+="**书签**\n\n"; g.bms.forEach(x=>{ md+="- "+(x.label||"位置")+"（"+Math.round((x.pct||0)*100)+"%）\n"; }); md+="\n"; } });
+  return md;
+}
+function exportNotes(){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([notesMarkdown()],{type:"text/markdown;charset=utf-8"}));
+  a.download="我的批注_"+fmtTs(Date.now())+".md"; document.body.appendChild(a); a.click(); a.remove(); toast("已导出 Markdown"); }
+async function copyNotes(){ try{ await navigator.clipboard.writeText(notesMarkdown()); toast("已复制全部批注"); }catch(e){ toast("复制失败，请用「导出 Markdown」"); } }
+
+/* ---------- 今日回顾 ---------- */
+let reviewShift=0;
+function reviewPicks(){
+  const pool=[]; allAnnotations().forEach(g=>{ if(!g.p) return; g.notes.forEach(x=>{ if(x.exact) pool.push({x,g}); }); });
+  if(!pool.length) return [];
+  let s=Math.floor(Date.now()/86400000)+reviewShift*7919; const rnd=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+  const arr=pool.slice(); for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr.slice(0,3);
+}
+
+window.addEventListener("storage", e=>{ if(e.key==="wikiReadPos.v1" && document.getElementById("view-browse").style.display!=="none") render(); });
+window.addEventListener("focus", ()=>{ if(document.getElementById("view-browse").style.display!=="none") render(); });
+boot();
+</script>
+</body>
+</html>
