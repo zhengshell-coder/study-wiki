@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>我的图书馆</title>
-<meta name="theme-color" content="#F6F2EA">
+<meta name="theme-color" content="#EFE7D8">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -228,6 +228,99 @@
   .lock p{font-size:13.5px;color:var(--ink-2);margin:0 0 18px}
   .lock .btn.primary{width:100%;justify-content:center}
 
+
+  /* ================= 图书馆氛围 ================= */
+  :root{--wood:#5C4130;--wood-d:#3E2B1F;--gilt:#C9A96A;--gilt-d:#9C7B45;--seal:#8E3B2E;--bg:#EFE7D8}
+  body{background:
+    radial-gradient(ellipse 120% 60% at 50% -10%, rgba(255,252,242,.75), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(110,80,40,.022) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(110,80,40,.016) 0 1px, transparent 1px 6px),
+    var(--bg);background-attachment:fixed}
+  body::before{content:"";position:fixed;top:0;left:0;right:0;height:7px;z-index:40;
+    background:linear-gradient(180deg,#6B4C36,var(--wood-d));box-shadow:0 2px 6px rgba(40,25,10,.35)}
+  /* 匾额式页头 */
+  .topbar{flex-direction:column;align-items:center;text-align:center;gap:12px;border-bottom:0;padding-bottom:0;margin-bottom:30px}
+  .topbar .spacer{display:none}
+  .brand{display:flex;flex-direction:column;align-items:center}
+  .brand h1{font-size:30px;letter-spacing:10px;padding:12px 30px 12px 40px;color:#2E2217;background:#F8F1E2;
+    border:1px solid var(--gilt-d);box-shadow:inset 0 0 0 4px #F8F1E2, inset 0 0 0 5px var(--gilt), 0 3px 10px rgba(80,55,25,.12)}
+  .brand p{justify-content:center;margin-top:10px}
+  .nav{position:relative;padding:8px 40px 0;gap:34px}
+  .nav::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;border-top:1px solid var(--gilt-d);border-bottom:1px solid var(--gilt-d);opacity:.55}
+  .nav button{font-size:15.5px;letter-spacing:4px}
+  .nav button.active{border-bottom-color:var(--seal);color:#2E2217}
+  /* 分区标题：金色菱纹 */
+  .sec-h{align-items:center}
+  .sec-h h2{display:flex;align-items:center;gap:10px;color:#2E2217}
+  .sec-h h2::before,.sec-h h2::after{content:"";width:6px;height:6px;background:var(--gilt);transform:rotate(45deg);display:inline-block}
+  .sec-h .rule{height:3px;background:none;border-top:1px solid rgba(156,123,69,.45);border-bottom:1px solid rgba(156,123,69,.25)}
+  /* 搜索框：黄铜边 */
+  .search{background:#FBF6EA;border-color:#CDBB98}
+  /* 继续阅读：索书卡 */
+  .ci{background:#FBF6EA repeating-linear-gradient(180deg, transparent 0 25px, rgba(120,150,170,.13) 25px 26px);
+    border:1px solid #D9CBAE;border-top:3px solid var(--seal);border-radius:3px;padding-top:12px;box-shadow:0 2px 6px rgba(80,55,25,.08)}
+  .ci .t{color:#2E2217}
+  /* 今日回顾：摘录笺 */
+  .rv{background:#FBF6EA;border:1px solid #D9CBAE;border-radius:3px;position:relative;padding-top:22px}
+  .rv::before{content:"“";position:absolute;top:-4px;left:12px;font-family:var(--serif);font-size:40px;color:var(--gilt);line-height:1}
+  .rv-q{border-left:0;padding-left:0}
+  /* 最近更新：借阅登记簿 */
+  .recent{background:#FBF6EA;border:1px solid #D9CBAE;border-radius:3px;padding:0 18px 0 30px;position:relative;box-shadow:0 2px 6px rgba(80,55,25,.07)}
+  .recent::before{content:"";position:absolute;left:20px;top:0;bottom:0;border-left:1px solid rgba(142,59,46,.45)}
+  .lg-h{display:flex;gap:14px;padding:10px 0 8px;border-bottom:3px double rgba(156,123,69,.55);font-family:var(--serif);font-size:12.5px;letter-spacing:3px;color:var(--muted)}
+  .lg-h span:first-child{flex:1}
+  .lg-h .lc{width:90px;text-align:right}
+  .lg-h .ld{width:78px;text-align:right}
+  .recent .ri{border-top:1px solid rgba(120,150,170,.22)}
+  .recent .lg-h+.ri{border-top:0}
+  .ri .c{width:90px;text-align:right}
+  .ri .d{font-family:var(--serif)}
+  /* 书卡：书口色条 */
+  .card{background:#FBF6EA;border-color:#D9CBAE;border-radius:4px}
+  .card::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;background:var(--edge,#8A8378);border-radius:0}
+  /* 书柜 */
+  .bookcase{background:none;border:0;padding:0;border-radius:0}
+  .case{padding:14px 14px 0;border-radius:6px;background:linear-gradient(180deg,#6E4F38,#5A3F2D 40%,#4E3626);
+    box-shadow:0 12px 28px rgba(60,38,18,.28), inset 0 1px 0 rgba(255,255,255,.12)}
+  .case-in{position:relative;padding:22px 18px 0;border-radius:2px;
+    background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.12) 35%, rgba(0,0,0,.30)),
+      repeating-linear-gradient(90deg,#3B2A1E 0 2px,#422F21 2px 6px,#39281C 6px 9px,#3F2C20 9px 13px);
+    box-shadow:inset 0 10px 22px rgba(0,0,0,.55), inset 0 -2px 6px rgba(0,0,0,.4)}
+  .spines{display:flex;align-items:flex-end;justify-content:space-evenly;gap:6px;overflow-x:auto;padding:10px 0 0;scrollbar-width:none}
+  .spines::-webkit-scrollbar{display:none}
+  .spine{flex:0 1 auto;min-width:34px;border-radius:4px 4px 1px 1px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;
+    padding:10px 0 8px;transition:transform .25s ease, filter .25s ease;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.34) 0%, rgba(255,255,255,.13) 16%, rgba(255,255,255,.05) 42%, rgba(0,0,0,.08) 72%, rgba(0,0,0,.38) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+      var(--cloth);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.25), 3px 0 4px rgba(0,0,0,.35), -1px 0 0 rgba(255,255,255,.04)}
+  .spine:hover{transform:translateY(-12px);filter:brightness(1.08)}
+  .spine .rib{display:block;width:100%;height:7px;margin:4px 0;
+    background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(255,255,255,.18) 45%, rgba(0,0,0,.45))}
+  .spine .gilt{display:block;width:76%;height:4px;margin:3px 0;border-top:1px solid var(--gilt);border-bottom:1px solid var(--gilt);opacity:.85}
+  .spine .label{flex:1;display:flex;align-items:center;justify-content:center;margin:8px 0;padding:10px 3px;max-height:128px;width:68%;min-width:22px;
+    background:linear-gradient(180deg,#EFE4C9,#E4D6B4);border:1px solid rgba(60,40,20,.45);box-shadow:inset 0 0 0 2px rgba(239,228,201,.9), inset 0 0 0 3px rgba(90,60,30,.35)}
+  .spine .nm{writing-mode:vertical-rl;font-family:var(--serif);font-size:13.5px;font-weight:600;letter-spacing:3px;color:#3A2A1C;
+    max-height:108px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
+  .spine .ct{font-family:var(--serif);font-size:11px;color:var(--gilt);letter-spacing:1px;margin-top:2px}
+  .plank{height:18px;margin:0 -18px;border-radius:0 0 2px 2px;
+    background:linear-gradient(180deg,#9A7050 0%,#80593D 35%,#6A4A33 70%,#553A28 100%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 3px, transparent 3px 11px);
+    background-blend-mode:multiply;box-shadow:0 5px 8px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,235,200,.35)}
+  .case-foot{height:12px}
+  .shelf-cap{font-family:var(--serif);letter-spacing:3px;padding:12px 0 0}
+  /* 页脚：藏书印 */
+  .footer{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .footer::before{content:"藏書";writing-mode:vertical-rl;font-family:var(--serif);font-size:13px;font-weight:600;letter-spacing:2px;
+    color:var(--seal);border:1.5px solid var(--seal);border-radius:3px;padding:6px 3px;opacity:.75}
+  @media (max-width:620px){
+    .brand h1{font-size:23px;letter-spacing:6px;padding:10px 18px 10px 24px}
+    .nav{padding:8px 14px 0;gap:26px}
+    .spines{justify-content:flex-start}
+    .lg-h .lc,.ri .c{width:auto}
+  }
   @media (max-width:620px){
     .wrap{padding-left:16px;padding-right:16px}
     .brand h1{font-size:25px}
@@ -575,19 +668,19 @@ function renderHome(box){
       rv.map(({x,g})=>`<div class="rv" onclick="openNote('${g.p.id}','note','${x.id}')"><div class="rv-q">${esc(clip(x.exact,110))}</div>${x.note?`<div class="rv-n">${esc(clip(x.note,90))}</div>`:""}<div class="rv-b">——《${esc(g.p.title)}》</div></div>`).join("")+`</div></div>`;
   }
   const recent=data.pages.slice().sort((a,b)=>pageTime(b)-pageTime(a)).slice(0,6);
-  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent">`+
+  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent"><div class="lg-h"><span>书　名</span><span class="lc">分　类</span><span class="ld">登　记</span></div>`+
     recent.map(p=>{ const m=moduleById(p.moduleId);
       return `<div class="ri" onclick="openPage('${p.id}')"><span class="t">${esc(p.title)}</span><span class="c">${esc(m?m.name:"")}</span><span class="d">${fmtDate(p)}</span></div>`; }).join("")+`</div></div>`;
   const mods=data.modules.map(m=>({m,ps:data.pages.filter(p=>p.moduleId===m.id).sort((a,b)=>pageTime(b)-pageTime(a))}))
     .filter(x=>x.ps.length).sort((a,b)=>b.ps.length-a.ps.length);
   h+=`<div class="block"><div class="sec-h"><h2>书目</h2><span class="rule"></span><span class="aside">${mods.length} 类 · ${data.pages.length} 本</span></div>
-    <div class="bookcase"><div class="spines">`+
+    <div class="bookcase"><div class="case"><div class="case-in"><div class="spines">`+
     mods.map(({m,ps},i)=>{ const c=(m.color||"#8A8378");
-      const w=46+Math.min(ps.length,12)*2, code=(m.name||"").charCodeAt(0)||0, hgt=176+((code+i*3)%5)*10;
-      const bg=`color-mix(in srgb, ${c} 36%, #ABA293)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
-      return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
-        <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
-    `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
+      const w=Math.min(72, 46+Math.min(ps.length,13)*2), code=(m.name||"").charCodeAt(0)||0, hgt=196+((code+i*5)%4)*12;
+      const cloth=`color-mix(in srgb, ${c} 42%, #3A2A20)`;
+      return `<div class="spine" style="flex-basis:${w}px;width:${w}px;height:${hgt}px;--cloth:${cloth}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
+        <i class="rib"></i><i class="gilt"></i><span class="label"><span class="nm">${esc(m.name)}</span></span><i class="gilt"></i><i class="rib"></i><span class="ct">${ps.length} 册</span></div>`; }).join("")+
+    `</div><div class="plank"></div></div><div class="case-foot"></div></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
   h+=rh;
   box.innerHTML=h;
 }
@@ -599,7 +692,7 @@ function cardHTML(p){
   const no=RN[relPath(p)]; const nnote=(no&&no.items)?no.items.length:0;
   const d=fmtDate(p);
   const meta=(d?`<span>${d}</span>`:"")+(pct>0?`<span>已读 ${pct}%</span>`:"")+(nbm?`<span>书签 ${nbm}</span>`:"")+(nnote?`<span>批注 ${nnote}</span>`:"")+`<span class="offtag">已离线</span>`;
-  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" onclick="openPage('${p.id}')">
+  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" style="--edge:color-mix(in srgb, ${m.color||"#8A8378"} 45%, #3A2A20)" onclick="openPage('${p.id}')">
     <div class="cat"><i style="background:${tone(m)}"></i>${esc(m.name)}</div>
     <button class="more" aria-label="更多操作" title="更新 / 离线 / 编辑" onclick="event.stopPropagation();toggleMenu('${p.id}',this)">⋯</button>
     <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="color:var(--faint)">暂无简介</p>`}
