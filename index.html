@@ -487,7 +487,7 @@ function renderHome(box){
     <div class="bookcase"><div class="spines">`+
     mods.map(({m,ps},i)=>{ const c=(m.color||"#8A8378");
       const w=46+Math.min(ps.length,12)*2, code=(m.name||"").charCodeAt(0)||0, hgt=176+((code+i*3)%5)*10;
-      const bg=`color-mix(in srgb, ${c} 48%, #A89F8F)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
+      const bg=`color-mix(in srgb, ${c} 36%, #ABA293)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
       return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
         <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
     `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
