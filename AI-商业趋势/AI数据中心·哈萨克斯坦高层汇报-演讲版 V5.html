@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哈萨克斯坦 AI 数据中心洞察 · V5</title>
+<!--
+  编辑部风格 · 墨蓝 · V5（总章 → 子章节 · 主体内容全量版）
+  两级结构：总章（页签 00-10 一行）→ 子章节（胶囊 X.Y）；子章节 = 一堂完整长页 PPT
+  每堂 PPT 固定五段：① spine 判断句 → ② hero 主视觉（表/图/框图/stats 只选一种）→ ③ 论点卡 grid → ④ hlight 收束金句（恰好 1 处）→ ⑤ src 来源/口径
+  主体内容不丢失：原稿全部数据/案例/论证/口径按子章节归位；密集对比用表格，趋势用图框
+  交互：点击页签/胶囊直达；←/→ 翻章；URL #chXy 直达任意子章节；对外模式隐藏第 10 章；打印展开全部
+  V5 修复：ch2 起 DOM 嵌套错位（导致 2.2 为空、3-9 章满宽）；页脚归位；2.1/7.1 内容错贴；00 编号统一；.sub 类名冲突
+-->
+<style>
+  :root {
+    --ink: #1a1c22;
+    --muted: #62656e;
+    --faint: #9a9ca3;
+    --accent: #2e4a7d;
+    --green: #2f7d6b;
+    --blue: #3b5b9e;
+    --amber: #a9741f;
+    --bg: #f2f3f6;
+    --line: rgba(26,28,34,0.12);
+    --serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+    --sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --display: "Archivo", "Helvetica Neue", "PingFang SC", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: var(--sans); color: var(--ink); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 52px 36px 88px; }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; pointer-events: none; }
+  .progress i { display: block; height: 100%; width: 20%; background: var(--accent); transition: width .4s ease; }
+
+  .modebar { position: fixed; top: 12px; right: 16px; z-index: 70; display: flex; gap: 3px; background: rgba(255,255,255,0.94); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 11px; padding: 4px; box-shadow: 0 4px 16px rgba(26,28,34,0.10); }
+  .modebar button { border: none; background: transparent; font-family: inherit; font-size: 12px; font-weight: 700; color: var(--muted); padding: 5px 13px; border-radius: 8px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .modebar button.on { background: var(--accent); color: #fff; }
+  .modebar button[data-mode="int"].on { background: var(--amber); color: #fff; }
+  body[data-mode="ext"] .tabs button.internal-only { display: none; }
+  body[data-mode="ext"] .panel.internal-only { display: none !important; }
+  body[data-mode="ext"] .internal-only { display: none; }
+
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 26px; padding-right: 200px; }
+  .head .kicker { font-family: var(--display); font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .head h1 { margin: 12px 0 8px; font-family: var(--serif); font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: 0.01em; line-height: 1.3; }
+  .head .tagline { font-size: 15px; color: var(--muted); }
+  .head .meta { text-align: right; font-size: 11.5px; color: #8a8d95; line-height: 1.7; font-family: var(--display); white-space: nowrap; }
+
+  /* 顶部导航：一行不折行 */
+  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; margin-top: 28px; border-bottom: 1px solid var(--line); }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button {
+    display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+    padding: 9px 11px; flex-shrink: 0; white-space: nowrap; border: none; cursor: pointer; font-family: inherit;
+    border-radius: 9px 9px 0 0; margin-bottom: -1px;
+    border-bottom: 2px solid transparent; background: transparent; color: var(--muted);
+    transition: color .15s, background .15s, border-color .15s;
+  }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button .t-en { font-family: var(--display); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .tabs button .t-zh { font-family: var(--serif); font-size: 14px; font-weight: 600; }
+  .tabs button .t-zh .num { font-family: var(--display); font-size: 11px; color: var(--accent); margin-right: 5px; font-weight: 700; }
+  .tabs button.active { border-bottom-color: var(--accent); background: #fff; color: var(--ink); }
+  .tabs button.active .t-en { color: var(--accent); }
+
+  /* 子章节导航 */
+  .subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 20px; }
+  .subtabs button { padding: 7px 16px; border-radius: 20px; border: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 12.5px; font-family: inherit; cursor: pointer; transition: all .15s; }
+  .subtabs button:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .subtabs button.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, #fff); color: var(--accent); font-weight: 600; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .subpanel { display: none; }
+  .subpanel.active { display: block; min-height: calc(100vh - 380px); }
+  .subpanel.active > * { animation: fadeUp .4s cubic-bezier(.25,.6,.3,1) backwards; }
+  .subpanel.active > *:nth-child(2) { animation-delay: .05s; }
+  .subpanel.active > *:nth-child(3) { animation-delay: .1s; }
+  .subpanel.active > *:nth-child(n+4) { animation-delay: .15s; }
+
+  .spine { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 20px; }
+  .spine .k { font-family: var(--display); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+  .spine .q { font-family: var(--serif); font-size: 17.5px; font-weight: 600; color: var(--ink); }
+  .sect-label { font-family: var(--display); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin: 30px 0 6px; padding-top: 10px; border-top: 1px dashed var(--line); }
+
+  /* 统一框格体系 */
+  .slide-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 4px 0 14px; }
+  .slide-grid.cols3 { grid-template-columns: repeat(3, 1fr); }
+  .slide-grid > .slide.span2 { grid-column: 1 / -1; }
+  .s-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .slide { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; box-shadow: 0 2px 10px rgba(26,28,34,0.05); min-height: 150px; display: flex; flex-direction: column; transition: box-shadow .18s ease; }
+  .slide:hover { box-shadow: 0 6px 18px rgba(26,28,34,0.08); }
+  .slide.hl { border: 1.5px solid var(--accent); }
+  .s-head { display: flex; gap: 10px; align-items: baseline; margin-bottom: 12px; }
+  .s-num { font-family: var(--display); font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; white-space: nowrap; }
+  .s-title { font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--ink); }
+  .s-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .sub { border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); background: color-mix(in srgb, var(--ink) 3%, #fff); border-radius: 10px; padding: 9px 12px; }
+  .sub .sub-t { font-size: 12.5px; font-weight: 700; color: var(--ink); line-height: 1.55; }
+  .sub .sub-d { font-size: 11.5px; color: var(--muted); line-height: 1.68; margin-top: 2px; }
+  .sub .sub-d b { color: var(--ink); }
+  .sub.t-accent { border-color: color-mix(in srgb, var(--accent) 26%, transparent); background: color-mix(in srgb, var(--accent) 5%, #fff); }
+  .sub.t-accent .sub-t { color: var(--accent); }
+  .sub.t-blue { border-color: color-mix(in srgb, var(--blue) 26%, transparent); background: color-mix(in srgb, var(--blue) 5%, #fff); }
+  .sub.t-blue .sub-t { color: var(--blue); }
+  .sub.t-green { border-color: color-mix(in srgb, var(--green) 26%, transparent); background: color-mix(in srgb, var(--green) 5%, #fff); }
+  .sub.t-green .sub-t { color: var(--green); }
+  .sub.t-amber { border-color: color-mix(in srgb, var(--amber) 26%, transparent); background: color-mix(in srgb, var(--amber) 5%, #fff); }
+  .sub.t-amber .sub-t { color: var(--amber); }
+  .sub.t-ghost { background: transparent; border: 1.5px dashed color-mix(in srgb, var(--ink) 22%, transparent); }
+  .sub.t-ghost .sub-t { color: var(--muted); }
+
+  .fig { margin-top: auto; padding-top: 10px; }
+  .fig svg { width: 100%; height: auto; display: block; }
+  .fig .fig-cap { font-family: var(--display); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-top: 6px; text-align: center; }
+
+  /* 条形图 */
+  .bchart { margin-top: 8px; }
+  .bchart .ct { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .brow { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .brow .bl { width: 150px; flex-shrink: 0; font-size: 11px; color: var(--muted); text-align: right; line-height: 1.35; }
+  .brow .btrack { flex: 1; background: rgba(26,28,34,0.06); border-radius: 6px; height: 18px; }
+  .brow .bfill { height: 100%; border-radius: 6px; background: var(--accent); min-width: 4px; }
+  .brow .bfill.dim { background: rgba(26,28,34,0.30); }
+  .brow .bv { font-size: 11px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .bnote { font-size: 11px; color: var(--accent); font-weight: 700; margin-top: 6px; line-height: 1.65; }
+  .bnote b { color: var(--ink); }
+
+  /* 分层框架图 */
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 4px 0 8px; }
+  .frame-title { font-family: var(--display); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); text-align: center; margin-bottom: 12px; }
+  .fcol { display: flex; flex-direction: column; gap: 6px; }
+  .fbox { border-radius: 10px; padding: 9px 14px; border: 1px solid; }
+  .fbox .fb-h { font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+  .fbox .fb-h .pct { font-family: var(--display); margin-left: 8px; color: var(--accent); }
+  .fbox .fb-d { font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 2px; }
+  .fb-l1 { background: color-mix(in srgb, var(--accent) 16%, #fff); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .fb-l2 { background: color-mix(in srgb, var(--accent) 13%, #fff); border-color: color-mix(in srgb, var(--accent) 36%, transparent); }
+  .fb-l3 { background: color-mix(in srgb, var(--accent) 10%, #fff); border-color: color-mix(in srgb, var(--accent) 32%, transparent); }
+  .fb-l4 { background: color-mix(in srgb, var(--accent) 7%, #fff); border-color: color-mix(in srgb, var(--accent) 28%, transparent); }
+  .fb-l5 { background: color-mix(in srgb, var(--accent) 4%, #fff); border-color: color-mix(in srgb, var(--accent) 24%, transparent); }
+  .farr-v { text-align: center; color: var(--faint); font-size: 12px; line-height: 1.1; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 2px; }
+  .flow .step { background: color-mix(in srgb, var(--accent) 6%, #fff); border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); color: var(--accent); padding: 4px 11px; border-radius: 16px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .flow .arr { color: var(--faint); font-size: 12px; }
+
+  .hlight { background: color-mix(in srgb, var(--accent) 4%, #fff); border-left: 2.5px solid var(--accent); padding: 15px 20px; border-radius: 0 10px 10px 0; font-family: var(--serif); font-size: 14px; color: #44474f; margin: 10px 0 16px; line-height: 1.9; }
+  .hlight b { color: var(--ink); }
+
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px 26px; box-shadow: 0 2px 10px rgba(26,28,34,0.05); margin-bottom: 16px; }
+  .card .frame-title { margin-bottom: 12px; }
+
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 110px; border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); background: color-mix(in srgb, var(--accent) 4%, #fff); border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .stat .v { font-family: var(--display); font-size: 19px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .cols3 .stats { flex-wrap: nowrap; gap: 6px; }
+  .cols3 .stat { min-width: 0; padding: 8px 6px; }
+  .cols3 .stat .v { font-size: 15px; white-space: nowrap; }
+  .cols3 .stat .l { font-size: 10px; }
+
+  /* 数据表格（承载原稿密集对比数据） */
+  .table-wrap { overflow-x: auto; margin: 10px 0 16px; border: 1px solid var(--line); border-radius: 12px; }
+  .table { width: 100%; border-collapse: collapse; }
+  .table th { background: var(--accent); color: #fff; text-align: left; font-size: 11.5px; padding: 8px 12px; font-weight: 600; white-space: nowrap; }
+  .table td { background: #fff; border-top: 1px solid var(--line); padding: 9px 12px; font-size: 12px; color: #3a3d46; vertical-align: top; line-height: 1.7; }
+  .table td b { color: var(--ink); }
+  .table td .dim { color: var(--faint); font-size: 10.5px; }
+  .table tr.hl-row td { background: color-mix(in srgb, var(--green) 5%, #fff); }
+  .table tr.total td { background: color-mix(in srgb, var(--accent) 8%, #fff); color: var(--accent); font-weight: 700; }
+
+  /* 堆叠占比条 */
+  .stackbar { display: flex; height: 46px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+  .stackbar > div { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; line-height: 1.25; padding: 2px; }
+  .stackbar .sb1 { background: var(--accent); flex: 0 0 65%; }
+  .stackbar .sb2 { background: color-mix(in srgb, var(--accent) 62%, #fff); flex: 0 0 25%; }
+  .stackbar .sb3 { background: color-mix(in srgb, var(--accent) 34%, #fff); flex: 0 0 10%; }
+  .stackbar .sb2, .stackbar .sb3 { color: var(--ink); }
+  .stackbar .pct { font-family: var(--display); font-size: 14px; font-weight: 700; }
+  .stackbar .nm { font-size: 9.5px; }
+
+  .src { font-size: 10px; color: var(--faint); margin: 16px 0 0; line-height: 1.6; }
+  .int-banner { background: color-mix(in srgb, var(--amber) 8%, #fff); border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); border-left: 3px solid var(--amber); border-radius: 0 10px 10px 0; padding: 10px 15px; font-size: 12px; color: #6b5320; margin-bottom: 16px; line-height: 1.6; }
+  .int-banner b { color: #4a3a12; }
+  .foot { margin-top: 44px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 11px; color: #6b6e76; line-height: 1.7; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 820px) {
+    .wrap { padding: 30px 18px 60px; }
+    .head { flex-direction: column; align-items: flex-start; padding-right: 0; }
+    .modebar { position: static; margin-bottom: 14px; justify-content: flex-start; }
+    .slide-grid, .slide-grid.cols3, .s-cols { grid-template-columns: 1fr; }
+    .spine .q { font-size: 16px; }
+    .brow .bl { width: 100px; font-size: 10px; }
+  }
+  @media print {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .progress, .tabs, .modebar, .subtabs { display: none !important; }
+    .panel, .subpanel { display: block !important; }
+    .panel.internal-only, .tabs button.internal-only { display: none !important; }
+    .subpanel + .subpanel { margin-top: 26px; }
+    body { background: #fff; }
+    .wrap { max-width: none; padding: 0; }
+    .slide, .card { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body data-mode="ext">
+
+<div class="modebar" id="modebar">
+  <button data-mode="ext" class="on">对外</button>
+  <button data-mode="int">对内</button>
+</div>
+
+<div class="progress"><i id="bar"></i></div>
+
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <div class="kicker">Kazakhstan AI Data Center · Executive Briefing · V5</div>
+      <h1>哈萨克斯坦 AI 数据中心洞察</h1>
+      <div class="tagline">通向未来国家核心竞争力的关键抓手</div>
+    </div>
+    <div class="meta">高层汇报 · V5<br>2026 · 单位经济学为量级示意</div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button data-ch="ch0" class="active"><span class="t-en">Course Map</span><span class="t-zh"><span class="num">00</span>框架总览</span></button>
+    <button data-ch="ch1"><span class="t-en">Inflection</span><span class="t-zh"><span class="num">01</span>时代拐点</span></button>
+    <button data-ch="ch2"><span class="t-en">The Race</span><span class="t-zh"><span class="num">02</span>中美竞速</span></button>
+    <button data-ch="ch3"><span class="t-en">The Window</span><span class="t-zh"><span class="num">03</span>战略窗口</span></button>
+    <button data-ch="ch4"><span class="t-en">The Gap</span><span class="t-zh"><span class="num">04</span>市场现状</span></button>
+    <button data-ch="ch5"><span class="t-en">Cost</span><span class="t-zh"><span class="num">05</span>投资结构</span></button>
+    <button data-ch="ch6"><span class="t-en">Value</span><span class="t-zh"><span class="num">06</span>投资价值</span></button>
+    <button data-ch="ch7"><span class="t-en">The Build</span><span class="t-zh"><span class="num">07</span>建设方案</span></button>
+    <button data-ch="ch8"><span class="t-en">Why Huawei</span><span class="t-zh"><span class="num">08</span>为何华为</span></button>
+    <button data-ch="ch9"><span class="t-en">Roadmap</span><span class="t-zh"><span class="num">09</span>合作蓝图</span></button>
+    <button data-ch="ch10" class="internal-only"><span class="t-en">Internal</span><span class="t-zh"><span class="num">10</span>市场洞察</span></button>
+  </div>
+
+  <!-- CH0 -->
+  <div class="panel active" data-panel="ch0">
+    <div class="subtabs"><button data-sub="ch0a" class="active">00 框架总览</button></div>
+    <div class="subpanel active" data-subpanel="ch0a">
+      <div class="spine"><span class="k">00 · 框架总览</span><span class="q">这份材料回答四个问题；四问的答案连起来，就是贯穿全篇的一条主线。</span></div>
+      <div class="card">
+        <div class="frame-title">Course Map · 四问 → 十章 · 一条主线</div>
+        <svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+          <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="rgba(26,28,34,0.4)"/></marker></defs>
+          <!-- Part 1 -->
+          <rect x="16" y="20" width="212" height="194" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="122" y="40" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 1 · WHY NOW</text>
+          <text x="122" y="58" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">世界为什么变了</text>
+          <rect x="26" y="70" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="36" y="93" font-size="12"><tspan fill="#2e4a7d" font-weight="700">01</tspan><tspan dx="8" fill="#1a1c22">时代拐点</tspan></text>
+          <rect x="26" y="118" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="36" y="141" font-size="12"><tspan fill="#2e4a7d" font-weight="700">02</tspan><tspan dx="8" fill="#1a1c22">中美竞速</tspan></text>
+          <text x="122" y="190" text-anchor="middle" fill="#62656e" font-size="10.5">AI 成为通用目的技术，全球重建两套基建</text>
+          <!-- Part 2 -->
+          <rect x="262" y="20" width="212" height="194" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="368" y="40" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 2 · WHERE</text>
+          <text x="368" y="58" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">哈萨克斯坦凭什么</text>
+          <rect x="272" y="70" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="282" y="93" font-size="12"><tspan fill="#2e4a7d" font-weight="700">03</tspan><tspan dx="8" fill="#1a1c22">战略窗口</tspan></text>
+          <rect x="272" y="118" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="282" y="141" font-size="12"><tspan fill="#2e4a7d" font-weight="700">04</tspan><tspan dx="8" fill="#1a1c22">市场现状</tspan></text>
+          <text x="368" y="190" text-anchor="middle" fill="#62656e" font-size="10.5">最高层已定调，产业算力仍近乎空白</text>
+          <!-- Part 3 -->
+          <rect x="508" y="20" width="212" height="194" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="614" y="40" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 3 · HOW MUCH</text>
+          <text x="614" y="58" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">要花多少 · 值多少</text>
+          <rect x="518" y="70" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="528" y="93" font-size="12"><tspan fill="#2e4a7d" font-weight="700">05</tspan><tspan dx="8" fill="#1a1c22">投资结构</tspan></text>
+          <rect x="518" y="118" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="528" y="141" font-size="12"><tspan fill="#2e4a7d" font-weight="700">06</tspan><tspan dx="8" fill="#1a1c22">投资价值</tspan></text>
+          <text x="614" y="190" text-anchor="middle" fill="#62656e" font-size="10.5">$30-45M/MW · 85% 可采购 · 电价锁定七年</text>
+          <!-- Part 4 -->
+          <rect x="754" y="20" width="212" height="194" rx="12" fill="none" stroke="rgba(26,28,34,0.18)" stroke-dasharray="5 4"/>
+          <text x="860" y="40" text-anchor="middle" fill="#9a9ca3" font-size="9.5" letter-spacing="1.5">PART 4 · WHAT TO DO</text>
+          <text x="860" y="58" text-anchor="middle" fill="#1a1c22" font-size="13" font-weight="700">现在该做什么</text>
+          <rect x="764" y="70" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="774" y="93" font-size="12"><tspan fill="#2e4a7d" font-weight="700">07</tspan><tspan dx="8" fill="#1a1c22">建设方案</tspan></text>
+          <rect x="764" y="118" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="774" y="141" font-size="12"><tspan fill="#2e4a7d" font-weight="700">08</tspan><tspan dx="8" fill="#1a1c22">为何华为</tspan></text>
+          <rect x="764" y="166" width="192" height="38" rx="7" fill="rgba(46,74,125,0.06)" stroke="rgba(46,74,125,0.3)"/>
+          <text x="774" y="189" font-size="12"><tspan fill="#2e4a7d" font-weight="700">09</tspan><tspan dx="8" fill="#1a1c22">合作蓝图</tspan></text>
+          <g class="internal-only">
+            <rect x="764" y="222" width="192" height="34" rx="7" fill="rgba(169,116,31,0.06)" stroke="rgba(169,116,31,0.35)" stroke-dasharray="4 3"/>
+            <text x="774" y="244" font-size="12"><tspan fill="#a9741f" font-weight="700">10</tspan><tspan dx="8" fill="#1a1c22">市场洞察（内部）</tspan></text>
+          </g>
+          <!-- arrows -->
+          <line x1="232" y1="114" x2="256" y2="114" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="244" y="104" text-anchor="middle" fill="#62656e" font-size="10.5">凭什么</text>
+          <line x1="478" y1="114" x2="502" y2="114" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="490" y="104" text-anchor="middle" fill="#62656e" font-size="10.5">值不值</text>
+          <line x1="724" y1="114" x2="748" y2="114" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah)"/>
+          <text x="736" y="104" text-anchor="middle" fill="#62656e" font-size="10.5">怎么做</text>
+          <!-- mainline -->
+          <rect x="16" y="272" width="972" height="46" rx="10" fill="rgba(26,28,34,0.04)" stroke="rgba(46,74,125,0.22)"/>
+          <text x="502" y="300" text-anchor="middle" font-size="13"><tspan fill="#2e4a7d" font-weight="700">主线</tspan><tspan fill="#1a1c22" dx="10">算力是国家基础设施 → 哈国握有电价 × 气候 → 全球产业算力短缺 → 电力转算力 → 90 天内启动</tspan></text>
+        </svg>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Why now · 01-02</span><h3 class="s-title">世界为什么变了？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">AI 已成通用目的技术</div><div class="sub-d">全球正在为它<b>重建能源与算力两套国家级基础设施</b>；发明到兑现的时滞每代减半，这是扩散最快的一次技术革命。</div></div>
+            <div class="sub"><div class="sub-t">中美用同一把尺子竞速</div><div class="sub-d">五层结构逐层看：能源美国缺、中国余；芯片两条供应链分岔；基建都在找电价洼地。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Where · 03-04</span><h3 class="s-title">哈萨克斯坦凭什么？</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">国家最高层已把数字化定为生存命题</div><div class="sub-d">2026 年 = 数字化与 AI 之年；电价、区位、冷源三项禀赋全部可独立验证。</div></div>
+            <div class="sub"><div class="sub-t">而产业算力供给仍近乎空白</div><div class="sub-d">科研算力起步、产业级接近零；一期已报需求就是全国商用存量的 2 倍。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">How much · 05-06</span><h3 class="s-title">要花多少？值多少？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">端到端 $30-45M / MW，约 85% 是可采购设备</div><div class="sub-d">三层造价拆分、四档规模、标杆案例，全在第 5 章。</div></div>
+            <div class="sub"><div class="sub-t">电价锁定七年（2.1¢，至 2032）</div><div class="sub-d">十年电费优势超过一期全部基建投资；最优 PUE 把并网配额多换出 20% 可售算力。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">What to do · 07-09</span><h3 class="s-title">现在该做什么？</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">按实际需求匹配建设场景</div><div class="sub-d">三类刚需 × 三种形态；推荐钢结构快建起步，向上兼容 GW 级、向下复制多州布点。</div></div>
+            <div class="sub t-accent"><div class="sub-t">最快形态可在 90 天内启动首个模块</div><div class="sub-d">对齐国家时钟：DCV 2027.06 首个 50 MW 投运，倒推 90 天内必须启动。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">一条主线贯穿全篇：<b>算力是国家基础设施 → 哈萨克斯坦具备两大核心要素（客户资源、廉价电力 + 优质自然气候）→ 全球产业算力供应短缺 → 依托气候与电力优势完成"电力转算力"，拿下未来算力行业的入场券。</b>任何一章迷路，回这条线定位。</div>
+      <div class="src">阅读方式：顶部页签切换总章，胶囊切换子章节；←/→ 方向键翻章；对外 / 对内模式切换于右上角；打印时自动展开全部章节。</div>
+    </div>
+  </div>
+
+  <!-- CH1 -->
+  <div class="panel" data-panel="ch1">
+    <div class="subtabs">
+      <button data-sub="ch1b" class="active">1.1 产业演进四阶段</button>
+      <button data-sub="ch1c">1.2 全球资本浪：四个维度</button>
+      <button data-sub="ch1d">1.3 第四次通用目的技术</button>
+      <button data-sub="ch1e">1.4 先行者打法与哈国路线</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1b">
+      <div class="spine"><span class="k">1.1 · 核心观点</span><span class="q">决定投资节奏的不是技术突破，而是商业化成熟度——谁在买单、买什么、买多久。四个阶段的分界线，是每一次买单主体的更替。</span></div>
+      <div class="card">
+        <div class="frame-title">AI Industry Maturity Path · 商业化成熟度横轴（买单主体四次更替）</div>
+        <svg viewBox="0 0 1000 236" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+          <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="rgba(26,28,34,0.45)"/></marker></defs>
+          <line x1="36" y1="118" x2="964" y2="118" stroke="rgba(26,28,34,0.4)" stroke-width="1.5" marker-end="url(#ah2)"/>
+          <line x1="740" y1="36" x2="740" y2="196" stroke="#2e4a7d" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.55"/>
+          <text x="740" y="26" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2e4a7d">关键转折：买单方从企业 IT 预算 → 国家与主权资本</text>
+          <circle cx="140" cy="118" r="7" fill="#fff" stroke="rgba(26,28,34,0.45)" stroke-width="2"/>
+          <text x="140" y="66" text-anchor="middle" font-size="12.5" font-weight="700" fill="#62656e" font-family="ui-monospace, monospace">2018 — 2022</text>
+          <text x="140" y="90" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1c22">技术验证</text>
+          <text x="140" y="146" text-anchor="middle" font-size="11.5" fill="#3a3d46">买单方：科研机构</text>
+          <text x="140" y="166" text-anchor="middle" font-size="10.5" fill="#9a9ca3">无规模化收入 · 科研超算</text>
+          <circle cx="380" cy="118" r="7" fill="#fff" stroke="rgba(26,28,34,0.45)" stroke-width="2"/>
+          <text x="380" y="66" text-anchor="middle" font-size="12.5" font-weight="700" fill="#62656e" font-family="ui-monospace, monospace">2022 — 2024</text>
+          <text x="380" y="90" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1c22">消费级爆发</text>
+          <text x="380" y="146" text-anchor="middle" font-size="11.5" fill="#3a3d46">买单方：个人与开发者</text>
+          <text x="380" y="166" text-anchor="middle" font-size="10.5" fill="#9a9ca3">订阅制成立 · 云端集中训练</text>
+          <circle cx="620" cy="118" r="7" fill="#fff" stroke="rgba(26,28,34,0.45)" stroke-width="2"/>
+          <text x="620" y="66" text-anchor="middle" font-size="12.5" font-weight="700" fill="#62656e" font-family="ui-monospace, monospace">2025 — 2026</text>
+          <text x="620" y="90" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1c22">企业级落地</text>
+          <text x="620" y="146" text-anchor="middle" font-size="11.5" fill="#3a3d46">买单方：企业 IT 预算</text>
+          <text x="620" y="166" text-anchor="middle" font-size="10.5" fill="#9a9ca3">按用量计费 · 推理为主</text>
+          <circle cx="880" cy="118" r="8" fill="#2e4a7d" stroke="#2e4a7d" stroke-width="2"/>
+          <text x="880" y="66" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2e4a7d" font-family="ui-monospace, monospace">2026 —</text>
+          <text x="880" y="90" text-anchor="middle" font-size="15" font-weight="700" fill="#2e4a7d">产业级基建</text>
+          <text x="880" y="146" text-anchor="middle" font-size="11.5" font-weight="700" fill="#2e4a7d">买单方：国家与主权资本</text>
+          <text x="880" y="166" text-anchor="middle" font-size="10.5" fill="#9a9ca3">算力＝生产要素 · 属地化 AI 工厂</text>
+          <text x="500" y="216" text-anchor="middle" font-size="10.5" fill="#9a9ca3" letter-spacing="1">算力从「费用」变成「国家资产」——资产属性的变化，发生在第三与第四阶段之间</text>
+        </svg>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">分界线</span><h3 class="s-title">每一次阶段更替，都是买单主体的更替</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">科研机构</span><span class="arr">›</span>
+              <span class="step">个人与开发者</span><span class="arr">›</span>
+              <span class="step">企业 IT 预算</span><span class="arr">›</span>
+              <span class="step">国家与主权资本</span>
+            </div>
+            <div class="sub"><div class="sub-t">算力形态随之更替</div><div class="sub-d">科研超算 → 云端集中训练 → 推理为主、需求持续化 → <b>属地化 AI 工厂</b>。决定投资节奏的不是技术突破，而是"谁在买单、买什么、买多久"。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">转折</span><h3 class="s-title">第三到第四阶段：算力从"费用"变成"国家资产"</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">买单方：企业 IT 预算 → 国家与主权资本</div><div class="sub-d">这不是采购规模的变化，是<b>资产属性的变化</b>——算力嵌入千行百业，成为生产要素。</div></div>
+            <div class="sub"><div class="sub-t">对本材料的含义</div><div class="sub-d">2026 年起的增量需求，主体是国家级、产业级基建——正是哈萨克斯坦可以承接、且必须现在决策的那一段。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">看清阶段，才知道该在什么时候进场：<b>产业级基建阶段刚刚开始，买单方已经换成了国家。</b></div>
+      <div class="src">来源：麦肯锡《State of AI》；德勤全球 AI 报告；各阶段划分为本材料基于公开商业化进程的归纳。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1c">
+      <div class="spine"><span class="k">1.2 · 核心观点</span><span class="q">这一轮投资的规模，已经不能只用"买芯片"来理解——四个维度同时扩张，瓶颈已从芯片转向后三者。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">01</span><h3 class="s-title">芯片与算力设备 <span style="font-family:var(--display);color:var(--accent)">$660-690B</span></h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">五大云与 AI 厂商 2026 年资本开支指引合计</div><div class="sub-d">IEA 指出：<b>仅这五家的支出，已超过全球石油与天然气生产投资总额。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">02</span><h3 class="s-title">电力与发电 <span style="font-family:var(--display);color:var(--accent)">415→945 TWh</span></h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">全球数据中心用电到 2030 年翻倍以上（IEA，2024 基准 415 TWh）</div><div class="sub-d">加速服务器（AI 算力载体）用电<b>年均增长约 30%</b>，贡献近一半新增；高盛预测同期电力需求增速最高 <b>165%</b>。</div></div>
+            <div class="fig">
+              <div class="bchart">
+                <div class="brow"><div class="bl">2024 年（基准）</div><div class="btrack"><div class="bfill dim" style="width:44%;"></div></div><div class="bv">415 TWh</div></div>
+                <div class="brow"><div class="bl">2030 年（预测）</div><div class="btrack"><div class="bfill" style="width:100%;"></div></div><div class="bv">945 TWh</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">03</span><h3 class="s-title">机房基建与电网 <span style="font-family:var(--display);color:var(--accent)">$6.7T + $1.4T</span></h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">麦肯锡：2030 年前全球数据中心资本开支达 6.7 万亿美元</div><div class="sub-d">美国电网与发电配套投资同步上调至 <b>1.4 万亿美元</b>，为过去十年两倍。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">04</span><h3 class="s-title">网络与配套：<b style="color:var(--accent)">瓶颈所在</b></h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">IEA：近期真正约束不是芯片，而是电力设备交期与并网排队</div><div class="sub-d">美国并网积压约 <b>2,600 GW</b>，中位等待 5 年。<b>在成熟市场，拿到并网批文比拿到芯片更难。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">四个维度同时扩张，瓶颈已从芯片转向后三者——<b>电力、机房、并网，恰恰是哈萨克斯坦有牌的地方。</b></div>
+      <div class="src">来源：IEA《Energy and AI》（2025-2026）；麦肯锡（经 AIFC 2026 论坛引述）；高盛研究（2026）；PowerLines 51 家公用事业调研（2026.04）；各公司 2026 财年资本开支指引。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1d">
+      <div class="spine"><span class="k">1.3 · 核心观点</span><span class="q">蒸汽机、电力、计算机之后，AI 是第四项通用目的技术——历史规律：从技术出现到生产率兑现的时滞，每一次都在缩短。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证 一</span><h3 class="s-title">从技术出现到生产率兑现的时滞（年）</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="brow"><div class="bl">蒸汽机 · 1769</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">~60</div></div>
+                <div class="brow"><div class="bl">电力 · 1890s</div><div class="btrack"><div class="bfill dim" style="width:50%;"></div></div><div class="bv">~30</div></div>
+                <div class="brow"><div class="bl">计算机 · 1981</div><div class="btrack"><div class="bfill dim" style="width:25%;"></div></div><div class="bv">~15</div></div>
+                <div class="brow"><div class="bl">生成式 AI · 2022</div><div class="btrack"><div class="bfill" style="width:12.5%;"></div></div><div class="bv">~7.5</div></div>
+                <div class="bnote">每一代缩短一半。按此规律，AI 的生产率兑现窗口落在 <b>2030 年前后</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证 二</span><h3 class="s-title">推理占 AI 总算力的比重（德勤）</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="brow"><div class="bl">2023 年</div><div class="btrack"><div class="bfill dim" style="width:50%;"></div></div><div class="bv">~1/3</div></div>
+                <div class="brow"><div class="bl">2026 年</div><div class="btrack"><div class="bfill" style="width:100%;"></div></div><div class="bv">~2/3</div></div>
+                <div class="bnote">算力需求的主体已从训练转向推理——<b>而推理必须贴近用户</b>，算力要建在离负载最近的地方</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide span2">
+          <div class="s-head"><span class="s-num">教训</span><h3 class="s-title">拉开国家差距的，是基建——同一规律，三次重演</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">英国：煤与铁路</span><span class="arr">›</span>
+              <span class="step">美国：电网与公路</span><span class="arr">›</span>
+              <span class="step">这一次：算力网络</span>
+            </div>
+            <div class="s-cols">
+              <div class="sub"><div class="sub-t">蒸汽与电力的历史给出过同一个教训</div><div class="sub-d"><b>真正拉开国家差距的，不是谁发明了技术，而是谁先把它变成了全国性的基础设施。</b></div></div>
+              <div class="sub t-accent"><div class="sub-t">对中美之外的国家，机会不在"造模型"</div><div class="sub-d">那需要千亿资本与十年积累；<b>机会在于成为算力的落地点</b>——承接必须贴近用户的推理负载（见图证二）。</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight"><b>核心结论：一个国家或区域在 AI 算力基建上的投资力度与时机，将直接决定其未来数十年的经济发展脉络、产业话语权与综合竞争力。</b>这不是技术选择，是国运选择。</div>
+      <div class="src">来源：通用目的技术扩散速度比较研究（Gen Re，2025.12）；麦肯锡《State of AI》；PwC；德勤全球 AI 报告。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch1e">
+      <div class="spine"><span class="k">1.4 · 核心观点</span><span class="q">过去两年，五个不同区域的国家用几乎同一套打法，抢先拿到了算力入场券。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:15%">国家 / 项目</th><th style="width:42%">打法与规模</th><th style="width:43%">关键先决条件</th></tr>
+          <tr><td><b>沙特阿拉伯</b><br><span class="dim">HUMAIN</span></td><td>主权基金 PIF 全资子公司；与英伟达签约 <b>20 万张 GPU</b>（2025.11）；目标 2027 年跻身全球前五大算力司法辖区</td><td>2022 年即公布 180 亿美元数据中心战略，<b>先立法（本地数据存储）后引资</b>——2025 年 AWS、谷歌、微软三大云厂商已全部落地</td></tr>
+          <tr><td><b>阿联酋</b><br><span class="dim">G42 / Stargate UAE</span></td><td>微软 <b>15 亿美元</b>投资（2024.04）；一次性采购 27 台 Cerebras CS-3；正评估对日本数据中心投资 <b>63 亿美元</b></td><td>主权资本 + 美方技术结盟双轨并行，<b>把"资金输出"变成"跨境算力布局"</b></td></tr>
+          <tr><td><b>印度</b><br><span class="dim">BharatGen / IndiaAI</span></td><td>政府 <b>约 12 亿美元</b>算力任务；Yotta 与英伟达合建国家级算力池</td><td><b>22 种官方语言</b>的本地化需求，天然形成持续算力订单</td></tr>
+          <tr><td><b>新加坡</b><br><span class="dim">SEA-LION</span></td><td>开源多语言模型，覆盖印尼语、马来语、泰语等 <b>7 种语言</b></td><td>定位区域<b>"AI 治理与安全枢纽"</b>，不拼算力规模、拼规则制定权</td></tr>
+          <tr><td><b>尼日利亚</b><br><span class="dim">拉各斯集群</span></td><td>规模约 <b>100 MW</b>，西非最大数据中心集群</td><td>立法强制数据本地存储，<b>外资建设权受限反倒逼出本地伙伴合作模式</b></td></tr>
+          <tr><td><b>法国</b><br><span class="dim">跨境至阿联酋 / 日本</span></td><td><b>1,090 亿欧元</b> AI 行动计划，其中 500 亿欧元与阿联酋联合扩建算力</td><td>本土资源不足时，<b>用跨境合作弥补，而非单打独斗</b></td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">打法 1</span><h3 class="s-title">先立规矩、后引资本</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">数据本地化立法与财政激励同步推出</div><div class="sub-d">让"必须落地"变成招商筹码——沙特 2022 年先立法、2025 年三大云厂商全部落地。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">打法 2</span><h3 class="s-title">电力与土地先行铺路</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">把总拥有成本做到全球洼地</div><div class="sub-d">才有资格进云厂商的选址名单——这一条恰是哈萨克斯坦的天然长板（详见第 3 章）。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">打法 3</span><h3 class="s-title">借船出海，不单打独斗</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">主权资本换技术联盟，或跨境产能置换</div><div class="sub-d">阿联酋"资金输出 → 跨境算力布局"、法国 500 亿欧元与阿联酋联合扩建——比闭门造车快得多。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">打法 4</span><h3 class="s-title">用本地化需求锁定持续订单</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">语言、监管、数据主权天然形成"必须本地跑"的负载</div><div class="sub-d">印度 22 种官方语言、新加坡 7 语模型——是最稳定的第一批客户。</div></div>
+          </div>
+        </div>
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">但要说清楚</span><h3 class="s-title">沙特 / 阿联酋的打法不是模板——哈萨克斯坦该卖确定性，不卖生态规模</h3></div>
+          <div class="s-body">
+            <div class="s-cols">
+              <div class="sub"><div class="sub-t">他们的核心资产：主权基金体量 + 对美政治资本</div><div class="sub-d">两国用真金白银换取了英伟达生态的优先供应权。这条路哈萨克斯坦复制不了，也不必复制。</div></div>
+              <div class="sub t-accent"><div class="sub-t">哈国的比较优势：电力、气候、多向量外交下"谁都不得罪"的中间人定位</div><div class="sub-d">变现方式不是砸钱绑定单一生态，而是用<b>不受第三方出口管制、交付确定性更高的供应路线</b>，承接那些恰恰需要"确定性"而非"生态规模"的产业级与主权级负载。这不是排斥英伟达生态（Alem.Cloud 等科研平台已经在用），而是让增量的产业级建设走一条更匹配自身禀赋的路。</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">算力已从技术议题升级为国家竞争力议题——这不是选择题，是全球主要经济体同时下场的必答题。<b>四条共同打法里，哈萨克斯坦已经握有大部分牌。</b></div>
+      <div class="src">来源：pdpSpectra《Sovereign AI 2026》；STL Partners《Sovereign AI Playbooks》（2025）；Asia Society（马来西亚）；Japan Times（2026.08）；德勤全球 AI 报告。</div>
+    </div>
+  </div>
+
+  <!-- CH2 -->
+  <div class="panel" data-panel="ch2">
+    <div class="subtabs">
+      <button data-sub="ch2a" class="active">2.1 五层结构与中美分析</button>
+      <button data-sub="ch2b">2.2 五层结构下的哈萨克斯坦</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch2a">
+      <div class="spine"><span class="k">2.1 · 核心观点</span><span class="q">用同一把尺子量中美：黄仁勋的"AI 五层结构"——能源 → 芯片 → 基础设施 → 模型 → 应用，层层相互拉动。逐层看下去，两国的短板与打法完全不同。</span></div>
+      <div class="card">
+        <div class="frame-title">Five-Layer Cake · 黄仁勋五层结构（自下而上，下层拉动上层）</div>
+        <div class="flow" style="justify-content:center">
+          <span class="step">① 能源</span><span class="arr">›</span>
+          <span class="step">② 芯片</span><span class="arr">›</span>
+          <span class="step">③ 基础设施</span><span class="arr">›</span>
+          <span class="step">④ 模型</span><span class="arr">›</span>
+          <span class="step">⑤ 应用</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:11%">层级</th><th style="width:44.5%">美国</th><th style="width:44.5%">中国</th></tr>
+          <tr><td><b>① 能源</b></td><td>并网队列积压约 <b>2,600 GW</b>，中位等待 <b>5 年</b>；电网商 2030 年前追加 <b>1.4 万亿美元</b>。巨头被迫自建电厂——Meta 一个园区自建约 2.25 GW 燃气。<b>缺电、缺并网。</b></td><td>发电量已是美国<b>两倍以上</b>，未来五年新增装机预计达美国<b>六倍</b>；2025 年新增风光 <b>430 GW+</b>，占全球一半以上。<b>能源不是约束，是战略储备。</b></td></tr>
+          <tr><td><b>② 芯片</b></td><td>《芯片与科学法案》<b>527 亿美元</b>补贴本土制造与研发；英伟达生态在单卡性能与开发者规模上仍领先。<b>代价是出口管制——供应可得性成为他国的政策风险。</b></td><td>国家大基金三期 <b>475 亿美元</b>；昇腾已公开四代路线图至 2028 年，自研 HBM。<b>对第三国而言：不受第三方管制、交期可承诺。</b></td></tr>
+          <tr class="hl-row"><td><b>③ 基础设施</b></td><td>2026 年五大厂资本开支指引 <b>6,600-6,900 亿美元</b>，全国数据中心约 <b>5,427 座</b>。打法：<b>资本驱动的分布式扩张</b>，单园区 1-5 GW，自建电厂 + 输电。</td><td>"东数西算"八大枢纽、十大集群，<b>把算力搬到电价洼地</b>；智能算力规模已达 <b>2,185 EFLOPS</b>，同比 +177%。打法：<b>国家规划驱动的集中布局</b>。</td></tr>
+          <tr><td><b>④ 模型</b></td><td>2025 年产出头部模型 <b>50 个</b>，Arena 榜首（Claude Opus 4.6，1,503 分）。模式：闭源授权与开源并行，<b>但价值仍集中在模型方。</b></td><td>2025 年 <b>30 个</b>头部模型，总产出从 2022 年 151 个猛增至 <b>849 个</b>；与美国差距缩至 <b>2.7%</b>（Doubao-Seed-2.0，1,464 分），且以<b>开源路线</b>为主——开源模型可直接本地部署、母语微调，无需从零训练。</td></tr>
+          <tr><td><b>⑤ 应用</b></td><td>企业采用率全球领先：<b>88%</b> 常态化用 AI，<b>62%</b> 试点智能体，但仅 <b>39%</b> 能报出利润影响。<b>规模化仍是难点。</b></td><td>制造、政务、交通、能源的<b>规模化场景落地</b>更快，且与国家基建投资形成闭环——<b>应用拉动算力，算力反哺应用。</b></td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">US</span><h3 class="s-title">美国：资本驱动，短板在能源与并网</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">钱不缺，电和时间缺</div><div class="sub-d">五大厂一年资本开支近 7,000 亿美元，却要为并网排队 5 年、自建电厂——<b>在成熟市场，拿到并网批文比拿到芯片更难。</b></div></div>
+            <div class="sub"><div class="sub-t">芯片领先，但用出口管制换取</div><div class="sub-d">对第三国而言，最强的生态同时也是最不确定的供应。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">CN</span><h3 class="s-title">中国：规划驱动，长板在能源与开源</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">能源冗余 + 把算力搬向洼地</div><div class="sub-d">"东数西算"本质是用国家规划把负载迁到电价最低的地方——<b>这条线再往西延伸一步，就是哈萨克斯坦。</b></div></div>
+            <div class="sub"><div class="sub-t">芯片可承诺交期，模型开源</div><div class="sub-d">对第三国意义最大的两件事：<b>供应不受第三方管制；用上前沿模型不再需要训练前沿模型。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">五层看下来：能源层美国缺、中国余；芯片层的关键词不是性能，是"可得性"；基建层中美都在找电价洼地；模型层开源改变了规则——<b>第三国是最大受益者。</b>下一页，把哈萨克斯坦放到同一把尺子上。</div>
+      <div class="src">来源：英伟达"AI 五层蛋糕"（黄仁勋，2025）；Al Jazeera / IEA 能源对比（2026）；美国《芯片与科学法案》；中国工信部与新浪财经（2026.08）；斯坦福 HAI《AI Index》模型统计；麦肯锡《State of AI》；PowerLines（2026.04）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch2b">
+      <div class="spine"><span class="k">2.2 · 核心观点</span><span class="q">五层里，哈萨克斯坦不需要在能源之外补短板，也不必去芯片、模型层拼投入——真正的战场是第③层：把已有的能源禀赋，转化成可交易的算力基础设施。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">哈萨克斯坦在五层中的站位</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="frame">
+                <div class="frame-title">Where to stand · 自上而下</div>
+                <div class="fcol">
+                  <div class="fbox fb-l5"><div class="fb-h">⑤ 应用 <span class="pct">需求层</span></div><div class="fb-d">政务、能源、矿业、金融的负载必须落在境内</div></div>
+                  <div class="fbox fb-l4"><div class="fb-h">④ 模型 <span class="pct">受益层</span></div><div class="fb-d">直接采用开源模型做母语适配，无需从零训练</div></div>
+                  <div class="fbox fb-l1"><div class="fb-h">③ 基础设施 <span class="pct">主战场 ★</span></div><div class="fb-d">唯一能真正参与、且能赢的一层</div></div>
+                  <div class="fbox fb-l4"><div class="fb-h">② 芯片 <span class="pct">选择层</span></div><div class="fb-d">不自研，但必须选定可承诺交期的供应路线</div></div>
+                  <div class="fbox fb-l2"><div class="fb-h">① 能源 <span class="pct">优势层</span></div><div class="fb-d">全球最低梯队电价，且已锁定七年</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">逐层</span><h3 class="s-title">中美竞争的实质 → 哈萨克斯坦的位置</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">⑤ 应用：经济价值在此产生，也在此决定算力需求</div><div class="sub-d"><b>需求层</b>——个人数据境内存储已立法，政务与主权负载<b>必须落在境内</b>，需求是确定的。</div></div>
+            <div class="sub"><div class="sub-t">④ 模型：性能已趋同，开源路线降低了使用门槛</div><div class="sub-d"><b>受益层</b>——KAZ-LLM 等母语模型可基于开源底座持续迭代。</div></div>
+            <div class="sub t-accent"><div class="sub-t">③ 基础设施：中美都在把算力搬向电价与土地的洼地</div><div class="sub-d"><b>主战场</b>——把能源禀赋转化成可交易的算力基础设施，这是哈萨克斯坦<b>唯一能真正参与、且能赢</b>的一层。</div></div>
+            <div class="sub"><div class="sub-t">② 芯片：两条供应链已经分岔，可得性成政策变量</div><div class="sub-d"><b>选择层</b>——不自研，但必须选定<b>可承诺交期</b>的供应路线。</div></div>
+            <div class="sub"><div class="sub-t">① 能源：美国缺电缺并网，中国以装机规模取胜</div><div class="sub-d"><b>优势层</b>——埃基巴斯图兹 2.1¢/kWh，限价锁定至 2032。<b>中美正在花几万亿美元买的东西，哈国本来就有。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">中美正在花几万亿美元，去买他们本来就缺的东西——<b>便宜的电、可用的并网容量、天然的冷源。这三样，哈萨克斯坦本来就有。</b>下一章，逐项验证这三样。</div>
+      <div class="src">来源：英伟达"AI 五层蛋糕"（黄仁勋，2025）；哈能源部 2026-2032 最高限价令（2025.12）；哈萨克斯坦《AI 发展概念 2024-2029》与个人数据境内存储立法。</div>
+    </div>
+  </div>
+
+  <!-- CH3 -->
+  <div class="panel" data-panel="ch3">
+    <div class="subtabs">
+      <button data-sub="ch3a" class="active">3.1 政治定调</button>
+      <button data-sub="ch3b">3.2 制度与枢纽</button>
+      <button data-sub="ch3c">3.3 三项可验证禀赋</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch3a">
+      <div class="spine"><span class="k">3.1 · 核心观点</span><span class="q">这不是一个需要说服决策层的议题——总统托卡耶夫已把数字与 AI 能力定义为国家生存命题，并将 2026 年定为"数字化与人工智能之年"。</span></div>
+      <div class="slide-grid">
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">语录一</span><h3 class="s-title">生存命题</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">"哈萨克斯坦必须成为数字强国。这关乎我们作为一个文明国家，在新技术时代能否生存下去。"</div><div class="sub-d">——总统托卡耶夫，国情咨文（akorda.kz）</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">语录二</span><h3 class="s-title">分界线已经划出</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">"人工智能的出现，已经在能够走进未来的国家与将留在过去的国家之间，划出了一条清晰的分界线。"</div><div class="sub-d">——紧迫性的官方表述</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">语录三</span><h3 class="s-title">政治授权</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">"任何国家都不应只做人工智能的消费者。"</div><div class="sub-d">这句话，正是自建算力基础设施的政治授权——本材料不需要说服，只需要执行路径。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">落点</span><h3 class="s-title">从定调到执行，只剩两步</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">生存命题</span><span class="arr">›</span>
+              <span class="step">分界线</span><span class="arr">›</span>
+              <span class="step">政治授权</span><span class="arr">›</span>
+              <span class="step">执行路径（本材料）</span>
+            </div>
+            <div class="sub"><div class="sub-t">三句话指向同一个结论</div><div class="sub-d">本材料<b>不需要说服决策层</b>，只需要给出执行路径——这也是后面七章的全部任务。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">政治授权已到位——剩下的是工程问题与账本问题。</div>
+      <div class="src">来源：哈萨克斯坦总统官方网站（akorda.kz）国情咨文；Eurasianet（2026）；Astana Times（2026.07）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch3b">
+      <div class="spine"><span class="k">3.2 · 核心观点</span><span class="q">哈萨克斯坦不满足于"参与者"，正在系统性申领中亚数字与 AI 的枢纽地位——从战略到制度已经落地。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">枢纽</span><h3 class="s-title">正在申领的中亚角色</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">依托能源资源、关键矿产与过境走廊三重支点</div><div class="sub-d"><b>阿拉套（Alatau）：</b>中亚首个全整合数字城市，配套专属法律框架<br><b>国际机构落地：</b>联合国亚太经社会"亚太可持续发展数字解决方案中心"设于阿拉木图；总统提议将世界人工智能合作组织中亚区域办公室设在哈国，并在阿斯塔纳举办首次会议<br><b>中哈数字桥：</b>总统提议在"一带一路"框架下推动中哈数字贸易与数字经济对接，并倡议将 <b>2027 年定为中哈人工智能联合倡议年</b></div></div>
+            <div class="sub t-accent"><div class="sub-t">多向量原则</div><div class="sub-d">总统同时明确：承认中美均为技术巨头，不预设排他性选择。<b>这意味着中方方案的竞争力，取决于交付确定性与经济性，而非政治站队。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">时钟</span><h3 class="s-title">国家节奏</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">2025.09 国情咨文</span><span class="arr">›</span>
+              <span class="step">2025 AI 与数字发展部成立</span><span class="arr">›</span>
+              <span class="step">2026 数字化与 AI 之年</span><span class="arr">›</span>
+              <span class="step">2027 中哈 AI 联合倡议年（提议）</span>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">制度</span><h3 class="s-title">制度与 2029 目标</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">制度基础</div><div class="sub-d">《数字法典》推进中；《AI 发展概念 2024-2029》；个人数据境内存储要求已立法——<b>政务与主权数据负载必须落在境内，这是法律约束而非偏好</b></div></div>
+            <div class="sub"><div class="sub-t">2029 年国家目标</div><div class="sub-d">AI 产品与服务出口 <b>50 亿美元</b>；数字经济占 GDP <b>20%</b> 以上</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">底座</span><h3 class="s-title">已建成底座与中哈基础</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">已建成的底座</div><div class="sub-d">在线政务服务全球第 10 位，90% 公共服务已线上化；两台国家级超算已投运；阿斯塔纳创新枢纽孵化 2,000 家初创企业</div></div>
+            <div class="sub"><div class="sub-t">中哈基础</div><div class="sub-d">2025 年双边贸易额 <b>487 亿美元</b>创历史新高；永久全面战略伙伴关系</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">制度、载体、外交三线并进——战略窗口有政策背书，不是空窗。</div>
+      <div class="src">来源：哈总统官网与总理府；Astana Times（2026.07）；Eurasianet（2026）；Times of Central Asia（2025-2026）；中国海关总署。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch3c">
+      <div class="spine"><span class="k">3.3 · 核心观点</span><span class="q">战略定位解决"要不要做"，禀赋解决"能不能做成"——电价、区位、冷源三项，全部可独立验证。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">① 电价</span><h3 class="s-title">全球最低梯队，且锁定到 2032</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">工商业电价对比（美分 / kWh）</div>
+                <div class="brow"><div class="bl">埃基巴斯图兹 GRES-1</div><div class="btrack"><div class="bfill" style="width:14%;"></div></div><div class="bv">2.1¢</div></div>
+                <div class="brow"><div class="bl">哈萨克斯坦均价</div><div class="btrack"><div class="bfill" style="width:47%;"></div></div><div class="bv">7.2¢</div></div>
+                <div class="brow"><div class="bl">世界均价</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">15.4¢</div></div>
+                <div class="bnote">哈国工商业电价 = 世界均价的 46.8%</div>
+              </div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">七年价格确定性</div><div class="sub-d">2025 年 12 月已批准 2026-2032 年最高限价，与 2025 年持平——投资模型里电费一栏，七年不用重算。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">但</span><h3 class="s-title">电量是稀缺的</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">2025 年全国电力缺口约 1.5 TWh，需自俄进口</div><div class="sub-d">政府目标 2027 年消除缺口、2029 年前新增约 13 GW。</div></div>
+            <div class="sub t-accent"><div class="sub-t">电价便宜、电量紧张</div><div class="sub-d"><b>这正是"每兆瓦算力产出"成为核心指标的原因。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">② 区位</span><h3 class="s-title">欧亚十字路口</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">1,780km</div><div class="l">中哈陆路边境</div></div>
+              <div class="stat"><div class="v">11-16 天</div><div class="l">中欧班列（海运 35-40 天）</div></div>
+            </div>
+            <div class="sub"><div class="sub-t">算力设备陆路直达</div><div class="sub-d">供应链不绕海洋、不过第三方港口。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">③ 冷源</span><h3 class="s-title">结构性优势，还有水账</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">−40°C</div><div class="l">冬季极寒 = 全年自然冷却</div></div>
+              <div class="stat"><div class="v">40%</div><div class="l">全球铀产量占比（2025，世界第一）</div></div>
+            </div>
+            <div class="sub"><div class="sub-t">极寒气候直接支撑 PUE 1.25 设计目标；核电长期托底</div><div class="sub-d">乌尔肯 VVER-1200 计划 2035-36 投运，第二座拟采用中核 HPR1000。</div></div>
+            <div class="sub t-accent"><div class="sub-t">水账：风冷 / 自然冷却方案的耗水强度（WUE）可低至 0</div><div class="sub-d">常规蒸发冷却方案通常在 1.0-2.5 立方米/兆瓦时之间（Equinix 2023 年披露其蒸发冷却设施均值为 1.63）——中亚本身水资源紧张，这层优势在电费之外，同样是可以摆上桌面的谈判筹码。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">哈萨克斯坦的下一个十年，取决于能否把<b>"能源出口国"升级为"算力出口国"</b>——把每一兆瓦卖出比原煤高两个数量级的价格。</div>
+      <div class="src">来源：哈能源部 2026-2032 最高限价令（2025.12.24），埃基巴斯图兹 GRES-1 为 9.50 坚戈/kWh，按 462 KZT/USD 折算；GlobalPetrolPrices（2025.06）；Times of Central Asia / Eurasianet（2026）。</div>
+    </div>
+  </div>
+
+  <!-- CH4 -->
+  <div class="panel" data-panel="ch4">
+    <div class="subtabs">
+      <button data-sub="ch4a" class="active">4.1 供给侧：已建与缺口</button>
+      <button data-sub="ch4b">4.2 需求侧：六个方向</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch4a">
+      <div class="spine"><span class="k">4.1 · 核心观点</span><span class="q">科研算力已经起步，产业级算力接近空白——一期已报需求就是全国商用存量的 2 倍，这就是市场空间的准确尺寸。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:18%">已建项目</th><th style="width:42%">算力规模（PFLOPS/EFLOPS）</th><th style="width:40%">IT 负载估算（MW）</th></tr>
+          <tr><td><b>Alem.Cloud</b><br><span class="dim">2025.07</span></td><td>512 张 NVIDIA H200 / 64 台 HGX，峰值约 <b>2 EFLOPS</b></td><td>≈ <b>0.6-0.9 MW</b><br><span class="dim">按 HGX H200 单机约 10kW、PUE 1.3 估算</span></td></tr>
+          <tr><td><b>AI-Farabium</b><br><span class="dim">2025.10</span></td><td><b>1,500 PFLOPS</b>，全球 TOP500 第 103 位</td><td><span class="dim">硬件规格未公开，无法估算</span></td></tr>
+          <tr><td><b>Kosshy</b><br><span class="dim">2026.11 计划</span></td><td>约为 Farabium 的 <b>3 倍</b>（≈4,500 PFLOPS）</td><td><span class="dim">硬件规格未公开，无法估算</span></td></tr>
+          <tr><td><b>高校网络</b><br><span class="dim">纳大·KazNU·ENU·Satbayev</span></td><td>合计 <b>42 PFLOPS</b></td><td><span class="dim">硬件规格未公开，无法估算</span></td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">缺口：商用容量 vs 已报需求</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">数据中心 IT 容量（兆瓦）</div>
+                <div class="brow"><div class="bl">哈电信现网（47% 份额）</div><div class="btrack"><div class="bfill dim" style="width:2.5%;"></div></div><div class="bv">25</div></div>
+                <div class="brow"><div class="bl">全国商用存量（推算）</div><div class="btrack"><div class="bfill dim" style="width:5.3%;"></div></div><div class="bv">~53</div></div>
+                <div class="brow"><div class="bl">DCV 一期已报需求</div><div class="btrack"><div class="bfill" style="width:10%;"></div></div><div class="bv">100+</div></div>
+                <div class="brow"><div class="bl">DCV 规划总容量</div><div class="btrack"><div class="bfill" style="width:100%;"></div></div><div class="bv">1,000</div></div>
+                <div class="bnote">仅一期需求，就是全国现有商用存量的约 2 倍</div>
+              </div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">哈电信已确认与 20 家以上超大规模厂商洽谈 DCV 容量</div><div class="sub-d">需求是确定的，缺的是基础设施。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">口径</span><h3 class="s-title">两个尺子不能直接相加</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">上表：PFLOPS / EFLOPS 衡量计算能力</div><div class="sub-d">这些是<b>国家科研与示范平台</b>，不是产业算力供给；按已公开硬件规格逐项估算 IT 负载，未公开的如实标注。</div></div>
+            <div class="sub"><div class="sub-t">左图：MW 衡量可出租的基础设施规模</div><div class="sub-d">两者口径不同，不能直接相加或比较——但结论一致：<b>产业级可售容量接近零。</b></div></div>
+            <div class="sub t-accent"><div class="sub-t">时钟：算力中心从决策到投产需 6-18 个月</div><div class="sub-d">选址、并网、设备、调试——长周期项决定起点。<b>等需求兑现再开工 = 主动迟到一年半。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">科研算力已经起步，产业级算力接近空白——<b>这就是市场空间的准确尺寸。</b>DCV 2027.06 首个 50 MW 投运，是唯一真正的时间锚点。</div>
+      <div class="src">来源：Astana Times（2026.02 / 04）；qazinform（2026）；Telecom Review Asia（2026）；TOP500 榜单（2025.11）。全国商用存量按哈电信 25 MW / 47% 份额推算；IT 负载估算为本材料按公开规格推算。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch4b">
+      <div class="spine"><span class="k">4.2 · 核心观点</span><span class="q">需求侧六个方向全部要求境内落地，且已经排队——先建者定义市场。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:15%">维度</th><th style="width:47%">关键数字</th><th style="width:38%">应用场景</th></tr>
+          <tr><td><b>1. 主权与政务</b></td><td>eGov GPT 已上线 <b>50 项服务</b>，覆盖约 30% 政务咨询量，2026 年 4 月上线以来调用<b>超 15 万次</b>；年内计划扩至 <b>150 项服务、覆盖率 70%</b></td><td>政务问答与公共服务；个人数据境内存储已立法，负载必须落在境内</td></tr>
+          <tr><td><b>2. 母语大模型</b></td><td>哈萨克语仅占全球公开互联网内容约 <b>0.03%</b>；KAZ-LLM 8B/70B 已训练，语料 <b>1,500 亿 token</b>——按 Chinchilla 缩放定律，70B 模型最优训练规模在<b>万亿 token 量级</b>，现有语料不到十分之一</td><td>国家级母语大模型持续训练与迭代；每一代向国际前沿水平靠拢，都是新的算力订单</td></tr>
+          <tr><td><b>3. 能源与金融</b></td><td>企业研发投入<b>不足 GDP 1%</b>；KMG 已在东莫尔达别克油田试点数字孪生，拟推广至 <b>12 个主力油田（占储量 90%）</b>，预计增产<b>最高 3%</b></td><td>油气/矿业数字孪生规模化部署；Kaspi 级金融科技已是规模化 AI 用户——缺的是基础设施，不是需求</td></tr>
+          <tr><td><b>4. 交通物流</b></td><td>中间走廊物流处理时长从 <b>2.5 周压缩至 1-2 天</b>；中哈边境通关缩短至<b>约 30 分钟</b>；Alem.AI 国际算力中心 2026 年落地</td><td>过境货运全链路数字化——每一次通关提速，背后都是实时推理与数据处理需求</td></tr>
+          <tr><td><b>5. 教育与人才</b></td><td>QAIRU 2026-27 首批 <b>600 名学生</b>；全国<b>超 35 万名教师</b>完成 AI 培训；中小学 AI 试点 <b>10→50→300 所</b>，目标 <b>500 所</b>农村学校</td><td>国家级 AI 人才管线；人才培养本身也是持续的算力消费者</td></tr>
+          <tr class="hl-row"><td><b>6. 算力出海</b> <span style="color:var(--accent);font-size:10px;font-weight:700">NEW</span></td><td>中亚数据中心市场年复合增速约 <b>18.5%</b>，哈萨克斯坦占据主导份额；已系统性申领中亚数字/AI 枢纽地位（阿拉套数字城市、联合国亚太经社会数字解决方案中心落地阿拉木图，总统提议世界人工智能合作组织中亚区域办公室设在哈国）</td><td>建成的算力不必只服务哈萨克本土市场——可承接乌兹别克斯坦、吉尔吉斯斯坦等中亚邻国及中间走廊沿线的外溢需求，对应第 7 章"中亚算力枢纽"三期规划</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">共性</span><h3 class="s-title">六类负载有一个共同点：必须在境内跑</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">法律约束：个人数据境内存储已立法</div><div class="sub-d">政务、主权数据、金融负载不是"偏好本地"，是<b>不能出境</b>。</div></div>
+            <div class="sub"><div class="sub-t">物理约束：推理必须贴近用户</div><div class="sub-d">通关、油田、教学的实时推理，时延决定可用性——对应第 1 章"推理占比 2/3"的行业趋势。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">结论</span><h3 class="s-title">缺的不是需求，是基础设施</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">五类本土需求 + 一类外溢需求</div><div class="sub-d">前五类锁定第一批客户，第六类决定天花板——<b>中亚枢纽定位让 1 GW 的规划不只服务一国市场。</b></div></div>
+            <div class="sub"><div class="sub-t">已在排队的需求，谁先建成谁先定义市场</div><div class="sub-d">哈电信 20+ 超大规模厂商洽谈、DCV 一期 100+ MW 已报需求（见 4.1）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">六类负载全部要求境内落地，且已经排队——<b>先建者定义市场。</b>下一章，算清一兆瓦到底要花多少钱。</div>
+      <div class="src">来源：Astana Times（2026.02 / 04 / 08）；qazinform（2026）；ISSAI KAZ-LLM 官方页面；Kazakhstan Today；Times of Central Asia（2026）；trend.az（2026）；Arizton 中亚数据中心市场报告（第 6 项数字）。</div>
+    </div>
+  </div>
+
+  <!-- CH5 -->
+  <div class="panel" data-panel="ch5">
+    <div class="subtabs">
+      <button data-sub="ch5a" class="active">5.1 造价框架</button>
+      <button data-sub="ch5b">5.2 四档规模与哈国参考值</button>
+      <button data-sub="ch5c">5.3 选址差价与成本结构</button>
+      <button data-sub="ch5e">5.4 标杆案例：三大千兆瓦园区</button>
+      <button data-sub="ch5f">5.5 双赛道对比</button>
+      <button data-sub="ch5g">5.6 决策者三个数字</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5a">
+      <div class="spine"><span class="k">5.1 · 核心观点</span><span class="q">全行业用同一个单位说话：每兆瓦多少钱（$/MW）。任何规模的项目，端到端造价都由三层构成——记住这张表，就能读懂任何一份数据中心投资书。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:16%">层</th><th style="width:40%">包含什么</th><th style="width:28%">单位造价 $/MW</th><th style="width:16%">占端到端</th></tr>
+          <tr><td><b>A</b> 场地与接入</td><td>土地、土建外壳、消防安防、并网接入</td><td>$2-3M<br><span class="dim">+ 并网 500-2,500 万 / 项目</span></td><td>~8%</td></tr>
+          <tr><td><b>B</b> 基建（供电+温控）</td><td>变配电、UPS、锂电、柴发、液冷 / 风冷全系统</td><td>$12-17M</td><td>~32%</td></tr>
+          <tr class="hl-row"><td colspan="2"><b>设施小计（不含 IT 设备）</b></td><td><b>$15-20M</b><br><span class="dim">传统风冷仅 $10-12M；全球均值 $11.3M</span></td><td><b>~40%</b></td></tr>
+          <tr><td><b>C</b> IT 设备</td><td>AI 加速卡与整机、集群网络、存储</td><td>$15-25M</td><td><b>40-60%</b></td></tr>
+          <tr class="total"><td colspan="2"><b>端到端合计</b></td><td>$30-45M</td><td>100%</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide span2">
+          <div class="s-head"><span class="s-num">风冷 vs 液冷</span><h3 class="s-title">$10-12M → $15-20M：三个口径，看的是三件不同的事</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">7-10%</div><div class="l">部件级溢价（Turner &amp; Townsend，冷却系统部件增量）</div></div>
+              <div class="stat"><div class="v">50-67%</div><div class="l">系统级差距（高功率密度带来供电+温控整套升级）</div></div>
+              <div class="stat"><div class="v">50-100%</div><div class="l">整体级溢价（iRecruit，AI 定制设施 vs 传统设施）</div></div>
+            </div>
+            <div class="s-cols">
+              <div class="sub"><div class="sub-t">差距来自功率密度，不来自冷却部件</div><div class="sub-d">液冷 / AI 高密度设施比传统风冷高 50-67%（$10-12M → $15-20M），主要是<b>整套供电与温控系统升级</b>；只看冷却部件增量仅 7-10%。</div></div>
+              <div class="sub t-accent"><div class="sub-t">三个数字看的是三件不同的事</div><div class="sub-d">部件级、系统级、整体级——<b>选型与谈判时不要混用口径</b>，否则同一份报价会被解读出三种溢价。</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">记住一个单位、三层结构：<b>$/MW · 场地 8% + 基建 32% + IT 40-60%。</b>任何一份数据中心投资书，都能用这张表还原。</div>
+      <div class="src">来源：2026 年全球数据中心造价基准（Axis Intelligence、iRecruit、SAVRN 汇总）；高盛研究（建设 $15-20M/MW，另加新增发电约 $2,500/kW）；Turner &amp; Townsend（冷却系统部件增量成本 7-10%）；iRecruit（AI 定制设施整体溢价 50-100%）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5b">
+      <div class="spine"><span class="k">5.2 · 核心观点</span><span class="q">四档规模，四个数量级——哈国口径正落在全球区间最低端，这不是巧合。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:14%">规模</th><th style="width:20%">设施投资</th><th style="width:20%">IT 设备投资</th><th style="width:20%">端到端合计</th><th style="width:26%">这是什么量级的东西</th></tr>
+          <tr><td><b>1 MW</b></td><td>$15-20M</td><td>$15-25M</td><td><b>$30-45M</b></td><td>单点推理节点，约 8-10 个高密机柜。一家大企业的自用 AI 平台起步规模。</td></tr>
+          <tr><td><b>10 MW</b></td><td>$150-200M</td><td>$150-250M</td><td><b>$300-450M</b></td><td>行业级 AI 平台：可支撑一个国家的银行业风控，或一家大型油气公司的全部智能化负载。</td></tr>
+          <tr class="hl-row"><td><b>100 MW</b><br><span class="dim" style="color:var(--green);font-weight:600">DCV 一期</span></td><td>$1.5-2.0B</td><td>$1.5-2.5B</td><td><b>$3.0-4.5B</b></td><td>区域智算枢纽。<b>相当于哈国现有全部商用数据中心容量的两倍。</b></td></tr>
+          <tr><td><b>1 GW</b><br><span class="dim" style="color:var(--accent);font-weight:600">DCV 全规模</span></td><td>$15-20B</td><td>$15-25B</td><td><b>$30-45B</b></td><td>国家级算力底座。<b>哈政府对 DCV 的公开口径正是 300 亿美元</b>——落在这个区间的下沿。</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">为什么</span><h3 class="s-title">压在全球区间最低端，不是巧合</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">$30B</div><div class="l">DCV 官方口径</div></div>
+              <div class="stat"><div class="v">÷ 1 GW</div><div class="l">规划总容量</div></div>
+              <div class="stat"><div class="v">= $30M/MW</div><div class="l">全球区间 $30-45M 的下沿</div></div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">土地便宜、电价最低、极寒气候直接砍掉一部分温控投资</div><div class="sub-d"><b>同样的钱，在哈萨克斯坦能买到更多算力。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">本地参考值</span><h3 class="s-title">1 MW / 10 MW 项目该怎么估</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">$30-35M</div><div class="l">1 MW 端到端合理区间</div></div>
+              <div class="stat"><div class="v">$300-350M</div><div class="l">10 MW 端到端合理区间</div></div>
+            </div>
+            <div class="sub"><div class="sub-t">DCV 是哈国唯一有官方数字支撑的同类项目</div><div class="sub-d">$30M/MW 是千兆瓦级单价，直接套用到 1 MW / 10 MW 会偏乐观——小规模项目摊不到千兆瓦级的固定成本折扣。</div></div>
+            <div class="sub"><div class="sub-t">但低电价（2.1¢，锁定至 2032）、低地价与极寒气候仍能省下可观的温控与并网支出</div><div class="sub-d">综合两个方向，<b>仍落在全球区间的下半段，而非上限。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">四档规模、四个数量级——<b>哈国口径正落在全球区间最低端。</b>下一页看：同样一兆瓦，在哪儿建差多少。</div>
+      <div class="src">来源：全球四档规模区间按 5.1 三层造价推算；DCV 口径见 Astana Times（2026.02）与哈电信公开通报；本地参考值为本材料基于两个方向的综合估算，非报价。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5c">
+      <div class="spine"><span class="k">5.3 · 核心观点</span><span class="q">同样一兆瓦，在哪儿建差多少——最贵与最便宜的一线市场相差 52%；而中美两种成本结构，指向同一个答案：往电价洼地走。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">设施造价对比（不含 IT 设备，百万美元 / MW，2026）</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="brow"><div class="bl">东京</div><div class="btrack"><div class="bfill dim" style="width:100%;"></div></div><div class="bv">15.2</div></div>
+                <div class="brow"><div class="bl">新加坡</div><div class="btrack"><div class="bfill dim" style="width:95%;"></div></div><div class="bv">14.5</div></div>
+                <div class="brow"><div class="bl">法兰克福 / 伦敦</div><div class="btrack"><div class="bfill dim" style="width:92%;"></div></div><div class="bv">14.0</div></div>
+                <div class="brow"><div class="bl">硅谷</div><div class="btrack"><div class="bfill dim" style="width:88%;"></div></div><div class="bv">13.3</div></div>
+                <div class="brow"><div class="bl">新泽西</div><div class="btrack"><div class="bfill dim" style="width:85%;"></div></div><div class="bv">12.9</div></div>
+                <div class="brow"><div class="bl">全球均值</div><div class="btrack"><div class="bfill" style="width:74%;"></div></div><div class="bv">11.3</div></div>
+                <div class="brow"><div class="bl">都柏林 / 马德里</div><div class="btrack"><div class="bfill" style="width:66%;"></div></div><div class="bv">10.0</div></div>
+                <div class="bnote">最贵与最便宜的一线市场，相差 52%——这还没算并网等待期</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">读数</span><h3 class="s-title">差价从哪来、到哪里去</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">两点已经确定</div><div class="sub-d"><b>DCV 的端到端口径 3,000 万美元/MW 落在全球最低区间；温控（占设施造价近三分之一）正是极寒气候能直接压缩的那一项。</b></div></div>
+            <div class="sub t-accent"><div class="sub-t">把中美这条线再往西延伸一步，就是哈萨克斯坦</div><div class="sub-d"><b>而埃基巴斯图兹 2.1 美分的电价，比中国西部还低。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">US</span><h3 class="s-title">美国：钱花在电，时间花在等</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">设施造价里电气占 40-48%、温控占 29-33%，土建外壳仅约 15%</div><div class="sub-d">数据中心已是"披着建筑外壳的工业机器"。</div></div>
+            <div class="sub"><div class="sub-t">真正的成本是时间</div><div class="sub-d">北弗吉尼亚并网排队最长 7 年；一个 60 MW 项目每延期一个月，损失约 1,420 万美元收入。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">CN</span><h3 class="s-title">中国：压硬件，也压工期</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">建设期采购中含芯片的硬件占 70-80%</div><div class="sub-d">模块化交付已把工期压到 <b>100 天</b>，建设成本降低 10% 以上。</div></div>
+            <div class="sub"><div class="sub-t">"东数西算"的本质：把算力搬到电价洼地</div><div class="sub-d">牛津能源研究所指出，中国沿海电价 0.08-0.14 美元/kWh，与弗吉尼亚相当——<b>真正的洼地在西部。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">中美两种成本结构、两种打法，指向同一个答案：<b>把算力建到电价与时间的双重洼地去</b>——这条线再往西延伸一步，就是哈萨克斯坦。</div>
+      <div class="src">来源：SAVRN 与 Axis Intelligence 造价拆分（2026）；iRecruit 基准（2026）；新浪财经 / 工信部（中国口径，2026.08）；牛津能源研究所《The China data centre advantage》（2026.02）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5e">
+      <div class="spine"><span class="k">5.4 · 核心观点</span><span class="q">谷歌、Meta、亚马逊的千兆瓦级项目，是全行业的公开定价参照——它们的投资构成，暴露了一件在哈萨克斯坦不必花的钱。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:13%">项目</th><th style="width:28%">规模与节奏</th><th style="width:30%">配套电力</th><th style="width:29%">已披露投入</th></tr>
+          <tr><td><b>Meta</b><br><span class="dim">路易斯安那＋俄亥俄<br>Hyperion / Prometheus</span></td><td>Hyperion：目标 5GW（2027 底 1.5GW，2030 年 2GW）<br>Prometheus：2026 年首个"泰坦"级集群</td><td>3 座燃气电厂≈2.25 GW＋1,500MW 风光＋150MW 地热＋100 英里 500kV 线<br>另 400MW 表后自备燃气（2×200MW）</td><td>Hyperion 州内总投资达 <b>500 亿美元</b>（基建 100 亿＋电厂约 40 亿＋输电 12 亿）<br>Prometheus 含于 2025 年 640-720 亿资本开支</td></tr>
+          <tr><td><b>Google</b><br><span class="dim">印度 · 维沙卡帕特南</span></td><td>首期 1GW（5 年投资），规划扩展至"多个吉瓦"——谷歌云 CEO 称其为"美国以外最大的 AI 枢纽"</td><td>配套可再生能源采购＋安得拉邦电网升级（印度日照资源丰富邦，属其南亚布局锚点）</td><td><b>150 亿美元</b>（5 年）<br>预计创造 18.8 万个就业<br>纳入 Alphabet 2026 资本开支上修后的 1,950-2,050 亿美元区间</td></tr>
+          <tr><td><b>Amazon (AWS)</b><br><span class="dim">印第安纳州<br>Project Rainier</span></td><td>终期 2.2GW；一期已投运（2025.10），二期 2026 年在建</td><td>依托印第安纳电网扩容——新建变电站与输电设施；未披露大规模自备燃气电厂，路线与 Meta 不同</td><td>一期 <b>110 亿美元</b>（已投运）＋二期 <b>150 亿美元</b>（2026 在建）＝合计超 <b>260 亿美元</b><br>约 50 万颗 Trainium2 芯片（目标年底 100 万颗）</td></tr>
+          <tr class="hl-row"><td colspan="2"><b>三家共同特征</b></td><td colspan="2">表外 SPV 融资渐成标配（Meta 一例即寻求 <b>290 亿美元</b>：30 亿股权/Blue Owl + 260 亿债权/PIMCO，摩根士丹利协调）；电力自建或电网深度绑定是千兆瓦级项目的共同前提；<b>普遍分阶段（Phase）交付，而非一次建成</b></td></tr>
+        </table>
+      </div>
+      <div class="slide-grid cols3">
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">结论 ①</span><h3 class="s-title">电力自建已成标配——在哈国这笔钱不用花</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">Meta 一个园区自建约 2.25 GW 燃气 + 1.65 GW 新能源；Amazon 依赖电网深度扩容</div><div class="sub-d"><b>在哈萨克斯坦：电网现成、电价 2.1 美分、限价锁定到 2032。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">结论 ②</span><h3 class="s-title">输电是隐性大项</h3></div>
+          <div class="s-body">
+            <div class="stats"><div class="stat"><div class="v">$1.2B</div><div class="l">一条 100 英里 500kV 线路</div></div></div>
+            <div class="sub"><div class="sub-t">约等于一座 50 MW 数据中心的全部基建投资</div><div class="sub-d">选址靠近现成电源与主网，省下的不是小数。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">结论 ③</span><h3 class="s-title">融资结构与节奏都可复制</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">股权与债权分离的 SPV 模式</div><div class="sub-d">Meta 一例 290 亿美元：30 亿股权 + 260 亿债权。</div></div>
+            <div class="sub"><div class="sub-t">Amazon 式"一期先投运、二期再跟进"</div><div class="sub-d">同样适用于 DCV 分期建设（见第 9 章三级台阶）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">三家千兆瓦园区暴露了同一件事：<b>成熟市场最大的一笔隐性支出是电力与输电——而这正是哈萨克斯坦可以省下的那笔钱。</b></div>
+      <div class="src">来源：Data Center Frontier（2026）；CNBC（2026.07；2025.10）；Meta 公开公告与财报指引；Blackridge Research；Reuters/Yahoo Finance（Google，2026）；Data Center Dynamics（Alphabet 资本开支，2026）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5f">
+      <div class="spine"><span class="k">5.5 · 核心观点</span><span class="q">全球 AI 算力基建已经分化为两条都在规模化落地的路线——此处只做客观并列，选型结论见第 8 章。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:14%">维度</th><th style="width:43%">赛道 A · 英伟达生态路线（美国）</th><th style="width:43%">赛道 B · 华为昇腾路线（中国）</th></tr>
+          <tr><td><b>代表体系</b></td><td>GPU + 第三方供电温控 + 第三方集成商</td><td>昇腾 + 数字能源 + 网络存储，单一责任界面</td></tr>
+          <tr><td><b>生态成熟度</b></td><td style="color:var(--green);font-weight:600">领先：开发者规模与工具链最成熟</td><td>追赶中：CANN / MindSpore 生态在扩张</td></tr>
+          <tr><td><b>供应确定性</b></td><td>受出口管制政策影响，可得性存在政策变量</td><td style="color:var(--green);font-weight:600">陆路直达，无第三方管制，交期可承诺</td></tr>
+          <tr><td><b>交付方式</b></td><td>分包采购：芯片、供电、温控、土建分别签约</td><td style="color:var(--green);font-weight:600">全栈打包：一份合同覆盖端到端约 85%</td></tr>
+          <tr><td><b>结算与融资</b></td><td>美元结算，依托西方资本市场（SPV / 私募债）</td><td>结算灵活，可对接中资金融机构分期结构</td></tr>
+          <tr><td><b>典型适用</b></td><td>前沿研究、国际科研协作、已有生态延续</td><td>主权算力、产业级推理、工期与预算刚性的项目</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">选 A 当</span><h3 class="s-title">第一约束是生态与协作</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">前沿研究、国际科研协作、已有生态延续</div><div class="sub-d">开发者规模与工具链最成熟；代价是供应可得性存在政策变量、分包采购责任分散。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">选 B 当</span><h3 class="s-title">第一约束是交期与单一责任</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">主权算力、产业级推理、工期与预算刚性的项目</div><div class="sub-d">陆路直达、无第三方管制、一份合同覆盖端到端约 85%；生态仍在追赶中。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">两条路线并非互斥：<b>决定选择的不是芯片参数，而是项目的第一约束条件。</b>哈萨克斯坦两类需求并存，<b>现实答案是分场景并行，而非二选一。</b></div>
+      <div class="src">口径说明：本页为两条路线的客观并列，维度取自公开产品与合同形态；选型结论见第 8 章。生态成熟度与供应确定性均为定性判断。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch5g">
+      <div class="spine"><span class="k">5.6 · 核心观点</span><span class="q">决策者只需要记住三个数字——其余都是它的拆分。</span></div>
+      <div class="slide-grid">
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">三数</span><h3 class="s-title">$30-45M · 40-60% · 70-80%</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">$30-45M</div><div class="l">每兆瓦端到端造价——记住这一个数，其余都是它的拆分</div></div>
+              <div class="stat"><div class="v">40-60%</div><div class="l">IT 设备占比——芯片选型决定近一半投资，也决定能否扩容</div></div>
+              <div class="stat"><div class="v" style="color:var(--green)">70-80%</div><div class="l">供电与温控占设施造价——这部分决定 PUE，也就决定可售算力</div></div>
+            </div>
+            <div class="s-cols">
+              <div class="sub t-accent"><div class="sub-t">三个数字叠加，结论清楚</div><div class="sub-d"><b>端到端投资中约 85% 落在可采购的设备上</b>——IT 设备（40-60%）、供电与温控（约 32%）、网络与存储（5-12%）。<b>只有土地、土建外壳与并网接入（约 15%）是必须本地完成的。</b></div></div>
+              <div class="sub"><div class="sub-t">85% 的设备清单，对应三类供应商能力</div><div class="sub-d" style="margin-bottom:8px">一份端到端合同可以覆盖的，正是这三层：</div>
+                <div class="flow">
+                  <span class="step">IT 40-60% · 昇腾 950 + Atlas</span>
+                  <span class="step">供电温控 ~32% · 华为数字能源</span>
+                  <span class="step">网络存储 5-12% · CloudEngine + OceanStor</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">投资结构决定了谈判结构：<b>85% 的钱指向同一份设备清单，因此真正需要决定的，不是"买什么"，而是"跟谁一次性买齐"。</b></div>
+      <div class="src">口径说明：三个数字均来自 5.1 三层造价表；"85% 可采购"= IT 40-60% + 供电温控 ~32% + 网络存储 5-12% 的中值合计，其余约 15% 为土地、土建外壳与并网接入。</div>
+    </div>
+  </div>
+
+  <!-- CH6 -->
+  <div class="panel" data-panel="ch6">
+    <div class="subtabs">
+      <button data-sub="ch6a" class="active">6.1 空间与项目管线</button>
+      <button data-sub="ch6b">6.2 一期 50 MW 的钱怎么花</button>
+      <button data-sub="ch6c">6.3 两大价值杠杆</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch6a">
+      <div class="spine"><span class="k">6.1 · 核心观点</span><span class="q">市场以万亿计；哈萨克斯坦在这张地图上的坐标已经明确：埃基巴斯图兹"数据中心谷"，1 GW，300 亿美元。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">空间</span><h3 class="s-title">2030 年前全球数据中心累计资本开支</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="bchart">
+                <div class="ct">累计资本开支（万亿美元）</div>
+                <div class="brow"><div class="bl">AI 专用数据中心</div><div class="btrack"><div class="bfill" style="width:78%;"></div></div><div class="bv">$5.2T</div></div>
+                <div class="brow"><div class="bl">传统 IT 基础设施</div><div class="btrack"><div class="bfill dim" style="width:22%;"></div></div><div class="bv">$1.5T</div></div>
+                <div class="bnote">合计 6.7 万亿美元 · 约 70% 的容量增长由 AI 负载驱动</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">坐标</span><h3 class="s-title">哈萨克斯坦在这张图上的位置</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">1 GW</div><div class="l">DCV 规划总容量</div></div>
+              <div class="stat"><div class="v">$30B</div><div class="l">官方公开投资口径</div></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><div class="v">2027.06</div><div class="l">首个 50 MW 投运</div></div>
+              <div class="stat"><div class="v">1,400 公顷</div><div class="l">Tier III · PUE 1.25</div></div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">埃基巴斯图兹"数据中心谷"</div><div class="sub-d">4 × 50 MW AI 中心起步，一期 100 MW——<b>国家主导的旗舰项目已经落子。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:20%">项目</th><th style="width:32%">规模与投资</th><th style="width:26%">节奏</th><th style="width:22%">主体</th></tr>
+          <tr><td><b>Data Center Valley</b><br><span class="dim">埃基巴斯图兹</span></td><td>1 GW · 300 亿美元<br>4 × 50 MW AI 中心<br>1,400 公顷 · Tier III · PUE 1.25</td><td>2026.01 启动<br>一期 100 MW<br><b>2027.06 首个 50 MW 投运</b></td><td>哈电信<br>（政府直管）</td></tr>
+          <tr><td><b>JMOT04 Tier IV</b><br><span class="dim">巴甫洛达尔州</span></td><td>19 亿美元合计<br>数据中心 15 亿<br>+ 250 MW 燃气电厂 4 亿</td><td>已签约<br><span class="dim">（工期未公布）</span></td><td>JMOT04（英国）<br>经 AI 与数字发展部</td></tr>
+        </table>
+      </div>
+      <div class="hlight">两个锚点分工不同：DCV 是国家主导的旗舰级项目，巴甫洛达尔是外资主导的独立市场化项目，二者并行推进——需求验证并不依赖单一项目的执行结果，哈电信也已确认与 20 家以上超大规模厂商就 DCV 容量进行洽谈（详见第 4 章）。中亚数据中心市场年复合增速约 <b>18.5%</b>，哈萨克斯坦占据主导份额。</div>
+      <div class="src">来源：麦肯锡（经 AIFC 数据中心投资论坛 2026 引述）；The Tech Capital（2026）；Astana Times（2026.02 / 2026.04）；OilPrice / Times of Central Asia（2026）；Arizton 中亚数据中心市场报告。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch6b">
+      <div class="spine"><span class="k">6.2 · 核心观点</span><span class="q">按 DCV 口径 3,000 万美元/MW 推算，单个 50 MW 模块约 15 亿美元，由三个模块构成。</span></div>
+      <div class="stackbar">
+        <div class="sb1"><span class="pct">65%</span><span class="nm">智算 ≈ 9.75 亿</span></div>
+        <div class="sb2"><span class="pct">25%</span><span class="nm">基建 ≈ 3.75 亿</span></div>
+        <div class="sb3"><span class="pct">10%</span><span class="nm">ICT ≈ 1.5 亿</span></div>
+      </div>
+      <div class="slide-grid cols3">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">M1</span><h3 class="s-title">智算 · 65%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">发动机：芯片 + 整机</div><div class="sub-d">决策因素：<b>路线图确定性 · 供应安全 · 生态</b>。选芯片就是选路线图，决定二期能否平滑扩容（见 7.1 L3）。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">M2</span><h3 class="s-title">基建 · 25%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">地基：最难返工</div><div class="sub-d">决策因素：<b>建设周期 · PUE · 可伸缩性</b>。供电与温控决定 PUE，也就决定可售算力（见 6.3 杠杆二）。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">M3</span><h3 class="s-title">ICT · 10%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">神经：网络 + 存储</div><div class="sub-d">决策因素：<b>组网线性度 · 吞吐 · 可分期升级</b>。同样的卡，线性度差 20% 就等于白买 20% 的芯片。</div></div>
+          </div>
+        </div>
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">总账</span><h3 class="s-title">50 MW ≈ 15 亿美元，怎么对上第 5 章</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">$1.5B</div><div class="l">单模块 50 MW × $30M/MW</div></div>
+              <div class="stat"><div class="v">$3.0B</div><div class="l">一期 100 MW（2 × 50 MW）</div></div>
+              <div class="stat"><div class="v">$30B</div><div class="l">全规模 1 GW（20 × 50 MW）</div></div>
+            </div>
+            <div class="s-cols">
+              <div class="sub t-accent"><div class="sub-t">65 / 25 / 10 是 DCV 口径的模块拆分，与 5.1 的 A/B/C 三层可互相印证</div><div class="sub-d">智算 ≈ IT 设备（40-60% 取上限）；基建 ≈ 供电温控 + 场地；ICT ≈ 网络存储。</div></div>
+              <div class="sub"><div class="sub-t">三个模块，两类决策</div><div class="sub-d">智算 65% 是<b>芯片路线图</b>的决策（第 8 章）；基建 25% + ICT 10% 是<b>形态与能源</b>的决策（第 7 章）。</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">65% 的决策是芯片路线图，25% 的决策是能源与形态——<b>第 7、8 章讲的就是这两件事。</b></div>
+      <div class="src">测算口径：按 DCV 官方 300 亿美元 / 1 GW 折算 $30M/MW；模块占比为量级示意，非报价。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch6c">
+      <div class="spine"><span class="k">6.3 · 核心观点</span><span class="q">两大价值杠杆：电费套利十年省出一期基建；最优 PUE 把稀缺的并网配额换成收入。</span></div>
+      <div class="sect-label">杠杆一 · 电费套利</div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:44%">口径</th><th>50 MW</th><th>1 GW</th></tr>
+          <tr><td>年耗电量</td><td>438 GWh</td><td>8.8 TWh</td></tr>
+          <tr><td>年电费 · 埃基巴斯图兹（2.1¢）</td><td><b>$9M</b></td><td><b>$180M</b></td></tr>
+          <tr><td>年电费 · 美国口径（8¢）</td><td>$35M</td><td>$700M</td></tr>
+          <tr class="total"><td><b>年度成本优势</b></td><td>≈ $26M</td><td>≈ $520M</td></tr>
+        </table>
+      </div>
+      <div class="sub t-accent" style="margin-bottom:14px"><div class="sub-t">十年周期内，仅电费一项的成本优势就超过一期 50 MW 全部基建投资（约 3.75 亿美元）</div><div class="sub-d">而这个优势已被限价令锁定到 2032 年。测算口径：满负荷 8,760 小时；电价见第 3 章；美国口径为数据中心工商业电价常用区间。</div></div>
+      <div class="sect-label">杠杆二 · PUE 杠杆——被低估的那个</div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">逻辑</span><h3 class="s-title">并网容量是配额，不是商品</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">同样一张 100 MW 的并网批文</div><div class="sub-d">PUE 1.50（行业常见）支撑 66.7 MW IT；PUE 1.25（DCV 目标）支撑 80.0 MW。</div></div>
+            <div class="fig">
+              <div class="bchart">
+                <div class="brow"><div class="bl">PUE 1.50（行业常见）</div><div class="btrack"><div class="bfill dim" style="width:83%;"></div></div><div class="bv">66.7</div></div>
+                <div class="brow"><div class="bl">PUE 1.25（DCV 目标）</div><div class="btrack"><div class="bfill" style="width:100%;"></div></div><div class="bv">80.0</div></div>
+                <div class="bnote" style="color:var(--green)">同一张批文，多出 13.3 MW IT 负载 = 多出 20% 可售算力</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">兑现</span><h3 class="s-title">+20% ≈ 每年 2,000 万美元级</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">按一期口径，这 20% 相当于每年额外约 2,000 万美元级的算力售卖能力</div><div class="sub-d">而增量投入仅落在温控与供电选型上。<b>在哈萨克斯坦，温控方案不是工程细节，是商业模式。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">哈萨克斯坦的投资逻辑，一句话：<b>用世界最低梯队的电价，买七年锁定的成本确定性；再用最优 PUE，把稀缺的并网配额换成最多的可售算力。</b></div>
+      <div class="src">测算口径：PUE 杠杆按 100 MW 并网容量 ÷ PUE 折算 IT 负载；"每年 2,000 万美元级"按一期口径的算力租售能力量级估算，非报价。</div>
+    </div>
+  </div>
+
+  <!-- CH7 -->
+  <div class="panel" data-panel="ch7">
+    <div class="subtabs">
+      <button data-sub="ch7a" class="active">7.1 立体五层架构</button>
+      <button data-sub="ch7b">7.2 三类刚需三形态</button>
+      <button data-sub="ch7c">7.3 三方案对比</button>
+      <button data-sub="ch7d">7.4 华为三重能力与推荐</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch7a">
+      <div class="spine"><span class="k">7.1 · 核心观点</span><span class="q">一座 AI 数据中心从下往上五层，每一层都是一次独立的投资决策——占多少钱、什么时候定、定错了能不能改。越靠下的层，越早决策、越难返工。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">图证</span><h3 class="s-title">立体五层（自下而上）</h3></div>
+          <div class="s-body">
+            <div class="fig">
+              <div class="frame">
+                <div class="frame-title">L0-L4 · 自下而上，每层一次独立决策</div>
+                <div class="fcol">
+                  <div class="fbox fb-l5"><div class="fb-h">L4 应用与模型层 <span class="pct">不计入基建投资</span></div><div class="fb-d">政务 · 金融 · 能源 · 矿业 · 哈萨克语大模型</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l4"><div class="fb-h">L3 算力层 <span class="pct">40-60%</span></div><div class="fb-d">赛道 A：GPU 生态 · 赛道 B：昇腾 950PR（风冷）/ 950DT（液冷）+ Atlas</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l3"><div class="fb-h">L2 网络与存储层 <span class="pct">5-12%</span></div><div class="fb-d">400G 无损 AI Fabric · 高吞吐并行存储</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l2"><div class="fb-h">L1 能源层：供电与温控 <span class="pct">~32%</span></div><div class="fb-d">电力模块 · UPS · 锂电 · 风冷 / 液冷 / 间接蒸发 · 能效管理</div></div>
+                  <div class="farr-v">▲ 建立其上</div>
+                  <div class="fbox fb-l1"><div class="fb-h">L0 形态层：场地与建筑 <span class="pct">~8%</span></div><div class="fb-d">传统楼宇 / 钢结构快建 / 预制模块化 · 土地 · 并网接入</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">决策</span><h3 class="s-title">逐层拆解：占多少 · 何时定 · 能否改</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">L4 应用与模型 · 不计入基建投资</div><div class="sub-d">先定应用，再定规模——负载画像决定卡型与总 MW。<b>可随时调整。</b></div></div>
+            <div class="sub"><div class="sub-t">L3 算力 · 40-60%</div><div class="sub-d">选芯片就是选路线图——决定近一半投资，也决定二期能否平滑扩容。<b>按代际更换，3-5 年一轮。</b></div></div>
+            <div class="sub"><div class="sub-t">L2 网络存储 · 5-12%</div><div class="sub-d">组网决定有效算力——同样的卡，线性度差 20% 就等于白买 20% 的芯片。<b>可分期升级。</b></div></div>
+            <div class="sub"><div class="sub-t">L1 能源 · ~32%</div><div class="sub-d">这一层决定 PUE，也就决定可售算力——在电量受限的市场，是商业模式而非工程细节。<b>极难返工</b>——管路与承重一次定型。</div></div>
+            <div class="sub t-accent"><div class="sub-t">L0 形态 · ~8%</div><div class="sub-d">形态决定交付速度与演进弹性——占钱最少，但锁定所有上层的可能性。<b>唯一完全不可返工——今天就要拍板。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">注意这个反差：<b>L0 只占约 8% 的投资，却是唯一完全不可返工的一层。</b>而 L1 占三分之一、极难返工。<b>两层加起来四成的钱，决定了另外六成钱能不能花得出去。</b></div>
+      <div class="src">口径说明：各层占比与 5.1 三层造价表一致（L0 ≈ A 场地与接入；L1 ≈ B 基建；L2+L3 ≈ C IT 设备）；可返工性为工程经验判断。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch7b">
+      <div class="spine"><span class="k">7.2 · 核心观点</span><span class="q">形态之争没有绝对答案，只有场景匹配——AI 产业的三类核心刚需，对应三种建设形态与三个投资量级。</span></div>
+      <div class="slide-grid cols3">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Scenario A</span><h3 class="s-title">战略投资型：国家级算力底座</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">0.5-1 GW</div><div class="l">规模</div></div>
+              <div class="stat"><div class="v">$15-45B</div><div class="l">投资</div></div>
+              <div class="stat"><div class="v">≥18 月</div><div class="l">周期</div></div>
+            </div>
+            <div class="sub"><div class="sub-t">刚需：主权算力 · 长期国家竞争力</div><div class="sub-d">形态：<b>方案一 · 传统楼宇</b>（终局形态）。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">Scenario B ★</span><h3 class="s-title">区域建设型：中亚智算枢纽</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">50-300 MW</div><div class="l">规模</div></div>
+              <div class="stat"><div class="v">$1.5-13B</div><div class="l">投资</div></div>
+              <div class="stat"><div class="v">9-12 月</div><div class="l">周期</div></div>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">刚需：算力租售 · 区域辐射 · 出口创汇</div><div class="sub-d">形态：<b>方案二 · 钢结构快建</b>。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">Scenario C</span><h3 class="s-title">产业落地型：行业边缘推理</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">1-20 MW</div><div class="l">规模</div></div>
+              <div class="stat"><div class="v">$0.03-0.9B</div><div class="l">投资</div></div>
+              <div class="stat"><div class="v">6-9 月</div><div class="l">周期</div></div>
+            </div>
+            <div class="sub"><div class="sub-t">刚需：矿区 · 油田 · 州府就近推理，低时延</div><div class="sub-d">形态：<b>方案三 · 预制模块化</b>。</div></div>
+          </div>
+        </div>
+        <div class="slide span2">
+          <div class="s-head"><span class="s-num">关系</span><h3 class="s-title">不是二选一，是时间先后——一次形态选择，锁定三条演进路径</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">B 起步：最快形成收入与示范</span><span class="arr">›</span>
+              <span class="step">向上兼容 A：滚动扩容至 GW 级</span><span class="arr">›</span>
+              <span class="step">向下复制 C：多州布点</span>
+            </div>
+            <div class="sub t-accent"><div class="sub-t">这就是 B 被推荐的根本原因</div><div class="sub-d">以场景 B 起步，向上兼容 A，向下复制 C——<b>三条路径共用同一套芯片与数字能源家族</b>（见 7.3）。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">三类场景并非二选一，而是<b>时间上的先后</b>：先建能最快产生收入的，再向两端生长。</div>
+      <div class="src">口径说明：投资量级 = 规模 × 第 5 章 $30-45M/MW；建设周期为三种形态的行业经验区间，见 7.3 对比表。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch7c">
+      <div class="spine"><span class="k">7.3 · 核心观点</span><span class="q">三个方案都可搭载昇腾 950 与华为数字能源全家族——差异只在形态与节奏，不在能力上限。</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:13%">维度</th><th style="width:29%">S1 楼宇</th><th style="width:29%">S2 钢结构</th><th style="width:29%">S3 预制模块</th></tr>
+          <tr><td><b>建设周期</b></td><td>≥18 个月</td><td style="color:var(--green);font-weight:600">9-12 个月</td><td>6-9 个月</td></tr>
+          <tr><td><b>规模上限</b></td><td>GW 级</td><td>数百 MW</td><td>数十 MW</td></tr>
+          <tr><td><b>散热演进</b></td><td>风冷 / 液冷皆宜</td><td style="color:var(--green);font-weight:600">风冷先行 · 液冷就绪</td><td>风冷为主</td></tr>
+          <tr><td><b>对上 DCV 节奏</b></td><td>否</td><td style="color:var(--green);font-weight:700">是</td><td>是（但规模不足）</td></tr>
+          <tr><td><b>典型场景</b></td><td>国家级超大集群</td><td>区域智算枢纽</td><td>边缘推理、多点布局</td></tr>
+          <tr><td><b>取舍</b></td><td>单位造价最低，但周期最长——大概率错过 2027.06 首个 50 MW 节点</td><td style="color:var(--green);font-weight:600">单位造价高于超大规模楼宇，换回一整个施工季的先发优势</td><td>液冷深度受限（FusionModule / FusionDC 系列），适合分散多点，不适合单点做大</td></tr>
+        </table>
+      </div>
+      <div class="slide-grid">
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">为什么是 S2</span><h3 class="s-title">用略高的单位造价，换回一整个施工季</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">9-12 个月建成，对上 2027.06 节点</div><div class="sub-d">风冷先行、液冷就绪，规模上限数百 MW——<b>刚好覆盖一期到三期的滚动扩容区间。</b></div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">为什么不是 S1 / S3</span><h3 class="s-title">一个太慢，一个太小</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">S1 楼宇：单位造价最低，但周期 ≥18 个月</div><div class="sub-d">大概率错过 2027.06 首个 50 MW 节点——适合作为三期的终局形态。</div></div>
+            <div class="sub"><div class="sub-t">S3 预制模块：最快，但液冷深度受限</div><div class="sub-d">FusionModule / FusionDC 系列适合分散多点，不适合单点做大——是场景 C 的答案，不是主站的答案。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">三个方案都可搭载昇腾 950 与华为数字能源全家族。<b>差异只在形态与节奏，不在能力上限。</b></div>
+      <div class="src">口径说明：S1/S2/S3 对应 7.2 的方案一/二/三；"对上 DCV 节奏"以 2027.06 首个 50 MW 投运为基准倒推。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch7d">
+      <div class="spine"><span class="k">7.4 · 核心观点</span><span class="q">三个方案能够成立，前提是华为能把数字能源、芯片、交付服务三种能力打包进同一份合同——这也是它与单一芯片供应商或纯工程总包商的根本区别。</span></div>
+      <div class="card">
+        <div class="frame-title">Proof points · 三重能力的四个数字</div>
+        <div class="stats">
+          <div class="stat"><div class="v">60MW</div><div class="l">马来西亚案例总 IT 容量</div></div>
+          <div class="stat"><div class="v">11mo</div><div class="l">建设周期（较常规缩短约 50%）</div></div>
+          <div class="stat"><div class="v">1.0 EFLOPS</div><div class="l">Atlas 950 SuperPoD FP8 算力</div></div>
+          <div class="stat"><div class="v">15GW+</div><div class="l">全球累计交付机架容量</div></div>
+        </div>
+      </div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">DIGITAL ENERGY</span><h3 class="s-title">数字能源</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">FusionPower9000 户外一体化 PowerPOD：集成 UPS、锂电与低压配电，标准化预制</div><div class="sub-d">马来西亚 Johor 项目：3 栋楼共 60MW IT 容量，单机柜功率密度 &gt;20kW，约 1,000 个预制模块与土建同步施工，<b>11 个月建成投产（常规工期 24 个月，缩短约 50%）</b>，首期已于 2024 年 7 月底商用。</div></div>
+            <div class="sub"><div class="sub-t">风冷方案零耗水，热带高湿气候下实现 PUE≈1.4，配电用房面积减少 40%</div><div class="sub-d">——哈国的 −40°C 只会比这更容易。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">COMPUTE</span><h3 class="s-title">昇腾 950 + Atlas</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">950DT 单芯片 FP8 约 977 TFLOPS，FP4 约 1,953 TFLOPS，自研 HBM</div><div class="sub-d"><b>Atlas 950 SuperPoD 由 1,024 颗 950DT 组成，FP8 1.0 EFLOPS / FP4 2.0 EFLOPS</b>，98.3TB 显存，全液冷，UnifiedBus 2.0 全光互联——这决定了本项目二期能否平滑扩容到 EFLOPS 级。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">DELIVERY</span><h3 class="s-title">交付与服务</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">全球 170+ 国家和地区、1,000+ 座大型数据中心、累计交付 15GW+ 机架容量的工程与运维体系</div><div class="sub-d">落到哈萨克斯坦是：2026 年 7 月主权基金 Samruk-Kazyna 与华为中东中亚总裁就 AI 基础设施、数据中心、存储与网络合作举行会谈；本地已有 5G、云与 GovTech 长期合作基础，本地团队与备件体系在位——这意味着一期投产后的运维响应，不需要从零建立。</div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">推荐</span><h3 class="s-title">S2 钢结构快建式</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t"><b>今天能开工，明天能长大。</b></div><div class="sub-d">以最短工期建成一期风冷算力（950PR + 华为数字能源），同步预留液冷管路与承重——950DT 就绪即接。</div></div>
+            <div class="flow">
+              <span class="step">2026-27 一期：钢结构 + 风冷 + 950PR</span><span class="arr">›</span>
+              <span class="step">2027-28 二期：液冷启用 + 950DT</span><span class="arr">›</span>
+              <span class="step">2028+ 三期：中亚算力枢纽</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight"><b>今天能开工，明天能长大。</b>推荐 S2 钢结构快建：一期风冷 950PR 最短工期投产，同步预留液冷管路与承重，950DT 就绪即接。</div>
+      <div class="src">来源：华为数字能源官网马来西亚 AI 数据中心案例（digitalpower.huawei.com，Johor 项目，2024 年 7 月商用）；华为 Connect 2025 公开路线图与 Atlas 950 SuperPoD 规格；Samruk-Kazyna 官方通报（2026.07）。</div>
+    </div>
+  </div>
+
+  <!-- CH8 -->
+  <div class="panel" data-panel="ch8">
+    <div class="subtabs">
+      <button data-sub="ch8a" class="active">8.1 定位与底数</button>
+      <button data-sub="ch8b">8.2 NVIDIA 已在场</button>
+      <button data-sub="ch8c">8.3 能源与路线图</button>
+      <button data-sub="ch8d">8.4 本地在位</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch8a">
+      <div class="spine"><span class="k">8.1 · 核心观点</span><span class="q">芯片 + 网络 + 数字能源 + 交付——第 6 章证明了 PUE 与算力密度共同决定项目回报。能把这两件事放进同一份合同的厂商，几乎只有一家。</span></div>
+      <div class="slide-grid">
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">底数</span><h3 class="s-title">四个数字</h3></div>
+          <div class="s-body">
+            <div class="stats">
+              <div class="stat"><div class="v">170+</div><div class="l">服务国家和地区</div></div>
+              <div class="stat"><div class="v">1000+</div><div class="l">已交付大型数据中心</div></div>
+              <div class="stat"><div class="v">15GW+</div><div class="l">累计交付机架容量</div></div>
+              <div class="stat"><div class="v">99.1%</div><div class="l">UPS S-ECO 供电效率</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">框架</span><h3 class="s-title">同一份合同，四种能力</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">芯片：昇腾 950 + Atlas 整机</div><div class="sub-d">从单芯片到 SuperPoD，路线图公开、交期可承诺。</div></div>
+            <div class="sub"><div class="sub-t">数字能源：供电 + 温控 + 能效管理</div><div class="sub-d">FusionPower + FusionCol + iCooling——<b>决定 PUE 的那一层</b>。</div></div>
+            <div class="sub"><div class="sub-t">网络与存储：CloudEngine + OceanStor</div><div class="sub-d">400G 无损 AI Fabric，<b>组网决定有效算力</b>。</div></div>
+            <div class="sub t-accent"><div class="sub-t">交付：全球 EPC 生态 + 本地团队</div><div class="sub-d"><b>合同边界 = 责任边界</b>——出了问题只找一个电话号码。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">合同边界 = 责任边界——<b>出了问题只找一个电话号码。</b></div>
+      <div class="src">来源：华为数字能源公开数据（服务国家、交付数据中心与机架容量、UPS S-ECO 效率）；能力框架对应第 5 章 85% 可采购设备清单的三层。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch8b">
+      <div class="spine"><span class="k">8.2 · 核心观点</span><span class="q">先说清楚：NVIDIA 已经在场——不建议、也没有必要替换任何已投资产。问题不是"换掉谁"，而是：接下来这 1 GW 的产业算力增量，用什么建。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">存量</span><h3 class="s-title">已在场的，继续服役</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">Alem.Cloud 512 张 H200 已投运，Kosshy 年底上线</div><div class="sub-d">我们不建议、也没有必要替换任何已投资产——<b>科研资产继续服役。</b></div></div>
+          </div>
+        </div>
+        <div class="slide hl">
+          <div class="s-head"><span class="s-num">增量</span><h3 class="s-title">接下来 1 GW 的产业算力，用什么建</h3></div>
+          <div class="s-body">
+            <div class="sub t-accent"><div class="sub-t">问题不是"换掉谁"，而是增量最优解</div><div class="sub-d">按场景分：科研维持现状；<b>政务主权负载与 GW 级产业推理，答案是昇腾。</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:30%">场景</th><th style="width:28%">现状</th><th style="width:42%">增量最优解</th></tr>
+          <tr><td>科研 · 前沿实验 · 国际论文</td><td>Alem.Cloud / Farabium（NVIDIA）</td><td>维持现状，继续用</td></tr>
+          <tr><td>政务与主权数据负载</td><td>分散、容量不足</td><td style="color:var(--accent);font-weight:600">昇腾 — 无第三方出口管制</td></tr>
+          <tr><td>GW 级产业推理与租售</td><td>尚未开建</td><td style="color:var(--accent);font-weight:600">昇腾 — 陆路交付、结算灵活、全栈单一责任</td></tr>
+        </table>
+      </div>
+      <div class="hlight">客观说明：NVIDIA 单卡生态成熟度依然领先。<b>但在"供应确定性 × 交付周期 × 全栈责任"三项上，产业级增量的答案是昇腾。</b></div>
+      <div class="src">来源：Alem.Cloud / AI-Farabium / Kosshy 公开规格见 4.1；两条路线对比见 5.5。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch8c">
+      <div class="spine"><span class="k">8.3 · 核心观点</span><span class="q">数字能源把第 6 章的 20% 兑现；昇腾公开路线图决定二期的天花板。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">能源</span><h3 class="s-title">数字能源三件套</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t"><b>供电：</b>FusionPower 电力模块 + UPS5000（S-ECO 99.1%）+ SmartLi 锂电</div><div class="sub-d">预制化 PowerPOD，与土建并行施工。</div></div>
+            <div class="sub"><div class="sub-t"><b>温控：</b>FusionCol8000 间接蒸发冷却</div><div class="sub-d">把 −40°C 的冬天直接换算成 PUE 红利。</div></div>
+            <div class="sub t-accent"><div class="sub-t"><b>管理：</b>NetEco + iCooling AI 能效调优</div><div class="sub-d">全生命周期持续压降 PUE——20% 可售算力的兑现路径。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">路线图</span><h3 class="s-title">昇腾四代公开承诺</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">950PR · 2026Q1</span><span class="arr">›</span>
+              <span class="step">950DT · 2026Q4</span><span class="arr">›</span>
+              <span class="step">960 · 2027</span><span class="arr">›</span>
+              <span class="step">970 · 2028</span>
+            </div>
+            <div class="sub"><div class="sub-t"><b>950DT 单芯片：</b>FP8 约 977 TFLOPS，FP4 约 1,953 TFLOPS，自研 HBM</div><div class="sub-d"><b>Atlas 950 SuperPoD：</b>1,024 颗 950DT，FP8 1.0 EFLOPS / FP4 2.0 EFLOPS，98.3 TB 显存，全液冷，UnifiedBus 2.0 全光互联。</div></div>
+            <div class="sub"><div class="sub-t"><b>网络与生态：</b>CloudEngine 400G AI Fabric 保障集群线性度</div><div class="sub-d">CANN / MindSpore 支持哈萨克语大模型本地适配。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">硬件有代际，路线图是承诺——公开路线图就是供应确定性的书面证明。</div>
+      <div class="src">来源：华为 Connect 2025 公开路线图与 Atlas 950 SuperPoD 规格。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch8d">
+      <div class="spine"><span class="k">8.4 · 核心观点</span><span class="q">在哈萨克斯坦，我们不是新来的。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">存量</span><h3 class="s-title">长期合作基础在位</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">2026 年 7 月，主权基金 Samruk-Kazyna 与华为中东中亚总裁举行会谈</div><div class="sub-d">议题：AI 基础设施、数据中心、存储与网络合作。</div></div>
+            <div class="sub"><div class="sub-t">已有 5G、云与 GovTech 长期合作基础</div><div class="sub-d">本地团队与备件体系在位。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">意义</span><h3 class="s-title">对一期项目的直接意义</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">运维响应不需从零建立</div><div class="sub-d">本地团队与备件体系已在位，<b>一期投产后的运维有保障</b>。</div></div>
+            <div class="sub"><div class="sub-t">政府层面沟通渠道已通</div><div class="sub-d">Samruk-Kazyna 会谈 = <b>主权基金层面的合作通道已打开</b>。</div></div>
+            <div class="sub t-accent"><div class="sub-t"><b>单一责任界面：</b>芯片、能源、网络、交付一家兜底</div><div class="sub-d">出了问题只找一个电话号码。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">钢结构工艺与业界同源——华为的差异化在交付体系与能源效率，不在钢板。</div>
+      <div class="src">来源：Samruk-Kazyna 官方通报（2026.07）；Kazakhstan Today；DK News（2025-2026）。</div>
+    </div>
+  </div>
+
+  <!-- CH9 -->
+  <div class="panel" data-panel="ch9">
+    <div class="subtabs">
+      <button data-sub="ch9a" class="active">9.1 蓝图与 90 天</button>
+      <button data-sub="ch9b">9.2 三个风险与应对</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch9a">
+      <div class="spine"><span class="k">9.1 · 核心观点</span><span class="q">一张蓝图 · 三期滚动 · 一个伙伴——对齐国家节奏：2027 年 6 月 DCV 首个 50 MW 投运，这是唯一真正的时间约束，倒推 90 天内必须启动。</span></div>
+      <div class="slide-grid">
+        <div class="slide hl span2">
+          <div class="s-head"><span class="s-num">台阶</span><h3 class="s-title">三级台阶</h3></div>
+          <div class="s-body">
+            <div class="s-cols">
+              <div>
+                <div class="sub"><div class="sub-t"><b>一期 2027：</b>50 MW · 950PR · 风冷 · ≈$1.5B</div><div class="sub-d">对齐 DCV 首个 50 MW 节点</div></div>
+                <div class="sub"><div class="sub-t"><b>二期 2028：</b>+50-100 MW · 950DT · 液冷</div><div class="sub-d">液冷管路与承重在一期已预留，就绪即接</div></div>
+              </div>
+              <div class="sub t-accent"><div class="sub-t"><b>三期 2029+：</b>迈向 1 GW 中亚算力枢纽</div><div class="sub-d">承接中亚邻国与中间走廊沿线外溢需求（见 4.2 第 6 项）——<b>1 GW 的规划不只服务一国市场。</b></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">90 天</span><h3 class="s-title">三个里程碑</h3></div>
+          <div class="s-body">
+            <div class="flow">
+              <span class="step">第 1-30 天：高层共识 + 场址与并网容量确认</span><span class="arr">›</span>
+              <span class="step">第 31-60 天：一期规模与 PUE 目标冻结</span><span class="arr">›</span>
+              <span class="step">第 61-90 天：设计冻结 + 长周期设备下单</span>
+            </div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">模式</span><h3 class="s-title">合作模式与融资协同</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">联合咨询与可研 → 交钥匙建设（华为 + 全球 EPC 生态）→ 运营移交与本地人才培养</div><div class="sub-d">端到端责任移交。</div></div>
+            <div class="sub"><div class="sub-t">融资协同</div><div class="sub-d">中资金融机构渠道与分期结构，与 DCV 国家投资激励叠加使用。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">每一期用当期最优技术、期期无缝衔接——<b>用确定的投资节奏，锁住不确定时代的选择权。</b></div>
+      <div class="src">口径说明：一期投资按 50 MW × $30M/MW 估算；时间锚点为 DCV 2027.06 首个 50 MW 投运（Astana Times，2026.02）。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch9b">
+      <div class="spine"><span class="k">9.2 · 核心观点</span><span class="q">任何国家级基建投资都有风险敞口，回避不写不等于风险不存在——以下是三个最实质的风险点，以及为什么我们认为它们可控。</span></div>
+      <div class="slide-grid cols3">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">风险 1</span><h3 class="s-title">电力扩容的执行不确定性</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">政府目标 2027 年消除电力缺口、停止自俄进口</div><div class="sub-d">但当前约 26.8 GW 装机对应的是快速增长的用电需求，扩容路径本身也有过调整——2026 年发生对俄电站合同取消、转由中方企业承建，计划中的核电项目也一度面临融资进度不确定。电价便宜不等于电量有保证，这是本材料唯一需要显性提示的技术性风险。</div></div>
+            <div class="sub t-accent"><div class="sub-t">应对建议</div><div class="sub-d">把"场址与并网容量确认"（已是本章 90 天计划第一步）做实——要求电网公司出具书面分期供电承诺作为里程碑门槛，而不是把电价单独作为电量的代理指标。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">风险 2</span><h3 class="s-title">供应链路线的外部合规环境</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">昇腾路线本身"不受第三方出口管制"（第 2 章已述），这是其相对英伟达生态的结构性优势</div><div class="sub-d">但反过来看，选择以中国技术路线为主力的产业级部署，也需要哈方在与西方资本市场（世界银行、EBRD 等）既有合作关系中做好沟通，避免被单一解读为"选边"。总统已明确的多向量外交原则（第 3 章）正是管理这层关系的政治资产，而非需要回避的话题。</div></div>
+            <div class="sub t-accent"><div class="sub-t">应对建议</div><div class="sub-d">把"昇腾承接产业级/主权级负载、原有生态继续服务前沿科研"（第 8 章已有此表述）作为对外沟通的标准口径，体现的是场景化选型而非阵营选择。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">风险 3</span><h3 class="s-title">大型基建的工期与造价执行风险</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">国家级算力基建属于大型基建项目</div><div class="sub-d">全球同类项目的工期与造价超支是普遍现象，而非哈萨克斯坦特有的风险。</div></div>
+            <div class="sub t-accent"><div class="sub-t">应对建议</div><div class="sub-d">第 7 章推荐的"钢结构快建"与本章"三级台阶"分期节奏，本身就是针对这类风险的工程与财务对冲——把大额一次性资本承诺拆分为可分阶段验证、每期独立决策的小额投入，任何一期出现偏差，损失敞口都被限制在该期规模内，而不会拖累整体项目。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">算力时代不会等任何人。<b>最好的启动时间是三年前，其次是今天。</b></div>
+      <div class="src">来源：OilPrice.com（2026）；Eurasianet（2026）；哈萨克斯坦总理府（primeminister.kz，2026）。风险评估基于公开报道，非内部尽调结论。</div>
+    </div>
+  </div>
+
+  <!-- CH10 -->
+  <div class="panel internal-only" data-panel="ch10">
+    <div class="int-banner"><b>内部资料 · 不对客户展示。</b>本章为销售侧的空间测算与产品映射；切换到"对外"模式后本章自动隐藏。当前为框架版，行业数据待补充。</div>
+    <div class="subtabs">
+      <button data-sub="ch10a" class="active">10.1 测算逻辑与行业矩阵</button>
+      <button data-sub="ch10b">10.2 产品货架与待补清单</button>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch10a">
+      <div class="spine"><span class="k">10.1 · 核心观点</span><span class="q">每个行业的可售空间，都沿同一条链条推导——第 5 章的单位造价与 85% 可采购比例，是这条链条的换算系数。</span></div>
+      <div class="flow">
+        <span class="step">行业 AI 场景</span><span class="arr">›</span>
+        <span class="step">算力负载 MW</span><span class="arr">›</span>
+        <span class="step">× $30-45M / MW</span><span class="arr">›</span>
+        <span class="step">端到端空间</span><span class="arr">›</span>
+        <span class="step">× ~85% 可采购</span><span class="arr">›</span>
+        <span class="step">华为可承接清单</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <tr><th style="width:16%">行业</th><th style="width:36%">主要 AI 负载场景</th><th style="width:14%">算力需求 MW</th><th style="width:14%">端到端空间</th><th style="width:20%">华为主要落点</th></tr>
+          <tr><td><b>政府与公共部门</b></td><td>eGov GPT、数字法典合规、公共安全、哈萨克语大模型</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>昇腾 + 数字能源 + 存储</td></tr>
+          <tr><td><b>能源与矿业</b></td><td>井下解释、矿山调度、电网负荷预测、设备预测性维护</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>昇腾 + 边缘预制模块</td></tr>
+          <tr><td><b>金融</b></td><td>风控与反欺诈、智能客服、信贷审批、合规审查</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>昇腾推理 + 高可用供电</td></tr>
+          <tr><td><b>电信与运营商</b></td><td>算力租售、网络智能运维、DCV 承载</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>全栈交钥匙</td></tr>
+          <tr><td><b>制造与交通</b></td><td>质检视觉、物流调度、中欧班列智能通关</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>边缘推理 + 集成服务</td></tr>
+          <tr><td><b>医疗与教育</b></td><td>影像辅助诊断、母语教学平台、科研算力</td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td>昇腾 + 云平台 + 培训</td></tr>
+          <tr class="total"><td colspan="2"><b>合计可售空间</b></td><td><span class="dim">待补</span></td><td><span class="dim">待补</span></td><td></td></tr>
+        </table>
+      </div>
+      <div class="hlight">链条固定、系数固定——<b>只要填上各行业的 MW，可售空间就自动出来。</b></div>
+      <div class="src">灰色为待补充项。填写顺序建议：先定各行业算力负载 MW（可参考 DCV 已报需求与哈电信客户结构），再按第 5 章系数换算。</div>
+    </div>
+
+    <div class="subpanel" data-subpanel="ch10b">
+      <div class="spine"><span class="k">10.2 · 核心观点</span><span class="q">产品货架按层对齐第 5 章的投资结构——服务长尾是下一步要填的重点。</span></div>
+      <div class="slide-grid">
+        <div class="slide">
+          <div class="s-head"><span class="s-num">L3</span><h3 class="s-title">算力 40-60%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">昇腾 950PR / 950DT · Atlas 整机与 SuperPoD</div><div class="sub-d">CANN / MindSpore 生态适配。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">L1</span><h3 class="s-title">数字能源 ~32%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">FusionPower 电力模块 · UPS5000 · SmartLi · FusionCol8000 温控</div><div class="sub-d">NetEco / iCooling 能效管理。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">L2</span><h3 class="s-title">网络与存储 5-12%</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">CloudEngine 400G AI Fabric · OceanStor 存储</div><div class="sub-d">组网决定有效算力。</div></div>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="s-head"><span class="s-num">SV</span><h3 class="s-title">服务与长尾（待补充）</h3></div>
+          <div class="s-body">
+            <div class="sub"><div class="sub-t">咨询与可研 · 交钥匙集成 · 运维外包 · 人才培养与认证 · 备件与升级</div><div class="sub-d">这部分的空间与毛利结构待补充，是内部版下一步要填的重点。</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hlight">待补充清单：① 各行业算力负载 MW 的估算依据与口径 ② 服务与长尾收入的空间测算与毛利结构 ③ 竞争格局：NVIDIA / Presight-G42 / 本地集成商的份额与打法 ④ 分年度落单节奏与关键客户名单。</div>
+      <div class="src">口径说明：产品货架按第 5 章投资结构三层对齐；本页为内部框架版。</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>口径说明：全部数据均引自公开来源并标注于各章末尾，主要包括英伟达「AI 五层结构」（黄仁勋）、IEA《Energy and AI》、高盛研究、麦肯锡《State of AI》与《The Cost of Compute》（经 AIFC 2026 论坛引述）、德勤、PwC、Gen Re 通用目的技术扩散研究、PowerLines 公用事业调研、2026 年全球数据中心造价基准（Axis Intelligence / iRecruit / SAVRN）、Data Center Frontier 与 CNBC（Meta 千兆瓦园区）、Al Jazeera 与牛津能源研究所（中美能源对比）、工信部与新浪财经、哈总统官网 akorda.kz 国情咨文、哈萨克斯坦能源部 2026-2032 限价令、哈总理府、Astana Times、qazinform、Kazakhstan Today、Times of Central Asia、Eurasianet、Arizton、华为 Connect 2025 公开路线图。单位经济学测算为量级示意，非商务报价。仅用于客户高层交流。</div>
+    <div style="text-align:right;">提示：方向键 ←/→ 翻章；点击页签/胶囊直达对应子章节；URL 加 #ch5c 可直达任意子章节</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var bar = document.getElementById('bar');
+
+  function visibleTabs() {
+    return Array.prototype.filter.call(
+      document.querySelectorAll('#tabs button'),
+      function (b) { return body.getAttribute('data-mode') === 'int' || !b.classList.contains('internal-only'); }
+    );
+  }
+  function currentTab() { return document.querySelector('#tabs button.active'); }
+  function panelOf(ch) { return document.querySelector('.panel[data-panel="' + ch + '"]'); }
+  function setProgress() {
+    var tv = visibleTabs(), cur = currentTab();
+    var i = tv.indexOf(cur);
+    bar.style.width = (((i < 0 ? 0 : i) + 1) / tv.length * 100) + '%';
+  }
+  function activateSub(panel, sid) {
+    panel.querySelectorAll('.subtabs button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-sub') === sid);
+    });
+    panel.querySelectorAll('.subpanel').forEach(function (p) {
+      p.classList.toggle('active', p.getAttribute('data-subpanel') === sid);
+    });
+    if (history.replaceState) history.replaceState(null, '', '#' + sid);
+  }
+  function activate(ch, scroll) {
+    document.querySelectorAll('#tabs button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-ch') === ch);
+    });
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', p.getAttribute('data-panel') === ch);
+    });
+    var panel = panelOf(ch);
+    if (panel) {
+      var b = panel.querySelector('.subtabs button.active') || panel.querySelector('.subtabs button');
+      if (b) activateSub(panel, b.getAttribute('data-sub'));
+    }
+    setProgress();
+    if (scroll !== false) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function stepChapter(dir) {
+    var tv = visibleTabs(), cur = currentTab();
+    var i = tv.indexOf(cur);
+    activate(tv[(i + dir + tv.length) % tv.length].getAttribute('data-ch'));
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b) return;
+    if (b.closest('#tabs') && b.getAttribute('data-ch')) { activate(b.getAttribute('data-ch')); return; }
+    if (b.hasAttribute('data-sub')) {
+      var panel = b.closest('.panel');
+      if (panel) activateSub(panel, b.getAttribute('data-sub'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (b.hasAttribute('data-mode')) {
+      body.setAttribute('data-mode', b.getAttribute('data-mode'));
+      document.querySelectorAll('.modebar button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      var cur = currentTab();
+      if (!cur || visibleTabs().indexOf(cur) < 0) activate('ch0', false); else setProgress();
+      return;
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { stepChapter(1); }
+    else if (e.key === 'ArrowLeft') { stepChapter(-1); }
+  });
+
+  document.querySelectorAll('.subtabs').forEach(function (st) {
+    if (st.querySelectorAll('button').length < 2) st.style.display = 'none';
+  });
+
+  function openHash() {
+    var h = (location.hash || '').replace('#', '');
+    var m = h.match(/^(ch\d+)([a-z]?)$/);
+    if (!m || !panelOf(m[1])) { activate('ch0', false); return; }
+    if (m[1] === 'ch10' && body.getAttribute('data-mode') !== 'int') {
+      body.setAttribute('data-mode', 'int');
+      document.querySelectorAll('.modebar button').forEach(function (x) { x.classList.toggle('on', x.getAttribute('data-mode') === 'int'); });
+    }
+    activate(m[1], false);
+    if (m[2]) activateSub(panelOf(m[1]), h);
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+</body>
+</html>
