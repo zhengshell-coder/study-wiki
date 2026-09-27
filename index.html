@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="图书馆">
 <style>
   :root{
-    --bg:#F6F2EA; --paper:#FFFDF8; --paper-2:#FBF8F1;
+    --bg:#F3EFE7; --paper:#FFFDF8; --paper-2:#FBF8F1;
     --ink:#2A2724; --ink-2:#5C564D; --muted:#8A8378; --faint:#B3AB9E;
     --line:#E6DECF; --line-2:#D8CFBE;
     --accent:#3E6B63; --accent-2:#2F554E; --accent-soft:#E5EDE9;
@@ -104,6 +104,17 @@
   .sh-n small{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0;margin-left:8px}
   .sh-l{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .chev{color:var(--faint);font-size:18px}
+  /* 书架 · 书脊 */
+  .bookcase{background:linear-gradient(#EFE8DB,#E9E1D2);border:1px solid var(--line);border-radius:var(--r);padding:26px 22px 0}
+  .spines{display:flex;align-items:flex-end;gap:10px;overflow-x:auto;padding:14px 4px 0;scrollbar-width:thin}
+  .spine{flex-shrink:0;border-radius:3px 3px 0 0;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;
+    padding:14px 0 10px;transition:transform .2s ease, box-shadow .2s ease;box-shadow:inset -3px 0 0 rgba(0,0,0,.07), inset 2px 0 0 rgba(255,255,255,.18)}
+  .spine:hover{transform:translateY(-10px);box-shadow:inset -3px 0 0 rgba(0,0,0,.07), inset 2px 0 0 rgba(255,255,255,.18), 0 8px 16px rgba(60,45,20,.18)}
+  .spine .band{width:70%;height:0;border-top:1px solid rgba(255,255,255,.45);border-bottom:1px solid rgba(0,0,0,.12);margin:0 0 3px}
+  .spine .nm{writing-mode:vertical-rl;font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:4px;flex:1;display:flex;align-items:center;margin:8px 0}
+  .spine .ct{font-size:11px;opacity:.85;font-variant-numeric:tabular-nums}
+  .plank{height:12px;background:#B9AE9C;border-radius:0 0 4px 4px;margin:0 -22px;box-shadow:0 3px 0 #A89C88}
+  .shelf-cap{font-size:12.5px;color:var(--muted);text-align:center;padding:10px 0 12px}
 
   /* ---------- 分类内 / 搜索结果 ---------- */
   .crumb{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
@@ -472,8 +483,14 @@ function renderHome(box){
       return `<div class="ri" onclick="openPage('${p.id}')"><span class="t">${esc(p.title)}</span><span class="c">${esc(m?m.name:"")}</span><span class="d">${fmtDate(p)}</span></div>`; }).join("")+`</div></div>`;
   const mods=data.modules.map(m=>({m,ps:data.pages.filter(p=>p.moduleId===m.id).sort((a,b)=>pageTime(b)-pageTime(a))}))
     .filter(x=>x.ps.length).sort((a,b)=>b.ps.length-a.ps.length);
-  h+=`<div class="block"><div class="sec-h"><h2>书目</h2><span class="rule"></span><span class="aside">${mods.length} 类 · ${data.pages.length} 本</span></div><div class="shelf">`+
-    mods.map(({m,ps})=>`<div class="sh" onclick="setModule('${m.id}')">${sealHTML(m)}<div class="sh-i"><div class="sh-n">${esc(m.name)}<small>${ps.length} 本</small></div><div class="sh-l">最新：${esc(ps[0].title)}</div></div><span class="chev">›</span></div>`).join("")+`</div></div>`;
+  h+=`<div class="block"><div class="sec-h"><h2>书目</h2><span class="rule"></span><span class="aside">${mods.length} 类 · ${data.pages.length} 本</span></div>
+    <div class="bookcase"><div class="spines">`+
+    mods.map(({m,ps},i)=>{ const c=(m.color||"#8A8378");
+      const w=46+Math.min(ps.length,12)*2, code=(m.name||"").charCodeAt(0)||0, hgt=176+((code+i*3)%5)*10;
+      const bg=`color-mix(in srgb, ${c} 48%, #A89F8F)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
+      return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
+        <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
+    `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
   box.innerHTML=h;
 }
 function cardHTML(p){
