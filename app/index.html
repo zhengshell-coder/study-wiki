@@ -799,6 +799,7 @@ async function updateDoc(id){
 /* ---------- modal: upload + edit ---------- */
 function fillModuleSelect(sel){ sel.innerHTML=data.modules.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join(""); }
 function openUpload(){
+  if(sourceMode==="seed"){ toast("书架目录还没加载完成，请刷新页面后再上传"); return; }
   modalMode="add";
   document.getElementById("pmTitle").textContent="上传新书";
   document.getElementById("pmSub").textContent= ghOn()? "选 HTML 文件 → 选分类 → 同步到线上和手机"
@@ -1019,7 +1020,7 @@ async function delPage(id){
     toast("正在删除…");
     let got=null; try{ got=await ghGet(path); }catch(e){}
     if(got){ await ghDelete(path, got.sha, "删除文件："+p.file); }
-    data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings();
+    DELETED.add(id); data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings();
     await pushCatalog("删除："+p.title); unindexDoc(p.id);
     toast(got?"已删除文件并同步":"原文件不在，已移除登记");
   }catch(e){ toast("删除出错："+errMsg(e)); }
@@ -1061,7 +1062,7 @@ async function delModule(id){
   const n=data.pages.filter(p=>p.moduleId===id).length;
   if(n>0){ toast("该模块下还有 "+n+" 个页面，先移除它们"); return; }
   if(!confirm("删除这个模块？")) return;
-  data.modules=data.modules.filter(m=>m.id!==id); saveLocal(); render(); renderSettings();
+  DELETED_M.add(id); data.modules=data.modules.filter(m=>m.id!==id); saveLocal(); render(); renderSettings();
   if(ghOn()){ try{ await pushCatalog("删除模块"); toast("已删除并同步"); }catch(e){ toast("本地已删"); } }
   else toast("已删除模块");
 }
@@ -1107,9 +1108,16 @@ async function ghDelete(path, sha, message){ const c=ghCfg();
     return await res.json();
   });
 }
+const DELETED=new Set(), DELETED_M=new Set();
 async function pushCatalog(message){
   if(!data||!Array.isArray(data.modules)||!Array.isArray(data.pages)) throw new Error("目录数据异常，已取消同步以防损坏");
+  if(sourceMode==="seed") throw new Error("书架目录还没加载完成，为防止覆盖已取消。请刷新页面后再试。");
   const cat=await ghGet("catalog.json");
+  /* 合并保护：线上有、本地没有（且不是本次删除的）→ 保留，防止旧页面覆盖新目录 */
+  try{ const remote=JSON.parse(b64utf8(cat&&cat.content));
+    const ids=new Set(data.pages.map(p=>p.id)); (remote.pages||[]).forEach(p=>{ if(!ids.has(p.id)&&!DELETED.has(p.id)) data.pages.push(p); });
+    const mids=new Set(data.modules.map(m=>m.id)); (remote.modules||[]).forEach(m=>{ if(!mids.has(m.id)&&!DELETED_M.has(m.id)) data.modules.push(m); });
+  }catch(e){}
   await ghPut("catalog.json", utf8b64(JSON.stringify(data,null,2)), message||"更新目录", cat&&cat.sha);
 }
 
