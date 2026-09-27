@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>微积分：重新理解变化与累积的语言</title>
+<style>
+  :root{
+    --ink:#1a1c22; --muted:#565a63; --faint:#8a8d95;
+    --accent:#b23b34; --bg:#f4f3ef; --paper:#fff;
+    --line:rgba(26,28,34,0.12);
+    --green:#2f7d6b; --blue:#3b5b9e; --amber:#a9741f; --violet:#6a4c93;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);line-height:1.6;
+    font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .en{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .wrap{max-width:1180px;margin:0 auto;padding:44px 32px 90px;}
+
+  /* header */
+  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:22px;}
+  .head .kicker{font-family:"Archivo",Arial,sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:600;}
+  .head h1{margin:10px 0 6px;font-size:33px;font-weight:700;letter-spacing:-.01em;}
+  .head .sub{font-size:14.5px;color:var(--muted);}
+  .head .meta{text-align:right;font-size:12px;color:#6b6e76;line-height:1.7;}
+  .head .meta b{color:var(--ink);}
+
+  /* tabs */
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:24px;border-bottom:1px solid var(--line);}
+  .tabs button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;padding:10px 15px;border:none;cursor:pointer;font-family:inherit;border-radius:9px 9px 0 0;margin-bottom:-1px;border-bottom:2px solid transparent;background:transparent;color:var(--muted);transition:all .15s;}
+  .tabs button .t-en{font-family:"Archivo",Arial,sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.9;}
+  .tabs button .t-zh{font-size:14px;font-weight:500;}
+  .tabs button .t-zh .num{font-family:"Archivo",Arial,sans-serif;font-size:11px;color:var(--accent);margin-right:5px;font-weight:700;}
+  .tabs button.active{border-bottom-color:var(--accent);background:var(--paper);color:var(--ink);}
+
+  .panel{display:none;margin-top:26px;}
+  .panel.active{display:block;animation:fadeUp .4s ease both;}
+
+  /* sub tabs */
+  .subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px;}
+  .subtabs button{padding:7px 15px;border-radius:20px;border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:12.5px;font-family:inherit;cursor:pointer;transition:all .15s;}
+  .subtabs button.active{border-color:var(--accent);background:rgba(178,59,52,.08);color:var(--accent);font-weight:600;}
+  .subpanel{display:none;margin-top:18px;}
+  .subpanel.active{display:block;animation:fadeUp .35s ease both;}
+
+  /* cards */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 22px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px;}
+  .card.hl{border:1.5px solid var(--accent);}
+  .card.dark{background:var(--ink);color:#fff;border:none;}
+  .card.dark .zh-t{color:#fff;}
+  .card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .card-h .zh-t{font-size:17px;font-weight:700;}
+  .card-h .en-t{font-family:"Archivo",Arial,sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+  .card.dark .card-h .en-t{color:rgba(255,255,255,.6);}
+  p.txt{font-size:14px;color:#3a3d46;line-height:1.85;}
+  p.txt+p.txt{margin-top:10px;}
+  .card.dark p.txt{color:rgba(255,255,255,.92);}
+  b.k{color:var(--accent);font-weight:700;}
+  .card.dark b.k{color:#ffb3ac;}
+
+  .sect-label{font-family:"Archivo",Arial,sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75787f;margin:24px 0 12px;}
+
+  /* points list */
+  ul.pts{list-style:none;margin-top:6px;}
+  ul.pts li{font-size:13.5px;color:#3f424b;line-height:1.75;padding:3px 0 3px 16px;position:relative;}
+  ul.pts li::before{content:"›";position:absolute;left:0;color:var(--accent);font-family:"Archivo",Arial,sans-serif;font-weight:700;}
+  ul.pts li b{color:var(--ink);font-weight:600;}
+
+  /* rows */
+  .rows{margin-top:6px;}
+  .row{display:grid;grid-template-columns:190px 1fr;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 15px;margin-bottom:8px;align-items:baseline;}
+  .row .rn{font-size:13.5px;font-weight:700;color:var(--ink);}
+  .row .rn small{display:block;font-family:"Archivo",Arial,sans-serif;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-top:1px;}
+  .row .rd{font-size:13px;color:var(--muted);line-height:1.65;}
+  .row .rd b{color:#3a3d46;}
+  @media(max-width:640px){.row{grid-template-columns:1fr;gap:3px;}}
+
+  /* numbered steps */
+  ol.steps{list-style:none;counter-reset:s;}
+  ol.steps li{counter-increment:s;position:relative;padding:11px 14px 11px 52px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:9px;font-size:13.5px;color:#3f424b;line-height:1.65;}
+  ol.steps li::before{content:counter(s);position:absolute;left:14px;top:11px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-family:"Archivo",Arial,sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  ol.steps li b{color:var(--ink);}
+
+  /* horizontal timeline */
+  .track{position:relative;margin:16px 0 8px;}
+  .track::before{content:"";position:absolute;top:20px;left:8%;right:8%;height:2px;background:var(--line);z-index:0;}
+  .track-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1;}
+  .tstep{flex:1;min-width:130px;text-align:center;}
+  .tstep .num{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;font-family:"Archivo",Arial,sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 0 4px var(--bg);}
+  .tstep .num.blue{background:var(--blue);}
+  .tstep .num.green{background:var(--green);}
+  .tstep .num.amber{background:var(--amber);}
+  .tstep .tt{font-size:14px;font-weight:700;margin-top:10px;}
+  .tstep .time{font-family:"Archivo",Arial,sans-serif;font-size:12px;font-weight:700;color:var(--accent);margin-top:3px;}
+  .tstep .time.blue{color:var(--blue);}
+  .tstep .time.green{color:var(--green);}
+  .tstep .time.amber{color:var(--amber);}
+  .tstep .dd{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.55;}
+  .axis{display:flex;justify-content:space-between;font-family:"Archivo",Arial,sans-serif;font-size:11px;color:var(--faint);margin-top:14px;padding:0 2px;}
+  .axis-bar{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--amber),var(--green),var(--blue));margin-top:4px;opacity:.5;}
+
+  /* flow chips */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
+  .flow .step{background:rgba(178,59,52,.07);border:1px solid rgba(178,59,52,.28);color:var(--accent);padding:5px 12px;border-radius:16px;font-size:12px;font-weight:600;white-space:nowrap;}
+  .flow .arr{color:var(--faint);font-size:13px;}
+  .flow.cool .step{background:rgba(59,91,158,.07);border-color:rgba(59,91,158,.3);color:var(--blue);}
+  .flow.warm .step{background:rgba(169,116,31,.07);border-color:rgba(169,116,31,.3);color:var(--amber);}
+
+  /* diagrams */
+  .dgm{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px;text-align:center;overflow-x:auto;}
+  .dgm svg{max-width:100%;height:auto;}
+
+  /* shift */
+  .shift{display:flex;align-items:stretch;gap:8px;margin:9px 0;flex-wrap:wrap;}
+  .shift .b{flex:1;min-width:120px;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;text-align:center;line-height:1.45;display:flex;flex-direction:column;justify-content:center;}
+  .shift .b small{font-weight:400;font-size:11px;opacity:.85;margin-top:2px;}
+  .shift .old{background:rgba(26,28,34,.05);color:var(--muted);border:1px solid var(--line);}
+  .shift .new{background:rgba(178,59,52,.07);color:var(--accent);border:1px solid rgba(178,59,52,.3);}
+  .shift .new b{color:var(--accent);}
+  .shift .to{flex:0 0 auto;align-self:center;color:var(--accent);font-size:18px;font-family:"Archivo",Arial,sans-serif;font-weight:700;}
+
+  /* quadrant tiles */
+  .quad{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  .qtile{border:1px solid var(--line);border-radius:11px;padding:14px 16px;background:var(--paper);border-top:3px solid var(--accent);}
+  .qtile.b2{border-top-color:var(--blue);} .qtile.g{border-top-color:var(--green);} .qtile.a{border-top-color:var(--amber);}
+  .qtile .qh{font-size:14px;font-weight:700;}
+  .qtile .qb{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.6;}
+  @media(max-width:640px){.quad{grid-template-columns:1fr;}}
+
+  /* mini numbered */
+  .mini{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+  .mini .m{flex:1;min-width:150px;border:1px solid var(--line);border-radius:11px;padding:13px 15px;background:var(--paper);}
+  .mini .m .mn{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-family:"Archivo",Arial,sans-serif;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin-bottom:7px;}
+  .mini .m .mt{font-size:13px;font-weight:600;color:var(--ink);line-height:1.5;}
+
+  /* highlight quote */
+  .hlight{background:rgba(178,59,52,.05);border-left:3px solid var(--accent);padding:13px 17px;border-radius:0 8px 8px 0;font-size:14.5px;color:#3a3d46;margin-top:14px;line-height:1.7;}
+  .hlight b{color:var(--accent);}
+  .card.dark .hlight{background:rgba(255,255,255,.06);border-left-color:#ffb3ac;color:#fff;}
+  .card.dark .hlight b{color:#ffb3ac;}
+
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+  .chips span{font-size:12px;background:rgba(26,28,34,.05);border-radius:6px;padding:5px 11px;color:#3a3d46;}
+
+  /* grids */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .grid2.top{align-items:start;}
+
+  /* formula box */
+  .formula{font-family:"Cambria Math",Georgia,"Times New Roman",serif;font-size:15px;text-align:center;background:#faf9f6;border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:10px 0;color:#3a3d46;letter-spacing:.02em;line-height:1.8;}
+  .card.dark .formula{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.92);}
+  .formula b{color:var(--accent);font-weight:700;}
+  .card.dark .formula b{color:#ffb3ac;}
+
+  /* stacked fractions */
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.25;}
+  .frac .num{padding:0 7px;line-height:1.35;}
+  .frac .bar{display:block;height:1.5px;background:#565a66;border-radius:1px;margin:1px 0;}
+  .frac .den{padding:0 7px;line-height:1.35;}
+  .frac b{color:var(--accent);font-weight:700;}
+  .card.dark .frac{color:#fff;}
+  .card.dark .frac .bar{background:rgba(255,255,255,.55);}
+
+  /* scene block */
+  .scene{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 22px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:14px;}
+  .scene-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+  .scene-h .idx{font-family:"Archivo",Arial,sans-serif;font-size:11px;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:2px 8px;}
+  .scene.blue .idx{background:var(--blue);}
+  .scene.green .idx{background:var(--green);}
+  .scene.amber .idx{background:var(--amber);}
+  .scene.violet .idx{background:var(--violet);}
+  .scene-h .t{font-size:16px;font-weight:700;}
+  .scene .desc{font-size:13.5px;color:#3f424b;line-height:1.75;margin-top:6px;}
+  .scene .desc b{color:var(--ink);}
+
+  /* category grid */
+  .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px;}
+  .cat-tile{border-radius:11px;padding:14px 14px 12px;color:#fff;position:relative;overflow:hidden;min-height:74px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  .cat-tile .ico{font-size:20px;}
+  .cat-tile .nm{font-size:14.5px;font-weight:700;margin-top:4px;}
+  .cat-tile .ct{font-family:"Archivo",Arial,sans-serif;font-size:11px;opacity:.85;margin-top:2px;}
+
+  /* comparison table */
+  .cmp-wrap{overflow-x:auto;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  table.cmp{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--paper);min-width:580px;}
+  table.cmp thead th{background:var(--ink);color:#fff;font-size:11.5px;font-weight:700;text-align:left;padding:10px 12px;}
+  table.cmp td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;line-height:1.55;color:#3f424b;}
+  table.cmp tbody tr:nth-child(even){background:#faf9f6;}
+  table.cmp td.m{font-weight:700;color:var(--ink);white-space:nowrap;}
+  table.cmp td.m small{display:block;font-weight:400;color:var(--faint);font-size:10.5px;margin-top:1px;}
+  table.cmp td.pro{color:var(--green);} table.cmp td.con{color:var(--accent);}
+
+  .foot{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:11.5px;color:#6b6e76;line-height:1.7;}
+
+  @media(max-width:820px){
+    .wrap{padding:28px 18px 64px;}
+    .head h1{font-size:25px;}
+    .grid2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <div class="head">
+    <div>
+      <div class="kicker">数学 · 微积分 · 从起源到应用</div>
+      <h1>微积分：重新理解变化与累积的语言</h1>
+      <div class="sub">从起源到实际应用，由浅入深，用可视化的方式重新认识那些最熟悉的概念</div>
+    </div>
+    <div class="meta">
+      面向有一定基础的复习者<br>
+      可视化版 · 2026
+    </div>
+  </div>
+
+  <!-- ============ TABS ============ -->
+  <div class="tabs" id="tabs">
+    <button data-ch="ch1" class="active"><span class="t-en">What Is Calculus</span><span class="t-zh"><span class="num">01</span>微积分是什么</span></button>
+    <button data-ch="ch2"><span class="t-en">Origins</span><span class="t-zh"><span class="num">02</span>起源故事</span></button>
+    <button data-ch="ch3"><span class="t-en">The Limit</span><span class="t-zh"><span class="num">03</span>极限 · 地基</span></button>
+    <button data-ch="ch4"><span class="t-en">The Derivative</span><span class="t-zh"><span class="num">04</span>导数 · 变化</span></button>
+    <button data-ch="ch5"><span class="t-en">The Integral</span><span class="t-zh"><span class="num">05</span>积分 · 累积</span></button>
+    <button data-ch="ch6"><span class="t-en">The Bridge</span><span class="t-zh"><span class="num">06</span>基本定理</span></button>
+    <button data-ch="ch7"><span class="t-en">In Practice</span><span class="t-zh"><span class="num">07</span>应用实战</span></button>
+    <button data-ch="ch8"><span class="t-en">Keep Learning</span><span class="t-zh"><span class="num">08</span>重新学习</span></button>
+  </div>
+
+  <!-- ============ CH1 · 微积分是什么 ============ -->
+  <div class="panel active" data-panel="ch1">
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">一句话认识微积分</span><span class="en-t">In One Line</span></div>
+      <p class="txt">微积分是研究<b class="k">连续变化</b>的数学语言。它用两把钥匙打开了理解世界的大门：<b class="k">导数</b>描述"此刻变化有多快"，<b class="k">积分</b>描述"一点点累积起来是多少"。</p>
+      <p class="txt" style="margin-top:10px;">如果你还记得高中物理里"位移求导得速度，速度求导得加速度"——恭喜，你已经懂了微积分的核心直觉。现在我们要做的，只是把这份直觉重新激活、补全、然后用到真实世界中去。</p>
+    </div>
+
+    <div class="sect-label">微积分的两根支柱</div>
+    <div class="grid2">
+      <div class="card" style="margin-bottom:0;border-color:rgba(178,59,52,.4);">
+        <div class="card-h"><span class="zh-t">微分 · Derivative</span><span class="en-t">"切片"</span></div>
+        <p class="txt">把一段连续的变化，<b>切成无限薄的瞬间</b>，去看每个瞬间的"变化率"。</p>
+        <ul class="pts">
+          <li>核心问题：此刻的速度是多少？</li>
+          <li>几何直觉：曲线在某点的<b>切线斜率</b></li>
+          <li>记号：f'(x) 或 dy/dx</li>
+          <li>回答的是：<b>"快不快"、"往哪走"</b></li>
+        </ul>
+      </div>
+      <div class="card" style="margin-bottom:0;border-color:rgba(59,91,158,.4);">
+        <div class="card-h"><span class="zh-t">积分 · Integral</span><span class="en-t" style="color:var(--blue);">"拼接"</span></div>
+        <p class="txt">把无限多个瞬间的微小量，<b>拼接累积成一个整体</b>。</p>
+        <ul class="pts">
+          <li>核心问题：总共积累了多少？</li>
+          <li>几何直觉：曲线下方的<b>面积</b></li>
+          <li>记号：∫f(x)dx</li>
+          <li>回答的是：<b>"总共多少"、"积了多少"</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="dgm">
+      <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans SC,PingFang SC,sans-serif">
+        <!-- Left: Derivative -->
+        <rect x="20" y="30" width="280" height="200" rx="14" fill="rgba(178,59,52,.04)" stroke="rgba(178,59,52,.25)" stroke-width="1.5"/>
+        <text x="160" y="58" text-anchor="middle" fill="#b23b34" font-size="16" font-weight="700">微分 · 切片看瞬间</text>
+        <!-- curve -->
+        <path d="M 60 180 Q 120 80, 180 140 T 280 110" fill="none" stroke="#b23b34" stroke-width="2.5"/>
+        <!-- tangent line -->
+        <line x1="100" y1="200" x2="240" y2="80" stroke="#b23b34" stroke-width="2" stroke-dasharray="6 3" opacity=".6"/>
+        <!-- point -->
+        <circle cx="170" cy="135" r="5" fill="#b23b34"/>
+        <text x="185" y="130" fill="#b23b34" font-size="12" font-weight="600">切线斜率 = 变化率</text>
+        <text x="160" y="210" text-anchor="middle" fill="#8a5a55" font-size="12">f'(x) = "此刻有多快"</text>
+
+        <!-- Center arrow -->
+        <text x="360" y="120" text-anchor="middle" fill="#565a63" font-size="13" font-weight="600">互为逆运算</text>
+        <path d="M 310 140 L 410 140" stroke="#565a63" stroke-width="2" fill="none"/>
+        <path d="M 310 140 L 318 134 M 310 140 L 318 146" stroke="#565a63" stroke-width="2" fill="none"/>
+        <path d="M 410 140 L 402 134 M 410 140 L 402 146" stroke="#565a63" stroke-width="2" fill="none"/>
+        <text x="360" y="165" text-anchor="middle" fill="#8a8d95" font-size="11">求导 ⟷ 积分</text>
+
+        <!-- Right: Integral -->
+        <rect x="420" y="30" width="280" height="200" rx="14" fill="rgba(59,91,158,.04)" stroke="rgba(59,91,158,.25)" stroke-width="1.5"/>
+        <text x="560" y="58" text-anchor="middle" fill="#3b5b9e" font-size="16" font-weight="700">积分 · 拼接看累积</text>
+        <!-- curve -->
+        <path d="M 460 180 Q 520 80, 580 140 T 680 110" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+        <!-- area under curve -->
+        <path d="M 460 180 Q 520 80, 580 140 T 680 110 L 680 200 L 460 200 Z" fill="rgba(59,91,158,.12)"/>
+        <text x="560" y="195" text-anchor="middle" fill="#3b5b9e" font-size="12" font-weight="600">∫f(x)dx = 累积量</text>
+      </svg>
+    </div>
+
+    <div class="card dark">
+      <div class="card-h"><span class="zh-t">为什么微积分如此重要</span><span class="en-t">Why It Matters</span></div>
+      <p class="txt">世界不是静止的——行星在转、股价在变、信号在传、神经在放电。任何涉及<b class="k">"连续变化"</b>的问题，背后的语言都是微积分。</p>
+      <div class="hlight"><b>物理</b>靠它描述运动，<b>通信</b>靠它分解信号，<b>AI</b>靠它优化学习。微积分不是一门"考完就忘"的课，而是理解现代世界运行规律的底层语法。</div>
+    </div>
+
+    <div class="hlight">如果你曾经觉得微积分"学过但没真正懂"，那大概率是因为当初<b>只学了公式、没理解直觉</b>。这篇文章的目标，就是帮你把直觉找回来。</div>
+  </div>
+
+  <!-- ============ CH2 · 起源故事 ============ -->
+  <div class="panel" data-panel="ch2">
+    <div class="subtabs">
+      <button data-sub="ch2a" class="active">2.1 时间轴与三大难题</button>
+      <button data-sub="ch2b">2.2 牛顿的思路与推导</button>
+    </div>
+    <div class="subpanel active" data-subpanel="ch2a">
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">微积分不是一天发明的</span><span class="en-t">A Long Story</span></div>
+      <p class="txt">微积分的诞生，花了将近两千年。它是被<b class="k">三个古老的难题</b>一步步逼出来的——求切线、求面积、求瞬时速度。这三条路走到尽头，恰好汇合在了同一个人手里。</p>
+    </div>
+
+    <div class="sect-label">推动微积分诞生的三个古老难题</div>
+    <div class="rows">
+      <div class="row"><div class="rn">求切线<small>Tangent</small></div><div class="rd">曲线上某点的切线怎么画？<b>几何问题</b>——费马、笛卡尔都在啃。后来发现，切线斜率就是变化率。</div></div>
+      <div class="row"><div class="rn">求面积<small>Area</small></div><div class="rd">不规则曲线围成的面积怎么算？<b>阿基米德的穷竭法</b>用多边形逼近圆，走了两千年还没到终点。</div></div>
+      <div class="row"><div class="rn">求瞬时速度<small>Velocity</small></div><div class="rd">运动物体在某一瞬间的速度是多少？<b>运动学问题</b>——开普勒算行星轨道、伽利略算落体，都卡在这里。</div></div>
+    </div>
+
+    <div class="sect-label">关键时间轴 · 从穷竭法到严格化</div>
+    <div class="card">
+      <div class="track">
+        <div class="track-row">
+          <div class="tstep">
+            <div class="num amber">1</div>
+            <div class="tt">穷竭法</div>
+            <div class="time amber">公元前 250 年</div>
+            <div class="dd">阿基米德用多边形逼近圆面积，"无限逼近"的最早雏形</div>
+          </div>
+          <div class="tstep">
+            <div class="num amber">2</div>
+            <div class="tt">运动与行星</div>
+            <div class="time amber">1600s</div>
+            <div class="dd">开普勒算行星轨道面积，伽利略研究落体——瞬时速度成为核心难题</div>
+          </div>
+          <div class="tstep">
+            <div class="num">3</div>
+            <div class="tt">费马极值</div>
+            <div class="time">1629</div>
+            <div class="dd">费马用"几乎为零的增量"求函数极值，已非常接近导数思想</div>
+          </div>
+          <div class="tstep">
+            <div class="num">4</div>
+            <div class="tt">牛顿 · 流数术</div>
+            <div class="time">1665–66</div>
+            <div class="dd">瘟疫期间回乡，发明"流数"（fluxion）——把变化看作"流动"，统一了三个难题</div>
+          </div>
+          <div class="tstep">
+            <div class="num blue">5</div>
+            <div class="tt">莱布尼茨 · 符号</div>
+            <div class="time blue">1670s</div>
+            <div class="dd">独立发明微积分，创造了 dy/dx、∫ 等我们今天用的全部符号</div>
+          </div>
+          <div class="tstep">
+            <div class="num green">6</div>
+            <div class="tt">严格化</div>
+            <div class="time green">1850s</div>
+            <div class="dd">柯西、魏尔斯特拉斯用 ε-δ 语言重新定义极限，微积分终于"无懈可击"</div>
+          </div>
+        </div>
+        <div class="axis"><span>公元前</span><span>中世纪</span><span>17世纪</span><span>19世纪</span></div>
+        <div class="axis-bar"></div>
+      </div>
+    </div>
+
+    <div class="grid2 top">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">牛顿的突破</span><span class="en-t">Newton</span></div>
+        <p class="txt">牛顿的关键洞察：运动可以看作位置随时间"流动"。他引入"流数"（即导数）来描述流动的快慢，又发现反过来"积分"可以还原流动的总量。</p>
+        <p class="txt">更关键的是——他意识到<b class="k">求导和积分互为逆运算</b>。这意味着切线问题和面积问题，其实是同一个问题的两个面。</p>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">莱布尼茨的贡献</span><span class="en-t">Leibniz</span></div>
+        <p class="txt">莱布尼茨独立得到同样结论，但他更大的贡献是<b class="k">符号</b>。他发明的 dy/dx 直观地表达了"变化量之比"，∫（拉长的 S）代表"求和"。</p>
+        <p class="txt">这些符号太好用了，至今全世界还在用。<b>我们今天学的微积分符号体系，几乎全部来自莱布尼茨。</b></p>
+      </div>
+    </div>
+
+    <div class="card dark">
+      <div class="card-h"><span class="zh-t">核心突破：两个难题是一个问题</span><span class="en-t">The Breakthrough</span></div>
+      <p class="txt">在牛顿和莱布尼茨之前，"求切线"和"求面积"是两个互不相干的难题，各搞各的。他们的突破在于发现：<b class="k">求导（微分）和积分互为逆运算</b>——就像加法和减法、乘法和除法一样。</p>
+      <div class="hlight">这个发现被称为<b>"微积分基本定理"</b>。它把两千年的两条路打通成了一条，微积分从此正式诞生。</div>
+    </div>
+    </div><!-- /ch2a -->
+
+    <!-- 2.2 牛顿的思路与推导 -->
+    <div class="subpanel" data-subpanel="ch2b">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">牛顿是怎么发现微积分的</span><span class="en-t">Newton's Path</span></div>
+        <p class="txt">牛顿不是为了发明数学而发明数学。他是在研究<b class="k">行星为什么按椭圆轨道运动</b>时，被逼着发明了微积分。下面还原他的完整思路链。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">① 起点：一个没有工具的问题</span><span class="en-t">The Problem</span></div>
+        <p class="txt">开普勒已发现行星沿椭圆轨道运行（1609），但<b>为什么</b>？什么力在驱动？牛顿猜测：太阳对行星有引力，且引力随距离减弱。但要验证这个猜想，他需要计算"连续变化的速度和位置"--当时的数学工具做不到。</p>
+        <p class="txt">具体来说，他面临三个子问题：</p>
+        <ul class="pts">
+          <li>行星每一瞬间的<b>速度方向</b>是什么？（切线问题）</li>
+          <li>速度每时每刻都在变，<b>变化率</b>是多少？（加速度问题）</li>
+          <li>如果引力 F ∝ <span class="frac"><span class="num">1</span><span class="bar"></span><span class="den">r²</span></span>，<b>轨道方程</b>是什么？（微分方程）</li>
+        </ul>
+        <div class="hlight">牛顿需要一个能处理"连续变化"的数学。既然没有，他就自己造一个。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- reference axis -->
+            <line x1="60" y1="130" x2="560" y2="130" stroke="#8a8d95" stroke-width="1" stroke-dasharray="4 3"/>
+            <!-- elliptical orbit (sun at left focus) -->
+            <ellipse cx="250" cy="130" rx="180" ry="75" fill="none" stroke="#3b5b9e" stroke-width="2"/>
+            <!-- sun at left focus (c=150, so focus at x=100) -->
+            <circle cx="100" cy="130" r="10" fill="#a9741f"/>
+            <text x="75" y="115" fill="#a9741f" font-size="12" font-weight="700">太阳</text>
+            <!-- planet on orbit -->
+            <circle cx="380" cy="92" r="6" fill="#b23b34"/>
+            <text x="390" y="88" fill="#b23b34" font-size="12" font-weight="700">行星</text>
+            <!-- r line from sun to planet -->
+            <line x1="100" y1="130" x2="380" y2="92" stroke="#b23b34" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <text x="220" y="105" fill="#b23b34" font-size="11">r = ?</text>
+            <!-- tangent direction question -->
+            <line x1="380" y1="92" x2="430" y2="65" stroke="#6a4c93" stroke-width="2"/>
+            <text x="435" y="60" fill="#6a4c93" font-size="11">速度方向？</text>
+            <!-- three question labels -->
+            <text x="60" y="25" fill="#3b5b9e" font-size="12" font-weight="700">三个子问题：</text>
+            <text x="60" y="220" fill="#6a4c93" font-size="11">① 切线方向？</text>
+            <text x="240" y="220" fill="#b23b34" font-size="11">② 加速度 = ?</text>
+            <text x="420" y="220" fill="#2f7d6b" font-size="11">③ 轨道方程？</text>
+            <!-- F arrow toward sun -->
+            <line x1="370" y1="96" x2="120" y2="128" stroke="#2f7d6b" stroke-width="1.5" marker-end="url(#arrG1)"/>
+            <defs><marker id="arrG1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker></defs>
+            <text x="200" y="150" fill="#2f7d6b" font-size="11">F ∝ 1/r²</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">② 流数：把世界看作"流动"</span><span class="en-t">Fluents &amp; Fluxions</span></div>
+        <p class="txt">牛顿的核心洞察：<b class="k">所有物理量都在"流动"</b>--时间在流、位置在流、速度在流。他把随时间变化的量叫<b>"流数"</b>（fluent），把变化率叫<b>"流数率"</b>（fluxion）。</p>
+        <p class="txt">用今天的记号：如果 x(t) 是位置（流数），那么 ẋ = <span class="frac"><span class="num">dx</span><span class="bar"></span><span class="den">dt</span></span> 就是速度（流数率）。牛顿在变量上面点一个点表示流数率：<b>ẋ = 导数，ẍ = 二阶导数</b>。这个记号物理学家至今还在用。</p>
+        <div class="formula">
+          牛顿的记号 &nbsp; -> &nbsp; 今天的记号<br>
+          ẋ &nbsp; = &nbsp; <span class="frac"><span class="num">dx</span><span class="bar"></span><span class="den">dt</span></span> &nbsp; = &nbsp; f'(t) &nbsp; <span style="color:#8a8d95;">(一阶导数 / 速度)</span><br>
+          ẍ &nbsp; = &nbsp; <span class="frac"><span class="num">d²x</span><span class="bar"></span><span class="den">dt²</span></span> &nbsp; = &nbsp; f''(t) &nbsp; <span style="color:#8a8d95;">(二阶导数 / 加速度)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">③ 关键洞察：切线 = 瞬时运动方向</span><span class="en-t">Tangent = Motion</span></div>
+        <p class="txt">牛顿做了一件前人没做过的事：他把<b>几何问题</b>翻译成了<b>运动问题</b>。想象一个点沿曲线 y = f(x) 运动，它在每个瞬间的运动方向，就是曲线在该点的<b class="k">切线方向</b>。</p>
+        <div class="shift">
+          <div class="b old">求切线 = 几何问题<small>画一条只触碰曲线一点的线</small></div>
+          <div class="to">›</div>
+          <div class="b new">求切线 = 运动问题<small>求运动质点的瞬时方向</small></div>
+        </div>
+        <p class="txt">这一步把"求切线"和"求瞬时速度"<b>统一成了同一个问题</b>。两个困扰数学界上千年的难题，在牛顿的运动视角下合二为一。</p>
+        <div class="dgm">
+          <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- axes -->
+            <line x1="40" y1="220" x2="580" y2="220" stroke="#8a8d95" stroke-width="1.5"/>
+            <line x1="40" y1="30" x2="40" y2="220" stroke="#8a8d95" stroke-width="1.5"/>
+            <text x="585" y="225" fill="#8a8d95" font-size="12">x</text>
+            <text x="32" y="28" fill="#8a8d95" font-size="12">y</text>
+            <!-- curve y = f(x) -->
+            <path d="M 50 200 Q 150 50, 300 110 T 550 80" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+            <text x="490" y="70" fill="#3b5b9e" font-size="12">y = f(x)</text>
+            <!-- moving point P on curve -->
+            <circle cx="200" cy="70" r="6" fill="#b23b34"/>
+            <text x="150" y="62" fill="#b23b34" font-size="13" font-weight="700">P</text>
+            <!-- tangent line at P (direction of motion) -->
+            <line x1="120" y1="90" x2="280" y2="50" stroke="#b23b34" stroke-width="2.5"/>
+            <text x="285" y="45" fill="#b23b34" font-size="12" font-weight="700">切线 = 运动方向</text>
+            <!-- velocity arrow along tangent -->
+            <line x1="200" y1="70" x2="260" y2="55" stroke="#b23b34" stroke-width="2" marker-end="url(#arrT1)"/>
+            <defs><marker id="arrT1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b23b34"/></marker></defs>
+            <text x="230" y="50" fill="#b23b34" font-size="11">v</text>
+            <!-- trail dots showing motion -->
+            <circle cx="130" cy="95" r="3" fill="#8a8d95" opacity=".4"/>
+            <circle cx="100" cy="115" r="3" fill="#8a8d95" opacity=".3"/>
+            <circle cx="80" cy="140" r="3" fill="#8a8d95" opacity=".2"/>
+            <text x="70" y="170" fill="#8a8d95" font-size="11">运动轨迹</text>
+            <!-- secant comparison -->
+            <circle cx="350" cy="105" r="4" fill="#6a4c93" opacity=".5"/>
+            <line x1="200" y1="70" x2="350" y2="105" stroke="#6a4c93" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
+            <text x="300" y="100" fill="#6a4c93" font-size="10" opacity=".6">割线（平均方向）</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">④ 牛顿的求导方法：小增量逼近</span><span class="en-t">Newton's Method</span></div>
+        <p class="txt">牛顿的具体做法：给变量 x 一个微小增量 o（他的记号），看函数值变化多少，然后让增量"消失"。以 y = x² 为例，完整推导：</p>
+        <div class="formula" style="text-align:left;">
+          <b>目标</b>：求 y = x² 在任意点的变化率（导数）<br><br>
+          <b>第一步</b>：给 x 一个微小增量 o<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;新的 y 值 = (x + o)² = x² + 2xo + o²<br><br>
+          <b>第二步</b>：算 y 的变化量<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Δy = (x² + 2xo + o²) - x² = 2xo + o²<br><br>
+          <b>第三步</b>：算变化率（变化量 ÷ 增量）<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="frac"><span class="num">Δy</span><span class="bar"></span><span class="den">o</span></span> = <span class="frac"><span class="num">2xo + o²</span><span class="bar"></span><span class="den">o</span></span> = 2x + o<br><br>
+          <b>第四步</b>：让增量 o "消失"（取极限 o -> 0）<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;变化率 = 2x + 0 = <b>2x</b> ✓
+        </div>
+        <p class="txt">结果：y = x² 的导数是 2x。这就是<b class="k">幂法则 <span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dx</span></span>[xⁿ] = n·xⁿ⁻¹</b> 在 n=2 时的特例。牛顿对各种函数重复这个过程，总结出了通用规律。</p>
+        <div class="hlight">注意第四步：o "消失"但不是"等于零"。这正是后来贝克莱批评的地方--o 到底是不是零？这个问题等了 150 年才被柯西和魏尔斯特拉斯解决（见第 3 章）。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- axes -->
+            <line x1="50" y1="240" x2="580" y2="240" stroke="#8a8d95" stroke-width="1.5"/>
+            <line x1="50" y1="30" x2="50" y2="240" stroke="#8a8d95" stroke-width="1.5"/>
+            <text x="585" y="245" fill="#8a8d95" font-size="12">x</text>
+            <text x="42" y="28" fill="#8a8d95" font-size="12">y</text>
+            <!-- parabola y = x² (scaled) -->
+            <path d="M 50 240 Q 200 240, 300 90 T 500 30" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+            <text x="470" y="50" fill="#3b5b9e" font-size="12">y = x²</text>
+            <!-- point P at (x, x²) -->
+            <circle cx="220" cy="195" r="5" fill="#b23b34"/>
+            <text x="175" y="190" fill="#b23b34" font-size="12" font-weight="700">P(x, x²)</text>
+            <!-- point Q at (x+o, (x+o)²) -->
+            <circle cx="290" cy="150" r="5" fill="#2f7d6b"/>
+            <text x="295" y="145" fill="#2f7d6b" font-size="12" font-weight="700">Q(x+o, (x+o)²)</text>
+            <!-- horizontal increment o -->
+            <line x1="220" y1="210" x2="290" y2="210" stroke="#a9741f" stroke-width="2"/>
+            <line x1="220" y1="207" x2="220" y2="213" stroke="#a9741f" stroke-width="1.5"/>
+            <line x1="290" y1="207" x2="290" y2="213" stroke="#a9741f" stroke-width="1.5"/>
+            <text x="240" y="228" fill="#a9741f" font-size="13" font-weight="700">o</text>
+            <!-- vertical increment Δy -->
+            <line x1="310" y1="195" x2="310" y2="150" stroke="#b23b34" stroke-width="2"/>
+            <line x1="307" y1="195" x2="313" y2="195" stroke="#b23b34" stroke-width="1.5"/>
+            <line x1="307" y1="150" x2="313" y2="150" stroke="#b23b34" stroke-width="1.5"/>
+            <text x="318" y="178" fill="#b23b34" font-size="13" font-weight="700">Δy</text>
+            <!-- secant line P-Q -->
+            <line x1="180" y1="225" x2="330" y2="130" stroke="#6a4c93" stroke-width="1.5" stroke-dasharray="5 3" opacity=".6"/>
+            <text x="335" y="125" fill="#6a4c93" font-size="11">割线斜率 = Δy/o</text>
+            <!-- limit arrow: Q -> P -->
+            <path d="M 285 155 Q 255 175, 225 193" fill="none" stroke="#8a8d95" stroke-width="1.5" marker-end="url(#arrN1)" stroke-dasharray="3 2"/>
+            <defs><marker id="arrN1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a8d95"/></marker></defs>
+            <text x="200" y="250" fill="#8a8d95" font-size="11">o -> 0 时，割线 -> 切线，斜率 -> 2x</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">⑤ 最大的发现：求导和积分互为逆运算</span><span class="en-t">The Inverse Discovery</span></div>
+        <p class="txt">牛顿在算变化率的过程中，注意到一个深刻的关系：<b class="k">如果你知道变化率，可以反推回原函数</b>。就像你知道加速度，可以积分出速度，再积分出位置。</p>
+        <div class="formula">
+          正向（求导）：位置 s(t) -> 速度 v(t) = s'(t) -> 加速度 a(t) = v'(t)<br>
+          逆向（积分）：加速度 a(t) -> 速度 v(t) = ∫a(t)dt -> 位置 s(t) = ∫v(t)dt
+        </div>
+        <p class="txt">这意味着：<b class="k">"求面积"（积分）和"求变化率"（求导）是同一件事的两个方向</b>。这就是微积分基本定理--牛顿最重要的发现。</p>
+        <div class="hlight">在牛顿之前，"求切线"的人不知道"求面积"的人在干嘛，反过来也一样。牛顿发现它们互为逆运算后，<b>两千年来的两条路终于打通成了一条</b>。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- three columns: position, velocity, acceleration -->
+            <!-- Position box -->
+            <rect x="40" y="50" width="130" height="50" rx="10" fill="rgba(178,59,52,.07)" stroke="#b23b34" stroke-width="1.5"/>
+            <text x="105" y="80" text-anchor="middle" fill="#b23b34" font-size="14" font-weight="700">位置 s(t)</text>
+            <!-- Velocity box -->
+            <rect x="245" y="50" width="130" height="50" rx="10" fill="rgba(59,91,158,.07)" stroke="#3b5b9e" stroke-width="1.5"/>
+            <text x="310" y="80" text-anchor="middle" fill="#3b5b9e" font-size="14" font-weight="700">速度 v(t)</text>
+            <!-- Acceleration box -->
+            <rect x="450" y="50" width="130" height="50" rx="10" fill="rgba(47,125,107,.07)" stroke="#2f7d6b" stroke-width="1.5"/>
+            <text x="515" y="80" text-anchor="middle" fill="#2f7d6b" font-size="14" font-weight="700">加速度 a(t)</text>
+            <!-- top arrows: derivative (rightward) -->
+            <line x1="170" y1="65" x2="245" y2="65" stroke="#b23b34" stroke-width="2" marker-end="url(#arrD1)"/>
+            <text x="207" y="58" text-anchor="middle" fill="#b23b34" font-size="11" font-weight="700">求导 ↓</text>
+            <line x1="375" y1="65" x2="450" y2="65" stroke="#3b5b9e" stroke-width="2" marker-end="url(#arrD2)"/>
+            <text x="412" y="58" text-anchor="middle" fill="#3b5b9e" font-size="11" font-weight="700">求导 ↓</text>
+            <defs><marker id="arrD1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b23b34"/></marker><marker id="arrD2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <!-- bottom arrows: integral (leftward) -->
+            <line x1="450" y1="90" x2="375" y2="90" stroke="#2f7d6b" stroke-width="2" marker-end="url(#arrI1)" stroke-dasharray="5 3"/>
+            <text x="412" y="105" text-anchor="middle" fill="#2f7d6b" font-size="11" font-weight="700">积分 ↑</text>
+            <line x1="245" y1="90" x2="170" y2="90" stroke="#3b5b9e" stroke-width="2" marker-end="url(#arrI2)" stroke-dasharray="5 3"/>
+            <text x="207" y="105" text-anchor="middle" fill="#3b5b9e" font-size="11" font-weight="700">积分 ↑</text>
+            <defs><marker id="arrI1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker><marker id="arrI2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <!-- labels -->
+            <text x="105" y="135" text-anchor="middle" fill="#8a8d95" font-size="11">我在哪？</text>
+            <text x="310" y="135" text-anchor="middle" fill="#8a8d95" font-size="11">多快？</text>
+            <text x="515" y="135" text-anchor="middle" fill="#8a8d95" font-size="11">在加速吗？</text>
+            <text x="310" y="180" text-anchor="middle" fill="#565a63" font-size="13" font-weight="700">求导和积分互为逆运算 = 微积分基本定理</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">⑥ 从引力到轨道：微积分的终极验证</span><span class="en-t">From Gravity to Orbits</span></div>
+        <p class="txt">有了微积分，牛顿终于可以做一件震撼世界的事：<b class="k">只凭一条假设（引力与距离平方成反比），从数学上推出开普勒的全部三条定律</b>。开普勒的定律是"看出来的"（二十年观测数据的总结），牛顿的推导是"算出来的"（从一条物理定律出发的必然结论）。</p>
+        <p class="txt" style="margin-top:10px;">这段推导被誉为<b class="k">牛顿推理能力的巅峰</b>，也是微积分第一次在重大科学问题上的完整实战。下面把推导拆成四步，每一步都给出完整的数学过程。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步：把引力写成运动微分方程</span><span class="en-t">Step 1 · The Equation</span></div>
+        <p class="txt">把两条定律合并：万有引力 F = <span class="frac"><span class="num">GMm</span><span class="bar"></span><span class="den">r²</span></span>（G 为引力常数，M 为太阳质量，m 为行星质量，r 为距离），加上牛顿第二定律 F = ma。注意力的方向<b>永远指向太阳</b>（径向），所以行星的运动方程是：</p>
+        <div class="formula">
+          m·a = -<span class="frac"><span class="num">GMm</span><span class="bar"></span><span class="den">r²</span></span> &nbsp;&nbsp;→&nbsp;&nbsp; <b>a</b> = -<span class="frac"><span class="num"><b>GM</b></span><span class="bar"></span><span class="den"><b>r²</b></span></span> &nbsp; <span style="color:#8a8d95;">(负号 = 加速度指向太阳)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 前置知识：什么是极坐标？</span><span class="en-t">Polar Coordinates 101</span></div>
+        <p class="txt">要描述行星的位置，首先得选一套"坐标系"。最常见的有两种，它们用<b>完全不同的方式</b>定位同一个点：</p>
+        <div class="grid2 top">
+          <div class="card" style="margin-bottom:0;border-color:rgba(59,91,158,.3);">
+            <div class="card-h"><span class="zh-t">直角坐标 (x, y)</span><span class="en-t" style="color:var(--blue);">Cartesian</span></div>
+            <p class="txt">从原点出发，<b>向右走 x 步，再向上走 y 步</b>，就到了目标点。像城市网格--"东三环北四路"。</p>
+            <ul class="pts">
+              <li>两个量：<b>x</b>（横向距离）、<b>y</b>（纵向距离）</li>
+              <li>单位向量 î、ĵ <b>永远固定</b>，不随位置变化</li>
+              <li>适合：网格、屏幕像素、建筑图纸</li>
+              <li>引力 F = GMm/r² 拆成 F<sub>x</sub>、F<sub>y</sub> 很麻烦</li>
+            </ul>
+          </div>
+          <div class="card" style="margin-bottom:0;border-color:rgba(178,59,52,.3);">
+            <div class="card-h"><span class="zh-t">极坐标 (r, θ)</span><span class="en-t" style="color:var(--accent);">Polar</span></div>
+            <p class="txt">从原点出发，<b>沿着角度 θ 的方向，走 r 步</b>，就到了目标点。像雷达扫描--"距离 10 公里，方位 45°"。</p>
+            <ul class="pts">
+              <li>两个量：<b>r</b>（到原点的距离）、<b>θ</b>（从参考方向转过的角度）</li>
+              <li>单位向量 ê<sub>r</sub>、ê<sub>θ</sub> <b>随位置旋转</b></li>
+              <li>适合：轨道、雷达、波纹、万有引力</li>
+              <li>引力 F = GMm/r² 里只有 r，<b>天然匹配</b></li>
+            </ul>
+          </div>
+        </div>
+        <p class="txt" style="margin-top:14px;">两种坐标描述的是<b>同一个点</b>，可以互相转换--这就是三角函数的本质：</p>
+        <div class="formula">
+          <b>x = r · cos θ</b> &nbsp;&nbsp;&nbsp; <b>y = r · sin θ</b> &nbsp;&nbsp;&nbsp; <b>r = √(x² + y²)</b> &nbsp;&nbsp;&nbsp; <b>θ = arctan(y/x)</b>
+        </div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- Origin / Sun -->
+            <circle cx="80" cy="220" r="8" fill="#a9741f"/>
+            <text x="50" y="240" fill="#a9741f" font-size="12" font-weight="700">原点(太阳)</text>
+            <!-- x-axis -->
+            <line x1="80" y1="220" x2="560" y2="220" stroke="#3b5b9e" stroke-width="1.5"/>
+            <text x="565" y="225" fill="#3b5b9e" font-size="12">x</text>
+            <!-- y-axis -->
+            <line x1="80" y1="220" x2="80" y2="30" stroke="#3b5b9e" stroke-width="1.5"/>
+            <text x="65" y="28" fill="#3b5b9e" font-size="12">y</text>
+            <!-- Point P -->
+            <circle cx="400" cy="90" r="6" fill="#b23b34"/>
+            <text x="410" y="85" fill="#b23b34" font-size="13" font-weight="700">P</text>
+            <!-- Cartesian: x projection (dashed) -->
+            <line x1="80" y1="90" x2="400" y2="90" stroke="#3b5b9e" stroke-width="1.5" stroke-dasharray="5 3" opacity=".5"/>
+            <line x1="400" y1="220" x2="400" y2="90" stroke="#3b5b9e" stroke-width="1.5" stroke-dasharray="5 3" opacity=".5"/>
+            <!-- x label -->
+            <rect x="220" y="225" width="40" height="18" rx="4" fill="rgba(59,91,158,.1)"/>
+            <text x="240" y="238" text-anchor="middle" fill="#3b5b9e" font-size="12" font-weight="700">x</text>
+            <!-- y label -->
+            <rect x="55" y="145" width="40" height="18" rx="4" fill="rgba(59,91,158,.1)"/>
+            <text x="75" y="158" text-anchor="middle" fill="#3b5b9e" font-size="12" font-weight="700">y</text>
+            <!-- Cartesian label -->
+            <text x="160" y="50" fill="#3b5b9e" font-size="11" font-weight="700">直角坐标：(x, y)</text>
+            <text x="160" y="66" fill="#3b5b9e" font-size="10" opacity=".7">向右走 x，再向上走 y</text>
+            <!-- Polar: r line from origin to P -->
+            <line x1="80" y1="220" x2="400" y2="90" stroke="#b23b34" stroke-width="2.5"/>
+            <text x="210" y="145" fill="#b23b34" font-size="14" font-weight="700">r</text>
+            <!-- θ arc -->
+            <path d="M 150 220 A 70 70 0 0 0 135 197" fill="none" stroke="#6a4c93" stroke-width="2"/>
+            <text x="158" y="208" fill="#6a4c93" font-size="13" font-weight="700">θ</text>
+            <!-- Polar label -->
+            <text x="430" y="130" fill="#b23b34" font-size="11" font-weight="700">极坐标：(r, θ)</text>
+            <text x="430" y="146" fill="#b23b34" font-size="10" opacity=".7">沿 θ 方向走 r</text>
+            <!-- relationship arrows -->
+            <text x="430" y="175" fill="#565a63" font-size="11">x = r·cosθ</text>
+            <text x="430" y="192" fill="#565a63" font-size="11">y = r·sinθ</text>
+            <!-- right angle marker for Cartesian -->
+            <rect x="392" y="212" width="16" height="16" fill="none" stroke="#3b5b9e" stroke-width="1" opacity=".4"/>
+            <!-- Why polar for orbits -->
+            <rect x="40" y="250" width="540" height="25" rx="6" fill="rgba(178,59,52,.05)" stroke="rgba(178,59,52,.12)"/>
+            <text x="310" y="268" text-anchor="middle" fill="#b23b34" font-size="11.5" font-weight="700">行星轨道用极坐标：r 直接 = 到太阳距离 -> 引力 F = GMm/r² 天然只有一个变量</text>
+          </svg>
+        </div>
+        <div class="hlight"><b>极坐标不是为了为难你，而是为了让方程更简单。</b>引力只依赖距离 r，不依赖角度 θ--用极坐标，这个物理事实直接反映在方程里。用直角坐标的话，x 和 y 相互耦合，方程会复杂得多。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 铺垫：位置在极坐标下怎么写</span><span class="en-t">Position in Polar</span></div>
+        <p class="txt">在直角坐标里，位置写成 (x, y)，两个单位向量 î、ĵ 是<b>固定的</b>--永远指向同一个方向。但行星绕太阳运动，用<b class="k">极坐标</b>更自然：用<b>距离 r</b>（到太阳多远）和<b>角度 θ</b>（转了多少度）来确定位置。</p>
+        <div class="formula">
+          位置向量 &nbsp; = &nbsp; <b>r · ê<sub>r</sub></b> &nbsp;&nbsp; <span style="color:#8a8d95;">(长度为 r，方向为 ê_r)</span>
+        </div>
+        <p class="txt">这里有个<b class="k">容易忽略的关键点</b>：ê<sub>r</sub> 不是固定的！它是"从太阳指向行星"的单位向量，行星转到哪里，它就指向哪里。还有一个配套的 ê<sub>θ</sub> --垂直于 ê<sub>r</sub>，指向角度增大的方向。这两个单位向量<b>随着行星的运动而旋转</b>。</p>
+        <div class="dgm">
+          <svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- Sun -->
+            <circle cx="310" cy="120" r="10" fill="#a9741f"/>
+            <text x="280" y="112" fill="#a9741f" font-size="12" font-weight="700">太阳</text>
+            <!-- reference axis -->
+            <line x1="310" y1="120" x2="560" y2="120" stroke="#8a8d95" stroke-width="1" stroke-dasharray="4 3"/>
+            <!-- Position 1 (upper right) -->
+            <circle cx="460" cy="60" r="6" fill="#b23b34"/>
+            <line x1="310" y1="120" x2="460" y2="60" stroke="#b23b34" stroke-width="2"/>
+            <text x="380" y="80" fill="#b23b34" font-size="13" font-weight="700">r</text>
+            <line x1="460" y1="60" x2="510" y2="40" stroke="#3b5b9e" stroke-width="2" marker-end="url(#er1a)"/>
+            <defs><marker id="er1a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <text x="515" y="35" fill="#3b5b9e" font-size="11" font-weight="700">ê_r ¹</text>
+            <line x1="460" y1="60" x2="430" y2="25" stroke="#2f7d6b" stroke-width="2" marker-end="url(#eth1a)"/>
+            <defs><marker id="eth1a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker></defs>
+            <text x="395" y="22" fill="#2f7d6b" font-size="11" font-weight="700">ê_θ ¹</text>
+            <text x="440" y="80" fill="#b23b34" font-size="10">位置 ①</text>
+            <!-- Position 2 (lower left) -->
+            <circle cx="180" cy="170" r="6" fill="#6a4c93"/>
+            <line x1="310" y1="120" x2="180" y2="170" stroke="#6a4c93" stroke-width="2"/>
+            <text x="230" y="160" fill="#6a4c93" font-size="13" font-weight="700">r</text>
+            <line x1="180" y1="170" x2="130" y2="195" stroke="#3b5b9e" stroke-width="2" marker-end="url(#er1b)"/>
+            <defs><marker id="er1b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <text x="95" y="200" fill="#3b5b9e" font-size="11" font-weight="700">ê_r ²</text>
+            <line x1="180" y1="170" x2="210" y2="210" stroke="#2f7d6b" stroke-width="2" marker-end="url(#eth1b)"/>
+            <defs><marker id="eth1b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker></defs>
+            <text x="215" y="220" fill="#2f7d6b" font-size="11" font-weight="700">ê_θ ²</text>
+            <text x="155" y="155" fill="#6a4c93" font-size="10">位置 ②</text>
+            <!-- Key insight label -->
+            <rect x="40" y="195" width="540" height="38" rx="8" fill="rgba(178,59,52,.05)" stroke="rgba(178,59,52,.15)"/>
+            <text x="310" y="220" text-anchor="middle" fill="#b23b34" font-size="12" font-weight="700">关键：ê_r 和 ê_θ 在位置 ① 和 ② 指向不同方向 -- 它们在旋转！</text>
+          </svg>
+        </div>
+        <div class="hlight">在直角坐标里，单位向量 î、ĵ 是"死的"（永远不动）。在极坐标里，ê<sub>r</sub>、ê<sub>θ</sub> 是"活的"（跟着行星转）。<b>这个区别就是后面所有"多出来的项"的根源。</b></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 第一层：速度 = 位置求导（乘积法则！）</span><span class="en-t">Velocity</span></div>
+        <p class="txt">速度是位置的导数：v = d/dt [位置]。位置 = r·ê<sub>r</sub>，这是两个<b>都在变</b>的东西相乘--r 在变（距离在变），ê<sub>r</sub> 也在变（方向在转）。所以必须用<b class="k">乘积法则</b>：</p>
+        <div class="formula" style="text-align:left;">
+          <b>v</b> = <span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dt</span></span> [ r · ê<sub>r</sub> ]<br><br>
+          = <span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span> · ê<sub>r</sub> &nbsp; + &nbsp; r · <span class="frac"><span class="num">d(ê<sub>r</sub>)</span><span class="bar"></span><span class="den">dt</span></span><br><br>
+          <span style="color:#8a8d95;">(乘积法则：第一个求导 × 第二个不动 + 第一个不动 × 第二个求导)</span>
+        </div>
+        <p class="txt">第一项 r'·ê<sub>r</sub> 没问题。但第二项里的 <b>d(ê<sub>r</sub>)/dt 是什么？</b> ê<sub>r</sub> 是一个单位向量，它的<b>长度</b>不变（永远是 1），但它的<b>方向</b>在变。当角度 θ 增加一点点 dθ 时，ê<sub>r</sub> 转了 dθ --它的变化量 dê<sub>r</sub> 指向<b>垂直于 ê<sub>r</sub> 的方向</b>，也就是 ê<sub>θ</sub> 的方向：</p>
+        <div class="formula" style="text-align:left;">
+          <b>单位向量的求导法则</b>（极坐标专属）：<br><br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">d(ê<sub>r</sub>)</span><span class="bar"></span><span class="den">dt</span></span> = <span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> · ê<sub>θ</sub> &nbsp;&nbsp; <span style="color:#8a8d95;">(ê_r 的导数 = 角速度 × ê_θ)</span><br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">d(ê<sub>θ</sub>)</span><span class="bar"></span><span class="den">dt</span></span> = -<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> · ê<sub>r</sub> &nbsp;&nbsp; <span style="color:#8a8d95;">(ê_θ 的导数 = -角速度 × ê_r，注意负号)</span>
+        </div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- Sun -->
+            <circle cx="100" cy="100" r="8" fill="#a9741f"/>
+            <!-- ê_r at angle θ -->
+            <line x1="100" y1="100" x2="250" y2="50" stroke="#3b5b9e" stroke-width="2.5" marker-end="url(#er2)"/>
+            <defs><marker id="er2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <text x="170" y="65" fill="#3b5b9e" font-size="13" font-weight="700">ê_r</text>
+            <!-- ê_r at angle θ+dθ (slightly rotated) -->
+            <line x1="100" y1="100" x2="260" y2="38" stroke="#3b5b9e" stroke-width="2" stroke-dasharray="4 3" opacity=".5" marker-end="url(#er2b)"/>
+            <defs><marker id="er2b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <text x="270" y="32" fill="#3b5b9e" font-size="11" opacity=".6">ê_r (转了dθ后)</text>
+            <!-- dθ arc -->
+            <path d="M 145 85 A 50 50 0 0 0 145 78" fill="none" stroke="#6a4c93" stroke-width="1.5"/>
+            <text x="155" y="80" fill="#6a4c93" font-size="12" font-weight="700">dθ</text>
+            <!-- The change dê_r: from tip of old ê_r to tip of new ê_r -->
+            <line x1="250" y1="50" x2="260" y2="38" stroke="#b23b34" stroke-width="2.5" marker-end="url(#der2)"/>
+            <defs><marker id="der2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b23b34"/></marker></defs>
+            <text x="265" y="55" fill="#b23b34" font-size="12" font-weight="700">dê_r</text>
+            <!-- ê_θ direction -->
+            <line x1="250" y1="50" x2="220" y2="15" stroke="#2f7d6b" stroke-width="2" marker-end="url(#eth2)"/>
+            <defs><marker id="eth2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker></defs>
+            <text x="185" y="12" fill="#2f7d6b" font-size="12" font-weight="700">ê_θ 方向</text>
+            <!-- Explanation -->
+            <rect x="350" y="20" width="250" height="155" rx="10" fill="rgba(178,59,52,.04)" stroke="rgba(178,59,52,.12)"/>
+            <text x="365" y="45" fill="#565a63" font-size="12" font-weight="700">几何含义：</text>
+            <text x="365" y="68" fill="#565a63" font-size="11">ê_r 转了 dθ 后，</text>
+            <text x="365" y="85" fill="#565a63" font-size="11">尖端移动了 dê_r。</text>
+            <text x="365" y="108" fill="#b23b34" font-size="11" font-weight="700">dê_r 指向 ê_θ 方向！</text>
+            <text x="365" y="131" fill="#565a63" font-size="11">大小 = 1 × dθ</text>
+            <text x="365" y="154" fill="#565a63" font-size="11">所以 d(ê_r)/dt = θ'·ê_θ</text>
+          </svg>
+        </div>
+        <p class="txt">把这个结果代回去，速度就有<b>两项</b>了：</p>
+        <div class="formula">
+          <b>v</b> = <span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span> · ê<sub>r</sub> &nbsp; + &nbsp; r · <span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> · ê<sub>θ</sub>
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">径向速度（靠近/远离太阳） + 切向速度（绕太阳转）</span>
+        </div>
+        <div class="hlight">在直角坐标里，速度只有 x' 和 y' 两个简单项。在极坐标里，速度分成了<b>径向</b>（r'，距离变化）和<b>切向</b>（r·θ'，旋转变化）两部分。多出来的 θ' 和 r，都来自<b>单位向量在旋转</b>这个事实。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 第二层：加速度 = 速度再求导（四项变两项）</span><span class="en-t">Acceleration</span></div>
+        <p class="txt">加速度是速度的导数。速度 v = r'·ê<sub>r</sub> + r·θ'·ê<sub>θ</sub> 有两项，每项都是"标量 × 旋转向量"的乘积。对每一项用乘积法则，再代入单位向量的求导法则，<b>展开后一共四项</b>：</p>
+        <div class="formula" style="text-align:left;">
+          <b>a</b> = <span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dt</span></span> [ r'·ê<sub>r</sub> + r·θ'·ê<sub>θ</sub> ]<br><br>
+          <b>第一项</b>：d/dt [r'·ê<sub>r</sub>] = r''·ê<sub>r</sub> + r'·<span style="color:#2f7d6b;">(θ'·ê<sub>θ</sub>)</span> &nbsp; <span style="color:#8a8d95;">(乘积法则 + ê_r' = θ'·ê_θ)</span><br><br>
+          <b>第二项</b>：d/dt [r·θ'·ê<sub>θ</sub>] = r'·θ'·ê<sub>θ</sub> + r·θ''·ê<sub>θ</sub> + r·θ'·<span style="color:#b23b34;">(-θ'·ê<sub>r</sub>)</span> &nbsp; <span style="color:#8a8d95;">(乘积法则 + ê_θ' = -θ'·ê_r)</span><br><br>
+          <b>四项加起来</b>，把 ê<sub>r</sub> 和 ê<sub>θ</sub> 分别合并：<br><br>
+          &nbsp;&nbsp;含 ê<sub>r</sub> 的：&nbsp; <b>r'' - r·(θ')²</b> &nbsp;&nbsp; <span style="color:#8a8d95;">(两项合并，一个来自第一项，一个来自第二项的红色部分)</span><br>
+          &nbsp;&nbsp;含 ê<sub>θ</sub> 的：&nbsp; <b>r'·θ' + r·θ'' + r'·θ' = r·θ'' + 2·r'·θ'</b> &nbsp;&nbsp; <span style="color:#8a8d95;">(三项合并，两个 r'·θ' 来自不同地方)</span>
+        </div>
+        <p class="txt">最终，加速度在极坐标下的<b>完整表达式</b>：</p>
+        <div class="formula">
+          <b>a</b> = [ <span class="frac"><span class="num">d²r</span><span class="bar"></span><span class="den">dt²</span></span> - r·(<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span>)² ] · ê<sub>r</sub> &nbsp; + &nbsp; [ r·<span class="frac"><span class="num">d²θ</span><span class="bar"></span><span class="den">dt²</span></span> + 2·<span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span>·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> ] · ê<sub>θ</sub>
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">径向分量（沿 ê_r） + 切向分量（沿 ê_θ）</span>
+        </div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- Sun -->
+            <circle cx="310" cy="130" r="8" fill="#a9741f"/>
+            <!-- Planet -->
+            <circle cx="430" cy="80" r="6" fill="#b23b34"/>
+            <line x1="310" y1="130" x2="430" y2="80" stroke="#8a8d95" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="360" y="100" fill="#8a8d95" font-size="11">r</text>
+            <!-- radial direction -->
+            <line x1="430" y1="80" x2="480" y2="55" stroke="#3b5b9e" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="485" y="50" fill="#3b5b9e" font-size="10">ê_r</text>
+            <!-- tangential direction -->
+            <line x1="430" y1="80" x2="400" y2="45" stroke="#2f7d6b" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="370" y="40" fill="#2f7d6b" font-size="10">ê_θ</text>
+            <!-- Radial acceleration box -->
+            <rect x="40" y="160" width="270" height="85" rx="8" fill="rgba(59,91,158,.06)" stroke="rgba(59,91,158,.2)"/>
+            <text x="55" y="183" fill="#3b5b9e" font-size="12" font-weight="700">径向分量（沿 ê_r）</text>
+            <text x="55" y="203" fill="#565a63" font-size="11">d²r/dt² - r·(dθ/dt)²</text>
+            <text x="55" y="222" fill="#3b5b9e" font-size="11">↑ r'' = 距离在加速变化</text>
+            <text x="55" y="238" fill="#b23b34" font-size="11">↓ -r·θ'² = 向心加速度（被拉向太阳）</text>
+            <!-- Tangential acceleration box -->
+            <rect x="320" y="160" width="270" height="85" rx="8" fill="rgba(47,125,107,.06)" stroke="rgba(47,125,107,.2)"/>
+            <text x="335" y="183" fill="#2f7d6b" font-size="12" font-weight="700">切向分量（沿 ê_θ）</text>
+            <text x="335" y="203" fill="#565a63" font-size="11">r·d²θ/dt² + 2·dr/dt·dθ/dt</text>
+            <text x="335" y="222" fill="#2f7d6b" font-size="11">↑ r·θ'' = 角速度在加速变化</text>
+            <text x="335" y="238" fill="#a9741f" font-size="11">↑ 2·r'·θ' = 科里奥利项（r变+旋转）</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 第三层：为什么"多出来"两项？</span><span class="en-t">Why Extra Terms?</span></div>
+        <p class="txt">在直角坐标里，加速度就是 a = x''·î + y''·ĵ --干干净净，没有多余的东西。为什么极坐标下会多出 <b>-r·(θ')²</b> 和 <b>2·r'·θ'</b> 这两项？<b class="k">因为坐标系本身在转。</b></p>
+        <div class="grid2 top">
+          <div class="card" style="margin-bottom:0;border-color:rgba(178,59,52,.3);">
+            <div class="card-h"><span class="zh-t">-r·(θ')²：向心项</span><span class="en-t">Centripetal</span></div>
+            <p class="txt">即使 r 不变（完美的圆轨道），行星也有<b>径向加速度</b>！为什么？因为速度方向在不停偏转--行星每时每刻都在"转弯"。<b class="k">转弯就是加速度</b>，哪怕距离没变。</p>
+            <p class="txt" style="margin-top:6px;">这就像你开车转圈--速度大小不变，但方向盘一直在转，你被"甩"向外侧。这个力就是向心力 = m·r·(θ')²，方向指向圆心（太阳）。</p>
+          </div>
+          <div class="card" style="margin-bottom:0;border-color:rgba(169,116,31,.3);">
+            <div class="card-h"><span class="zh-t">2·r'·θ'：科里奥利项</span><span class="en-t">Coriolis</span></div>
+            <p class="txt">即使角速度 θ' 恒定（匀速旋转），只要 r 在变（行星靠近或远离太阳），就有<b>切向加速度</b>！为什么？因为"越靠近中心，同样的角速度对应的线速度越小"。</p>
+            <p class="txt" style="margin-top:6px;">想象花样滑冰旋转时收回手臂--角速度会变快。反过来，手臂伸出去时会变慢。这种 r 变化引起的切向效应，就是 2·r'·θ'。</p>
+          </div>
+        </div>
+        <div class="hlight"><b>直角坐标的 î、ĵ 是"死的" -- 求导为零，不产生多余项。极坐标的 ê<sub>r</sub>、ê<sub>θ</sub> 是"活的" -- 求导不为零，每求一次导就"冒出"新项。</b>这就是极坐标比直角坐标复杂、但也更适合描述旋转运动的原因。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步 · 终点：代入引力，得到两条方程</span><span class="en-t">The Two Equations</span></div>
+        <p class="txt">现在把加速度的完整表达式和引力对接。引力 F = -GMm/r² · ê<sub>r</sub>，<b>只有径向分量，切向为零</b>（引力始终指向太阳，不会"拧"行星）。代入 F = ma：</p>
+        <div class="formula" style="text-align:left;">
+          <b>径向</b>（引力 ≠ 0）：&nbsp; m · [ <span class="frac"><span class="num">d²r</span><span class="bar"></span><span class="den">dt²</span></span> - r·(<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span>)² ] = -<span class="frac"><span class="num">GMm</span><span class="bar"></span><span class="den">r²</span></span><br><br>
+          <b>切向</b>（引力 = 0）：&nbsp; m · [ r·<span class="frac"><span class="num">d²θ</span><span class="bar"></span><span class="den">dt²</span></span> + 2·<span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span>·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> ] = 0
+        </div>
+        <p class="txt">两边约掉 m（质量不影响运动！这就是等效原理的萌芽），得到最终方程组：</p>
+        <div class="formula" style="text-align:left;">
+          <b>径向</b>：&nbsp; <span class="frac"><span class="num">d²r</span><span class="bar"></span><span class="den">dt²</span></span> - r·(<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span>)² = -<span class="frac"><span class="num">GM</span><span class="bar"></span><span class="den">r²</span></span> &nbsp;&nbsp;<span style="color:#8a8d95;">(引力拉行星靠近太阳)</span><br><br>
+          <b>切向</b>：&nbsp; r·<span class="frac"><span class="num">d²θ</span><span class="bar"></span><span class="den">dt²</span></span> + 2·<span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span>·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = 0 &nbsp;&nbsp;<span style="color:#8a8d95;">(无力矩 -> 角动量守恒)</span>
+        </div>
+        <div class="hlight">这就是牛顿要解的微分方程组：两个未知函数 r(t)、θ(t)，两条方程。<b>径向方程描述"引力如何拉扯距离"，切向方程描述"无力矩时旋转如何守恒"</b>。后续三步，就是在解这组方程。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- reference axis (polar) -->
+            <line x1="100" y1="160" x2="560" y2="160" stroke="#8a8d95" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="565" y="165" fill="#8a8d95" font-size="11">参考方向</text>
+            <!-- Sun at origin -->
+            <circle cx="100" cy="160" r="12" fill="#a9741f"/>
+            <text x="68" y="145" fill="#a9741f" font-size="13" font-weight="700">太阳 ☉</text>
+            <!-- Planet at (r, θ) -->
+            <circle cx="350" cy="90" r="7" fill="#b23b34"/>
+            <text x="360" y="85" fill="#b23b34" font-size="13" font-weight="700">行星</text>
+            <!-- r vector (sun -> planet) -->
+            <line x1="100" y1="160" x2="350" y2="90" stroke="#b23b34" stroke-width="2"/>
+            <text x="195" y="118" fill="#b23b34" font-size="14" font-weight="700">r</text>
+            <!-- angle θ arc -->
+            <path d="M 155 160 A 55 55 0 0 0 148 142" fill="none" stroke="#6a4c93" stroke-width="1.5"/>
+            <text x="165" y="148" fill="#6a4c93" font-size="13" font-weight="700">θ</text>
+            <!-- radial direction (outward, along r) -->
+            <line x1="350" y1="90" x2="400" y2="67" stroke="#3b5b9e" stroke-width="2" marker-end="url(#arrR1)"/>
+            <defs><marker id="arrR1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#3b5b9e"/></marker></defs>
+            <text x="405" y="60" fill="#3b5b9e" font-size="12" font-weight="700">径向 ê_r</text>
+            <!-- tangential direction (perpendicular to r, direction of motion) -->
+            <line x1="350" y1="90" x2="310" y2="55" stroke="#2f7d6b" stroke-width="2" marker-end="url(#arrT2)"/>
+            <defs><marker id="arrT2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker></defs>
+            <text x="260" y="50" fill="#2f7d6b" font-size="12" font-weight="700">切向 ê_θ</text>
+            <!-- Force vector (toward sun, opposite to radial) -->
+            <line x1="340" y1="95" x2="130" y2="152" stroke="#a9741f" stroke-width="2.5" marker-end="url(#arrF1)"/>
+            <defs><marker id="arrF1" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#a9741f"/></marker></defs>
+            <text x="210" y="145" fill="#a9741f" font-size="13" font-weight="700">F = -GMm/r²</text>
+            <!-- orbit hint -->
+            <ellipse cx="220" cy="160" rx="180" ry="90" fill="none" stroke="#3b5b9e" stroke-width="1" stroke-dasharray="3 3" opacity=".3"/>
+            <!-- decomposition labels -->
+            <rect x="40" y="210" width="540" height="90" rx="8" fill="rgba(178,59,52,.04)" stroke="rgba(178,59,52,.15)"/>
+            <text x="60" y="235" fill="#3b5b9e" font-size="12" font-weight="700">径向分量</text>
+            <text x="60" y="255" fill="#565a63" font-size="11">加速度沿半径方向 = d²r/dt² - r·(dθ/dt)²</text>
+            <text x="60" y="275" fill="#565a63" font-size="11">= 引力产生的 -GM/r²（行星被拉向太阳）</text>
+            <text x="340" y="235" fill="#2f7d6b" font-size="12" font-weight="700">切向分量</text>
+            <text x="340" y="255" fill="#565a63" font-size="11">加速度垂直半径方向 = r·θ'' + 2·r'·θ'</text>
+            <text x="340" y="275" fill="#565a63" font-size="11">= 0（引力无力矩，不"拧"行星）</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第二步：切向方程 → 开普勒第二定律（等面积）</span><span class="en-t">Step 2 · Equal Areas</span></div>
+        <p class="txt">先解比较容易的切向方程。关键技巧：把整个方程乘上 r（这正好是乘积法则的"反用"）：</p>
+        <div class="formula" style="text-align:left;">
+          <b>原方程</b>：&nbsp; r·θ'' + 2·r'·θ' = 0<br><br>
+          <b>两边乘 r</b>：&nbsp; r²·θ'' + 2·r·r'·θ' = 0<br><br>
+          <b>识别出乘积法则</b>：&nbsp; <span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dt</span></span> [ r²·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> ] = 0<br><br>
+          <b>积分</b>：&nbsp; <b>r²·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = h</b> &nbsp; <span style="color:#8a8d95;">(h 为常数——积分一次的结果)</span>
+        </div>
+        <p class="txt">r²·θ' = 常数 的物理含义：<b class="k">角动量守恒</b>（角动量 L = m·r²·θ'）。为什么守恒？因为引力始终指向太阳，对行星产生的力矩（r × F）恒为零——力没有"拧动"行星旋转的能力。</p>
+        <p class="txt">现在把这个常数翻译成几何语言。行星在一小段时间 dt 内扫过的面积（扇形）：</p>
+        <div class="formula">
+          面积速率 &nbsp; <span class="frac"><span class="num">dA</span><span class="bar"></span><span class="den">dt</span></span> = ½·r²·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = <b><span class="frac"><span class="num">h</span><span class="bar"></span><span class="den">2</span></span> = 常数</b>
+        </div>
+        <div class="hlight">结论：<b>行星单位时间扫过的面积处处相等——这就是开普勒第二定律 ✓</b>。开普勒用 10 年苦算得到的规律，牛顿只花了两行积分。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <ellipse cx="280" cy="140" rx="200" ry="80" fill="none" stroke="#3b5b9e" stroke-width="2"/>
+            <circle cx="114" cy="140" r="10" fill="#a9741f"/>
+            <text x="80" y="128" fill="#a9741f" font-size="12" font-weight="700">太阳</text>
+            <path d="M 114 140 L 180 75 A 200 80 0 0 1 190 72 Z" fill="rgba(178,59,52,.15)" stroke="#b23b34" stroke-width="1.5"/>
+            <text x="150" y="108" fill="#b23b34" font-size="12" font-weight="700">A₁</text>
+            <text x="125" y="190" fill="#b23b34" font-size="10">近日点：r 小，θ 大</text>
+            <path d="M 114 140 L 460 132 A 200 80 0 0 1 462 148 Z" fill="rgba(47,125,107,.15)" stroke="#2f7d6b" stroke-width="1.5"/>
+            <text x="430" y="120" fill="#2f7d6b" font-size="12" font-weight="700">A₂</text>
+            <text x="395" y="180" fill="#2f7d6b" font-size="10">远日点：r 大，θ 小</text>
+            <text x="295" y="135" text-anchor="middle" fill="#565a63" font-size="20" font-weight="700">=</text>
+            <text x="295" y="155" text-anchor="middle" fill="#8a8d95" font-size="10">面积相等</text>
+            <line x1="114" y1="140" x2="180" y2="75" stroke="#b23b34" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="114" y1="140" x2="190" y2="72" stroke="#b23b34" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="114" y1="140" x2="460" y2="132" stroke="#2f7d6b" stroke-width="1" stroke-dasharray="3 2"/>
+            <line x1="114" y1="140" x2="462" y2="148" stroke="#2f7d6b" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="310" y="255" text-anchor="middle" fill="#565a63" font-size="13" font-weight="700">dA/dt = h/2 = 常数 -> 等面积定律 ✓</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第三步：径向方程 → 椭圆轨道（开普勒第一定律）</span><span class="en-t">Step 3 · The Ellipse</span></div>
+        <p class="txt">现在攻最难的一关。径向方程 <span class="frac"><span class="num">d²r</span><span class="bar"></span><span class="den">dt²</span></span> - r·(<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span>)² = -<span class="frac"><span class="num">GM</span><span class="bar"></span><span class="den">r²</span></span> 直接解不动——它包含 r 和 θ 的耦合。牛顿的办法（现代教科书称为 <b class="k">Binet 换元</b>）：</p>
+        <p class="txt" style="margin-top:8px;">引入新未知数 <b>u = 1/r</b>，并利用上一步的常数 h = r²·θ'，把方程里所有 r 的导数换成对 θ 的导数：</p>
+        <div class="formula" style="text-align:left;">
+          <b>换元关系</b>（三个都能由 u = 1/r 和 r²θ' = h 推出来）：<br><br>
+          &nbsp;&nbsp;①&nbsp; <span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = h·u²<br>
+          &nbsp;&nbsp;②&nbsp; <span class="frac"><span class="num">dr</span><span class="bar"></span><span class="den">dt</span></span> = -h·<span class="frac"><span class="num">du</span><span class="bar"></span><span class="den">dθ</span></span><br>
+          &nbsp;&nbsp;③&nbsp; <span class="frac"><span class="num">d²r</span><span class="bar"></span><span class="den">dt²</span></span> = -h²u²·<span class="frac"><span class="num">d²u</span><span class="bar"></span><span class="den">dθ²</span></span><br><br>
+          <b>代入径向方程</b>，两边除以 -h²u²：<br><br>
+          &nbsp;&nbsp;<b><span class="frac"><span class="num">d²u</span><span class="bar"></span><span class="den">dθ²</span></span> + u = <span class="frac"><span class="num">GM</span><span class="bar"></span><span class="den">h²</span></span></b> &nbsp; <span style="color:#8a8d95;">(常数！)</span>
+        </div>
+        <p class="txt">惊喜出现了：换元后方程变成了<b class="k">简谐振子方程</b>——和第 7 章弹簧振动 x'' = -ω²x 完全同型！它的解是：</p>
+        <div class="formula">
+          u = <span class="frac"><span class="num">GM</span><span class="bar"></span><span class="den">h²</span></span>·(1 + e·cos θ) &nbsp;&nbsp;→&nbsp;&nbsp; 还原 <b>r</b> = <span class="frac"><span class="num">1</span><span class="bar"></span><span class="den">u</span></span>：<br><br>
+          <b>r(θ)</b> = <span class="frac"><span class="num"><b>p</b></span><span class="bar"></span><span class="den"><b>1 + e·cos θ</b></span></span> &nbsp; <span style="color:#8a8d95;">其中 <b>p</b> = <span class="frac"><span class="num">h²</span><span class="bar"></span><span class="den">GM</span></span>，e 是积分常数（离心率）</span>
+        </div>
+        <p class="txt">最后识别形状。这是圆锥曲线的极坐标方程：</p>
+        <ul class="pts">
+          <li><b>e = 0</b>：圆轨道</li>
+          <li><b>0 &lt; e &lt; 1</b>：<b class="k">椭圆轨道 ✓ —— 开普勒第一定律</b></li>
+          <li><b>e = 1</b>：抛物线（一去不回）</li>
+          <li><b>e &gt; 1</b>：双曲线（掠过太阳的彗星）</li>
+        </ul>
+        <div class="hlight">核心洞察：<b>"把 1/r 当作未知数"之后，行星绕太阳的引力问题，数学上就变成了弹簧振动问题</b>——同一个方程，串起了弹簧、钟摆和整个太阳系。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <circle cx="90" cy="120" r="50" fill="none" stroke="#3b5b9e" stroke-width="2"/>
+            <circle cx="90" cy="120" r="5" fill="#a9741f"/>
+            <text x="90" y="195" text-anchor="middle" fill="#3b5b9e" font-size="13" font-weight="700">e = 0</text>
+            <text x="90" y="212" text-anchor="middle" fill="#565a63" font-size="11">圆</text>
+            <text x="90" y="228" text-anchor="middle" fill="#8a8d95" font-size="10">特殊椭圆</text>
+            <ellipse cx="240" cy="120" rx="60" ry="40" fill="none" stroke="#b23b34" stroke-width="2"/>
+            <circle cx="215" cy="120" r="5" fill="#a9741f"/>
+            <circle cx="250" cy="90" r="4" fill="#b23b34"/>
+            <text x="240" y="195" text-anchor="middle" fill="#b23b34" font-size="13" font-weight="700">0 &lt; e &lt; 1</text>
+            <text x="240" y="212" text-anchor="middle" fill="#565a63" font-size="11">椭圆 ✓</text>
+            <text x="240" y="228" text-anchor="middle" fill="#8a8d95" font-size="10">行星轨道</text>
+            <path d="M 370 60 Q 430 120, 370 180" fill="none" stroke="#2f7d6b" stroke-width="2"/>
+            <circle cx="390" cy="120" r="5" fill="#a9741f"/>
+            <text x="400" y="195" text-anchor="middle" fill="#2f7d6b" font-size="13" font-weight="700">e = 1</text>
+            <text x="400" y="212" text-anchor="middle" fill="#565a63" font-size="11">抛物线</text>
+            <text x="400" y="228" text-anchor="middle" fill="#8a8d95" font-size="10">一去不回</text>
+            <path d="M 480 60 Q 540 120, 480 180" fill="none" stroke="#6a4c93" stroke-width="2"/>
+            <path d="M 600 60 Q 540 120, 600 180" fill="none" stroke="#6a4c93" stroke-width="2"/>
+            <circle cx="520" cy="120" r="5" fill="#a9741f"/>
+            <text x="540" y="195" text-anchor="middle" fill="#6a4c93" font-size="13" font-weight="700">e &gt; 1</text>
+            <text x="540" y="212" text-anchor="middle" fill="#565a63" font-size="11">双曲线</text>
+            <text x="540" y="228" text-anchor="middle" fill="#8a8d95" font-size="10">掠日彗星</text>
+            <text x="310" y="255" text-anchor="middle" fill="#a9741f" font-size="11">☉ 太阳在焦点上 -- 离心率 e 决定轨道形状</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第四步：椭圆几何 → 开普勒第三定律（T² ∝ a³）</span><span class="en-t">Step 4 · The Period Law</span></div>
+        <p class="txt">第三定律说的是"行星公转周期 T 的平方与轨道半长轴 a 的立方成正比"。它藏在第二步的面积速率和椭圆的几何里：</p>
+        <div class="formula" style="text-align:left;">
+          <b>①</b> &nbsp; 面积速率 <span class="frac"><span class="num">dA</span><span class="bar"></span><span class="den">dt</span></span> = <span class="frac"><span class="num">h</span><span class="bar"></span><span class="den">2</span></span>，一周期 T 内扫过整个椭圆面积 πab（a 半长轴、b 半短轴）：<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;T·<span class="frac"><span class="num">h</span><span class="bar"></span><span class="den">2</span></span> = πab &nbsp;→&nbsp; T = <span class="frac"><span class="num">2πab</span><span class="bar"></span><span class="den">h</span></span><br><br>
+          <b>②</b> &nbsp; 椭圆几何关系：b² = a²(1 - e²)，而由 <b>p</b> = <span class="frac"><span class="num">h²</span><span class="bar"></span><span class="den">GM</span></span> 得：<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;b² = a·p = a·<span class="frac"><span class="num">h²</span><span class="bar"></span><span class="den">GM</span></span><br><br>
+          <b>③</b> &nbsp; 把 b² 代入并整理：<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;T² = <span class="frac"><span class="num">4π²a²b²</span><span class="bar"></span><span class="den">h²</span></span> = <span class="frac"><span class="num">4π²·a²·a·h²</span><span class="bar"></span><span class="den">GM·h²</span></span> = <span class="frac"><span class="num"><b>4π²a³</b></span><span class="bar"></span><span class="den"><b>GM</b></span></span> ✓
+        </div>
+        <p class="txt">结论：<b class="k">T² = <span class="frac"><span class="num">4π²</span><span class="bar"></span><span class="den">GM</span></span>·a³</b>。括号里只含太阳的常数，所以对同一太阳的所有行星，<span class="frac"><span class="num">T²</span><span class="bar"></span><span class="den">a³</span></span> = 同一个值——<b class="k">开普勒第三定律 ✓</b>。</p>
+        <div class="hlight">至此，微积分从一条引力假设出发，把开普勒的三条定律全部"证明"了出来——<b>观测事实从此变成了数学必然</b>。</div>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- Three nested orbits with increasing semi-major axis -->
+            <!-- Sun at center -->
+            <circle cx="310" cy="120" r="8" fill="#a9741f"/>
+            <text x="285" y="112" fill="#a9741f" font-size="11" font-weight="700">太阳</text>
+            <!-- Inner orbit (small a, short T) -->
+            <ellipse cx="310" cy="120" rx="50" ry="35" fill="none" stroke="#b23b34" stroke-width="2"/>
+            <circle cx="350" cy="110" r="4" fill="#b23b34"/>
+            <text x="360" y="108" fill="#b23b34" font-size="11">a₁ (小)</text>
+            <text x="360" y="122" fill="#b23b34" font-size="10">T₁ 短</text>
+            <!-- Middle orbit -->
+            <ellipse cx="310" cy="120" rx="100" ry="70" fill="none" stroke="#3b5b9e" stroke-width="2"/>
+            <circle cx="400" cy="80" r="4" fill="#3b5b9e"/>
+            <text x="410" y="78" fill="#3b5b9e" font-size="11">a₂ (中)</text>
+            <text x="410" y="92" fill="#3b5b9e" font-size="10">T₂ 中</text>
+            <!-- Outer orbit -->
+            <ellipse cx="310" cy="120" rx="160" ry="95" fill="none" stroke="#2f7d6b" stroke-width="2" opacity=".7"/>
+            <circle cx="460" cy="55" r="4" fill="#2f7d6b"/>
+            <text x="470" y="53" fill="#2f7d6b" font-size="11">a₃ (大)</text>
+            <text x="470" y="67" fill="#2f7d6b" font-size="10">T₃ 长</text>
+            <!-- Relationship arrow -->
+            <text x="310" y="240" text-anchor="middle" fill="#565a63" font-size="14" font-weight="700">T² ∝ a³</text>
+            <text x="310" y="260" text-anchor="middle" fill="#8a8d95" font-size="11">轨道越大 -> 周期越长（立方关系，不是线性）</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">三定律汇总：看与算的对照</span><span class="en-t">Summary of All Three Laws</span></div>
+        <div class="cmp-wrap">
+          <table class="cmp">
+            <thead>
+              <tr><th>开普勒定律</th><th>观测事实（1609–1619）</th><th>微积分推导结果</th><th>数学来源</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="m">第一定律<small>椭圆轨道</small></td><td>行星沿椭圆轨道绕日运行</td><td>r = p/(1+e·cosθ)，0 &lt; e &lt; 1 为椭圆 ✓</td><td>径向方程 + Binet 换元（简谐振子解）</td></tr>
+              <tr><td class="m">第二定律<small>等面积</small></td><td>行星与太阳的连线单位时间扫过相等面积</td><td><span class="frac"><span class="num">dA</span><span class="bar"></span><span class="den">dt</span></span> = <span class="frac"><span class="num">r²θ'</span><span class="bar"></span><span class="den">2</span></span> = <span class="frac"><span class="num">h</span><span class="bar"></span><span class="den">2</span></span> = 常数 ✓</td><td>切向方程两边乘 r 后积分（角动量守恒）</td></tr>
+              <tr><td class="m">第三定律<small>T² ∝ a³</small></td><td>各行星 T² 与 a³ 的比值相同</td><td>T² = <span class="frac"><span class="num">4π²a³</span><span class="bar"></span><span class="den">GM</span></span> ✓</td><td>面积速率 + 椭圆几何 b² = a·<span class="frac"><span class="num">h²</span><span class="bar"></span><span class="den">GM</span></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="txt" style="margin-top:12px;">还有一个流传甚广的故事：1684 年，哈雷专程到剑桥请教牛顿"平方反比力下行星走什么轨道"，牛顿平静地回答：<b class="k">"椭圆，我几年前就算过。"</b>——但他翻遍了手稿也没找到那份证明，只好重新算了一遍。1687 年，包含这套推导的《自然哲学的数学原理》出版，人类科学的新时代由此开始。</p>
+        <div class="hlight">这条推导链也是微积分"终极验证"的意义所在：<b>它不是对观测的拟合，而是从力学原理出发的必然推导</b>。此后 200 年，海王星的发现、彗星回归的预言，都建立在这套数学之上。</div>
+      </div>
+
+      <div class="card dark">
+        <div class="card-h"><span class="zh-t">牛顿的完整思路链</span><span class="en-t">The Full Chain</span></div>
+        <div class="flow">
+          <span class="step">行星为什么走椭圆？</span><span class="arr">-></span>
+          <span class="step">需要算连续变化</span><span class="arr">-></span>
+          <span class="step">发明流数（导数）</span><span class="arr">-></span>
+          <span class="step">发现求导 = 逆积分</span><span class="arr">-></span>
+          <span class="step">解微分方程</span><span class="arr">-></span>
+          <span class="step">推出椭圆轨道 ✓</span>
+        </div>
+        <div class="hlight" style="margin-top:14px;">微积分不是凭空发明的数学游戏，而是被<b>真实物理问题</b>逼出来的工具。牛顿的伟大在于：他不仅发明了工具，还用它解决了困扰人类两千年的问题。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CH3 · 极限 ============ -->
+  <div class="panel" data-panel="ch3">
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">极限：一切的起点</span><span class="en-t">The Foundation</span></div>
+      <p class="txt">导数和积分都建立在一个概念上——<b class="k">极限</b>。不弄懂极限，微积分就是一堆没有灵魂的公式。好消息是，极限的直觉非常简单。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="zh-t">从芝诺悖论说起</span><span class="en-t">Zeno's Paradox</span></div>
+      <p class="txt">古希腊的芝诺提了一个悖论：阿基里斯追乌龟，每次到达乌龟上一个位置时，乌龟又往前走了一点点。如此无限循环——阿基里斯永远追不上乌龟？</p>
+      <p class="txt">我们当然知道阿基里斯能追上。问题出在哪？<b class="k">无限个越来越小的步骤，加起来可以是一个有限的数。</b>这就是极限的核心思想：无限逼近，但结果有限。</p>
+      <div class="hlight">极限不是"到达"，而是<b>"无限接近"</b>。它问的不是"等于多少"，而是"趋近于多少"。</div>
+    </div>
+
+    <div class="sect-label">可视化：一个经典极限</div>
+    <div class="card">
+      <p class="txt">看这个函数：f(x) = (x² - 1) / (x - 1)。当 x = 1 时，分母为零，函数"无定义"。但 x <b>趋近</b> 1 时会怎样？</p>
+      <div class="dgm">
+        <svg viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+          <!-- axes -->
+          <line x1="60" y1="280" x2="580" y2="280" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="60" y1="40" x2="60" y2="280" stroke="#8a8d95" stroke-width="1.5"/>
+          <text x="585" y="285" fill="#8a8d95" font-size="12">x</text>
+          <text x="52" y="38" fill="#8a8d95" font-size="12">y</text>
+          <!-- grid values -->
+          <text x="300" y="298" text-anchor="middle" fill="#8a8d95" font-size="11">1</text>
+          <text x="55" y="165" text-anchor="end" fill="#8a8d95" font-size="11">2</text>
+          <!-- limit line y=2 -->
+          <line x1="60" y1="160" x2="580" y2="160" stroke="#3b5b9e" stroke-width="1.5" stroke-dasharray="8 4" opacity=".5"/>
+          <text x="575" y="155" text-anchor="end" fill="#3b5b9e" font-size="12" font-weight="600">y = 2 (极限)</text>
+          <!-- x=1 dashed -->
+          <line x1="300" y1="40" x2="300" y2="280" stroke="#b23b34" stroke-width="1.5" stroke-dasharray="6 4" opacity=".4"/>
+          <!-- curve f(x) = x+1 (since (x²-1)/(x-1) = x+1 for x≠1) -->
+          <path d="M 80 260 L 280 160 M 320 160 L 560 60" fill="none" stroke="#b23b34" stroke-width="2.5"/>
+          <!-- hole at (300, 160) -->
+          <circle cx="300" cy="160" r="6" fill="#fff" stroke="#b23b34" stroke-width="2.5"/>
+          <!-- approaching arrows from left -->
+          <path d="M 220 160 L 285 160" stroke="#2f7d6b" stroke-width="1.5" fill="none" marker-end="url(#arrL)"/>
+          <text x="200" y="152" fill="#2f7d6b" font-size="11" font-weight="600">x → 1⁻</text>
+          <text x="190" y="175" fill="#2f7d6b" font-size="11">f → 2</text>
+          <!-- approaching arrows from right -->
+          <path d="M 380 160 L 315 160" stroke="#a9741f" stroke-width="1.5" fill="none" marker-end="url(#arrR)"/>
+          <text x="385" y="152" fill="#a9741f" font-size="11" font-weight="600">x → 1⁺</text>
+          <text x="385" y="175" fill="#a9741f" font-size="11">f → 2</text>
+          <defs>
+            <marker id="arrL" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2f7d6b"/></marker>
+            <marker id="arrR" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a9741f"/></marker>
+          </defs>
+          <!-- table -->
+          <text x="100" y="60" fill="#565a63" font-size="12" font-weight="600">数值逼近：</text>
+          <text x="100" y="80" fill="#565a63" font-size="11">x = 0.9  →  f = 1.9</text>
+          <text x="100" y="96" fill="#565a63" font-size="11">x = 0.99  →  f = 1.99</text>
+          <text x="100" y="112" fill="#565a63" font-size="11">x = 0.999 →  f = 1.999</text>
+          <text x="100" y="128" fill="#b23b34" font-size="11" font-weight="700">x → 1    →  f → 2 ✓</text>
+        </svg>
+      </div>
+      <p class="txt">x = 1 处函数是"断的"（空心圆），但从两边逼近，f(x) 都无限趋近 <b class="k">2</b>。所以极限存在：<b>lim<sub>x→1</sub> f(x) = 2</b>。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="zh-t">极限的正式表述（通俗版）</span><span class="en-t">The Definition</span></div>
+      <div class="formula">
+        lim<sub>x→a</sub> f(x) = L &nbsp; 读作："当 x 无限趋近 a 时，f(x) 无限趋近 L"
+      </div>
+      <p class="txt">关键点：<b>不要求 x 真的等于 a</b>。函数在 a 处甚至可以没有定义（如上例）。极限只关心"逼近"的行为，不关心"到达"。</p>
+      <div class="hlight">19 世纪柯西和魏尔斯特拉斯用 <b>ε-δ 语言</b>严格化了"无限趋近"——大意是：你给我任意小的误差容忍 ε，我都能找到一个范围 δ，让 x 落在 a 的 δ 范围内时，f(x) 就落在 L 的 ε 范围内。<b>这就是微积分"无懈可击"的根基。</b></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="zh-t">连续性：没有"跳跃"</span><span class="en-t">Continuity</span></div>
+      <p class="txt">如果一个函数在某点的极限值 <b>等于</b> 它的实际值，就说函数在该点<b class="k">连续</b>。直观上就是"一笔画下来不断开"。</p>
+      <ul class="pts">
+        <li><b>连续</b> = lim<sub>x→a</sub> f(x) = f(a) —— 极限值 = 实际值</li>
+        <li><b>不连续</b> = 有跳跃、断点或空心 —— 极限不存在或不等于实际值</li>
+        <li>微积分研究的函数<b>默认是连续的</b>（或分段连续），因为不连续的点上导数无意义</li>
+      </ul>
+    </div>
+
+    <div class="sect-label">补章：微积分的"信任危机"与严格化</div>
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">贝克莱的攻击："已死量的幽灵"</span><span class="en-t">The Crisis</span></div>
+      <p class="txt">牛顿的微积分虽然<b>结果总是对的</b>，但逻辑上有漏洞。他让增量 o "消失"--但 o 到底是不是零？如果是零，除以 o 就是除以零（无意义）；如果不是零，凭什么让它消失？</p>
+      <p class="txt" style="margin-top:10px;">1734 年，爱尔兰主教贝克莱发表了著名的攻击：<b class="k">"这些流数是什么？是消失增量的速度。那这些消失的增量又是什么？它们既不是有限量，也不是无穷小量，也不是零。难道不能叫它们'已死量的幽灵'吗？"</b></p>
+      <div class="hlight">这不是抬杠。贝克莱指出的是一个<b>真实的逻辑漏洞</b>：微积分在推导过程中先假设增量不为零（用来做除法），后又让它等于零（用来消去项）。这种"既是零又不是零"的矛盾，让微积分在诞生后 150 年里都处于"好用但说不清"的尴尬状态。</div>
+    </div>
+
+    <div class="grid2 top">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">柯西：用极限重建微积分</span><span class="en-t">Cauchy · 1821</span></div>
+        <p class="txt">柯西的关键贡献：<b class="k">不再依赖"无穷小量"这个模糊概念</b>，而是用极限重新定义一切。</p>
+        <ul class="pts">
+          <li><b>极限的严格定义</b>（1821）：当变量逐步逼近一个值，最终与它相差任意小，这个值就是极限</li>
+          <li><b>连续性</b>：用极限重新定义 -- lim<sub>x->a</sub> f(x) = f(a)</li>
+          <li><b>导数</b>：明确定义为差商的极限：f'(x) = lim <span class="frac"><span class="num">f(x+h)-f(x)</span><span class="bar"></span><span class="den">h</span></span></li>
+          <li><b>积分</b>：定义为黎曼和的极限（不再只是"无穷多个矩形"的直觉）</li>
+          <li><b>级数收敛</b>：建立了判别无穷级数是否收敛的准则</li>
+        </ul>
+        <p class="txt" style="margin-top:8px;">柯西把微积分从"依赖无穷小量"变成了"<b class="k">完全基于极限</b>"。无穷小量不再是基础概念，而只是"一个趋于零的变量"的简称。</p>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">魏尔斯特拉斯：ε-δ 语言</span><span class="en-t">Weierstrass · 1850s</span></div>
+        <p class="txt">柯西的定义虽然前进了一大步，但"任意小""逐步逼近"这些词仍然依赖直觉。魏尔斯特拉斯把它们<b class="k">变成了纯逻辑的陈述</b>：</p>
+        <div class="formula" style="text-align:left;font-size:13.5px;">
+          <b>lim<sub>x->a</sub> f(x) = L</b> 的含义：<br><br>
+          对任意 ε > 0，存在 δ > 0，<br>
+          使得当 0 < |x - a| < δ 时，<br>
+          就有 |f(x) - L| < ε。
+        </div>
+        <ul class="pts">
+          <li><b>ε</b> = 你能容忍的误差（要多小有多小）</li>
+          <li><b>δ</b> = 我给你的逼近范围（保证误差在 ε 内）</li>
+          <li>整个过程<b>不涉及"无穷小"</b>，只用有限的不等式</li>
+        </ul>
+        <p class="txt" style="margin-top:8px;">魏尔斯特拉斯还发现了一个<b class="k">颠覆直觉的函数</b>：处处连续但处处不可导。这说明"直觉"是不可靠的--只有严格的逻辑才能保证正确性。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="zh-t">为什么严格化如此重要</span><span class="en-t">Why Rigor Matters</span></div>
+      <div class="rows">
+        <div class="row"><div class="rn">之前<small>Pre-Rigor</small></div><div class="rd">微积分"好用但说不清" -- 结果正确，但推导过程有逻辑漏洞。贝克莱的批评是有效的。</div></div>
+        <div class="row"><div class="rn">柯西<small>Cauchy</small></div><div class="rd">用极限替代无穷小量 -- 消除了"既是零又不是零"的矛盾，但极限本身还需更精确的定义。</div></div>
+        <div class="row"><div class="rn">魏尔斯特拉斯<small>Weierstrass</small></div><div class="rd">ε-δ 语言把"逼近"变成纯逻辑 -- 不再依赖任何直觉，微积分终于"无懈可击"。</div></div>
+      </div>
+      <div class="hlight"><b>严格化的意义不只是"自圆其说"</b>--它让微积分能处理更复杂的问题（如傅里叶级数的收敛性、多元函数的极限），为现代分析学、概率论、泛函分析奠定了基础。没有这步，今天通信和 AI 的数学地基就不存在。</div>
+    </div>
+
+    <div class="card dark">
+      <p class="txt">极限是微积分的地基。导数是"比值的极限"，积分是"求和的极限"。<b class="k">理解了极限，后面的所有概念都只是它的不同应用。</b></p>
+    </div>
+  </div>
+
+  <!-- ============ CH4 · 导数 ============ -->
+  <div class="panel" data-panel="ch4">
+    <div class="subtabs">
+      <button data-sub="ch4a" class="active">4.1 直觉：瞬间有多快</button>
+      <button data-sub="ch4b">4.2 计算：求导法则</button>
+      <button data-sub="ch4c">4.3 高阶导数</button>
+    </div>
+
+    <!-- 4.1 -->
+    <div class="subpanel active" data-subpanel="ch4a">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">导数的本质：瞬时变化率</span><span class="en-t">The Intuition</span></div>
+        <p class="txt">你在高速公路上开车，仪表盘显示 <b>120 km/h</b>。这个数字是什么意思？它不是"过去一小时的平均速度"，也不是"从起点到现在的平均速度"——它是<b class="k">此刻这一瞬间的速度</b>。</p>
+        <p class="txt" style="margin-top:10px;">但"一瞬间"的时间跨度是零，距离变化也是零，0/0 有意义吗？这就是微积分要解决的问题。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">从平均速度到瞬时速度</span><span class="en-t">Average → Instantaneous</span></div>
+        <p class="txt">思路很简单：取一个很小的时间间隔 Δt，算平均速度 = <span class="frac"><span class="num">Δs</span><span class="bar"></span><span class="den">Δt</span></span>。然后让 Δt 越来越小——<b class="k">取极限</b>。</p>
+        <div class="formula">
+          瞬时速度 = lim<sub>Δt→0</sub> &nbsp; <span class="frac"><span class="num">Δs</span><span class="bar"></span><span class="den">Δt</span></span>
+          <br><br>
+          即 &nbsp; v(t) = lim<sub>Δt→0</sub> <span class="frac"><span class="num">s(t+Δt) - s(t)</span><span class="bar"></span><span class="den">Δt</span></span>
+        </div>
+        <p class="txt">这个表达式，就是<b class="k">导数的定义</b>。把 s(t) 换成任意函数 f(x)，就得到了一般形式：</p>
+        <div class="formula">
+          <b>f'(x) = lim<sub>Δx→0</sub> <span class="frac"><span class="num">f(x+Δx) - f(x)</span><span class="bar"></span><span class="den">Δx</span></span></b>
+        </div>
+      </div>
+
+      <div class="sect-label">可视化：割线变切线</div>
+      <div class="dgm">
+        <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+          <!-- axes -->
+          <line x1="50" y1="300" x2="590" y2="300" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="50" y1="30" x2="50" y2="300" stroke="#8a8d95" stroke-width="1.5"/>
+          <text x="595" y="305" fill="#8a8d95" font-size="12">x</text>
+          <text x="42" y="28" fill="#8a8d95" font-size="12">y</text>
+          <text x="135" y="316" text-anchor="middle" fill="#8a8d95" font-size="11">1</text>
+          <text x="230" y="316" text-anchor="middle" fill="#8a8d95" font-size="11">1.5</text>
+          <text x="330" y="316" text-anchor="middle" fill="#8a8d95" font-size="11">2</text>
+          <!-- parabola y = x²  scaled: x=1→y=1(60px), x=2→y=4(240px), etc. -->
+          <!-- mapping: x_pixel = 50 + x*100, y_pixel = 300 - x²*60 -->
+          <path d="M 60 294 Q 100 270, 135 240 T 230 120 T 330 60" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+          <!-- point P at x=1: (135, 240) -->
+          <circle cx="135" cy="240" r="6" fill="#b23b34"/>
+          <text x="95" y="235" fill="#b23b34" font-size="13" font-weight="700">P(1, 1)</text>
+          <!-- Q1 at x=2: (330, 60) - secant slope = 3 -->
+          <line x1="135" y1="240" x2="330" y2="60" stroke="#a9741f" stroke-width="1.5" opacity=".5" stroke-dasharray="5 3"/>
+          <circle cx="330" cy="60" r="4" fill="#a9741f"/>
+          <text x="340" y="55" fill="#a9741f" font-size="11">Q₁(2, 4) 斜率=3</text>
+          <!-- Q2 at x=1.5: (230, 120) - secant slope = 2.5 -->
+          <line x1="135" y1="240" x2="230" y2="120" stroke="#2f7d6b" stroke-width="1.5" opacity=".6" stroke-dasharray="5 3"/>
+          <circle cx="230" cy="120" r="4" fill="#2f7d6b"/>
+          <text x="240" y="115" fill="#2f7d6b" font-size="11">Q₂(1.5, 2.25) 斜率=2.5</text>
+          <!-- Q3 at x=1.1: (160, 228) - secant slope = 2.1 -->
+          <line x1="135" y1="240" x2="160" y2="228" stroke="#6a4c93" stroke-width="1.5" opacity=".7"/>
+          <circle cx="160" cy="228" r="3.5" fill="#6a4c93"/>
+          <text x="168" y="225" fill="#6a4c93" font-size="11">Q₃(1.1) 斜率≈2.1</text>
+          <!-- tangent at P: slope = 2, passes through (135,240) -->
+          <!-- direction: dx=1, dy=-2(since y is flipped). line from (85, 340) to (185, 140) -->
+          <line x1="85" y1="340" x2="210" y2="90" stroke="#b23b34" stroke-width="2.5"/>
+          <text x="175" y="105" fill="#b23b34" font-size="13" font-weight="700">切线 (斜率=2)</text>
+          <!-- annotation -->
+          <text x="310" y="280" fill="#565a63" font-size="12">Q → P 时，割线 → 切线</text>
+          <text x="310" y="298" fill="#565a63" font-size="12">切线斜率 = 导数 f'(1) = 2</text>
+        </svg>
+      </div>
+      <p class="txt">图中的彩色虚线是"割线"——连接 P 点和附近 Q 点的线。Q 越靠近 P，割线斜率越接近 <b>2</b>。当 Q 无限逼近 P 时，割线就变成了<b class="k">切线</b>，切线的斜率就是<b class="k">导数</b>。</p>
+      <div class="hlight">导数 = 切线斜率 = 瞬时变化率。这三个说法是<b>同一件事</b>的三种表达。</div>
+    </div>
+
+    <!-- 4.2 -->
+    <div class="subpanel" data-subpanel="ch4b">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">不用每次都取极限：求导法则</span><span class="en-t">Shortcuts</span></div>
+        <p class="txt">用定义求导太慢了。前辈数学家已经帮我们把常见函数的导数和运算法则总结好了——<b class="k">记住这些，95% 的求导就能秒杀</b>。</p>
+      </div>
+
+      <div class="sect-label">基本求导公式</div>
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead><tr><th>函数 f(x)</th><th>导数 f'(x)</th><th>口诀 / 备注</th></tr></thead>
+          <tbody>
+          <tr><td class="m">c<small>常数</small></td><td>0</td><td>常数不变化，变化率为零</td></tr>
+          <tr><td class="m">x<sup>n</sup><small>幂函数</small></td><td class="pro">n·x<sup>n-1</sup></td><td>"把指数拿下来，指数减一"——最常用的法则</td></tr>
+          <tr><td class="m">e<sup>x</sup><small>自然指数</small></td><td class="pro">e<sup>x</sup></td><td>导数是自己！这就是 e 的魔力</td></tr>
+          <tr><td class="m">ln(x)<small>自然对数</small></td><td class="pro"><span class="frac"><span class="num">1</span><span class="bar"></span><span class="den">x</span></span></td><td>对数的导数是倒数</td></tr>
+          <tr><td class="m">sin(x)<small>正弦</small></td><td class="pro">cos(x)</td><td>sin → cos</td></tr>
+          <tr><td class="m">cos(x)<small>余弦</small></td><td class="pro">-sin(x)</td><td>cos → -sin（注意负号）</td></tr>
+          <tr><td class="m">a<sup>x</sup><small>一般指数</small></td><td class="pro">a<sup>x</sup>·ln(a)</td><td>比 e<sup>x</sup> 多乘一个 ln(a)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sect-label">四则运算与链式法则</div>
+      <div class="rows">
+        <div class="row"><div class="rn">加法法则<small>Sum</small></div><div class="rd">(f + g)' = f' + g' &nbsp;——<b>各导各的，相加即可</b></div></div>
+        <div class="row"><div class="rn">乘积法则<small>Product</small></div><div class="rd">(f·g)' = f'·g + f·g' &nbsp;——<b>"你导我不导，我导你不导，加起来"</b></div></div>
+        <div class="row"><div class="rn">商法则<small>Quotient</small></div><div class="rd">(f/g)' = <span class="frac"><span class="num">f'·g - f·g'</span><span class="bar"></span><span class="den">g²</span></span> &nbsp;——<b>"上导乘下，减，上不导乘下导，除以下方"</b></div></div>
+        <div class="row"><div class="rn">链式法则<small>Chain</small></div><div class="rd">[f(g(x))]' = f'(g)·g'(x) &nbsp;——<b>最最重要！从外到内逐层求导，相乘</b></div></div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-h"><span class="zh-t">链式法则为什么重要</span><span class="en-t">Why Chain Rule Matters</span></div>
+        <p class="txt">真实世界的函数几乎都是"嵌套"的——比如 e<sup>sin(x)</sup>、sin(x²)、ln(cos(x))。<b class="k">没有链式法则，你根本求不了导。</b></p>
+        <p class="txt">更关键的是——后面会看到，<b>深度学习的反向传播，本质上就是对整个神经网络做链式法则</b>。这条法则不只是考试题，它是 AI 的引擎。</p>
+        <div class="formula">
+          例：求 sin(x²) 的导数<br>
+          外层 f = sin(·)，内层 g = x²<br>
+          f'(g) = cos(x²)，g'(x) = 2x<br>
+          ∴ [sin(x²)]' = cos(x²)·2x = <b>2x·cos(x²)</b>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">这些公式是怎么来的？--用定义推导</span><span class="en-t">From First Principles</span></div>
+        <p class="txt">上面的公式表不是凭空猜的。每个公式都可以从导数的定义 f'(x) = lim <span class="frac"><span class="num">f(x+h)-f(x)</span><span class="bar"></span><span class="den">h</span></span> 一步步推导出来。看两个最重要的例子。</p>
+
+        <div class="sect-label">示例 1：幂法则 d/dx[xⁿ] = n·xⁿ⁻¹</div>
+        <div class="formula" style="text-align:left;">
+          <b>用定义</b>：f'(x) = lim<sub>h→0</sub> <span class="frac"><span class="num">(x+h)ⁿ - xⁿ</span><span class="bar"></span><span class="den">h</span></span><br><br>
+          <b>第一步</b>：用二项式定理展开 (x+h)ⁿ<br>
+          &nbsp;&nbsp;(x+h)ⁿ = xⁿ + n·xⁿ⁻¹·h + <span class="frac"><span class="num">n(n-1)</span><span class="bar"></span><span class="den">2</span></span>·xⁿ⁻²·h² + ... + hⁿ<br><br>
+          <b>第二步</b>：减去 xⁿ<br>
+          &nbsp;&nbsp;(x+h)ⁿ - xⁿ = n·xⁿ⁻¹·h + <span class="frac"><span class="num">n(n-1)</span><span class="bar"></span><span class="den">2</span></span>·xⁿ⁻²·h² + ... + hⁿ<br><br>
+          <b>第三步</b>：除以 h<br>
+          &nbsp;&nbsp;= n·xⁿ⁻¹ + <span class="frac"><span class="num">n(n-1)</span><span class="bar"></span><span class="den">2</span></span>·xⁿ⁻²·h + ... + hⁿ⁻¹<br><br>
+          <b>第四步</b>：取极限 h→0，所有含 h 的项消失<br>
+          &nbsp;&nbsp;f'(x) = <b>n·xⁿ⁻¹</b> ✓
+        </div>
+        <p class="txt">每一项含有 h 的因子，在 h->0 时全部归零，只留下第一项 n·xⁿ⁻¹。这就是幂法则的来历--<b class="k">不是记忆口诀，而是二项式展开 + 取极限的自然结果</b>。</p>
+
+        <div class="sect-label">示例 2：正弦函数 d/dx[sin(x)] = cos(x)</div>
+        <div class="formula" style="text-align:left;">
+          <b>用定义</b>：f'(x) = lim<sub>h→0</sub> <span class="frac"><span class="num">sin(x+h) - sin(x)</span><span class="bar"></span><span class="den">h</span></span><br><br>
+          <b>第一步</b>：用和角公式展开 sin(x+h)<br>
+          &nbsp;&nbsp;sin(x+h) = sin(x)cos(h) + cos(x)sin(h)<br><br>
+          <b>第二步</b>：代入并整理<br>
+          &nbsp;&nbsp;sin(x+h) - sin(x) = sin(x)[cos(h) - 1] + cos(x)·sin(h)<br><br>
+          <b>第三步</b>：除以 h<br>
+          &nbsp;&nbsp;= sin(x) · <span class="frac"><span class="num">cos(h) - 1</span><span class="bar"></span><span class="den">h</span></span> + cos(x) · <span class="frac"><span class="num">sin(h)</span><span class="bar"></span><span class="den">h</span></span><br><br>
+          <b>第四步</b>：取极限 h→0，用两个经典极限：<br>
+          &nbsp;&nbsp;• lim<sub>h→0</sub> <span class="frac"><span class="num">sin(h)</span><span class="bar"></span><span class="den">h</span></span> = 1 &nbsp; <span style="color:#8a8d95;">(弧长与弦长之比 → 1)</span><br>
+          &nbsp;&nbsp;• lim<sub>h→0</sub> <span class="frac"><span class="num">cos(h) - 1</span><span class="bar"></span><span class="den">h</span></span> = 0 &nbsp; <span style="color:#8a8d95;">(余弦变化比 h 慢)</span><br><br>
+          <b>第五步</b>：代入<br>
+          &nbsp;&nbsp;f'(x) = sin(x)·0 + cos(x)·1 = <b>cos(x)</b> ✓
+        </div>
+        <p class="txt">这个推导用到了两个"经典极限"--它们本身可以用几何直觉（单位圆上弧长与弦长的关系）来理解。<b class="k"><span class="frac"><span class="num">sin(h)</span><span class="bar"></span><span class="den">h</span></span> → 1 的几何含义</b>：当角度 h 很小时，弧长 ≈ 弦长，比值趋近于 1。</p>
+      </div>
+    </div>
+
+    <!-- 4.3 -->
+    <div class="subpanel" data-subpanel="ch4c">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">导数的导数：高阶导数</span><span class="en-t">Higher Derivatives</span></div>
+        <p class="txt">导数本身也是函数，可以再求导。<b class="k">二阶导数</b> f''(x) 就是"变化率的变化率"——它告诉你变化本身在加速还是减速。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">物理直觉：位移 → 速度 → 加速度</span><span class="en-t">Physics Intuition</span></div>
+        <div class="flow">
+          <span class="step">位移 s(t)</span><span class="arr">求导 ↓</span>
+          <span class="step">速度 v(t) = s'(t)</span><span class="arr">再求导 ↓</span>
+          <span class="step">加速度 a(t) = v'(t) = s''(t)</span>
+        </div>
+        <p class="txt" style="margin-top:12px;">你踩油门，车加速——位移在变（有速度），速度也在变（有加速度）。<b class="k">加速度就是位移的二阶导数。</b>牛顿第二定律 F = ma 本质上就是 F = m·s''(t)。</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-h"><span class="zh-t">一阶导数：增减</span><span class="en-t">f'(x)</span></div>
+          <ul class="pts">
+            <li>f'(x) > 0 → 函数<b>递增</b>（上坡）</li>
+            <li>f'(x) < 0 → 函数<b>递减</b>（下坡）</li>
+            <li>f'(x) = 0 → <b>极值点</b>（山顶或谷底）</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-h"><span class="zh-t">二阶导数：凹凸</span><span class="en-t">f''(x)</span></div>
+          <ul class="pts">
+            <li>f''(x) > 0 → <b>凹向上</b>（碗口朝上，加速增长）</li>
+            <li>f''(x) < 0 → <b>凸向下</b>（碗口朝下，减速增长）</li>
+            <li>f''(x) = 0 → <b>拐点</b>（凹凸切换处）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hlight"><b>一阶导数告诉你"往哪走"，二阶导数告诉你"弯向哪"。</b>这就像开车——方向盘是二阶导数，油门是一阶导数，而你的位置就是函数本身。</div>
+    </div>
+  </div>
+
+  <!-- ============ CH5 · 积分 ============ -->
+  <div class="panel" data-panel="ch5">
+    <div class="subtabs">
+      <button data-sub="ch5a" class="active">5.1 直觉：累积的智慧</button>
+      <button data-sub="ch5b">5.2 计算：积分法则</button>
+      <button data-sub="ch5c">5.3 定积分与不定积分</button>
+    </div>
+
+    <!-- 5.1 -->
+    <div class="subpanel active" data-subpanel="ch5a">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">积分的本质：无限累积</span><span class="en-t">The Intuition</span></div>
+        <p class="txt">如果导数是"切片"——把整体切成瞬间看变化率；那积分就是"拼接"——把无数个瞬间的微小量<b class="k">累积</b>成一个整体。</p>
+        <p class="txt" style="margin-top:10px;">最直观的例子：你知道每时刻的速度 v(t)，怎么算总共走了多远？把每个瞬间走的微小距离 v(t)·dt <b>加起来</b>——这就是积分。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">从矩形逼近到精确面积</span><span class="en-t">Riemann Sums</span></div>
+        <p class="txt">曲线下方的面积怎么算？古代人用"穷竭法"，现代人用<b>黎曼和</b>：把面积切成无数个细矩形，矩形面积之和逼近真实面积。</p>
+        <div class="dgm">
+          <svg viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- axes -->
+            <line x1="50" y1="280" x2="590" y2="280" stroke="#8a8d95" stroke-width="1.5"/>
+            <line x1="50" y1="30" x2="50" y2="280" stroke="#8a8d95" stroke-width="1.5"/>
+            <text x="595" y="285" fill="#8a8d95" font-size="12">x</text>
+            <text x="42" y="28" fill="#8a8d95" font-size="12">y</text>
+            <!-- curve f(x) = 0.5x² + 0.5, from x=0 to x=4 -->
+            <!-- mapping: x_px = 50 + x*80, y_px = 280 - (0.5x²+0.5)*30 -->
+            <!-- points: (50,265) (130,262) (210,250) (290,230) (370,200) (450,160) (530,110) (610,50) -->
+            <path d="M 50 265 Q 130 262, 210 250 T 370 200 T 530 110" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+            <!-- rectangles (left endpoint, 8 rectangles, width=40px=0.5x units) -->
+            <!-- rect1: x=0, f=0.5, h=15 -->
+            <rect x="50" y="265" width="40" height="15" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect2: x=0.5, f=0.625, h=18.75 -->
+            <rect x="90" y="261.25" width="40" height="18.75" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect3: x=1, f=1, h=30 -->
+            <rect x="130" y="250" width="40" height="30" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect4: x=1.5, f=1.625, h=48.75 -->
+            <rect x="170" y="231.25" width="40" height="48.75" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect5: x=2, f=2.5, h=75 -->
+            <rect x="210" y="205" width="40" height="75" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect6: x=2.5, f=3.625, h=108.75 -->
+            <rect x="250" y="171.25" width="40" height="108.75" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect7: x=3, f=5, h=150 -->
+            <rect x="290" y="130" width="40" height="150" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- rect8: x=3.5, f=6.625, h=198.75 -->
+            <rect x="330" y="81.25" width="40" height="198.75" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1"/>
+            <!-- labels -->
+            <text x="200" y="50" fill="#3b5b9e" font-size="13" font-weight="700">f(x) = ½x² + ½</text>
+            <text x="430" y="120" fill="#b23b34" font-size="12" font-weight="600">矩形之和 ≈ 面积</text>
+            <text x="430" y="138" fill="#b23b34" font-size="11">Δx 越小，越精确</text>
+            <text x="430" y="156" fill="#b23b34" font-size="11">Δx → 0 时 → 精确值</text>
+            <text x="180" y="300" fill="#8a8d95" font-size="11">Δx</text>
+            <!-- delta x arrow -->
+            <line x1="50" y1="290" x2="90" y2="290" stroke="#8a8d95" stroke-width="1"/>
+            <line x1="50" y1="287" x2="50" y2="293" stroke="#8a8d95" stroke-width="1"/>
+            <line x1="90" y1="287" x2="90" y2="293" stroke="#8a8d95" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="formula">
+          <b>∫<sub>a</sub><sup>b</sup> f(x) dx = lim<sub>Δx→0</sub> Σ f(x<sub>i</sub>)·Δx</b>
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">无数个细矩形的面积之和，当矩形无限窄时，就是曲线下方的精确面积</span>
+        </div>
+      </div>
+
+      <div class="card dark">
+        <p class="txt">导数是<b class="k">极限的比值</b>，积分是<b class="k">极限的求和</b>。一个在"切"，一个在"拼"——但它们其实是同一枚硬币的两面。怎么证明？下一章告诉你。</p>
+      </div>
+    </div>
+
+    <!-- 5.2 -->
+    <div class="subpanel" data-subpanel="ch5b">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">积分是导数的逆运算</span><span class="en-t">Antiderivative</span></div>
+        <p class="txt">求积分，本质上是<b class="k">找一个函数，它的导数等于被积函数</b>。也就是说，积分 = "反求导"。</p>
+        <p class="txt" style="margin-top:10px;">如果你知道 x² 的导数是 2x，那反过来——2x 的积分就是 x²（加个常数 C）。就这么简单。</p>
+      </div>
+
+      <div class="sect-label">基本积分公式（导数表的逆向）</div>
+      <div class="cmp-wrap">
+        <table class="cmp">
+          <thead><tr><th>被积函数 f(x)</th><th>积分 ∫f(x)dx</th><th>备注</th></tr></thead>
+          <tbody>
+          <tr><td class="m">c<small>常数</small></td><td class="pro">cx + C</td><td>常数积分变线性</td></tr>
+          <tr><td class="m">x<sup>n</sup><small>n ≠ -1</small></td><td class="pro"><span class="frac"><span class="num">x<sup>n+1</sup></span><span class="bar"></span><span class="den">n+1</span></span> + C</td><td>"指数加一，除以新指数"——幂法则的逆</td></tr>
+          <tr><td class="m"><span class="frac"><span class="num">1</span><span class="bar"></span><span class="den">x</span></span><small>特殊</small></td><td class="pro">ln|x| + C</td><td>n = -1 时的特殊情况</td></tr>
+          <tr><td class="m">e<sup>x</sup><small>指数</small></td><td class="pro">e<sup>x</sup> + C</td><td>积分还是自己</td></tr>
+          <tr><td class="m">cos(x)<small>余弦</small></td><td class="pro">sin(x) + C</td><td>cos → sin</td></tr>
+          <tr><td class="m">sin(x)<small>正弦</small></td><td class="pro">-cos(x) + C</td><td>sin → -cos（注意负号）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">积分技巧（进阶）</span><span class="en-t">Techniques</span></div>
+        <div class="rows">
+          <div class="row"><div class="rn">换元法<small>Substitution</small></div><div class="rd">链式法则的逆运算——设 u = g(x)，把复杂积分变简单。<b>最常用的积分技巧。</b></div></div>
+          <div class="row"><div class="rn">分部积分<small>By Parts</small></div><div class="rd">乘积法则的逆运算——∫u·dv = u·v - ∫v·du。<b>处理两个不同类型函数相乘。</b></div></div>
+        </div>
+        <div class="hlight">换元法 = 链式法则反过来用；分部积分 = 乘积法则反过来用。<b>积分技巧的本质，就是求导法则的逆操作。</b></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">这些公式是怎么来的？--从求导倒推</span><span class="en-t">From Differentiation</span></div>
+        <p class="txt">积分的所有公式都能从求导公式<b class="k">倒推</b>出来--因为积分就是"谁的导数是它"这个问题。看两个最重要的例子。</p>
+
+        <div class="sect-label">示例 1：幂法则 ∫xⁿ dx = xⁿ⁺¹/(n+1) + C</div>
+        <div class="formula" style="text-align:left;">
+          <b>思路</b>：求"谁的导数是 xⁿ"。先猜一个候选，再验证。<br><br>
+          <b>第一步</b>：猜候选函数 xⁿ⁺¹（次方加一）<br><br>
+          <b>第二步</b>：对它求导<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dx</span></span>[xⁿ⁺¹] = (n+1)·xⁿ &nbsp; <span style="color:#8a8d95;">(幂法则)</span><br><br>
+          <b>第三步</b>：多了系数 (n+1)，除以它修正<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dx</span></span>[ <span class="frac"><span class="num">xⁿ⁺¹</span><span class="bar"></span><span class="den">n+1</span></span> ] = xⁿ &nbsp; ✓<br><br>
+          <b>第四步</b>：验证结果<br>
+          &nbsp;&nbsp;∫xⁿ dx = <span class="frac"><span class="num">xⁿ⁺¹</span><span class="bar"></span><span class="den">n+1</span></span> + C &nbsp; <span style="color:#8a8d95;">(C 是任意常数，因为常数求导为零)</span>
+        </div>
+        <p class="txt">这就是积分公式表的来历--<b class="k">不是硬背，而是"猜一个、求导、修正系数"的试错法</b>。每次看到一个积分，问自己：什么函数求导会变成它？</p>
+
+        <div class="sect-label">示例 2：换元法 ∫ 2x·cos(x²) dx</div>
+        <div class="formula" style="text-align:left;">
+          <b>观察</b>：2x 恰好是 x² 的导数——这是链式法则的"指纹"。<br><br>
+          <b>第一步</b>：设 u = x²，则 <span class="frac"><span class="num">du</span><span class="bar"></span><span class="den">dx</span></span> = 2x<br><br>
+          <b>第二步</b>：替换<br>
+          &nbsp;&nbsp;∫ 2x·cos(x²) dx = ∫ cos(u) · du<br><br>
+          <b>第三步</b>：对 u 积分<br>
+          &nbsp;&nbsp;= sin(u) + C<br><br>
+          <b>第四步</b>：把 u 换回 x<br>
+          &nbsp;&nbsp;= <b>sin(x²) + C</b> ✓<br><br>
+          <b>验证</b>：<span class="frac"><span class="num">d</span><span class="bar"></span><span class="den">dx</span></span>[sin(x²)] = cos(x²)·2x ✓ <span style="color:#8a8d95;">(链式法则，回代验证)</span>
+        </div>
+        <p class="txt">看出套路了吗？第 4b 章求导示例里的 sin(x²) 求导结果是 2x·cos(x²)，这里就是它的<b class="k">逆运算</b>。一组求导 + 积分互为镜像：<b>d/dx[sin(x²)] = 2x·cos(x²) ⟷ ∫2x·cos(x²)dx = sin(x²)</b>。这正是微积分基本定理的日常使用方式。</p>
+      </div>
+    </div>
+
+    <!-- 5.3 -->
+    <div class="subpanel" data-subpanel="ch5c">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">定积分 vs 不定积分</span><span class="en-t">Definite vs Indefinite</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0;border-color:rgba(59,91,158,.4);">
+          <div class="card-h"><span class="zh-t">不定积分</span><span class="en-t" style="color:var(--blue);">Indefinite</span></div>
+          <div class="formula" style="text-align:left;">
+            ∫f(x)dx = F(x) + C
+          </div>
+          <ul class="pts">
+            <li>结果是<b>一个函数族</b>（差一个常数 C）</li>
+            <li>问的是："谁的导数是 f(x)？"</li>
+            <li>本质：反求导</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-bottom:0;border-color:rgba(178,59,52,.4);">
+          <div class="card-h"><span class="zh-t">定积分</span><span class="en-t">Definite</span></div>
+          <div class="formula" style="text-align:left;">
+            ∫<sub>a</sub><sup>b</sup> f(x)dx = F(b) - F(a)
+          </div>
+          <ul class="pts">
+            <li>结果是<b>一个数值</b>（面积、总量）</li>
+            <li>问的是："从 a 到 b 累积了多少？"</li>
+            <li>本质：黎曼和的极限</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">定积分的直觉</span><span class="en-t">Intuition</span></div>
+        <p class="txt">定积分最直观的意义就是<b class="k">面积</b>。但它不限于面积——任何"连续变化量的累积"都可以用定积分计算：</p>
+        <div class="quad">
+          <div class="qtile b2"><div class="qh">速度 → 位移</div><div class="qb">∫v(t)dt = 总路程。速度曲线下的面积 = 走了多远</div></div>
+          <div class="qtile"><div class="qh">力 → 功</div><div class="qb">∫F(x)dx = 总功。力曲线下的面积 = 做了多少功</div></div>
+          <div class="qtile g"><div class="qh">功率 → 能量</div><div class="qb">∫P(t)dt = 总能量。功率曲线下的面积 = 消耗多少能量</div></div>
+          <div class="qtile a"><div class="qh">密度 → 质量</div><div class="qb">∫ρ(x)dx = 总质量。密度曲线下的面积 = 物体总重</div></div>
+        </div>
+      </div>
+
+      <div class="hlight">定积分 = <b>"变化率的累积"</b>。只要你知道某个量的变化率，积分就能告诉你总量——这就是积分的万能之处。</div>
+    </div>
+  </div>
+
+  <!-- ============ CH6 · 微积分基本定理 ============ -->
+  <div class="panel" data-panel="ch6">
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">微积分基本定理：两座桥，一个定理</span><span class="en-t">The Fundamental Theorem</span></div>
+      <p class="txt">这是微积分最深刻的结论，没有之一。它说的是：<b class="k">求导和积分互为逆运算</b>。切线和面积——这两个困扰人类两千年的难题，原来是同一枚硬币的两面。</p>
+    </div>
+
+    <div class="sect-label">可视化：面积函数的导数 = 原函数</div>
+    <div class="dgm">
+      <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+        <!-- Top graph: f(t) -->
+        <text x="60" y="30" fill="#3b5b9e" font-size="14" font-weight="700">① 原函数 f(t)</text>
+        <line x1="60" y1="150" x2="680" y2="150" stroke="#8a8d95" stroke-width="1.5"/>
+        <line x1="60" y1="40" x2="60" y2="150" stroke="#8a8d95" stroke-width="1.5"/>
+        <!-- f(t) curve (e.g. f(t) = 0.5t + 1) -->
+        <path d="M 60 120 L 380 80" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+        <!-- shaded area from a to x -->
+        <path d="M 180 110 L 320 92 L 320 150 L 180 150 Z" fill="rgba(178,59,52,.12)" stroke="#b23b34" stroke-width="1.5"/>
+        <text x="195" y="145" fill="#b23b34" font-size="11" font-weight="600">A(x) = 面积</text>
+        <!-- points a and x -->
+        <line x1="180" y1="150" x2="180" y2="145" stroke="#8a8d95" stroke-width="1.5"/>
+        <text x="175" y="165" fill="#8a8d95" font-size="11">a</text>
+        <line x1="320" y1="150" x2="320" y2="145" stroke="#b23b34" stroke-width="1.5"/>
+        <text x="315" y="165" fill="#b23b34" font-size="11" font-weight="700">x</text>
+        <text x="340" y="90" fill="#3b5b9e" font-size="12">f(t)</text>
+
+        <!-- Arrow down -->
+        <text x="350" y="180" text-anchor="middle" fill="#565a63" font-size="12" font-weight="700">↓ A(x) 的导数 = f(x)</text>
+
+        <!-- Bottom graph: A(x) -->
+        <text x="60" y="205" fill="#b23b34" font-size="14" font-weight="700">② 面积函数 A(x) = ∫ₐˣ f(t)dt</text>
+        <line x1="60" y1="340" x2="680" y2="340" stroke="#8a8d95" stroke-width="1.5"/>
+        <line x1="60" y1="215" x2="60" y2="340" stroke="#8a8d95" stroke-width="1.5"/>
+        <!-- A(x) curve: integral of 0.5t+1 = 0.25t² + t -->
+        <path d="M 60 335 Q 180 320, 320 280 T 620 170" fill="none" stroke="#b23b34" stroke-width="2.5"/>
+        <!-- point on A(x) -->
+        <circle cx="320" cy="280" r="5" fill="#b23b34"/>
+        <line x1="320" y1="340" x2="320" y2="280" stroke="#b23b34" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
+        <text x="315" y="355" fill="#b23b34" font-size="11" font-weight="700">x</text>
+        <text x="340" y="275" fill="#b23b34" font-size="12">A(x)</text>
+        <text x="340" y="295" fill="#565a63" font-size="11">A'(x) = f(x)</text>
+
+        <!-- formula at right -->
+        <rect x="480" y="215" width="180" height="80" rx="10" fill="rgba(178,59,52,.05)" stroke="rgba(178,59,52,.2)"/>
+        <text x="570" y="240" text-anchor="middle" fill="#b23b34" font-size="13" font-weight="700">基本定理</text>
+        <text x="570" y="262" text-anchor="middle" fill="#3a3d46" font-size="12">d/dx [∫ₐˣ f(t)dt]</text>
+        <text x="570" y="280" text-anchor="middle" fill="#b23b34" font-size="13" font-weight="700">= f(x)</text>
+      </svg>
+    </div>
+
+    <div class="grid2 top">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">第一部分：面积函数的导数</span><span class="en-t">FTC Part 1</span></div>
+        <div class="formula" style="text-align:left;">
+          如果 F(x) = ∫<sub>a</sub><sup>x</sup> f(t)dt<br>
+          那么 F'(x) = <b>f(x)</b>
+        </div>
+        <p class="txt">通俗版：<b class="k">面积函数的变化率，就是原函数本身</b>。面积增长快慢，取决于该点 f(x) 有多高——f(x) 高，面积涨得快；f(x) = 0，面积不涨。</p>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">第二部分：用反求导算定积分</span><span class="en-t">FTC Part 2</span></div>
+        <div class="formula" style="text-align:left;">
+          如果 F'(x) = f(x)，则<br>
+          ∫<sub>a</sub><sup>b</sup> f(x)dx = <b>F(b) - F(a)</b>
+        </div>
+        <p class="txt">通俗版：<b class="k">要算面积，不用真的去画矩形</b>。只要找到 f(x) 的反导数 F(x)，把两端点值一减，面积就出来了。这让积分从"无限求和"变成了"查表 + 减法"。</p>
+      </div>
+    </div>
+
+    <div class="card dark">
+      <div class="card-h"><span class="zh-t">为什么这是个"奇迹"</span><span class="en-t">Why It's a Miracle</span></div>
+      <p class="txt">求导和积分，一个来自"求切线"，一个来自"求面积"。它们看起来毫无关系——一个在"切"，一个在"拼"。<b class="k">但基本定理告诉你：它们互为逆运算。</b></p>
+      <div class="hlight">这意味着：<b>你不需要为了每个积分去算无穷多个矩形的和</b>。只要会求导（反过来就会积分），就能算面积。这就是为什么微积分能成为一门实用学科——<b>没有基本定理，微积分只是哲学；有了它，微积分成了工具。</b></div>
+    </div>
+
+    <div class="shift">
+      <div class="b old">积分 = 无限求和<small>黎曼和的极限，计算量无穷大</small></div>
+      <div class="to">›</div>
+      <div class="b new">积分 = 反求导 + 代入<small>找到 F(x)，算 F(b)-F(a)，几步搞定</small></div>
+    </div>
+  </div>
+
+  <!-- ============ CH7 · 应用实战 ============ -->
+  <div class="panel" data-panel="ch7">
+    <div class="subtabs">
+      <button data-sub="ch7a" class="active">7.1 牛顿定律的微积分推导</button>
+      <button data-sub="ch7b">7.2 通信核心：傅里叶变换</button>
+      <button data-sub="ch7c">7.3 AI 核心：梯度下降</button>
+    </div>
+
+    <!-- 7.1 牛顿定律 -->
+    <div class="subpanel active" data-subpanel="ch7a">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">牛顿发明微积分，就是为了算运动</span><span class="en-t">Why Newton Invented Calculus</span></div>
+        <p class="txt">高中物理背过一堆公式：v = v₀ + at、s = v₀t + ½at²……这些公式怎么来的？<b class="k">它们不是猜的，是用微积分从 F = ma 一步步推导出来的。</b>一旦理解了这个推导，你就再也不用死记硬背了。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第一步：定义运动的语言</span><span class="en-t">Step 1</span></div>
+        <div class="rows">
+          <div class="row"><div class="rn">位置 s(t)<small>Position</small></div><div class="rd">物体在时刻 t 的位置——最基本的状态量</div></div>
+          <div class="row"><div class="rn">速度 v(t) = s'(t)<small>Velocity</small></div><div class="rd">位置的<b>一阶导数</b>——位置变化有多快</div></div>
+          <div class="row"><div class="rn">加速度 a(t) = v'(t) = s''(t)<small>Acceleration</small></div><div class="rd">速度的导数 = 位置的<b>二阶导数</b>——速度变化有多快</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第二步：牛顿第二定律 = 微分方程</span><span class="en-t">Step 2</span></div>
+        <div class="formula">
+          <b>F = m·a = m·s''(t)</b>
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">力 = 质量 × 加速度 = 质量 × 位置的二阶导数</span>
+        </div>
+        <p class="txt">这就是牛顿第二定律的微积分形式。它本质上是一个<b class="k">微分方程</b>：已知力 F，求位置 s(t)。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">第三步：自由落体——完整推导</span><span class="en-t">Step 3 · Free Fall</span></div>
+        <p class="txt">物体自由下落，唯一的力是重力 F = -mg（负号表示向下）。代入 F = ma：</p>
+        <div class="formula" style="text-align:left;">
+          ① &nbsp; m·s''(t) = -mg &nbsp; → &nbsp; s''(t) = -g &nbsp; <span style="color:#8a8d95;">(加速度恒定 = -g)</span><br><br>
+          ② &nbsp; 两边积分：s'(t) = ∫(-g)dt = <b>-gt + C₁</b> &nbsp; <span style="color:#8a8d95;">(速度)</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;代入初始条件 t=0 时 v=v₀：&nbsp; v(t) = <b>v₀ - gt</b> &nbsp; ✓<br><br>
+          ③ &nbsp; 再积分：s(t) = ∫(v₀ - gt)dt = <b>v₀t - ½gt² + C₂</b><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;代入初始条件 t=0 时 s=s₀：&nbsp; s(t) = <b>s₀ + v₀t - ½gt²</b> &nbsp; ✓
+        </div>
+        <div class="hlight">看到了吗？<b>v = v₀ - gt 和 s = s₀ + v₀t - ½gt²</b>——高中物理让你背的公式，就是积分两次的结果。知道了推导过程，你理解的是<b>公式背后的逻辑</b>，而不是死记的符号。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">微分方程：微积分的"方程"</span><span class="en-t">Differential Equations</span></div>
+        <p class="txt">含<b class="k">导数</b>的方程叫微分方程。物理定律几乎都是用微分方程写的——因为物理关心的不是"状态本身"，而是"状态怎么变"。看四个经典例子：</p>
+        <div class="quad">
+          <div class="qtile b2"><div class="qh">自由落体</div><div class="qb">s''(t) = -g &nbsp;→&nbsp; 解：s = s₀ + v₀t - ½gt²<br><small>上面刚刚算过：积分两次得到抛物线</small></div></div>
+          <div class="qtile"><div class="qh">冷却定律</div><div class="qb"><span class="frac"><span class="num">dT</span><span class="bar"></span><span class="den">dt</span></span> = -k(T - T₀)<br><small>"温度下降速度 ∝ 温差"——解是指数衰减，热水变凉的数学解释</small></div></div>
+          <div class="qtile g"><div class="qh">弹簧振动</div><div class="qb">x''(t) = -ω²x<br><small>"加速度 ∝ 位移"——解是正弦波 sin(ωt)，弹簧、钟摆、振荡电路全用它</small></div></div>
+          <div class="qtile a"><div class="qh">种群增长</div><div class="qb"><span class="frac"><span class="num">dP</span><span class="bar"></span><span class="den">dt</span></span> = rP<br><small>"增长 ∝ 种群本身"——解是指数增长，复利、人口模型、细菌繁殖同理</small></div></div>
+        </div>
+        <div class="hlight">四种方程，四种人生：<b>二次积分得抛物线，一阶微分得指数，二阶振荡得正弦</b>。微分方程就是"用导数描述规则，用积分还原轨迹"。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">微分方程的最高成就：从引力推出开普勒定律</span><span class="en-t">Kepler from Gravity</span></div>
+        <p class="txt">这是牛顿微积分最辉煌的一役：从万有引力 F = <span class="frac"><span class="num">GMm</span><span class="bar"></span><span class="den">r²</span></span> 出发，纯粹用微积分推出行星的椭圆轨道。完整推导链：</p>
+        <ol class="steps">
+          <li><b>写运动方程</b>：牛顿第二定律 F = m·s''(t)，代入引力：s''(t) = -<span class="frac"><span class="num">GM</span><span class="bar"></span><span class="den">r²</span></span> · ê<sub>r</sub></li>
+          <li><b>极坐标分解</b>：把加速度分解为径向和切向，得到两个微分方程（r 和 θ 各自满足）</li>
+          <li><b>面积积分</b>：切向方程两边乘 r 后积分，得到 r²·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = h（常数）——角动量守恒</li>
+          <li><b>解读</b>：r²·<span class="frac"><span class="num">dθ</span><span class="bar"></span><span class="den">dt</span></span> = 常数 意味着"单位时间扫过的面积相等"——<b class="k">这就是开普勒第二定律（等面积定律）✓</b></li>
+          <li><b>径向方程</b>：做变量替换 u = 1/r，把径向方程化为关于 u 的简谐振子方程</li>
+          <li><b>求解并还原</b>：解出 r(θ) = <span class="frac"><span class="num">p</span><span class="bar"></span><span class="den">1 + e·cosθ</span></span>——圆锥曲线方程；离心率 e &lt; 1 时就是<b class="k">椭圆，开普勒第一定律 ✓</b></li>
+        </ol>
+        <div class="hlight">从一条假设（万有引力）出发，微积分推出了两条经验定律。<b>这就是微积分的威力：用数学把"为什么"变成"必然"。</b></div>
+      </div>
+
+      <div class="sect-label">可视化：位移 → 速度 → 加速度</div>
+      <div class="dgm">
+        <svg viewBox="0 0 620 380" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+          <!-- Graph 1: Position (parabola) -->
+          <text x="20" y="25" fill="#b23b34" font-size="13" font-weight="700">位移 s(t) = s₀ + v₀t - ½gt²</text>
+          <line x1="40" y1="100" x2="580" y2="100" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="40" y1="30" x2="40" y2="100" stroke="#8a8d95" stroke-width="1.5"/>
+          <path d="M 60 40 Q 200 30, 320 55 T 560 95" fill="none" stroke="#b23b34" stroke-width="2.5"/>
+          <text x="540" y="85" fill="#b23b34" font-size="11">抛物线</text>
+          <text x="300" y="120" text-anchor="middle" fill="#565a63" font-size="11">↑ 向上抛，到达最高点后下落</text>
+
+          <!-- Arrow: 求导 -->
+          <text x="310" y="140" text-anchor="middle" fill="#3b5b9e" font-size="12" font-weight="700">↓ 求导（一阶导数）</text>
+
+          <!-- Graph 2: Velocity (line, decreasing) -->
+          <text x="20" y="170" fill="#3b5b9e" font-size="13" font-weight="700">速度 v(t) = v₀ - gt</text>
+          <line x1="40" y1="240" x2="580" y2="240" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="40" y1="175" x2="40" y2="240" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="60" y1="185" x2="560" y2="235" stroke="#3b5b9e" stroke-width="2.5"/>
+          <text x="540" y="225" fill="#3b5b9e" font-size="11">直线</text>
+          <text x="300" y="260" text-anchor="middle" fill="#565a63" font-size="11">↑ 速度持续减小，最高点 v=0</text>
+          <circle cx="310" cy="215" r="4" fill="#3b5b9e"/>
+          <text x="320" y="212" fill="#3b5b9e" font-size="11" font-weight="600">v=0 (最高点)</text>
+
+          <!-- Arrow: 求导 -->
+          <text x="310" y="280" text-anchor="middle" fill="#2f7d6b" font-size="12" font-weight="700">↓ 求导（二阶导数）</text>
+
+          <!-- Graph 3: Acceleration (constant) -->
+          <text x="20" y="310" fill="#2f7d6b" font-size="13" font-weight="700">加速度 a(t) = -g</text>
+          <line x1="40" y1="375" x2="580" y2="375" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="40" y1="315" x2="40" y2="375" stroke="#8a8d95" stroke-width="1.5"/>
+          <line x1="60" y1="355" x2="560" y2="355" stroke="#2f7d6b" stroke-width="2.5"/>
+          <text x="540" y="350" fill="#2f7d6b" font-size="11">水平线</text>
+          <text x="300" y="370" text-anchor="middle" fill="#565a63" font-size="11">↑ 加速度恒定 = -g（重力不变）</text>
+        </svg>
+      </div>
+
+      <div class="card dark">
+        <p class="txt">反过来也成立：<b class="k">积分是"求导的逆"</b>。从加速度积分得到速度，再积分得到位移。微积分让你在"力"和"运动"之间自由穿梭——<b>这就是物理世界的翻译器。</b></p>
+      </div>
+    </div>
+
+    <!-- 7.2 傅里叶变换 -->
+    <div class="subpanel" data-subpanel="ch7b">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">通信的基石：傅里叶变换</span><span class="en-t">Fourier Transform</span></div>
+        <p class="txt">你手机里发出的声音、WiFi 传的信号、5G 基站的数据——<b class="k">全部建立在同一个积分公式上</b>。这个公式就是傅里叶变换，而它的核心，就是一个积分。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">核心思想：任何信号都是正弦波的叠加</span><span class="en-t">The Big Idea</span></div>
+        <p class="txt">傅里叶的发现极其大胆：<b class="k">任何连续信号——不管多复杂——都可以拆解成一组不同频率正弦波的叠加</b>。就像任何颜色都是红绿蓝的混合，任何信号都是不同频率"纯音"的混合。</p>
+        <div class="formula">
+          <b>F(ω) = ∫<sub>-∞</sub><sup>+∞</sup> f(t)·e<sup>-iωt</sup> dt</b>
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">f(t) = 时域信号（你说话的波形）<br>
+          F(ω) = 频域信号（分解出的频率成分）<br>
+          这个积分，把"时间"翻译成了"频率"</span>
+        </div>
+        <div class="flow cool">
+          <span class="step">时域 f(t)</span><span class="arr">→</span>
+          <span class="step">傅里叶变换 ∫</span><span class="arr">→</span>
+          <span class="step">频域 F(ω)</span><span class="arr">→</span>
+          <span class="step">滤波 / 调制 / 压缩</span>
+        </div>
+      </div>
+
+      <div class="sect-label">可视化：方波 = 正弦波的叠加</div>
+      <div class="dgm">
+        <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+          <!-- axes -->
+          <line x1="30" y1="150" x2="590" y2="150" stroke="#8a8d95" stroke-width="1"/>
+          <text x="595" y="155" fill="#8a8d95" font-size="11">t</text>
+
+          <!-- Individual sine waves -->
+          <text x="30" y="25" fill="#3b5b9e" font-size="12" font-weight="600">① sin(ωt) &nbsp; 基频</text>
+          <path d="M 30 65 Q 70 35, 110 65 T 190 65 T 270 65 T 350 65 T 430 65 T 510 65" fill="none" stroke="#3b5b9e" stroke-width="2"/>
+
+          <text x="30" y="100" fill="#2f7d6b" font-size="12" font-weight="600">② ⅓·sin(3ωt) &nbsp; 三倍频</text>
+          <path d="M 30 130 Q 50 108, 70 130 T 110 130 T 150 130 T 190 130 T 230 130 T 270 130 T 310 130 T 350 130 T 390 130 T 430 130 T 470 130 T 510 130" fill="none" stroke="#2f7d6b" stroke-width="1.5"/>
+
+          <text x="30" y="175" fill="#a9741f" font-size="12" font-weight="600">③ ⅕·sin(5ωt) &nbsp; 五倍频</text>
+          <path d="M 30 205 Q 42 188, 54 205 T 78 205 T 102 205 T 126 205 T 150 205 T 174 205 T 198 205 T 222 205 T 246 205 T 270 205 T 294 205 T 318 205 T 342 205 T 366 205 T 390 205 T 414 205 T 438 205 T 462 205 T 486 205 T 510 205" fill="none" stroke="#a9741f" stroke-width="1.5" opacity=".8"/>
+
+          <!-- Sum -->
+          <text x="30" y="250" fill="#b23b34" font-size="12" font-weight="700">① + ② + ③ = 越来越像方波</text>
+          <path d="M 30 280 L 140 280 L 140 262 L 250 262 L 250 280 L 360 280 L 360 262 L 470 262 L 470 280 L 510 280" fill="none" stroke="#b23b34" stroke-width="2.5"/>
+          <text x="520" y="272" fill="#b23b34" font-size="11">→ 方波</text>
+        </svg>
+      </div>
+      <p class="txt">三个正弦波加在一起，已经开始像方波了。如果继续加 sin(7ωt)、sin(9ωt)……无限项求和——就能得到<b class="k">完美的方波</b>。这就是傅里叶级数：复杂信号 = 无限个正弦波的积分叠加。</p>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">关键原理：正交性——正弦波怎么被"筛"出来</span><span class="en-t">Orthogonality</span></div>
+        <p class="txt">为什么一定能拆成正弦波？因为不同频率的正弦波是<b class="k">正交</b>的——它们在"内积"（乘积的积分）意义下互不干扰：</p>
+        <div class="formula">
+          ∫<sub>0</sub><sup>T</sup> sin(mωt)·sin(nωt) dt = 0 &nbsp; (m ≠ n)<br><br>
+          自己和自己：&nbsp; ∫<sub>0</sub><sup>T</sup> sin²(nωt) dt = <span class="frac"><span class="num">T</span><span class="bar"></span><span class="den">2</span></span> &nbsp; (m = n)
+        </div>
+        <p class="txt">几何直觉：在向量世界里，"垂直"的两个向量点积为零，所以互不干扰。正弦波在"积分空间"里也是一样的——<b class="k">不同频率 = 互相垂直，同频率 = 只有自己</b>。就像对着一群人大喊，只有喊到和自己同频的人，对方才听得最清楚。</p>
+        <div class="flow">
+          <span class="step">复杂信号 f(t)</span><span class="arr">→</span>
+          <span class="step">乘 sin(nωt)</span><span class="arr">→</span>
+          <span class="step">求一个周期的积分</span><span class="arr">→</span>
+          <span class="step">其他频率全部"抵消"（正交积分=0）</span><span class="arr">→</span>
+          <span class="step">只留下第 n 个频率的系数</span>
+        </div>
+        <div class="hlight">傅里叶系数 a<sub>n</sub> = <span class="frac"><span class="num">2</span><span class="bar"></span><span class="den">T</span></span>·∫<sub>0</sub><sup>T</sup> f(t)·sin(nωt)dt，就是一个<b>"频率筛子"</b>：乘上去、积一下，其他频率全部归零，只筛出 n 倍频的强度。没有正交性，这个"筛子"根本不成立。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">通信领域的应用</span><span class="en-t">Applications</span></div>
+        <div class="quad">
+          <div class="qtile b2"><div class="qh">4G / 5G 调制</div><div class="qb">OFDM 正交频分复用——把数据分到几百个子载波上，每个都是正弦波。全靠傅里叶变换在时域和频域间切换。</div></div>
+          <div class="qtile"><div class="qh">音频 / 图像压缩</div><div class="qb">MP3 和 JPEG 都先用傅里叶变换把信号转到频域，然后<b>丢掉人耳/人眼不敏感的频率</b>——体积骤减，听感/观感几乎不变。</div></div>
+          <div class="qtile g"><div class="qh">滤波器设计</div><div class="qb">噪声往往是高频成分。傅里叶变换→去掉高频→反变换回时域，信号就干净了。所有降噪都基于此。</div></div>
+          <div class="qtile a"><div class="qh">雷达 / 成像</div><div class="qb">回波信号的频率偏移告诉你目标速度，时间延迟告诉你距离——全靠对信号做频域分析。</div></div>
+        </div>
+      </div>
+
+      <div class="hlight"><b>每次你用手机打电话、连 WiFi、刷视频，背后都有无数次傅里叶积分在跑。</b>通信工程的整个大厦，建在这个积分上。</div>
+    </div>
+
+    <!-- 7.3 梯度下降 -->
+    <div class="subpanel" data-subpanel="ch7c">
+      <div class="card hl">
+        <div class="card-h"><span class="zh-t">AI 的引擎：梯度下降</span><span class="en-t">Gradient Descent</span></div>
+        <p class="txt">训练 AI 模型——不管是 ChatGPT 还是图像识别——本质上就是在做一件事：<b class="k">调整参数，让"错误"最小化</b>。怎么知道往哪个方向调？靠导数。这就是梯度下降。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">核心思想：蒙眼下山</span><span class="en-t">The Intuition</span></div>
+        <p class="txt">想象你蒙着眼站在山坡上，要走到谷底（误差最小处）。你脚下用脚试一下——哪个方向最陡，就往那个方向走一步。不断重复，最终走到谷底。<b class="k">"最陡的方向"就是梯度，"走一步"就是参数更新。</b></p>
+        <div class="dgm">
+          <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" font-family="Cambria Math,Georgia,serif">
+            <!-- loss landscape -->
+            <path d="M 30 120 Q 120 40, 210 80 Q 280 110, 350 220 Q 430 260, 520 180 Q 560 150, 590 160" fill="none" stroke="#3b5b9e" stroke-width="2.5"/>
+            <text x="40" y="35" fill="#3b5b9e" font-size="13" font-weight="700">损失函数 L(w)</text>
+            <text x="460" y="145" fill="#3b5b9e" font-size="11">w</text>
+
+            <!-- starting point -->
+            <circle cx="120" cy="52" r="7" fill="#b23b34"/>
+            <text x="95" y="45" fill="#b23b34" font-size="11" font-weight="700">起点</text>
+
+            <!-- descent path (dotted) -->
+            <path d="M 120 52 L 155 70 L 190 88 L 230 105 L 270 135 L 300 175 L 330 210" fill="none" stroke="#b23b34" stroke-width="2" stroke-dasharray="4 3"/>
+            <!-- steps -->
+            <circle cx="155" cy="70" r="4" fill="#a9741f"/>
+            <circle cx="190" cy="88" r="4" fill="#a9741f"/>
+            <circle cx="230" cy="105" r="4" fill="#a9741f"/>
+            <circle cx="270" cy="135" r="4" fill="#a9741f"/>
+            <circle cx="300" cy="175" r="4" fill="#a9741f"/>
+
+            <!-- minimum -->
+            <circle cx="340" cy="220" r="7" fill="#2f7d6b"/>
+            <text x="350" y="225" fill="#2f7d6b" font-size="12" font-weight="700">谷底 (最优)</text>
+
+            <!-- gradient arrows (pointing uphill, but we go opposite) -->
+            <line x1="120" y1="52" x2="140" y2="35" stroke="#b23b34" stroke-width="1.5" marker-end="url(#gArrow)"/>
+            <text x="145" y="32" fill="#b23b34" font-size="10">∇L (梯度↑)</text>
+            <defs><marker id="gArrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b23b34"/></marker></defs>
+
+            <!-- step annotation -->
+            <text x="400" y="50" fill="#565a63" font-size="11">每步：w ← w - η·∇L</text>
+            <text x="400" y="68" fill="#565a63" font-size="11">η = 学习率（步长）</text>
+            <text x="400" y="86" fill="#565a63" font-size="11">∇L = 梯度（最陡方向）</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">数学表达：每一步都是导数</span><span class="en-t">The Math</span></div>
+        <p class="txt">一个神经网络有 n 个参数（权重）w₁, w₂, ..., wₙ。损失函数 L 衡量"当前有多错"。梯度是 L 对每个参数的<b class="k">偏导数</b>组成的向量：</p>
+        <div class="formula">
+          <b>∇L</b> = ( <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₁</span></span> , <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₂</span></span> , ... , <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wₙ</span></span> )
+          <br><br>
+          更新规则（每一步）：<br>
+          <b>wᵢ ← wᵢ - η · <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wᵢ</span></span></b> &nbsp; (对所有 i)
+          <br><br>
+          <span style="font-size:13px;color:#565a63;">η = 学习率（步长大小）<br>
+          <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wᵢ</span></span> = 偏导数（参数 wᵢ 方向上的"陡度"）<br>
+          减号 = 逆梯度方向走（下山，不是上山）</span>
+        </div>
+        <p class="txt">这里每个 <b><span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wᵢ</span></span></b> 就是一个偏导数——本质和你在课本上学的 dy/dx 完全一样，只是扩展到多变量。<b class="k">没有导数，AI 就不知道该往哪走。</b></p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">反向传播 = 链式法则</span><span class="en-t">Backpropagation = Chain Rule</span></div>
+        <p class="txt">神经网络有几十上百层，怎么算最前面参数的梯度？用<b class="k">链式法则</b>——从输出层开始，一层层往回传，每一层乘一个导数。</p>
+        <div class="flow warm">
+          <span class="step">前向传播：算预测值</span><span class="arr">→</span>
+          <span class="step">计算损失 L</span><span class="arr">→</span>
+          <span class="step">反向传播：链式法则算 <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wᵢ</span></span></span><span class="arr">→</span>
+          <span class="step">梯度下降更新 wᵢ</span>
+        </div>
+        <div class="hlight"><b>反向传播的本质，就是对整个网络应用链式法则。</b>你在第四章学的 [f(g(x))]' = f'(g)·g'(x)，就是深度学习训练的数学内核——只是扩展到了几百层、几十亿个参数。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">很多参数怎么办：偏导数</span><span class="en-t">Partial Derivatives</span></div>
+        <p class="txt">损失函数 L 依赖<b class="k">成百上千亿个参数</b> w₁, w₂, ..., wₙ。问"L 对 w₁ 的变化有多敏感"时，把其他参数全部当常数，只对 w₁ 求导——这就是<b class="k">偏导数 <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₁</span></span></b>。</p>
+        <div class="formula">
+          梯度 ∇L = ( <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₁</span></span> , <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₂</span></span> , ... , <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂wₙ</span></span> )<br><br>
+          <span style="color:#8a8d95;">∇ 读作 "nabla"（梯度符号）——一个向量，指向 L 上升最快的方向；反向就是下降最快</span>
+        </div>
+        <div class="hlight">偏导数 = "只动一个旋钮，看错误怎么变"。梯度下降就是同时转动所有旋钮，每个旋钮转多少、往哪转，由各自的偏导数决定。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="zh-t">具体算一遍：两层网络的链式法则</span><span class="en-t">A Concrete Example</span></div>
+        <p class="txt">假设一个最小网络：输入 x，第一层乘 w₁，过激活函数 σ，再乘 w₂，输出 ŷ = w₂·σ(w₁x)。训练目标是让预测 ŷ 接近真实值 y，损失取 L = ½(ŷ - y)²。求 L 对 w₁ 的偏导：</p>
+        <div class="formula" style="text-align:left;">
+          <b>链式法则逐层回传</b>：<br><br>
+          <b>第一步</b>：损失对输出求导<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂ŷ</span></span> = (ŷ - y) &nbsp; <span style="color:#8a8d95;">(平方损失求导)</span><br><br>
+          <b>第二步</b>：输出对 w₂ 求导<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">∂ŷ</span><span class="bar"></span><span class="den">∂w₂</span></span> = σ(w₁x) &nbsp; <span style="color:#8a8d95;">(乘的系数就是偏导)</span><br><br>
+          <b>第三步</b>：输出对 w₁ 求导（穿过激活函数）<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">∂ŷ</span><span class="bar"></span><span class="den">∂w₁</span></span> = w₂ · σ'(w₁x) · x &nbsp; <span style="color:#8a8d95;">(内层再乘 x)</span><br><br>
+          <b>第四步</b>：乘起来（链式法则）<br>
+          &nbsp;&nbsp;<span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₁</span></span> = (ŷ - y) · w₂ · σ'(w₁x) · x &nbsp; ✓<br><br>
+          <b>第五步</b>：更新参数<br>
+          &nbsp;&nbsp;w₁ ← w₁ - η · <span class="frac"><span class="num">∂L</span><span class="bar"></span><span class="den">∂w₁</span></span> &nbsp; <span style="color:#8a8d95;">(η = 学习率)</span>
+        </div>
+        <div class="hlight"><b>注意误差的"回流"轨迹</b>：损失 ŷ-y 先传到输出，再乘上路径上每个环节的导数往回传——一层层相乘，正是"反向传播"名字的由来。训练一亿参数的模型，就是这条链做了几十亿次。</div>
+      </div>
+
+      <div class="grid2 top">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-h"><span class="zh-t">梯度下降的变体</span><span class="en-t">Variants</span></div>
+          <ul class="pts">
+            <li><b>SGD</b>：随机梯度下降，每次用少量样本</li>
+            <li><b>Adam</b>：加动量+自适应步长，最常用</li>
+            <li><b>学习率调度</b>：先大后小，先快走后精调</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-h"><span class="zh-t">为什么 AI 离不开微积分</span><span class="en-t">Why Calculus</span></div>
+          <ul class="pts">
+            <li>训练 = 最小化损失 → 需要<b>导数</b>指方向</li>
+            <li>多层网络 → 需要<b>链式法则</b>传梯度</li>
+            <li>没有微积分 → <b>AI 无法学习</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card dark">
+        <p class="txt">AI 的"智能"，来自亿万次微积分运算。每一次参数更新，都是一个导数；每一次训练迭代，都是梯度下降的一步。<b class="k">微积分不是 AI 的附属品，而是 AI 的引擎。</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CH8 · 重新学习 ============ -->
+  <div class="panel" data-panel="ch8">
+    <div class="card hl">
+      <div class="card-h"><span class="zh-t">给"学过但忘了"的你：一条重新学习的路线</span><span class="en-t">A Learning Path</span></div>
+      <p class="txt">你有基础，只是生疏了。不需要从零开始啃教材——按照下面这条路线，每步配合可视化理解，大约<b class="k">两到三周</b>就能重建完整的微积分直觉。</p>
+    </div>
+
+    <div class="sect-label">七步重建微积分直觉</div>
+    <ol class="steps">
+      <li><b>重建直觉（2-3天）</b>——先不看公式，回到物理直觉。理解导数="瞬时变化率"、积分="累积量"。用开车的例子：速度表=导数，里程表读数差=定积分。</li>
+      <li><b>过一遍极限（2天）</b>——不用纠结 ε-δ 证明，理解"无限趋近但不到达"即可。重点理解 0/0 型极限和连续性的概念。</li>
+      <li><b>掌握求导法则（3-4天）</b>——背熟基本公式表（幂、指数、对数、三角），重点练<b>链式法则</b>。会求导=会做70%的微积分题。</li>
+      <li><b>理解积分（3天）</b>——黎曼和的直觉 + 基本积分公式。掌握换元法和分部积分这两个核心技巧。</li>
+      <li><b>打通基本定理（1-2天）</b>——理解"求导和积分互逆"这个核心。这是把微积分从两个独立话题统一成一个体系的关键。</li>
+      <li><b>挑一个应用深入（3-5天）</b>——从物理运动（牛顿定律）、信号处理（傅里叶）、机器学习（梯度下降）中选一个你感兴趣的，亲手推导一遍。</li>
+      <li><b>扩展视野（持续）</b>——多元微积分（偏导数、梯度）、微分方程、数值方法……根据需要逐步扩展。</li>
+    </ol>
+
+    <div class="sect-label">微积分知识地图</div>
+    <div class="catgrid">
+      <div class="cat-tile" style="background:#b23b34;"><div class="ico">📐</div><div class="nm">极限</div><div class="ct en">Foundation</div></div>
+      <div class="cat-tile" style="background:#a9741f;"><div class="ico">📏</div><div class="nm">导数</div><div class="ct en">Derivative</div></div>
+      <div class="cat-tile" style="background:#3b5b9e;"><div class="ico">🔣</div><div class="nm">积分</div><div class="ct en">Integral</div></div>
+      <div class="cat-tile" style="background:#2f7d6b;"><div class="ico">🌉</div><div class="nm">基本定理</div><div class="ct en">FTC</div></div>
+      <div class="cat-tile" style="background:#6a4c93;"><div class="ico">⚙️</div><div class="nm">微分方程</div><div class="ct en">Diff Eq</div></div>
+      <div class="cat-tile" style="background:#5566cc;"><div class="ico">📊</div><div class="nm">多元微积分</div><div class="ct en">Multivariable</div></div>
+      <div class="cat-tile" style="background:#2f8f9e;"><div class="ico">📡</div><div class="nm">傅里叶分析</div><div class="ct en">Fourier</div></div>
+      <div class="cat-tile" style="background:#c08457;"><div class="ico">🧠</div><div class="nm">梯度下降</div><div class="ct en">Gradient Descent</div></div>
+    </div>
+
+    <div class="grid2 top" style="margin-top:16px;">
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">推荐学习资源</span><span class="en-t">Resources</span></div>
+        <ul class="pts">
+          <li><b>3Blue1Brown《微积分的本质》</b>——B 站/YouTube 可看，最佳可视化直觉重建材料，每集 10 分钟</li>
+          <li><b>可汗学院（Khan Academy）</b>——免费完整课程，从极限到多元微积分，带交互练习</li>
+          <li><b>《托马斯微积分》</b>——经典教材，例题丰富，适合系统性复习</li>
+          <li><b>Desmos / GeoGebra</b>——在线可视化绘图工具，输入函数即时看图，培养几何直觉</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-h"><span class="zh-t">复习时的三个建议</span><span class="en-t">Three Tips</span></div>
+        <div class="mini">
+          <div class="m"><div class="mn">1</div><div class="mt">先画图，再算式。每个概念先建立几何直觉</div></div>
+          <div class="m"><div class="mn">2</div><div class="mt">关注"为什么"，不只"怎么算"。理解意义比记公式重要</div></div>
+          <div class="m"><div class="mn">3</div><div class="mt">选一个真实应用深入。用起来，才真正属于你</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips" style="margin-top:16px;">
+      <span>导数 = 切线斜率 = 瞬时变化率</span>
+      <span>积分 = 曲线面积 = 累积量</span>
+      <span>基本定理 = 两者互逆</span>
+      <span>F=ma = m·s''(t)</span>
+      <span>傅里叶 = 信号的积分分解</span>
+      <span>梯度下降 = 导数指引优化</span>
+      <span>反向传播 = 链式法则</span>
+    </div>
+
+    <div class="card dark" style="margin-top:18px;">
+      <div class="card-h"><span class="zh-t">最后一句话</span><span class="en-t">The Last Word</span></div>
+      <p class="txt" style="font-size:15px;">微积分不是一堆公式，而是一种<b class="k">看待世界的方式</b>——它让你看见变化中的规律、累积中的整体。牛顿用它看见了万物的运动，傅里叶用它看见了信号的骨骼，AI 研究者用它让机器学会了学习。</p>
+      <div class="hlight" style="font-size:15px;"><b>重新学一遍微积分，不只是复习知识，而是重新获得一双看世界的眼睛。</b>趁现在，从直觉开始，从应用出发，把这门语言重新变成你自己的。</div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="foot">
+    <div>微积分导论 · 从起源到应用 · 可视化版<br><span class="en">Calculus Revisited · From Origins to Applications · 2026</span></div>
+    <div style="text-align:right;">提示：点上方页签切换章节，第 02、04、05、07 章含子页签，也可用键盘 ← → 翻页<br><span class="en">Tip: click tabs (ch2, ch4, ch5 &amp; ch7 have sub-tabs) or use ← → keys</span></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs=document.querySelectorAll('#tabs button');
+  var panels=document.querySelectorAll('.panel');
+  var order=['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8'];
+  function show(ch){
+    tabs.forEach(function(b){b.classList.toggle('active',b.getAttribute('data-ch')===ch);});
+    panels.forEach(function(p){p.classList.toggle('active',p.getAttribute('data-panel')===ch);});
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-ch'));});});
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+    var cur=document.querySelector('#tabs button.active').getAttribute('data-ch');
+    var i=order.indexOf(cur);
+    i=e.key==='ArrowRight'?(i+1)%order.length:(i-1+order.length)%order.length;
+    show(order[i]);
+  });
+  document.querySelectorAll('.subtabs').forEach(function(bar){
+    var btns=bar.querySelectorAll('button');
+    var panel=bar.closest('.panel');
+    btns.forEach(function(b){
+      b.addEventListener('click',function(){
+        btns.forEach(function(x){x.classList.toggle('active',x===b);});
+        panel.querySelectorAll(':scope > .subpanel').forEach(function(sp){
+          sp.classList.toggle('active', sp.getAttribute('data-subpanel')===b.getAttribute('data-sub'));
+        });
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
