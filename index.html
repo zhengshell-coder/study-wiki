@@ -337,6 +337,17 @@
     .ri .d{display:none}
     .toolbar .btn span.lbl{display:none}
   }
+  /* 整理模式 */
+  .org-link{margin-left:auto;font-size:13.5px;color:var(--accent)!important;cursor:pointer;padding:3px 12px;border:1px solid var(--accent);border-radius:14px}
+  .card.orgcard{padding-left:44px;cursor:pointer}
+  .card .ck{position:absolute;left:14px;top:50%;margin-top:-9px;width:18px;height:18px;border:1.5px solid var(--line-2);border-radius:50%;background:var(--paper)}
+  .card.picked{box-shadow:0 0 0 2px var(--accent);background:#F4EBD3}
+  .card.picked .ck{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--paper)}
+  #orgbar{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom));z-index:60;display:none;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;
+    width:max-content;max-width:calc(100vw - 24px);padding:10px 14px;background:#FFFDF8;border:1px solid var(--line-2);border-radius:14px;box-shadow:0 12px 32px rgba(60,45,20,.22)}
+  #orgbar.show{display:flex}
+  #orgbar select{border:1px solid var(--line-2);background:var(--paper);border-radius:7px;padding:6px 8px;font-size:13px}
+  #orgCount{font-size:13px;color:var(--ink-2);min-width:84px}
 </style>
 </head>
 <body>
@@ -399,76 +410,9 @@
   <!-- ============ 设置 ============ -->
   <div id="view-settings" style="display:none">
     <h2 class="set-h">设置</h2>
-    <p class="set-sub">管理你的藏书、分类、同步与安装。点开每一项查看详情。</p>
+    <p class="set-sub">日常只会用到「安装与离线」。整理书架请回书架：点进一个分类，右上角有「整理」。</p>
 
-    <details class="sec" id="sec-docs" open>
-      <summary><span class="s-t">文档管理</span><span class="s-d">移动 · 下载 · 编辑 · 删除</span><span class="s-c">›</span></summary>
-      <div class="sb">
-        <div class="dlbar">
-          <label style="display:flex;align-items:center;gap:7px;font-size:13.5px;cursor:pointer"><input type="checkbox" id="selAll" onchange="toggleSelectAll(this.checked)"> 全选</label>
-          <span id="selCount" style="font-size:12.5px;color:var(--muted)">未选择</span>
-          <span style="flex:1"></span>
-          <button class="btn primary sm" onclick="downloadSelectedZip()">下载所选（ZIP）</button>
-          <button class="btn ghost sm" onclick="downloadRepoZip()">整库压缩包</button>
-        </div>
-        <div class="mvbar">
-          <span style="font-size:13px;color:var(--ink-2)">📂 把所选移到</span>
-          <select id="moveTarget"></select>
-          <button class="btn primary sm" onclick="moveSelected()">移动</button>
-          <span style="font-size:12px;color:var(--muted)">也可在每本书右侧直接选「移到…」，或把整行拖到分类标题上（电脑）</span>
-        </div>
-        <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
-        <div id="pageGroups"></div>
-        <div class="divider"></div>
-        <p class="sub-h">全文搜索索引</p>
-        <p class="hint">上传、更新时会自动把正文加进索引。如果搜不到某本书的内容，点一下重建。</p>
-        <div class="dlbar"><button class="btn ghost sm" onclick="rebuildSearchIndex()">重建全文索引</button><span id="idxStatus" class="resolved" style="margin:0"></span></div>
-      </div>
-    </details>
-
-    <details class="sec" id="sec-cats">
-      <summary><span class="s-t">分类</span><span class="s-d">新建或删除书目分类</span><span class="s-c">›</span></summary>
-      <div class="sb">
-        <div class="row">
-          <div class="field"><label>名称</label><input id="m_name" placeholder="例如：音乐"></div>
-          <div class="field"><label>类别（选一个常用分类）</label><select id="m_icon" onchange="iconPicked()"></select></div>
-        </div>
-        <div class="field" style="max-width:200px"><label>标识色</label><input id="m_color" type="color" value="#3E6B63" style="height:40px;padding:4px"></div>
-        <button class="btn primary" onclick="addModule()">新建分类</button>
-        <div class="divider"></div>
-        <div id="moduleList"></div>
-      </div>
-    </details>
-
-    <details class="sec" id="sec-sync">
-      <summary><span class="s-t">同步与备份</span><span class="s-d" id="syncSum">GitHub 连接 · 目录备份</span><span class="s-c">›</span></summary>
-      <div class="sb">
-        <div class="state" id="syncState"></div>
-        <p class="sub-h">GitHub 连接</p>
-        <p class="hint">令牌是这座私人图书馆的钥匙：没有它看不到书，也不能上传。它只保存在这台设备的这个浏览器里。</p>
-        <div class="field"><label>仓库（用户名/仓库名）</label><input id="gh_repo" placeholder="yourname/study-wiki"></div>
-        <div class="row">
-          <div class="field"><label>分支</label><input id="gh_branch" placeholder="main"></div>
-          <div class="field"><label>访问令牌 Token</label><input id="gh_token" type="password" placeholder="github_pat_…"></div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn primary" onclick="ghStore()">保存</button>
-          <button class="btn ghost" onclick="ghTest()">测试连接</button>
-        </div>
-        <div class="resolved" id="gh_status" style="margin-top:10px"></div>
-        <div style="margin-top:12px"><button class="btn ghost sm danger" onclick="lockDevice()">在这台设备上退出（清除令牌和离线缓存）</button></div>
-        <div class="divider"></div>
-        <p class="sub-h">目录备份</p>
-        <p class="hint">导出目录为 catalog.json 留存；换设备或出错时导入恢复。</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn ghost" onclick="exportData()">导出备份</button>
-          <button class="btn ghost" onclick="document.getElementById('importFile').click()">导入备份</button>
-          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
-        </div>
-      </div>
-    </details>
-
-    <details class="sec" id="sec-install">
+    <details class="sec" id="sec-install" open>
       <summary><span class="s-t">安装与离线</span><span class="s-d">装到桌面 · 断网也能看</span><span class="s-c">›</span></summary>
       <div class="sb">
         <p class="sub-h">安装到桌面</p>
@@ -484,9 +428,65 @@
         <div class="resolved" id="offlineStatus" style="margin-top:10px"></div>
       </div>
     </details>
+
+    <details class="sec" id="sec-backup">
+      <summary><span class="s-t">备份与导出</span><span class="s-d">下载全部书 · 目录备份</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="dlbar">
+          <button class="btn primary sm" onclick="downloadAll()">下载全部书（ZIP）</button>
+          <button class="btn ghost sm" onclick="downloadRepoZip()">整库压缩包</button>
+        </div>
+        <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
+        <p class="hint">导出目录为 catalog.json 留存；换设备或出错时导入恢复。目录平时由文件夹自动生成，一般用不上。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn ghost" onclick="exportData()">导出目录备份</button>
+          <button class="btn ghost" onclick="document.getElementById('importFile').click()">导入目录备份</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-sync">
+      <summary><span class="s-t">GitHub 令牌</span><span class="s-d" id="syncSum">网页上传 / 整理书架时才需要 · 高级</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="state" id="syncState"></div>
+        <p class="sub-h">GitHub 连接</p>
+        <p class="hint">书可以直接看，不需要令牌。只有想在网页上上传、移动、删除书时才需要填一次；它只保存在这台设备的这个浏览器里。在 Mac 上让 Claude 存书则完全不用。</p>
+        <div class="field"><label>仓库（用户名/仓库名）</label><input id="gh_repo" placeholder="yourname/study-wiki"></div>
+        <div class="row">
+          <div class="field"><label>分支</label><input id="gh_branch" placeholder="main"></div>
+          <div class="field"><label>访问令牌 Token</label><input id="gh_token" type="password" placeholder="github_pat_…"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" onclick="ghStore()">保存</button>
+          <button class="btn ghost" onclick="ghTest()">测试连接</button>
+        </div>
+        <div class="resolved" id="gh_status" style="margin-top:10px"></div>
+        <div style="margin-top:12px"><button class="btn ghost sm danger" onclick="lockDevice()">在这台设备上退出（清除令牌和离线缓存）</button></div>
+      </div>
+    </details>
+
+    <details class="sec" id="sec-cats">
+      <summary><span class="s-t">分类管理</span><span class="s-d">新建或删除分类 · 高级</span><span class="s-c">›</span></summary>
+      <div class="sb">
+        <div class="row">
+          <div class="field"><label>名称</label><input id="m_name" placeholder="例如：音乐"></div>
+          <div class="field"><label>类别（选一个常用分类）</label><select id="m_icon" onchange="iconPicked()"></select></div>
+        </div>
+        <div class="field" style="max-width:200px"><label>标识色</label><input id="m_color" type="color" value="#3E6B63" style="height:40px;padding:4px"></div>
+        <button class="btn primary" onclick="addModule()">新建分类</button>
+        <div class="divider"></div>
+        <div id="moduleList"></div>
+      </div>
+    </details>
+
   </div>
 
   <div class="footer" id="footer"></div>
+<div id="orgbar"><span id="orgCount"></span><a class="lnk" onclick="orgSelectAll()">全选</a>
+  <select id="orgTarget"></select><button class="btn primary sm" onclick="orgMove()">移动</button>
+  <button class="btn ghost sm" onclick="orgDownload()">下载</button><button class="btn ghost sm danger" onclick="orgDelete()">删除</button>
+  <button class="btn ghost sm" onclick="toggleOrg()">完成</button><span id="orgHint" style="display:none;font-size:12px;color:var(--muted)">未连接令牌：只能选择和下载</span></div>
 </div>
 
 <!-- ===== 上传 / 编辑 弹窗 ===== -->
@@ -607,6 +607,7 @@ async function lockDevice(){
 
 /* ---------- tabs ---------- */
 function switchTab(w){
+  if(orgMode){ orgMode=false; selPages.clear(); }
   ["browse","settings","notes"].forEach(k=>{ document.getElementById("view-"+k).style.display = w===k?"block":"none";
     const t=document.getElementById("tab-"+k); if(t) t.classList.toggle("active", w===k); });
   closeMenus();
@@ -651,15 +652,15 @@ function render(){
   const q=(_sb0 && _sb0.dataset.typed)?(_sb0.value||"").toLowerCase().trim():"";
   const box=document.getElementById("grid");
   if(!data.pages.length){ box.innerHTML=emptyHTML("书架还空着","上传第一本 HTML 学习页面，它会出现在这里。"); return; }
-  if(q){ renderSearch(box,q); return; }
+  if(q){ updateOrgBar(); renderSearch(box,q); return; }
   if(activeModule!=="all"){
     const m=moduleById(activeModule);
     const pages=data.pages.filter(p=>p.moduleId===activeModule).sort((a,b)=>pageTime(b)-pageTime(a));
-    box.innerHTML=`<div class="crumb"><a onclick="setModule('all')">‹ 书目</a><span class="here">${esc(m?m.name:"")}</span><span class="n">${pages.length} 本</span></div>`+
-      (pages.length?`<div class="grid">${pages.map(cardHTML).join("")}</div>`:emptyHTML("这个分类还没有书","上传时选这个分类，书就会放到这里。"));
-    markCachedStates(); return;
+    box.innerHTML=`<div class="crumb"><a onclick="setModule('all')">‹ 书目</a><span class="here">${esc(m?m.name:"")}</span><span class="n">${pages.length} 本</span><a class="org-link" onclick="toggleOrg()">${orgMode?"完成":"整理"}</a></div>`+
+      (pages.length?`<div class="grid${orgMode?" orgmode":""}">${pages.map(cardHTML).join("")}</div>`:emptyHTML("这个分类还没有书","上传时选这个分类，书就会放到这里。"));
+    markCachedStates(); updateOrgBar(); return;
   }
-  renderHome(box);
+  updateOrgBar(); renderHome(box);
 }
 function emptyHTML(t,s,noBtn){ return `<div class="empty"><div class="big">${t}</div><div>${s}</div>${noBtn?"":`<button class="btn primary" onclick="openUpload()">＋ 上传新书</button>`}</div>`; }
 function clearSearch(){ const s=document.getElementById("searchBox"); s.value=""; delete s.dataset.typed; render(); }
@@ -703,9 +704,10 @@ function cardHTML(p){
   const no=RN[relPath(p)]; const nnote=(no&&no.items)?no.items.length:0;
   const d=fmtDate(p);
   const meta=(d?`<span>${d}</span>`:"")+(pct>0?`<span>已读 ${pct}%</span>`:"")+(nbm?`<span>书签 ${nbm}</span>`:"")+(nnote?`<span>批注 ${nnote}</span>`:"")+`<span class="offtag">已离线</span>`;
-  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" style="--edge:color-mix(in srgb, ${m.color||"#8A8378"} 45%, #3A2A20)" onclick="openPage('${p.id}')">
-    <div class="cat"><i style="background:${tone(m)}"></i>${esc(m.name)}</div>
-    <button class="more" aria-label="更多操作" title="更新 / 离线 / 编辑" onclick="event.stopPropagation();toggleMenu('${p.id}',this)">⋯</button>
+  const og=inOrg();
+  return `<div class="card${CACHED.has(p.id)?" cached":""}${og?" orgcard":""}${og&&selPages.has(p.id)?" picked":""}" data-id="${p.id}" style="--edge:color-mix(in srgb, ${m.color||"#8A8378"} 45%, #3A2A20)" onclick="${og?`toggleSel('${p.id}')`:`openPage('${p.id}')`}">
+    ${og?`<span class="ck"></span>`:""}<div class="cat"><i style="background:${tone(m)}"></i>${esc(m.name)}</div>
+    <button class="more"${og?' style="display:none"':''} aria-label="更多操作" title="更新 / 离线 / 编辑" onclick="event.stopPropagation();toggleMenu('${p.id}',this)">⋯</button>
     <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="color:var(--faint)">暂无简介</p>`}
     <div class="meta">${tags}${meta}</div>
     ${pct>0?`<div class="bar"><i style="width:${pct}%;background:${tone(m)}"></i></div>`:""}</div>`;
@@ -716,12 +718,13 @@ function toggleMenu(id,btn){
   const mn=document.createElement("div"); mn.className="menu"; mn.onclick=e=>e.stopPropagation();
   mn.innerHTML=`<button onclick="closeMenus();updateDoc('${id}')">更新正文…</button>
     <button onclick="closeMenus();cacheOne('${id}')">${CACHED.has(id)?"重新存离线":"存为离线"}</button>
+    <button onclick="closeMenus();startOrgWith('${id}')">移到其他分类…</button>
     <div class="sep"></div><button onclick="closeMenus();openEdit('${id}')">编辑信息</button>`;
   card.appendChild(mn);
 }
 function closeMenus(){ document.querySelectorAll(".menu").forEach(x=>{ const c=x.closest(".card"); if(c) c.style.zIndex=""; x.remove(); }); openMenuId=null; }
 document.addEventListener("click",()=>{ if(document.querySelector(".menu")) closeMenus(); });
-function setModule(id){ activeModule=id; render(); window.scrollTo(0,0); }
+function setModule(id){ activeModule=id; orgMode=false; selPages.clear(); render(); window.scrollTo(0,0); }
 async function cacheOne(id){
   const p=data.pages.find(x=>x.id===id); if(!p) return;
   if(!("caches" in window) || !location.protocol.startsWith("http")){ toast("请在网址版里使用离线缓存"); return; }
@@ -958,44 +961,12 @@ function renderSettings(){
                 : on ? "已连接 "+c.repo+"：上传、更新、删除会自动同步到线上和你的其他设备。"
                      : "这个浏览器还没连接 GitHub：可以看书，但上传 / 更新 / 删除不会同步。填好下面的仓库和令牌即可。";
   document.getElementById("syncSum").textContent= ghState==="bad" ? "令牌已失效 · 需要更新" : on ? "已连接 · "+c.repo : "未连接 · 点开填写令牌";
-  renderPageGroups();
   const ml=document.getElementById("moduleList");
   ml.innerHTML=data.modules.map(m=>{ const n=data.pages.filter(p=>p.moduleId===m.id).length;
     return `<div class="listrow">${sealHTML(m,"pg-ic")}
       <div class="info"><div class="name">${esc(m.name)}</div><small>${esc(m.folder)}/ · ${n?n+" 本":"空分类（首页不显示）"}</small></div>
       <button class="btn ghost sm danger" onclick="delModule('${m.id}')">删除</button></div>`; }).join("");
 }
-function renderPageGroups(){
-  const box=document.getElementById("pageGroups"); if(!box) return;
-  const mods=data.modules.filter(m=>data.pages.some(p=>p.moduleId===m.id));
-  if(!data.pages.length){ box.innerHTML=`<p style="color:#9aa1ad;font-size:13px">还没有页面。</p>`; updateSelBar(); return; }
-  box.innerHTML=mods.map(m=>{
-    const ps=data.pages.filter(p=>p.moduleId===m.id);
-    const open=expandedMod.has(m.id);
-    const allSel=ps.every(p=>selPages.has(p.id));
-    const rows=open?ps.map(p=>`<div class="pg-row" draggable="true" ondragstart="dragStart(event,'${p.id}')" ondragend="dragEnd()">
-        <input type="checkbox" ${selPages.has(p.id)?"checked":""} onchange="togglePageSel('${p.id}',this.checked)">
-        <div class="pg-t" onclick="openPage('${p.id}')">${esc(p.title)}</div>
-        <select class="mv" onchange="rowMove('${p.id}',this)" title="移到其他分类"><option value="">移到…</option>${data.modules.filter(x=>x.id!==m.id).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>
-        <button class="btn ghost sm" onclick="openEdit('${p.id}')">编辑</button>
-        <button class="btn ghost sm danger" onclick="delPage('${p.id}')">删除</button></div>`).join(""):"";
-    return `<div class="pg-grp">
-      <div class="pg-head" ondragover="dropOver(event)" ondragleave="dropLeave(event)" ondrop="dropOn(event,'${m.id}')">
-        <input type="checkbox" ${allSel?"checked":""} onchange="toggleGroupSel('${m.id}',this.checked)">
-        <div class="pg-hi" onclick="toggleGroup('${m.id}')">${sealHTML(m,"pg-ic")}
-          <span class="pg-nm">${esc(m.name)}</span><span class="pg-cnt">${ps.length} 本</span></div>
-        <span class="pg-chev" onclick="toggleGroup('${m.id}')">${open?"▾":"▸"}</span>
-      </div>${open?`<div class="pg-body">${rows}</div>`:""}</div>`;
-  }).join("");
-  fillMoveTarget(); updateSelBar();
-}
-function updateSelBar(){ const n=selPages.size, total=data.pages.length;
-  const sc=document.getElementById("selCount"); if(sc) sc.textContent = n?("已选 "+n+" 篇"):"未选择";
-  const sa=document.getElementById("selAll"); if(sa) sa.checked = total>0 && n===total; }
-function toggleGroup(id){ if(expandedMod.has(id)) expandedMod.delete(id); else expandedMod.add(id); renderPageGroups(); }
-function togglePageSel(id,ch){ if(ch) selPages.add(id); else selPages.delete(id); renderPageGroups(); }
-function toggleGroupSel(mid,ch){ data.pages.filter(p=>p.moduleId===mid).forEach(p=>{ if(ch) selPages.add(p.id); else selPages.delete(p.id); }); renderPageGroups(); }
-function toggleSelectAll(ch){ selPages = new Set(ch?data.pages.map(p=>p.id):[]); renderPageGroups(); }
 async function downloadSelectedZip(){
   const pages=data.pages.filter(p=>selPages.has(p.id));
   const st=document.getElementById("dlStatus");
@@ -1039,19 +1010,6 @@ async function delPage(id){
 }
 
 /* ---------- 移动文件到其他分类（一次提交，原子完成） ---------- */
-let dragIds=[];
-function fillMoveTarget(){ const sel=document.getElementById("moveTarget"); if(!sel) return; const cur=sel.value;
-  sel.innerHTML=data.modules.map(m=>`<option value="${m.id}">${esc(m.name)}（${data.pages.filter(p=>p.moduleId===m.id).length}）</option>`).join("");
-  if(cur&&data.modules.some(m=>m.id===cur)) sel.value=cur; }
-function moveSelected(){ const t=document.getElementById("moveTarget").value;
-  if(!selPages.size){ toast("先勾选要移动的书"); return; } movePages([...selPages],t); }
-function rowMove(id,el){ const t=el.value; el.value=""; if(t) movePages([id],t); }
-function dragStart(ev,id){ dragIds=selPages.has(id)?[...selPages]:[id]; ev.dataTransfer.effectAllowed="move"; try{ ev.dataTransfer.setData("text/plain",id); }catch(e){}
-  ev.currentTarget.classList.add("dragging"); }
-function dragEnd(){ document.querySelectorAll(".pg-row.dragging,.pg-head.drop-over").forEach(x=>x.classList.remove("dragging","drop-over")); }
-function dropOver(ev){ if(!dragIds.length) return; ev.preventDefault(); ev.currentTarget.classList.add("drop-over"); }
-function dropLeave(ev){ ev.currentTarget.classList.remove("drop-over"); }
-function dropOn(ev,mid){ ev.preventDefault(); const ids=dragIds; dragIds=[]; dragEnd(); if(ids.length) movePages(ids,mid); }
 function renameKeys(obj,remap){ let n=0; if(!obj) return 0; Object.keys(remap).forEach(o=>{ if(obj[o]!==undefined){ obj[remap[o]]=obj[o]; delete obj[o]; n++; } }); return n; }
 async function movePages(ids,targetId){
   const st=document.getElementById("dlStatus"), tm=moduleById(targetId);
@@ -1107,6 +1065,43 @@ async function movePages(ids,targetId){
     toast("已移动 "+moved.length+" 本");
   }catch(e){ st.textContent="移动失败（什么都没改动）："+errMsg(e); toast("移动失败"); }
 }
+
+/* ---------- 书架整理模式：勾选 → 移动 / 下载 / 删除 ---------- */
+let orgMode=false;
+function inOrg(){ return orgMode && activeModule!=="all"; }
+function toggleOrg(){ orgMode=!orgMode; selPages.clear(); render(); }
+function startOrgWith(id){ orgMode=true; selPages=new Set([id]); render(); }
+function toggleSel(id){ if(selPages.has(id)) selPages.delete(id); else selPages.add(id);
+  const el=document.querySelector('.card[data-id="'+id+'"]'); if(el) el.classList.toggle("picked",selPages.has(id)); updateOrgBar(); }
+function orgSelectAll(){ const ids=data.pages.filter(p=>p.moduleId===activeModule).map(p=>p.id);
+  const all=ids.every(i=>selPages.has(i)); ids.forEach(i=>all?selPages.delete(i):selPages.add(i));
+  document.querySelectorAll(".card[data-id]").forEach(el=>el.classList.toggle("picked",selPages.has(el.dataset.id))); updateOrgBar(); }
+function updateOrgBar(){ const bar=document.getElementById("orgbar"); if(!bar) return;
+  if(!inOrg()){ bar.classList.remove("show"); return; }
+  bar.classList.add("show");
+  document.getElementById("orgCount").textContent=selPages.size?("已选 "+selPages.size+" 本"):"点书卡来选择";
+  const sel=document.getElementById("orgTarget"), cur=sel.value;
+  sel.innerHTML='<option value="">移到…</option>'+data.modules.filter(m=>m.id!==activeModule).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join("");
+  if(cur&&sel.querySelector('option[value="'+cur+'"]')) sel.value=cur;
+  document.getElementById("orgHint").style.display=ghOn()?"none":"inline"; }
+function orgMove(){ const t=document.getElementById("orgTarget").value;
+  if(!selPages.size){ toast("先点选要移动的书"); return; } if(!t){ toast("先在「移到…」里选目标分类"); return; }
+  movePages([...selPages],t); }
+function orgDownload(){ if(!selPages.size){ toast("先点选要下载的书"); return; } downloadSelectedZip(); }
+async function orgDelete(){
+  const ids=[...selPages]; if(!ids.length){ toast("先点选要删除的书"); return; }
+  if(!ghOn()){ toast("删除需要先连接 GitHub（设置 → GitHub 令牌）"); return; }
+  const ps=ids.map(id=>data.pages.find(p=>p.id===id)).filter(Boolean);
+  if(!confirm("删除所选 "+ps.length+" 本？\n\n"+ps.slice(0,6).map(p=>"《"+p.title+"》").join("、")+(ps.length>6?" 等":"")+"\n\n将彻底删除原文件（仍可在 GitHub 提交历史中找回）。")) return;
+  try{
+    for(let i=0;i<ps.length;i++){ const p=ps[i]; toast("正在删除 "+(i+1)+"/"+ps.length+"…"); const path=relPath(p);
+      let got=null; try{ got=await ghGet(path); }catch(e){}
+      if(got) await ghDelete(path,got.sha,"删除文件："+p.file);
+      DELETED.add(p.id); data.pages=data.pages.filter(x=>x.id!==p.id); unindexDoc(p.id); }
+    selPages.clear(); saveLocal(); render(); await pushCatalog("删除 "+ps.length+" 本"); toast("已删除 "+ps.length+" 本并同步");
+  }catch(e){ saveLocal(); render(); toast("删除出错："+errMsg(e)); }
+}
+async function downloadAll(){ selPages=new Set(data.pages.map(p=>p.id)); await downloadSelectedZip(); selPages.clear(); }
 const CATS=[
   {icon:"📚",name:"综合通识",color:"#8A8378"},{icon:"🏛️",name:"历史",color:"#A07A55"},
   {icon:"📖",name:"文学",color:"#A0625A"},{icon:"⚖️",name:"政治法律",color:"#6A7699"},
