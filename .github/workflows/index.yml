@@ -1,8 +1,8 @@
-name: 重建目录校验与全文索引
+name: 按文件夹生成目录与全文索引
 on:
   push:
     branches: [main]
-    paths: ["**/*.html", "catalog.json"]
+    paths: ["**/*.html"]
   workflow_dispatch:
 permissions:
   contents: write
@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 scripts/build_index.py
+      - run: python3 scripts/build_library.py
       - name: 提交索引变化
         run: |
-          if [ -n "$(git status --porcelain search-index.json)" ]; then
+          if [ -n "$(git status --porcelain catalog.json search-index.json reading.json)" ]; then
             git config user.name "library-bot"; git config user.email "bot@users.noreply.github.com"
-            git add search-index.json && git commit -m "全文索引：自动重建" && git push
+            git add catalog.json search-index.json reading.json && git commit -m "目录与全文索引：自动生成" && git push
           fi
