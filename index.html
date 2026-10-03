@@ -170,6 +170,12 @@
   .pg-body{border-top:1px solid var(--line)}
   .pg-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid #F1EBDF}
   .pg-row:first-child{border-top:0}
+  .pg-row[draggable=true]{cursor:grab}
+  .pg-row.dragging{opacity:.4}
+  .pg-head.drop-over{background:#E8DFC8;box-shadow:inset 0 0 0 2px var(--accent)}
+  .mv{border:1px solid var(--line-2);background:var(--paper);border-radius:7px;padding:4px 6px;font-size:12.5px;color:var(--ink-2);max-width:112px;cursor:pointer}
+  .mvbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 12px;margin-bottom:12px;background:var(--paper-2);border:1px dashed var(--line-2);border-radius:var(--r)}
+  .mvbar select{border:1px solid var(--line-2);background:var(--paper);border-radius:7px;padding:6px 8px;font-size:13px;color:var(--ink)}
   .pg-row .pg-t{flex:1;min-width:0;font-size:13.5px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pg-row .pg-t:hover{color:var(--accent)}
   .listrow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line)}
@@ -396,7 +402,7 @@
     <p class="set-sub">管理你的藏书、分类、同步与安装。点开每一项查看详情。</p>
 
     <details class="sec" id="sec-docs" open>
-      <summary><span class="s-t">文档管理</span><span class="s-d">批量下载 · 编辑 · 删除</span><span class="s-c">›</span></summary>
+      <summary><span class="s-t">文档管理</span><span class="s-d">移动 · 下载 · 编辑 · 删除</span><span class="s-c">›</span></summary>
       <div class="sb">
         <div class="dlbar">
           <label style="display:flex;align-items:center;gap:7px;font-size:13.5px;cursor:pointer"><input type="checkbox" id="selAll" onchange="toggleSelectAll(this.checked)"> 全选</label>
@@ -404,6 +410,12 @@
           <span style="flex:1"></span>
           <button class="btn primary sm" onclick="downloadSelectedZip()">下载所选（ZIP）</button>
           <button class="btn ghost sm" onclick="downloadRepoZip()">整库压缩包</button>
+        </div>
+        <div class="mvbar">
+          <span style="font-size:13px;color:var(--ink-2)">📂 把所选移到</span>
+          <select id="moveTarget"></select>
+          <button class="btn primary sm" onclick="moveSelected()">移动</button>
+          <span style="font-size:12px;color:var(--muted)">也可在每本书右侧直接选「移到…」，或把整行拖到分类标题上（电脑）</span>
         </div>
         <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
         <div id="pageGroups"></div>
@@ -961,20 +973,21 @@ function renderPageGroups(){
     const ps=data.pages.filter(p=>p.moduleId===m.id);
     const open=expandedMod.has(m.id);
     const allSel=ps.every(p=>selPages.has(p.id));
-    const rows=open?ps.map(p=>`<div class="pg-row">
+    const rows=open?ps.map(p=>`<div class="pg-row" draggable="true" ondragstart="dragStart(event,'${p.id}')" ondragend="dragEnd()">
         <input type="checkbox" ${selPages.has(p.id)?"checked":""} onchange="togglePageSel('${p.id}',this.checked)">
         <div class="pg-t" onclick="openPage('${p.id}')">${esc(p.title)}</div>
+        <select class="mv" onchange="rowMove('${p.id}',this)" title="移到其他分类"><option value="">移到…</option>${data.modules.filter(x=>x.id!==m.id).map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>
         <button class="btn ghost sm" onclick="openEdit('${p.id}')">编辑</button>
         <button class="btn ghost sm danger" onclick="delPage('${p.id}')">删除</button></div>`).join(""):"";
     return `<div class="pg-grp">
-      <div class="pg-head">
+      <div class="pg-head" ondragover="dropOver(event)" ondragleave="dropLeave(event)" ondrop="dropOn(event,'${m.id}')">
         <input type="checkbox" ${allSel?"checked":""} onchange="toggleGroupSel('${m.id}',this.checked)">
         <div class="pg-hi" onclick="toggleGroup('${m.id}')">${sealHTML(m,"pg-ic")}
           <span class="pg-nm">${esc(m.name)}</span><span class="pg-cnt">${ps.length} 本</span></div>
         <span class="pg-chev" onclick="toggleGroup('${m.id}')">${open?"▾":"▸"}</span>
       </div>${open?`<div class="pg-body">${rows}</div>`:""}</div>`;
   }).join("");
-  updateSelBar();
+  fillMoveTarget(); updateSelBar();
 }
 function updateSelBar(){ const n=selPages.size, total=data.pages.length;
   const sc=document.getElementById("selCount"); if(sc) sc.textContent = n?("已选 "+n+" 篇"):"未选择";
@@ -1023,6 +1036,76 @@ async function delPage(id){
     await pushCatalog("删除："+p.title); unindexDoc(p.id);
     toast(got?"已删除文件并同步":"原文件不在，已移除登记");
   }catch(e){ toast("删除出错："+errMsg(e)); }
+}
+
+/* ---------- 移动文件到其他分类（一次提交，原子完成） ---------- */
+let dragIds=[];
+function fillMoveTarget(){ const sel=document.getElementById("moveTarget"); if(!sel) return; const cur=sel.value;
+  sel.innerHTML=data.modules.map(m=>`<option value="${m.id}">${esc(m.name)}（${data.pages.filter(p=>p.moduleId===m.id).length}）</option>`).join("");
+  if(cur&&data.modules.some(m=>m.id===cur)) sel.value=cur; }
+function moveSelected(){ const t=document.getElementById("moveTarget").value;
+  if(!selPages.size){ toast("先勾选要移动的书"); return; } movePages([...selPages],t); }
+function rowMove(id,el){ const t=el.value; el.value=""; if(t) movePages([id],t); }
+function dragStart(ev,id){ dragIds=selPages.has(id)?[...selPages]:[id]; ev.dataTransfer.effectAllowed="move"; try{ ev.dataTransfer.setData("text/plain",id); }catch(e){}
+  ev.currentTarget.classList.add("dragging"); }
+function dragEnd(){ document.querySelectorAll(".pg-row.dragging,.pg-head.drop-over").forEach(x=>x.classList.remove("dragging","drop-over")); }
+function dropOver(ev){ if(!dragIds.length) return; ev.preventDefault(); ev.currentTarget.classList.add("drop-over"); }
+function dropLeave(ev){ ev.currentTarget.classList.remove("drop-over"); }
+function dropOn(ev,mid){ ev.preventDefault(); const ids=dragIds; dragIds=[]; dragEnd(); if(ids.length) movePages(ids,mid); }
+function renameKeys(obj,remap){ let n=0; if(!obj) return 0; Object.keys(remap).forEach(o=>{ if(obj[o]!==undefined){ obj[remap[o]]=obj[o]; delete obj[o]; n++; } }); return n; }
+async function movePages(ids,targetId){
+  const st=document.getElementById("dlStatus"), tm=moduleById(targetId);
+  if(!tm){ toast("找不到目标分类"); return; }
+  if(!ghOn()){ toast("移动文件需要先连接 GitHub（设置 → 同步里填一次令牌）"); return; }
+  if(sourceMode==="seed"){ toast("书架还没加载完成，请刷新后再试"); return; }
+  const items=ids.map(id=>data.pages.find(p=>p.id===id)).filter(p=>p&&p.moduleId!==targetId);
+  if(!items.length){ toast("所选的书已经在「"+tm.name+"」里了"); return; }
+  const names=items.slice(0,5).map(p=>"《"+p.title+"》").join("、")+(items.length>5?" 等 "+items.length+" 本":"");
+  if(!confirm("把 "+names+"\n移到「"+tm.name+"」？\n\n阅读进度、书签和批注会一起带过去。")) return;
+  const c=ghCfg(), br=c.branch||"main", base="https://api.github.com/repos/"+c.repo;
+  const J=async(m,u,b)=>{ const r=await fetch(base+u,{method:m,headers:Object.assign({"Content-Type":"application/json"},ghHeaders()),body:b?JSON.stringify(b):undefined,cache:"no-store"});
+    if(!r.ok){ let t=""; try{ t=(await r.json()).message||""; }catch(e){} throw new Error(m+" "+u.split("?")[0]+" 失败 "+r.status+" "+t); } return r.json(); };
+  try{
+    st.textContent="读取仓库…";
+    const ref=await J("GET","/git/ref/heads/"+br), head=ref.object.sha;
+    const commit=await J("GET","/git/commits/"+head);
+    const tree=await J("GET","/git/trees/"+commit.tree.sha+"?recursive=1");
+    if(tree.truncated) throw new Error("仓库文件太多，无法一次读取");
+    const sha={}; tree.tree.forEach(t=>{ if(t.type==="blob") sha[t.path]=t.sha; });
+    const taken=new Set(Object.keys(sha)), moved=[], missing=[], entries=[];
+    for(const p of items){
+      const old=relPath(p); if(!sha[old]){ missing.push(p.title); continue; }
+      let file=p.file, np=tm.folder+"/"+file;
+      if(taken.has(np)){ const mm=file.match(/^(.*?)(\.html?)$/i), b=mm?mm[1]:file, ext=mm?mm[2]:""; let i=2; while(taken.has(tm.folder+"/"+b+"-"+i+ext)) i++; file=b+"-"+i+ext; np=tm.folder+"/"+file; }
+      taken.delete(old); taken.add(np);
+      entries.push({path:np,mode:"100644",type:"blob",sha:sha[old]},{path:old,mode:"100644",type:"blob",sha:null});
+      moved.push({p,old,np,file});
+    }
+    if(!moved.length) throw new Error("仓库里找不到所选文件（目录与文件不一致）");
+    st.textContent="更新目录和阅读记录…";
+    const cat=JSON.parse(await (await ghRaw("catalog.json")).text());
+    if(!Array.isArray(cat.pages)||!Array.isArray(cat.modules)) throw new Error("线上目录格式异常，已取消");
+    if(!cat.modules.some(x=>x.id===tm.id)) cat.modules.push(tm);
+    moved.forEach(m=>{ let rp=cat.pages.find(x=>x.id===m.p.id); if(!rp){ rp=Object.assign({},m.p); cat.pages.push(rp); } rp.moduleId=targetId; rp.file=m.file; });
+    const remap={}; moved.forEach(m=>remap[m.old]=m.np);
+    let rd={positions:{},bookmarks:{},notes:{}}; try{ rd=Object.assign(rd,JSON.parse(await (await ghRaw("reading.json")).text())); }catch(e){}
+    const rn=renameKeys(rd.positions,remap)+renameKeys(rd.bookmarks,remap)+renameKeys(rd.notes,remap);
+    const bc=await J("POST","/git/blobs",{content:JSON.stringify(cat,null,2),encoding:"utf-8"});
+    entries.push({path:"catalog.json",mode:"100644",type:"blob",sha:bc.sha});
+    if(rn){ const br2=await J("POST","/git/blobs",{content:JSON.stringify(rd),encoding:"utf-8"}); entries.push({path:"reading.json",mode:"100644",type:"blob",sha:br2.sha}); }
+    st.textContent="提交…";
+    const nt=await J("POST","/git/trees",{base_tree:commit.tree.sha,tree:entries});
+    const nc=await J("POST","/git/commits",{message:"移动 "+moved.length+" 本到「"+tm.name+"」："+moved.slice(0,3).map(m=>m.p.title).join("、")+(moved.length>3?" 等":""),tree:nt.sha,parents:[head]});
+    await J("PATCH","/git/refs/heads/"+br,{sha:nc.sha});
+    /* 本机同步 */
+    for(const k of ["wikiReadPos.v1","wikiBookmarks.v1","wikiNotes.v1"]){ try{ const o=JSON.parse(localStorage.getItem(k)||"{}"); if(renameKeys(o,remap)) localStorage.setItem(k,JSON.stringify(o)); }catch(e){} }
+    try{ const dc=await caches.open(DOC_CACHE); for(const m of moved) await dc.delete("./__doc/"+encodeURI(m.old)); }catch(e){}
+    moved.forEach(m=>{ CACHED.delete(m.p.id); m.p.moduleId=targetId; m.p.file=m.file; });
+    selPages.clear(); expandedMod.add(targetId); saveLocal(); render(); renderSettings();
+    const renamed=moved.filter(m=>m.file!==m.p.file).length;
+    st.innerHTML="✅ 已把 <b>"+moved.length+"</b> 本移到「"+esc(tm.name)+"」"+(missing.length?"；"+missing.length+" 本因文件缺失已跳过："+esc(missing.join("、")):"")+"。线上几十秒后生效。";
+    toast("已移动 "+moved.length+" 本");
+  }catch(e){ st.textContent="移动失败（什么都没改动）："+errMsg(e); toast("移动失败"); }
 }
 const CATS=[
   {icon:"📚",name:"综合通识",color:"#8A8378"},{icon:"🏛️",name:"历史",color:"#A07A55"},
