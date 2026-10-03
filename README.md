@@ -1,33 +1,32 @@
 # 我的图书馆
 
-与 AI 共建的个人学习页面库。按模块收纳 HTML 学习页，Mac 与手机随时打开、离线可看。
+与 AI 共建的个人学习页面库。按模块收纳 HTML 学习页，Mac 与手机随时打开、可离线看。
+线上地址：https://zhengshell-coder.github.io/study-wiki/
 
 ## 目录结构
 
 ```
-个人 wiki/
-├── index.html        # 首页（浏览 + 管理）
-├── catalog.json      # 目录数据（模块、页面列表）—— 唯一数据源
-├── manifest.webmanifest
-├── sw.js             # 离线缓存
-├── icons/            # App 图标
-├── 历史/  中医/  政治/  经济/  科技/   # 各模块，放对应 HTML
+├── index.html          # 书架首页（继续阅读 / 书目 / 搜索 / 批注 / 设置）
+├── reader.html         # 阅读器（进度、书签、批注、搜索词定位）
+├── catalog.json        # 目录数据（模块、页面列表）—— 唯一数据源
+├── search-index.json   # 全文索引（由 Actions 自动重建，勿手改）
+├── reading.json        # 阅读进度 / 书签 / 批注的同步文件
+├── sw.js  manifest.webmanifest  icon-*.png   # PWA 与离线
+├── scripts/build_index.py                    # 目录校验 + 重建索引
+├── .github/workflows/index.yml               # 推送后自动跑上面的脚本
+└── AI-技术/ 历史/ 中医/ …                    # 各模块文件夹，放对应 HTML
 ```
 
-## 新增一个学习页面
+## 使用
 
-1. 把做好的 HTML 存进对应模块文件夹，例如 `历史/二战.html`
-2. 打开 index.html → ⚙️ 管理 → 添加页面（填标题、选模块、填文件名）
-3. 点「导出 catalog.json」，把文件发给我；我提交并发布
-4. Mac / 手机刷新即可看到
+- **只读**：直接打开网址即可，无需任何令牌。
+- **上传 / 更新 / 删除**：在「设置」里填一次 GitHub 令牌（仅存本机），之后在页面上传书，会自动提交到本仓库；全文索引由 GitHub Actions 自动重建。
+- **本地校验**：`python3 scripts/build_index.py --check`（目录里有但文件不存在时报错；文件未收入目录时提示）。
 
-> 静态站点网页本身无法写服务器文件，所以新增＝改源文件 + 发布一次。
+## 托管
 
-## 托管（私密）
-
-GitHub 私有库 → Cloudflare Pages 自动部署 → Cloudflare Access 仅允许本人邮箱访问。
-两台设备打开同一网址，浏览器「添加到主屏」即成 App 图标，离线可用。
+GitHub Pages（公开）。内容公开可读，请勿放入需要保密的材料。
 
 ## 备份
 
-管理页「导出 catalog.json」可随时留存目录备份；HTML 文件本身在各模块文件夹内，复制即备份。
+「设置」里可导出 catalog.json、打包下载全部书籍；也可直接复制整个仓库。

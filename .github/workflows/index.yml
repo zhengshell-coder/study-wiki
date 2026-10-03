@@ -1,0 +1,20 @@
+name: 重建目录校验与全文索引
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.html", "catalog.json"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/build_index.py
+      - name: 提交索引变化
+        run: |
+          if [ -n "$(git status --porcelain search-index.json)" ]; then
+            git config user.name "library-bot"; git config user.email "bot@users.noreply.github.com"
+            git add search-index.json && git commit -m "全文索引：自动重建" && git push
+          fi

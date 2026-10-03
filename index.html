@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>我的图书馆</title>
-<meta name="theme-color" content="#F6F2EA">
+<meta name="theme-color" content="#EFE7D8">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -195,6 +195,132 @@
   .footer{text-align:center;color:var(--faint);font-size:12px;margin-top:46px;letter-spacing:1px}
   .footer a{color:var(--accent);cursor:pointer}
 
+  .lnk{cursor:pointer;color:var(--accent)!important}
+  .review{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .rv{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:.15s}
+  .rv:hover{border-color:var(--line-2);transform:translateY(-2px)}
+  .rv-q{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--ink);border-left:2px solid var(--gold);padding-left:10px}
+  .rv-n{font-size:13px;color:var(--ink-2);margin-top:8px}
+  .rv-b{font-size:12px;color:var(--muted);margin-top:8px;text-align:right}
+  .results{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2px 18px}
+  .sr{padding:14px 0;border-top:1px solid var(--line);cursor:pointer}
+  .sr:first-child{border-top:0}
+  .sr-t{font-family:var(--serif);font-size:16px;font-weight:600;display:flex;gap:10px;align-items:baseline}
+  .sr-t .c{font-family:var(--sans);font-size:12px;font-weight:400;color:var(--muted)}
+  .sr:hover .sr-t{color:var(--accent)}
+  .sr-s{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.75}
+  .sr-m{font-size:11.5px;color:var(--muted);margin-top:4px}
+  mark{background:#F6E3A6;color:inherit;padding:0 1px;border-radius:2px}
+  .ng{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:4px 18px 8px;margin-bottom:14px}
+  .ng-h{display:flex;align-items:baseline;gap:10px;padding:12px 0 10px;border-bottom:1px solid var(--line)}
+  .ng-t{font-family:var(--serif);font-size:16.5px;font-weight:600;letter-spacing:1px}
+  .ng-c{font-size:12px;color:var(--muted)}
+  .nt{padding:12px 0;border-top:1px solid #F1EBDF;cursor:pointer}
+  .ng-h+.nt{border-top:0}
+  .nt:hover .nt-q,.nt:hover .nt-n{color:var(--accent-2)}
+  .nt-q{font-family:var(--serif);font-size:14.5px;line-height:1.8;border-left:3px solid;padding-left:10px}
+  .nt-n{font-size:13.5px;color:var(--ink);margin-top:6px}
+  .nt.bm .nt-n{margin-top:0;color:var(--ink-2)}
+  .nt-d{font-size:11.5px;color:var(--faint);margin-top:4px}
+  .lock{max-width:420px;margin:30px auto;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 28px}
+  .lock-seal{width:54px;height:54px;border:1.5px solid var(--accent);color:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:26px;font-weight:600;margin-bottom:14px}
+  .lock h2{font-family:var(--serif);font-size:22px;letter-spacing:3px;margin:0 0 6px}
+  .lock p{font-size:13.5px;color:var(--ink-2);margin:0 0 18px}
+  .lock .btn.primary{width:100%;justify-content:center}
+
+
+  /* ================= 图书馆氛围 ================= */
+  :root{--wood:#5C4130;--wood-d:#3E2B1F;--gilt:#C9A96A;--gilt-d:#9C7B45;--seal:#8E3B2E;--bg:#EFE7D8}
+  body{background:
+    radial-gradient(ellipse 120% 60% at 50% -10%, rgba(255,252,242,.75), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(110,80,40,.022) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(110,80,40,.016) 0 1px, transparent 1px 6px),
+    var(--bg);background-attachment:fixed}
+  body::before{content:"";position:fixed;top:0;left:0;right:0;height:7px;z-index:40;
+    background:linear-gradient(180deg,#6B4C36,var(--wood-d));box-shadow:0 2px 6px rgba(40,25,10,.35)}
+  /* 匾额式页头 */
+  .topbar{flex-direction:column;align-items:center;text-align:center;gap:12px;border-bottom:0;padding-bottom:0;margin-bottom:30px}
+  .topbar .spacer{display:none}
+  .brand{display:flex;flex-direction:column;align-items:center}
+  .brand h1{font-size:30px;letter-spacing:10px;padding:12px 30px 12px 40px;color:#2E2217;background:#F8F1E2;
+    border:1px solid var(--gilt-d);box-shadow:inset 0 0 0 4px #F8F1E2, inset 0 0 0 5px var(--gilt), 0 3px 10px rgba(80,55,25,.12)}
+  .brand p{justify-content:center;margin-top:10px}
+  .nav{position:relative;padding:8px 40px 0;gap:34px}
+  .nav::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;border-top:1px solid var(--gilt-d);border-bottom:1px solid var(--gilt-d);opacity:.55}
+  .nav button{font-size:15.5px;letter-spacing:4px}
+  .nav button.active{border-bottom-color:var(--seal);color:#2E2217}
+  /* 分区标题：金色菱纹 */
+  .sec-h{align-items:center}
+  .sec-h h2{display:flex;align-items:center;gap:10px;color:#2E2217}
+  .sec-h h2::before,.sec-h h2::after{content:"";width:6px;height:6px;background:var(--gilt);transform:rotate(45deg);display:inline-block}
+  .sec-h .rule{height:3px;background:none;border-top:1px solid rgba(156,123,69,.45);border-bottom:1px solid rgba(156,123,69,.25)}
+  /* 搜索框：黄铜边 */
+  .search{background:#FBF6EA;border-color:#CDBB98}
+  /* 继续阅读：索书卡 */
+  .ci{background:#FBF6EA repeating-linear-gradient(180deg, transparent 0 25px, rgba(120,150,170,.13) 25px 26px);
+    border:1px solid #D9CBAE;border-top:3px solid var(--seal);border-radius:3px;padding-top:12px;box-shadow:0 2px 6px rgba(80,55,25,.08)}
+  .ci .t{color:#2E2217}
+  /* 今日回顾：摘录笺 */
+  .rv{background:#FBF6EA;border:1px solid #D9CBAE;border-radius:3px;position:relative;padding-top:22px}
+  .rv::before{content:"“";position:absolute;top:-4px;left:12px;font-family:var(--serif);font-size:40px;color:var(--gilt);line-height:1}
+  .rv-q{border-left:0;padding-left:0}
+  /* 最近更新：借阅登记簿 */
+  .recent{background:#FBF6EA;border:1px solid #D9CBAE;border-radius:3px;padding:0 18px 0 30px;position:relative;box-shadow:0 2px 6px rgba(80,55,25,.07)}
+  .recent::before{content:"";position:absolute;left:20px;top:0;bottom:0;border-left:1px solid rgba(142,59,46,.45)}
+  .lg-h{display:flex;gap:14px;padding:10px 0 8px;border-bottom:3px double rgba(156,123,69,.55);font-family:var(--serif);font-size:12.5px;letter-spacing:3px;color:var(--muted)}
+  .lg-h span:first-child{flex:1}
+  .lg-h .lc{width:90px;text-align:right}
+  .lg-h .ld{width:78px;text-align:right}
+  .recent .ri{border-top:1px solid rgba(120,150,170,.22)}
+  .recent .lg-h+.ri{border-top:0}
+  .ri .c{width:90px;text-align:right}
+  .ri .d{font-family:var(--serif)}
+  /* 书卡：书口色条 */
+  .card{background:#FBF6EA;border-color:#D9CBAE;border-radius:4px}
+  .card::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;background:var(--edge,#8A8378);border-radius:0}
+  /* 书柜 */
+  .bookcase{background:none;border:0;padding:0;border-radius:0}
+  .case{padding:14px 14px 0;border-radius:6px;background:linear-gradient(180deg,#6E4F38,#5A3F2D 40%,#4E3626);
+    box-shadow:0 12px 28px rgba(60,38,18,.28), inset 0 1px 0 rgba(255,255,255,.12)}
+  .case-in{position:relative;padding:22px 18px 0;border-radius:2px;
+    background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.12) 35%, rgba(0,0,0,.30)),
+      repeating-linear-gradient(90deg,#3B2A1E 0 2px,#422F21 2px 6px,#39281C 6px 9px,#3F2C20 9px 13px);
+    box-shadow:inset 0 10px 22px rgba(0,0,0,.55), inset 0 -2px 6px rgba(0,0,0,.4)}
+  .spines{display:flex;align-items:flex-end;justify-content:space-evenly;gap:6px;overflow-x:auto;padding:10px 0 0;scrollbar-width:none}
+  .spines::-webkit-scrollbar{display:none}
+  .spine{flex:0 1 auto;min-width:34px;border-radius:4px 4px 1px 1px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;
+    padding:10px 0 8px;transition:transform .25s ease, filter .25s ease;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.34) 0%, rgba(255,255,255,.13) 16%, rgba(255,255,255,.05) 42%, rgba(0,0,0,.08) 72%, rgba(0,0,0,.38) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+      var(--cloth);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.25), 3px 0 4px rgba(0,0,0,.35), -1px 0 0 rgba(255,255,255,.04)}
+  .spine:hover{transform:translateY(-12px);filter:brightness(1.08)}
+  .spine .rib{display:block;width:100%;height:7px;margin:4px 0;
+    background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(255,255,255,.18) 45%, rgba(0,0,0,.45))}
+  .spine .gilt{display:block;width:76%;height:4px;margin:3px 0;border-top:1px solid var(--gilt);border-bottom:1px solid var(--gilt);opacity:.85}
+  .spine .label{flex:1;display:flex;align-items:center;justify-content:center;margin:8px 0;padding:10px 3px;max-height:128px;width:68%;min-width:22px;
+    background:linear-gradient(180deg,#EFE4C9,#E4D6B4);border:1px solid rgba(60,40,20,.45);box-shadow:inset 0 0 0 2px rgba(239,228,201,.9), inset 0 0 0 3px rgba(90,60,30,.35)}
+  .spine .nm{writing-mode:vertical-rl;font-family:var(--serif);font-size:13.5px;font-weight:600;letter-spacing:3px;color:#3A2A1C;
+    max-height:108px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
+  .spine .ct{font-family:var(--serif);font-size:11px;color:var(--gilt);letter-spacing:1px;margin-top:2px}
+  .plank{height:18px;margin:0 -18px;border-radius:0 0 2px 2px;
+    background:linear-gradient(180deg,#9A7050 0%,#80593D 35%,#6A4A33 70%,#553A28 100%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 3px, transparent 3px 11px);
+    background-blend-mode:multiply;box-shadow:0 5px 8px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,235,200,.35)}
+  .case-foot{height:12px}
+  .shelf-cap{font-family:var(--serif);letter-spacing:3px;padding:12px 0 0}
+  /* 页脚：藏书印 */
+  .footer{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .footer::before{content:"藏書";writing-mode:vertical-rl;font-family:var(--serif);font-size:13px;font-weight:600;letter-spacing:2px;
+    color:var(--seal);border:1.5px solid var(--seal);border-radius:3px;padding:6px 3px;opacity:.75}
+  @media (max-width:620px){
+    .brand h1{font-size:23px;letter-spacing:6px;padding:10px 18px 10px 24px}
+    .nav{padding:8px 14px 0;gap:26px}
+    .spines{justify-content:flex-start}
+    .lg-h .lc,.ri .c{width:auto}
+  }
   @media (max-width:620px){
     .wrap{padding-left:16px;padding-right:16px}
     .brand h1{font-size:25px}
@@ -218,6 +344,7 @@
     <div class="spacer"></div>
     <div class="nav">
       <button id="tab-browse" class="active" onclick="switchTab('browse')">书架</button>
+      <button id="tab-notes" onclick="switchTab('notes')">批注</button>
       <button id="tab-settings" onclick="switchTab('settings')">设置</button>
     </div>
   </div>
@@ -232,6 +359,35 @@
       <button class="btn primary" onclick="openUpload()">＋<span class="lbl">上传新书</span></button>
     </div>
     <div id="grid"></div>
+  </div>
+
+  <!-- ============ 批注 ============ -->
+  <div id="view-notes" style="display:none">
+    <h2 class="set-h">我的批注</h2>
+    <p class="set-sub" id="notesSum"></p>
+    <div class="toolbar" style="margin-bottom:22px">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="notesQ" placeholder="在批注和书签里搜索" autocomplete="off" oninput="renderNotes()">
+      </div>
+      <button class="btn ghost" onclick="copyNotes()">复制全部</button>
+      <button class="btn primary" onclick="exportNotes()">导出 Markdown</button>
+    </div>
+    <div id="notesBox"></div>
+  </div>
+
+  <!-- ============ 解锁 ============ -->
+  <div id="view-lock" style="display:none">
+    <div class="lock">
+      <div class="lock-seal">藏</div>
+      <h2>私人图书馆</h2>
+      <p>这里的书只对你开放。请输入你的 GitHub 令牌解锁，每台设备只需要一次。</p>
+      <div class="field"><label>仓库</label><input id="lk_repo" value="zhengshell-coder/study-wiki"></div>
+      <div class="field"><label>访问令牌</label><input id="lk_token" type="password" placeholder="github_pat_…" onkeydown="if(event.key==='Enter')unlock()"></div>
+      <button class="btn primary" onclick="unlock()">解锁</button>
+      <div class="resolved" id="lk_status" style="margin-top:10px"></div>
+      <p class="hint" style="margin-top:16px">手机上：在 Mac 上复制令牌，iPhone 上直接粘贴即可（同一 Apple ID 自带"通用剪贴板"）。</p>
+    </div>
   </div>
 
   <!-- ============ 设置 ============ -->
@@ -251,6 +407,10 @@
         </div>
         <div class="resolved" id="dlStatus" style="margin-bottom:10px"></div>
         <div id="pageGroups"></div>
+        <div class="divider"></div>
+        <p class="sub-h">全文搜索索引</p>
+        <p class="hint">上传、更新时会自动把正文加进索引。如果搜不到某本书的内容，点一下重建。</p>
+        <div class="dlbar"><button class="btn ghost sm" onclick="rebuildSearchIndex()">重建全文索引</button><span id="idxStatus" class="resolved" style="margin:0"></span></div>
       </div>
     </details>
 
@@ -273,7 +433,7 @@
       <div class="sb">
         <div class="state" id="syncState"></div>
         <p class="sub-h">GitHub 连接</p>
-        <p class="hint">上传、更新、删除都靠它同步到线上和手机。令牌只保存在这台设备的这个浏览器里——换浏览器要重新填一次。</p>
+        <p class="hint">令牌是这座私人图书馆的钥匙：没有它看不到书，也不能上传。它只保存在这台设备的这个浏览器里。</p>
         <div class="field"><label>仓库（用户名/仓库名）</label><input id="gh_repo" placeholder="yourname/study-wiki"></div>
         <div class="row">
           <div class="field"><label>分支</label><input id="gh_branch" placeholder="main"></div>
@@ -284,6 +444,7 @@
           <button class="btn ghost" onclick="ghTest()">测试连接</button>
         </div>
         <div class="resolved" id="gh_status" style="margin-top:10px"></div>
+        <div style="margin-top:12px"><button class="btn ghost sm danger" onclick="lockDevice()">在这台设备上退出（清除令牌和离线缓存）</button></div>
         <div class="divider"></div>
         <p class="sub-h">目录备份</p>
         <p class="hint">导出目录为 catalog.json 留存；换设备或出错时导入恢复。</p>
@@ -382,34 +543,62 @@ async function retry(fn, tries){ tries=tries||3; let last; for(let i=0;i<tries;i
 
 /* ---------- boot ---------- */
 async function boot(){
+  if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  document.getElementById("footer").innerHTML='我的图书馆 · 个人学习书房<span id="footInstall" style="display:none"> · <a onclick="installApp()">安装到桌面</a></span>';
+  updateInstallUI();
+  showApp();
   let loaded=false;
-  try{
-    const res=await fetch("./catalog.json",{cache:"no-store"});
-    if(res.ok){ const j=await res.json(); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="file"; loaded=true; } }
-  }catch(e){}
+  try{ const j=JSON.parse(await ghText("catalog.json"));
+    if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="file"; loaded=true; saveLocal(); } }
+  catch(e){ if(/ 401$/.test(e.message||"")){ showLock("令牌已失效（过期或被撤销），请换一个新令牌解锁。"); return; } }
   if(!loaded){ let l=null; try{ l=localStorage.getItem(LS_KEY); }catch(e){}
-    if(l){ try{ const j=JSON.parse(l); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="local"; } }catch(e){} } else sourceMode="seed"; }
+    if(l){ try{ const j=JSON.parse(l); if(j&&Array.isArray(j.modules)&&Array.isArray(j.pages)){ data=j; sourceMode="local"; toast("当前离线：显示上次保存的书架"); } }catch(e){} } }
   const _sb=document.getElementById("searchBox"); if(_sb) _sb.value="";
   render();
-  // 自动填充防护：浏览器有时会把记住的值塞进搜索框，监测到非用户输入就清掉
   setTimeout(()=>{ const s=document.getElementById("searchBox"); if(s && s.value && !s.dataset.typed){ s.value=""; render(); } }, 400);
-  if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});
-  document.getElementById("footer").innerHTML =
-    sourceMode==="file" ? '我的图书馆 · 与 AI 共读<span id="footInstall" style="display:none"> · <a onclick="installApp()">安装到桌面</a></span>'
-                        : "本地预览 · 上线后在网址里用，手机也能同步";
-  updateInstallUI();
   pullReading().then(()=>render()).catch(()=>{});
   checkToken();
+}
+function showLock(msg){
+  ["view-browse","view-settings","view-notes"].forEach(i=>document.getElementById(i).style.display="none");
+  document.getElementById("view-lock").style.display="block";
+  document.querySelector(".topbar .nav").style.visibility="hidden";
+  document.getElementById("syncDot").style.display="none";
+  document.getElementById("statLine").textContent="私人书房 · 需要解锁";
+  const c=ghCfg(); document.getElementById("lk_repo").value=c.repo||"zhengshell-coder/study-wiki";
+  document.getElementById("lk_status").textContent=msg||"";
+}
+function showApp(){
+  document.getElementById("view-lock").style.display="none";
+  document.querySelector(".topbar .nav").style.visibility="";
+  document.getElementById("syncDot").style.display="";
+  document.getElementById("view-browse").style.display="block";
+}
+async function unlock(){
+  const repo=document.getElementById("lk_repo").value.trim(), token=document.getElementById("lk_token").value.trim(), st=document.getElementById("lk_status");
+  if(!repo||!token){ st.textContent="请填写仓库和令牌"; return; }
+  st.textContent="正在验证…";
+  try{ const r=await fetch("https://api.github.com/repos/"+repo,{headers:{Authorization:"Bearer "+token,Accept:"application/vnd.github+json"},cache:"no-store"});
+    if(!r.ok){ st.textContent= r.status===401?"令牌无效或已过期。":(r.status===404?"找不到这个仓库，或令牌没有访问它的权限。":"验证失败："+r.status); return; }
+    const c=ghCfg(); localStorage.setItem(GH_KEY, JSON.stringify({repo, branch:c.branch||"main", token}));
+    document.getElementById("lk_token").value=""; st.textContent=""; boot();
+  }catch(e){ st.textContent="网络错误，请稍后再试"; }
+}
+async function lockDevice(){
+  if(!confirm("在这台设备上退出？\n\n会清除这里保存的令牌和离线缓存，下次打开需要重新输入令牌。你的书和批注不受影响。")) return;
+  const c=ghCfg(); localStorage.setItem(GH_KEY, JSON.stringify({repo:c.repo, branch:c.branch}));
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  try{ await caches.delete(DOC_CACHE); }catch(e){}
+  SIDX=null; SIDX_loading=null; CACHED=new Set();
+  showLock("已在这台设备上退出。");
 }
 
 /* ---------- tabs ---------- */
 function switchTab(w){
-  document.getElementById("view-browse").style.display = w==="browse"?"block":"none";
-  document.getElementById("view-settings").style.display = w==="settings"?"block":"none";
-  document.getElementById("tab-browse").classList.toggle("active", w==="browse");
-  document.getElementById("tab-settings").classList.toggle("active", w==="settings");
+  ["browse","settings","notes"].forEach(k=>{ document.getElementById("view-"+k).style.display = w===k?"block":"none";
+    const t=document.getElementById("tab-"+k); if(t) t.classList.toggle("active", w===k); });
   closeMenus();
-  if(w==="settings") renderSettings(); else render();
+  if(w==="settings") renderSettings(); else if(w==="notes") renderNotes(); else render();
   window.scrollTo(0,0);
 }
 
@@ -450,12 +639,7 @@ function render(){
   const q=(_sb0 && _sb0.dataset.typed)?(_sb0.value||"").toLowerCase().trim():"";
   const box=document.getElementById("grid");
   if(!data.pages.length){ box.innerHTML=emptyHTML("书架还空着","上传第一本 HTML 学习页面，它会出现在这里。"); return; }
-  if(q){
-    const pages=data.pages.filter(p=>{ const m=moduleById(p.moduleId); return (p.title+" "+(p.desc||"")+" "+(p.tags||[]).join(" ")+" "+(m?m.name:"")).toLowerCase().includes(q); }).sort((a,b)=>pageTime(b)-pageTime(a));
-    box.innerHTML=`<div class="crumb"><a onclick="clearSearch()">‹ 返回书架</a><span class="here">搜索</span><span class="n">“${esc(q)}” · ${pages.length} 本</span></div>`+
-      (pages.length?`<div class="grid">${pages.map(cardHTML).join("")}</div>`:emptyHTML("没有找到","换个关键词试试。",true));
-    markCachedStates(); return;
-  }
+  if(q){ renderSearch(box,q); return; }
   if(activeModule!=="all"){
     const m=moduleById(activeModule);
     const pages=data.pages.filter(p=>p.moduleId===activeModule).sort((a,b)=>pageTime(b)-pageTime(a));
@@ -477,20 +661,25 @@ function renderHome(box){
         return `<div class="ci" onclick="openPage('${p.id}')"><div class="t">${esc(p.title)}</div>
         <div class="m"><span>${esc(m?m.name:"")}</span><span>已读 ${v}%</span></div><div class="bar"><i style="width:${v}%"></i></div></div>`; }).join("")+`</div></div>`;
   }
+  const rv=reviewPicks();
+  if(rv.length){
+    h+=`<div class="block"><div class="sec-h"><h2>今日回顾</h2><span class="rule"></span><a class="aside lnk" onclick="reviewShift++;render()">换一批</a></div><div class="review">`+
+      rv.map(({x,g})=>`<div class="rv" onclick="openNote('${g.p.id}','note','${x.id}')"><div class="rv-q">${esc(clip(x.exact,110))}</div>${x.note?`<div class="rv-n">${esc(clip(x.note,90))}</div>`:""}<div class="rv-b">——《${esc(g.p.title)}》</div></div>`).join("")+`</div></div>`;
+  }
   const recent=data.pages.slice().sort((a,b)=>pageTime(b)-pageTime(a)).slice(0,6);
-  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent">`+
+  let rh=`<div class="block"><div class="sec-h"><h2>最近更新</h2><span class="rule"></span></div><div class="recent"><div class="lg-h"><span>书　名</span><span class="lc">分　类</span><span class="ld">登　记</span></div>`+
     recent.map(p=>{ const m=moduleById(p.moduleId);
       return `<div class="ri" onclick="openPage('${p.id}')"><span class="t">${esc(p.title)}</span><span class="c">${esc(m?m.name:"")}</span><span class="d">${fmtDate(p)}</span></div>`; }).join("")+`</div></div>`;
   const mods=data.modules.map(m=>({m,ps:data.pages.filter(p=>p.moduleId===m.id).sort((a,b)=>pageTime(b)-pageTime(a))}))
     .filter(x=>x.ps.length).sort((a,b)=>b.ps.length-a.ps.length);
   h+=`<div class="block"><div class="sec-h"><h2>书目</h2><span class="rule"></span><span class="aside">${mods.length} 类 · ${data.pages.length} 本</span></div>
-    <div class="bookcase"><div class="spines">`+
+    <div class="bookcase"><div class="case"><div class="case-in"><div class="spines">`+
     mods.map(({m,ps},i)=>{ const c=(m.color||"#8A8378");
-      const w=46+Math.min(ps.length,12)*2, code=(m.name||"").charCodeAt(0)||0, hgt=176+((code+i*3)%5)*10;
-      const bg=`color-mix(in srgb, ${c} 36%, #ABA293)`, fg=`color-mix(in srgb, ${c} 30%, #1E1A15)`;
-      return `<div class="spine" style="width:${w}px;height:${hgt}px;background:${bg};color:${fg}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
-        <span class="band"></span><span class="band"></span><span class="nm">${esc(m.name)}</span><span class="band"></span><span class="ct">${ps.length} 本</span></div>`; }).join("")+
-    `</div><div class="plank"></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
+      const w=Math.min(72, 46+Math.min(ps.length,13)*2), code=(m.name||"").charCodeAt(0)||0, hgt=196+((code+i*5)%4)*12;
+      const cloth=`color-mix(in srgb, ${c} 42%, #3A2A20)`;
+      return `<div class="spine" style="flex-basis:${w}px;width:${w}px;height:${hgt}px;--cloth:${cloth}" title="${esc(m.name)} · ${ps.length} 本 · 最新：${esc(ps[0].title)}" onclick="setModule('${m.id}')">
+        <i class="rib"></i><i class="gilt"></i><span class="label"><span class="nm">${esc(m.name)}</span></span><i class="gilt"></i><i class="rib"></i><span class="ct">${ps.length} 册</span></div>`; }).join("")+
+    `</div><div class="plank"></div></div><div class="case-foot"></div></div><div class="shelf-cap">点书脊进入分类</div></div></div>`;
   h+=rh;
   box.innerHTML=h;
 }
@@ -502,7 +691,7 @@ function cardHTML(p){
   const no=RN[relPath(p)]; const nnote=(no&&no.items)?no.items.length:0;
   const d=fmtDate(p);
   const meta=(d?`<span>${d}</span>`:"")+(pct>0?`<span>已读 ${pct}%</span>`:"")+(nbm?`<span>书签 ${nbm}</span>`:"")+(nnote?`<span>批注 ${nnote}</span>`:"")+`<span class="offtag">已离线</span>`;
-  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" onclick="openPage('${p.id}')">
+  return `<div class="card${CACHED.has(p.id)?" cached":""}" data-id="${p.id}" style="--edge:color-mix(in srgb, ${m.color||"#8A8378"} 45%, #3A2A20)" onclick="openPage('${p.id}')">
     <div class="cat"><i style="background:${tone(m)}"></i>${esc(m.name)}</div>
     <button class="more" aria-label="更多操作" title="更新 / 离线 / 编辑" onclick="event.stopPropagation();toggleMenu('${p.id}',this)">⋯</button>
     <h3>${esc(p.title)}</h3>${p.desc?`<p class="desc">${esc(p.desc)}</p>`:`<p class="desc" style="color:var(--faint)">暂无简介</p>`}
@@ -526,11 +715,10 @@ async function cacheOne(id){
   if(!("caches" in window) || !location.protocol.startsWith("http")){ toast("请在网址版里使用离线缓存"); return; }
   try{
     toast("正在存离线：《"+p.title+"》…");
-    const cache=await caches.open("study-wiki-v2");
-    try{ await cache.add("./reader.html"); }catch(e){}
-    const url=pathFor(p);
-    const res=await fetch(url,{cache:"reload"});
-    if(res.ok){ await cache.put(url, res.clone()); CACHED.add(p.id);
+    try{ const sc=await caches.open("library-shell-v1"); await sc.add("./reader.html"); }catch(e){}
+    const cache=await caches.open(DOC_CACHE);
+    const res=await ghRaw(relPath(p));
+    if(res.ok){ await cache.put(docKey(p), new Response(await res.text(),{headers:{"Content-Type":"text/html; charset=utf-8"}})); CACHED.add(p.id);
       const c=document.querySelector('.card[data-id="'+p.id+'"]'); if(c) c.classList.add("cached");
       toast("已存到本机，断网也能看"); }
     else toast("缓存失败（文件可能不存在）");
@@ -538,9 +726,9 @@ async function cacheOne(id){
 }
 async function markCachedStates(){
   if(!("caches" in window)) return;
-  let cache; try{ cache=await caches.open("study-wiki-v2"); }catch(e){ return; }
+  let cache; try{ cache=await caches.open(DOC_CACHE); }catch(e){ return; }
   for(const p of data.pages){
-    try{ const hit=await cache.match(pathFor(p));
+    try{ const hit=await cache.match(docKey(p));
       if(hit){ CACHED.add(p.id); const c=document.querySelector('.card[data-id="'+p.id+'"]'); if(c) c.classList.add("cached"); }
     }catch(e){}
   }
@@ -576,15 +764,14 @@ function readBm(){ try{ return JSON.parse(localStorage.getItem("wikiBookmarks.v1
 function readNotes(){ try{ return JSON.parse(localStorage.getItem("wikiNotes.v1")||"{}"); }catch(e){ return {}; } }
 function rDeriveRepo(){ const c=ghCfg(); if(c.repo) return c.repo; const h=location.hostname, o=(h.indexOf(".github.io")>0)?h.split(".")[0]:""; const seg=location.pathname.split("/").filter(Boolean)[0]; return (o&&seg)?(o+"/"+seg):""; }
 function rMerge(a,b){ const out=Object.assign({},a||{}); const o=b||{}; for(const k in o){ if(!out[k]||((o[k].ts||0)>(out[k].ts||0))) out[k]=o[k]; } return out; }
-async function pullReading(){ const repo=rDeriveRepo(); if(!repo) return;
-  try{ const r=await fetch("https://api.github.com/repos/"+repo+"/contents/reading.json?ref="+encodeURIComponent(ghCfg().branch||"main")+"&t="+Date.now(),{headers:{Accept:"application/vnd.github+json"},cache:"no-store"});
-    if(!r.ok) return; const j=await r.json(); const d=JSON.parse(decodeURIComponent(escape(atob((j.content||"").replace(/\s/g,"")))));
+async function pullReading(){ if(!ghOn()) return;
+  try{ const d=JSON.parse(await ghText("reading.json"));
     localStorage.setItem("wikiReadPos.v1", JSON.stringify(rMerge(readPos(), d.positions||{})));
     localStorage.setItem("wikiBookmarks.v1", JSON.stringify(rMerge(readBm(), d.bookmarks||{})));
     localStorage.setItem("wikiNotes.v1", JSON.stringify(rMerge(readNotes(), d.notes||{})));
   }catch(e){} }
-function openPage(id){ const p=data.pages.find(x=>x.id===id); if(!p) return;
-  window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title)+(p.rev?("&rev="+p.rev):""),"_blank"); }
+function openPage(id, extra){ const p=data.pages.find(x=>x.id===id); if(!p) return;
+  window.open("./reader.html#doc="+encodeURIComponent(relPath(p))+"&title="+encodeURIComponent(p.title)+(extra||""),"_blank"); }
 async function updateDoc(id){
   const p=data.pages.find(x=>x.id===id); if(!p) return;
   if(!ghOn()){ toast("更新需要先连接 GitHub（设置里填一次令牌）"); switchTab('settings'); return; }
@@ -600,8 +787,8 @@ async function updateDoc(id){
       const ex=await ghGet(path);
       await ghPut(path, utf8b64(text), "更新正文："+p.title, ex&&ex.sha);
       p.rev=Date.now(); p.date=new Date().toISOString().slice(0,10);
-      try{ if("caches" in window){ const c=await caches.open("study-wiki-v2"); await c.delete("./"+encodeURI(m?m.folder:"")+"/"+encodeURI(p.file)); } }catch(e){}
-      saveLocal(); await pushCatalog("更新正文："+p.title); render();
+      try{ if("caches" in window){ const c=await caches.open(DOC_CACHE); await c.delete(docKey(p)); CACHED.delete(p.id); } }catch(e){}
+      saveLocal(); await pushCatalog("更新正文："+p.title); render(); indexDoc(p.id, text);
       toast("✅ 已更新《"+p.title+"》，点开即是新内容");
     }catch(e){ toast("更新失败："+errMsg(e)); }
   };
@@ -692,6 +879,7 @@ async function savePage(){
           const exists=await ghGet(targetPath);
           st.innerHTML="更新正文 <b>"+esc(targetPath)+"</b> …";
           await ghPut(targetPath, utf8b64(text), "更新正文："+title, exists&&exists.sha);
+          indexDoc(p.id, text);
           if(oldPath!==targetPath){ const og=await ghGet(oldPath); if(og) await ghDelete(oldPath, og.sha, "移除旧位置："+p.file); }
         } else if(oldMod && oldMod.folder!==mod.folder){
           st.textContent="把文件搬到新分类…";
@@ -736,6 +924,7 @@ async function savePage(){
       else { data.pages.push({id:uid(), moduleId, title, file:fname, desc, tags, date:new Date().toISOString().slice(0,10), rev:Date.now()}); }
       st.textContent="更新目录…";
       await pushCatalog("上传页面："+title);
+      { const _pg=_exist||data.pages[data.pages.length-1]; if(_pg) indexDoc(_pg.id, text); }
       saveLocal(); render(); renderSettings();
       st.innerHTML="✅ 已发布！几十秒后线上/手机刷新可见。";
       toast("上传并同步成功"); setTimeout(closeModal,900);
@@ -808,7 +997,7 @@ async function downloadSelectedZip(){
   const zip=new JSZip(); let ok=0, fail=0, failed=[];
   for(let i=0;i<pages.length;i++){ const p=pages[i]; const m=moduleById(p.moduleId);
     st.innerHTML="正在打包 <b>"+(i+1)+"/"+pages.length+"</b>："+esc(p.title);
-    try{ const r=await fetch(pathFor(p),{cache:"no-store"}); if(r.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await r.blob()); ok++; } else { fail++; failed.push(p.title); } }
+    try{ const r=await ghRaw(relPath(p)); if(r.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await r.blob()); ok++; } else { fail++; failed.push(p.title); } }
     catch(e){ fail++; failed.push(p.title); } }
   if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
   st.textContent="生成压缩包…";
@@ -831,7 +1020,7 @@ async function delPage(id){
     let got=null; try{ got=await ghGet(path); }catch(e){}
     if(got){ await ghDelete(path, got.sha, "删除文件："+p.file); }
     DELETED.add(id); data.pages=data.pages.filter(x=>x.id!==id); saveLocal(); render(); renderSettings();
-    await pushCatalog("删除："+p.title);
+    await pushCatalog("删除："+p.title); unindexDoc(p.id);
     toast(got?"已删除文件并同步":"原文件不在，已移除登记");
   }catch(e){ toast("删除出错："+errMsg(e)); }
 }
@@ -933,15 +1122,15 @@ async function pushCatalog(message){
 
 /* ---------- offline + backup ---------- */
 async function cacheAllOffline(){
-  if(!("caches" in window) || !location.protocol.startsWith("http")){ alert("请在线上网址下使用（直接打开本地文件无法缓存）。"); return; }
-  const st=document.getElementById("offlineStatus");
-  const urls=["./","./index.html","./reader.html","./catalog.json","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-180.png"];
-  data.pages.forEach(p=>urls.push(pathFor(p)));
-  let cache; try{ cache=await caches.open("study-wiki-v2"); }catch(e){ st.textContent="无法访问缓存。"; return; }
-  let ok=0,fail=0;
-  for(let i=0;i<urls.length;i++){ st.innerHTML=`正在缓存 <b>${i+1}/${urls.length}</b> …`;
-    try{ const r=await fetch(urls[i],{cache:"reload"}); if(r.ok){ await cache.put(urls[i], r.clone()); ok++; } else fail++; }catch(e){ fail++; } }
-  st.innerHTML=`✅ 已缓存 <b>${ok}</b> 项${fail?`，<b>${fail}</b> 项失败`:""}。现在断网也能看。`; toast("离线缓存完成");
+  if(!("caches" in window)){ alert("这个浏览器不支持离线缓存。"); return; }
+  const st=document.getElementById("offlineStatus"); let ok=0,fail=0;
+  try{ const sc=await caches.open("library-shell-v1"); for(const u of ["./","./index.html","./reader.html","./manifest.webmanifest"]){ try{ await sc.add(u); }catch(e){} } }catch(e){}
+  const dc=await caches.open(DOC_CACHE);
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; st.innerHTML=`正在缓存 <b>${i+1}/${data.pages.length}</b>：${esc(p.title)}`;
+    try{ const t=await ghText(relPath(p)); await dc.put(docKey(p), new Response(t,{headers:{"Content-Type":"text/html; charset=utf-8"}})); CACHED.add(p.id); ok++; }catch(e){ fail++; } }
+  try{ await loadIndex(true); }catch(e){}
+  saveLocal();
+  st.innerHTML=`✅ 已缓存 <b>${ok}</b> 本${fail?`，<b>${fail}</b> 本失败`:""}。断网也能看、也能搜。`; toast("离线缓存完成");
 }
 function exportData(){ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="catalog.json"; a.click(); toast("已导出备份"); }
@@ -963,7 +1152,7 @@ async function downloadAllZip(){
   const zip=new JSZip(); let ok=0, fail=0, failed=[];
   for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; const m=moduleById(p.moduleId);
     st.innerHTML="正在打包 <b>"+(i+1)+"/"+data.pages.length+"</b>："+esc(p.title);
-    try{ const res=await fetch(pathFor(p),{cache:"no-store"});
+    try{ const res=await ghRaw(relPath(p));
       if(res.ok){ zip.file((m?m.folder:"未分类")+"/"+p.file, await res.blob()); ok++; } else { fail++; failed.push(p.title); } }
     catch(e){ fail++; failed.push(p.title); } }
   if(!ok){ st.textContent="没有可下载的文件（都获取失败）。"; return; }
@@ -979,6 +1168,128 @@ function downloadRepoZip(){ const repo=rDeriveRepo(); if(!repo){ toast("无法�
   const br=(ghCfg().branch||"main");
   window.open("https://github.com/"+repo+"/archive/refs/heads/"+encodeURIComponent(br)+".zip","_blank");
   const st=document.getElementById("dlStatus"); if(st) st.textContent="已请求整库压缩包下载（含全部文件与框架）。"; }
+
+/* ---------- 私有内容读取（带令牌） ---------- */
+const DOC_CACHE="library-docs-v1";
+function repoURL(path){ const c=ghCfg(); return "https://api.github.com/repos/"+c.repo+"/contents/"+ghEncPath(path)+"?ref="+encodeURIComponent(c.branch||"main"); }
+async function ghRaw(path){
+  if(!ghOn()){ const r=await fetch("./"+ghEncPath(path)+"?t="+Date.now(),{cache:"no-store"}); if(!r.ok) throw new Error("读取 "+path+" 失败 "+r.status); return r; }
+  const r=await fetch(repoURL(path)+"&t="+Date.now(),{headers:Object.assign({},ghHeaders(),{Accept:"application/vnd.github.raw"}),cache:"no-store"});
+  if(r.status===401){ ghState="bad"; updateSync(); }
+  if(!r.ok) throw new Error("读取 "+path+" 失败 "+r.status);
+  return r;
+}
+async function ghText(path){ return await (await ghRaw(path)).text(); }
+async function ghSha(path){
+  const r=await fetch(repoURL(path)+"&t="+Date.now(),{headers:Object.assign({},ghHeaders(),{Accept:"application/vnd.github.object"}),cache:"no-store"});
+  if(r.status===404) return null; if(!r.ok) throw new Error("读取 "+path+" 失败 "+r.status);
+  return (await r.json()).sha;
+}
+function docKey(p){ return "./__doc/"+encodeURI(relPath(p)); }
+
+/* ---------- 全文索引 ---------- */
+const IDX_PATH="search-index.json"; let SIDX=null, SIDX_loading=null;
+function htmlToText(html){ try{ const d=new DOMParser().parseFromString(html,"text/html");
+  d.querySelectorAll("script,style,noscript,svg,template").forEach(x=>x.remove());
+  return ((d.body&&d.body.textContent)||"").replace(/\s+/g," ").trim().slice(0,40000); }catch(e){ return ""; } }
+async function loadIndex(force){
+  if(SIDX&&!force) return SIDX;
+  if(SIDX_loading&&!force) return SIDX_loading;
+  SIDX_loading=(async()=>{
+    try{ const t=await ghText(IDX_PATH); SIDX=JSON.parse(t);
+      try{ const c=await caches.open(DOC_CACHE); await c.put("./__index", new Response(t,{headers:{"Content-Type":"application/json"}})); }catch(e){} }
+    catch(e){ try{ const c=await caches.open(DOC_CACHE); const r=await c.match("./__index"); SIDX=r?await r.json():{v:1,docs:{}}; }catch(e2){ SIDX={v:1,docs:{}}; } }
+    if(!SIDX||!SIDX.docs) SIDX={v:1,docs:{}};
+    return SIDX; })();
+  return SIDX_loading;
+}
+async function saveIndex(msg){ const sha=await ghSha(IDX_PATH); await ghPut(IDX_PATH, utf8b64(JSON.stringify(SIDX)), msg||"更新全文索引", sha); }
+async function indexDoc(id, html){ try{ await loadIndex(true); SIDX.docs[id]={t:htmlToText(html), at:Date.now()}; await saveIndex("全文索引：更新 "+id); }catch(e){ console.warn("索引更新失败",e); } }
+async function unindexDoc(id){ try{ await loadIndex(true); if(SIDX.docs[id]){ delete SIDX.docs[id]; await saveIndex("全文索引：移除 "+id); } }catch(e){} }
+async function rebuildSearchIndex(){
+  const st=document.getElementById("idxStatus"); if(!ghOn()){ toast("需要先连接 GitHub"); return; }
+  const docs={}; let ok=0, fail=0;
+  for(let i=0;i<data.pages.length;i++){ const p=data.pages[i]; st.textContent="正在建立索引 "+(i+1)+"/"+data.pages.length+"：《"+p.title+"》";
+    try{ docs[p.id]={t:htmlToText(await ghText(relPath(p))), at:Date.now()}; ok++; }catch(e){ fail++; } }
+  SIDX={v:1,docs}; SIDX_loading=null; st.textContent="正在保存索引…";
+  try{ await saveIndex("重建全文索引（"+ok+" 本）"); st.textContent="✅ 已为 "+ok+" 本书建立全文索引"+(fail?("，"+fail+" 本失败"):"")+"。"; toast("全文索引已更新"); }
+  catch(e){ st.textContent="保存失败："+errMsg(e); }
+}
+
+/* ---------- 搜索结果 ---------- */
+function curQuery(){ const s=document.getElementById("searchBox"); return (s&&s.dataset.typed)?(s.value||"").toLowerCase().trim():""; }
+function reEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+function markHTML(text,q){ const parts=text.split(new RegExp("("+reEsc(q)+")","ig")); return parts.map((x,i)=>i%2?`<mark>${esc(x)}</mark>`:esc(x)).join(""); }
+function makeSnip(t,i,ql,q){ const a=Math.max(0,i-38), b=Math.min(t.length,i+ql+70); return (a>0?"…":"")+markHTML(t.slice(a,b),q)+(b<t.length?"…":""); }
+function renderSearch(box,q){
+  const res=[];
+  data.pages.forEach(p=>{ const m=moduleById(p.moduleId);
+    const meta=(p.title+" "+(p.desc||"")+" "+(p.tags||[]).join(" ")+" "+(m?m.name:"")).toLowerCase().includes(q);
+    let n=0, snip=""; const e=SIDX&&SIDX.docs[p.id];
+    if(e&&e.t){ const low=e.t.toLowerCase(); let i=low.indexOf(q); if(i>=0){ snip=makeSnip(e.t,i,q.length,q); let j=i; while(j>=0&&n<99){ n++; j=low.indexOf(q,j+q.length); } } }
+    if(meta||n) res.push({p,m,meta,n,snip}); });
+  res.sort((a,b)=>(b.meta-a.meta)||(b.n-a.n)||(pageTime(b.p)-pageTime(a.p)));
+  const loading=!SIDX;
+  box.innerHTML=`<div class="crumb"><a onclick="clearSearch()">‹ 返回书架</a><span class="here">搜索</span><span class="n">“${esc(q)}” · ${res.length} 本${loading?" · 正在加载正文索引…":""}</span></div>`+
+    (res.length?`<div class="results">`+res.map(r=>`<div class="sr" onclick="openPage('${r.p.id}','&q=${encodeURIComponent(q).replace(/'/g,"%27")}')">
+      <div class="sr-t">${markHTML(r.p.title,q)}<span class="c">${esc(r.m?r.m.name:"")}</span></div>
+      ${r.snip?`<div class="sr-s">${r.snip}</div>`:(r.p.desc?`<div class="sr-s">${markHTML(r.p.desc,q)}</div>`:"")}
+      <div class="sr-m">${r.n?`正文 ${r.n>=99?"99+":r.n} 处`:""}${r.n&&r.meta?" · ":""}${r.meta?"书名 / 标签 / 简介匹配":""}</div></div>`).join("")+`</div>`
+      : (loading?"":emptyHTML("没有找到","正文里也没有这个词，换个说法试试。",true)));
+  if(loading) loadIndex().then(()=>{ if(curQuery()===q) render(); });
+}
+
+/* ---------- 批注总览 ---------- */
+const NCOL={ y:"#E3C15A", g:"#7FB98F", b:"#86A9D9", p:"#DE97B4", o:"#E0A869" };
+function fmtTs(ts){ if(!ts) return ""; const d=new Date(ts); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function clip(s,n){ s=(s||"").replace(/\s+/g," "); return s.length>n?s.slice(0,n)+"…":s; }
+function allAnnotations(){
+  const N=readNotes(), B=readBm(); const byPath={}; data.pages.forEach(p=>byPath[relPath(p)]=p);
+  const groups=[]; new Set([...Object.keys(N),...Object.keys(B)]).forEach(path=>{
+    const notes=((N[path]||{}).items)||[], bms=((B[path]||{}).items)||[]; if(!notes.length&&!bms.length) return;
+    const p=byPath[path];
+    groups.push({path,p,title:p?p.title:path.split("/").pop().replace(/\.html?$/i,""),notes,bms,
+      last:Math.max(0,...notes.map(x=>x.ts||0),...bms.map(x=>x.ts||0))}); });
+  return groups.sort((a,b)=>b.last-a.last);
+}
+function openNote(pid,kind,val){ if(!pid){ toast("这本书已不在书架上"); return; } openPage(pid,"&"+kind+"="+encodeURIComponent(val)); }
+function renderNotes(){
+  const qv=(document.getElementById("notesQ").value||"").toLowerCase().trim();
+  const gs=allAnnotations(); let nN=0,nB=0; gs.forEach(g=>{ nN+=g.notes.length; nB+=g.bms.length; });
+  document.getElementById("notesSum").textContent=`共 ${nN} 条批注、${nB} 个书签，来自 ${gs.length} 本书。点任意一条回到原文。`;
+  const box=document.getElementById("notesBox");
+  if(!gs.length){ box.innerHTML=emptyHTML("还没有批注","在阅读器里选中一段文字，点「高亮 · 批注」，它就会出现在这里。",true); return; }
+  let h="";
+  gs.forEach(g=>{ const m=g.p?moduleById(g.p.moduleId):null; const pid=g.p?g.p.id:"";
+    const ns=g.notes.filter(x=>!qv||((x.exact||"")+" "+(x.note||"")+" "+g.title).toLowerCase().includes(qv)).sort((a,b)=>(a.pct||0)-(b.pct||0));
+    const bs=g.bms.filter(x=>!qv||((x.label||"")+" "+g.title).toLowerCase().includes(qv)).sort((a,b)=>(a.pct||0)-(b.pct||0));
+    if(!ns.length&&!bs.length) return;
+    h+=`<div class="ng"><div class="ng-h"><span class="ng-t">${esc(g.title)}</span><span class="ng-c">${esc(m?m.name:(g.p?"":"已不在书架"))}</span></div>`+
+      ns.map(x=>`<div class="nt" onclick="openNote('${pid}','note','${x.id}')"><div class="nt-q" style="border-color:${NCOL[x.color]||NCOL.y}">${esc(x.exact||"")}</div>${x.note?`<div class="nt-n">${esc(x.note)}</div>`:""}<div class="nt-d">${fmtTs(x.ts)}</div></div>`).join("")+
+      bs.map(x=>`<div class="nt bm" onclick="openNote('${pid}','pct','${x.pct}')"><div class="nt-n">书签 · ${esc(x.label||"位置")}</div><div class="nt-d">读到 ${Math.round((x.pct||0)*100)}% · ${fmtTs(x.ts)}</div></div>`).join("")+`</div>`; });
+  box.innerHTML=h||emptyHTML("没有匹配的批注","换个关键词试试。",true);
+}
+function notesMarkdown(){
+  let md="# 我的批注\n\n*导出于 "+fmtTs(Date.now())+"*\n\n";
+  allAnnotations().forEach(g=>{ const m=g.p?moduleById(g.p.moduleId):null;
+    md+="## 《"+g.title+"》"+(m?"（"+m.name+"）":"")+"\n\n";
+    g.notes.slice().sort((a,b)=>(a.pct||0)-(b.pct||0)).forEach(x=>{ md+="> "+(x.exact||"").replace(/\s+/g," ")+"\n\n"; if(x.note) md+=x.note+"\n\n"; md+="*— "+fmtTs(x.ts)+"*\n\n"; });
+    if(g.bms.length){ md+="**书签**\n\n"; g.bms.forEach(x=>{ md+="- "+(x.label||"位置")+"（"+Math.round((x.pct||0)*100)+"%）\n"; }); md+="\n"; } });
+  return md;
+}
+function exportNotes(){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([notesMarkdown()],{type:"text/markdown;charset=utf-8"}));
+  a.download="我的批注_"+fmtTs(Date.now())+".md"; document.body.appendChild(a); a.click(); a.remove(); toast("已导出 Markdown"); }
+async function copyNotes(){ try{ await navigator.clipboard.writeText(notesMarkdown()); toast("已复制全部批注"); }catch(e){ toast("复制失败，请用「导出 Markdown」"); } }
+
+/* ---------- 今日回顾 ---------- */
+let reviewShift=0;
+function reviewPicks(){
+  const pool=[]; allAnnotations().forEach(g=>{ if(!g.p) return; g.notes.forEach(x=>{ if(x.exact) pool.push({x,g}); }); });
+  if(!pool.length) return [];
+  let s=Math.floor(Date.now()/86400000)+reviewShift*7919; const rnd=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+  const arr=pool.slice(); for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr.slice(0,3);
+}
 
 window.addEventListener("storage", e=>{ if(e.key==="wikiReadPos.v1" && document.getElementById("view-browse").style.display!=="none") render(); });
 window.addEventListener("focus", ()=>{ if(document.getElementById("view-browse").style.display!=="none") render(); });

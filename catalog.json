@@ -103,15 +103,6 @@
       "date": "2026-05-31"
     },
     {
-      "id": "mpvi4ivgijm5",
-      "moduleId": "mpvi40l3rkc5",
-      "title": "西方哲学史·时间线学习框架",
-      "file": "西方哲学史·时间线学习框架.html",
-      "desc": "",
-      "tags": [],
-      "date": "2026-06-01"
-    },
-    {
       "id": "mpvifso23d7t",
       "moduleId": "hist",
       "title": "二战史·从战争中思考·全书",
@@ -498,6 +489,26 @@
       "tags": [],
       "date": "2026-09-27",
       "rev": 1790531717483
+    },
+    {
+      "id": "restore0001",
+      "moduleId": "mq6wzyrperex",
+      "title": "哈萨克斯坦数据中心谷全链条洞察",
+      "file": "2026-09-27-哈萨克斯坦数据中心谷.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-09-27",
+      "rev": 1791049094960
+    },
+    {
+      "id": "restore0002",
+      "moduleId": "mq6wzyrperex",
+      "title": "哈萨克斯坦 AI 数据中心洞察 · V5",
+      "file": "AI数据中心·哈萨克斯坦高层汇报-演讲版 V5.html",
+      "desc": "",
+      "tags": [],
+      "date": "2026-09-27",
+      "rev": 1791049094960
     }
   ]
 }
