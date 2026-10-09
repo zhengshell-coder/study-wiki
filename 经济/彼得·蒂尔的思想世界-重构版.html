@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>彼得·蒂尔的思想世界</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;900&display=swap">
+<style>
+/* Layout concept: a drafting sheet. One quiet reading column (about 37 CJK characters per line),
+   a sticky index on the left at wide widths, figures drawn like thin-line technical sections.
+   Cobalt = Thiel's own line of argument; red pencil = tensions, critiques and corrections;
+   bronze = intellectual sources. */
+:root{
+  --paper:#F2F4F5;
+  --surface:#FBFCFC;
+  --ink:#18202B;
+  --ink-2:#2F3845;
+  --muted:#5A6473;
+  --rule:#C9D0D7;
+  --rule-soft:#DFE4E9;
+  --cobalt:#2545A3;
+  --cobalt-wash:rgba(37,69,163,.07);
+  --red:#AE382C;
+  --red-wash:rgba(174,56,44,.07);
+  --bronze:#80612A;
+  --bronze-wash:rgba(128,97,42,.09);
+  --hatch:rgba(24,32,43,.09);
+  --font-display:"Newsreader","Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  --font-body:"Newsreader","Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  --font-latin:"Newsreader","Iowan Old Style",Georgia,serif;
+  --font-ui:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --fs:1.0625rem;
+  --measure:40rem;
+  --wide:52rem;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F131A; --surface:#151A22; --ink:#E7EAEF; --ink-2:#C9D0DA; --muted:#94A0AF;
+    --rule:#2B333F; --rule-soft:#212833;
+    --cobalt:#93AAFF; --cobalt-wash:rgba(147,170,255,.10);
+    --red:#FF917C; --red-wash:rgba(255,145,124,.09);
+    --bronze:#D9B36C; --bronze-wash:rgba(217,179,108,.10);
+    --hatch:rgba(231,234,239,.09);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F131A; --surface:#151A22; --ink:#E7EAEF; --ink-2:#C9D0DA; --muted:#94A0AF;
+  --rule:#2B333F; --rule-soft:#212833;
+  --cobalt:#93AAFF; --cobalt-wash:rgba(147,170,255,.10);
+  --red:#FF917C; --red-wash:rgba(255,145,124,.09);
+  --bronze:#D9B36C; --bronze-wash:rgba(217,179,108,.10);
+  --hatch:rgba(231,234,239,.09);
+  color-scheme:dark;
+}
+:root[data-fs="s"]{--fs:1rem}
+:root[data-fs="l"]{--fs:1.1875rem}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink-2);font-family:var(--font-body);font-size:var(--fs);line-height:1.92;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-kerning:normal}
+::selection{background:var(--cobalt-wash);color:var(--ink)}
+a{color:var(--cobalt);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:2px}
+b,strong{color:var(--ink);font-weight:600}
+em{font-style:normal;color:var(--ink);background:linear-gradient(transparent 62%,var(--cobalt-wash) 62%)}
+i.en,.en{font-family:var(--font-latin);font-style:italic}
+
+/* progress */
+.progress{position:fixed;left:0;right:0;top:0;height:calc(2px + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);z-index:40;pointer-events:none;background:transparent}
+.progress i{display:block;height:2px;width:0;background:var(--cobalt)}
+
+/* shell */
+.shell{padding-inline:max(16px,4vw);padding-block:0 6rem}
+.layout{max-width:76rem;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:3rem}
+@media (min-width:1180px){.layout{grid-template-columns:15.5rem minmax(0,1fr)}}
+.content{min-width:0}
+
+/* masthead */
+.mast{max-width:var(--wide);padding-block:4.5rem 2.5rem;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--font-ui);font-size:.78rem;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.mast h1{font-family:var(--font-display);font-weight:900;color:var(--ink);font-size:clamp(2.3rem,6vw,3.6rem);line-height:1.15;letter-spacing:.01em;margin:.6rem 0 .2rem;text-wrap:balance}
+.mast .en-title{font-family:var(--font-latin);font-style:italic;font-size:clamp(1.05rem,2.4vw,1.35rem);color:var(--muted);margin:0}
+.mast .deck{font-size:1.18rem;line-height:1.85;color:var(--ink);max-width:var(--measure);margin:1.6rem 0 0}
+.mast .meta{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:1.6rem;font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+.mast .meta span{white-space:nowrap}
+.fs-ctl{display:inline-flex;gap:.25rem;align-items:center}
+.fs-ctl button{font:inherit;font-size:.8rem;color:var(--muted);background:transparent;border:1px solid var(--rule);border-radius:3px;padding:.05rem .5rem;cursor:pointer;line-height:1.6}
+.fs-ctl button[aria-pressed="true"]{color:var(--cobalt);border-color:var(--cobalt)}
+
+/* toc */
+.toc{font-family:var(--font-ui);font-size:.84rem;line-height:1.55}
+.toc-inline{max-width:var(--wide);margin-block:2rem 0;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+.toc-inline summary{cursor:pointer;padding:.8rem 1rem;color:var(--ink);font-weight:500;list-style:none}
+.toc-inline summary::-webkit-details-marker{display:none}
+.toc-inline summary::before{content:"＋";display:inline-block;width:1.4em;color:var(--cobalt)}
+.toc-inline[open] summary::before{content:"－"}
+.toc-inline nav{padding:0 1rem 1rem}
+.toc-side{display:none}
+@media (min-width:1180px){
+  .toc-inline{display:none}
+  .toc-side{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 1.5rem);max-height:calc(100vh - 3rem);overflow:auto;padding-block:4.8rem 2rem;padding-right:.5rem;scrollbar-width:thin}
+}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc > nav > ol > li{margin-top:.9rem}
+.toc a{display:block;color:var(--muted);text-decoration:none;padding:.18rem 0 .18rem .7rem;border-left:1px solid var(--rule-soft)}
+.toc a:hover{color:var(--ink)}
+.toc a.part{color:var(--ink);font-weight:500;border-left-color:transparent;padding-left:0}
+.toc a.part small{display:block;font-weight:400;color:var(--muted);font-size:.74rem;letter-spacing:.06em}
+.toc a[aria-current="true"]{color:var(--cobalt);border-left-color:var(--cobalt)}
+.toc a.part[aria-current="true"]{border-left-color:transparent}
+
+/* parts and sections */
+.part{max-width:var(--wide);padding-top:4.5rem}
+.part-head{border-top:2px solid var(--ink);padding-top:1.1rem;margin-bottom:2.2rem;max-width:var(--measure)}
+.part-no{font-family:var(--font-ui);font-size:.8rem;letter-spacing:.16em;color:var(--muted)}
+.part-head h2{font-family:var(--font-display);font-weight:900;color:var(--ink);font-size:clamp(1.75rem,4vw,2.3rem);line-height:1.25;margin:.35rem 0 .15rem;text-wrap:balance}
+.part-head .en{display:block;color:var(--muted);font-size:1.05rem}
+.answers{margin-top:1.1rem;font-family:var(--font-ui);font-size:.88rem;line-height:1.7;color:var(--ink-2);display:grid;grid-template-columns:auto minmax(0,1fr);gap:.2rem .8rem}
+.answers dt{color:var(--cobalt);font-weight:500;white-space:nowrap}
+.answers dd{margin:0}
+
+.sec{max-width:var(--measure);margin-top:3.4rem;scroll-margin-top:1.5rem}
+.sec h3{font-family:var(--font-display);font-weight:600;color:var(--ink);font-size:1.42rem;line-height:1.45;margin:0 0 1rem;text-wrap:balance}
+.sec h3 .num{font-family:var(--font-ui);font-weight:500;font-size:.8rem;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:.25rem}
+.sec h4{font-family:var(--font-display);font-weight:600;color:var(--ink);font-size:1.12rem;margin:2rem 0 .6rem}
+.sec p{margin:0 0 1.05em}
+.lede{font-size:1.1em;color:var(--ink);line-height:1.85;margin-bottom:1.3rem!important}
+.lede::before{content:"要点";display:block;font-family:var(--font-ui);font-size:.72rem;letter-spacing:.18em;color:var(--cobalt);margin-bottom:.15rem}
+.note{font-family:var(--font-ui);font-size:.84rem;line-height:1.75;color:var(--muted)}
+.sec ul,.sec ol.plain{padding-left:1.25em;margin:0 0 1.05em}
+.sec li{margin:.25em 0}
+.sec li::marker{color:var(--muted)}
+
+/* quotes from Thiel and others */
+.q{margin:1.6rem 0;padding:0 0 0 1.2rem;border-left:1px solid var(--ink)}
+.q .orig{font-family:var(--font-latin);font-style:italic;font-size:1.06em;line-height:1.7;color:var(--ink);margin:0}
+.q .zh{margin:.45rem 0 0;color:var(--ink-2)}
+.q .src{display:block;margin-top:.4rem;font-family:var(--font-ui);font-size:.78rem;color:var(--muted);letter-spacing:.02em}
+.q.other{border-left-color:var(--bronze)}
+
+/* source chip */
+.cite{font-family:var(--font-ui);font-size:.74em;color:var(--muted);white-space:nowrap}
+
+/* boxes by role */
+.box{margin:1.8rem 0;padding:1.1rem 1.25rem;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+.box > :last-child{margin-bottom:0}
+.box .box-t{font-family:var(--font-ui);font-size:.76rem;letter-spacing:.14em;color:var(--muted);margin:0 0 .5rem}
+.box.red{border-color:color-mix(in srgb,var(--red) 45%,var(--rule));background:var(--red-wash)}
+.box.red .box-t{color:var(--red)}
+.box.bronze .box-t{color:var(--bronze)}
+.box.cobalt .box-t{color:var(--cobalt)}
+
+/* reasoning chain: a true sequence */
+.chain{list-style:none;margin:1.6rem 0 1.8rem;padding:0;counter-reset:step}
+.chain li{position:relative;padding:0 0 1.05rem 2.6rem;margin:0}
+.chain li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:.15rem;width:1.7rem;height:1.7rem;border:1px solid var(--ink);border-radius:50%;font-family:var(--font-ui);font-size:.78rem;line-height:1.6rem;text-align:center;color:var(--ink);background:var(--paper)}
+.chain li::after{content:"";position:absolute;left:.84rem;top:1.95rem;bottom:.1rem;width:1px;background:var(--rule)}
+.chain li:last-child::after{display:none}
+.chain li:last-child::before{background:var(--cobalt);border-color:var(--cobalt);color:var(--paper)}
+.chain .c{color:var(--ink);font-weight:600;display:block}
+.chain .why{display:block;font-family:var(--font-ui);font-size:.82rem;line-height:1.7;color:var(--muted);margin-top:.1rem}
+.chain .why b{color:var(--bronze);font-weight:500}
+
+/* source entries (part 2) */
+.src-entry{margin-top:3.2rem;max-width:var(--wide);scroll-margin-top:1.5rem}
+.src-entry > header{display:grid;grid-template-columns:minmax(0,1fr);gap:.2rem;border-bottom:1px solid var(--rule);padding-bottom:.8rem;margin-bottom:1.2rem;max-width:var(--measure)}
+.src-entry .tag{font-family:var(--font-ui);font-size:.74rem;letter-spacing:.16em;color:var(--bronze)}
+.src-entry h3{font-family:var(--font-display);font-weight:600;color:var(--ink);font-size:1.42rem;line-height:1.4;margin:0;text-wrap:balance}
+.src-entry .works{font-family:var(--font-ui);font-size:.82rem;color:var(--muted);line-height:1.65}
+.src-body{max-width:var(--measure)}
+.src-body p{margin:0 0 1.05em}
+.took{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:1.4rem 0;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+@media (min-width:720px){.took{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.took > div{padding:.9rem 1rem;border-top:1px solid var(--rule-soft)}
+.took > div:first-child{border-top:0}
+@media (min-width:720px){.took > div{border-top:0;border-left:1px solid var(--rule-soft)}.took > div:first-child{border-left:0}}
+.took h5{margin:0 0 .35rem;font-family:var(--font-ui);font-size:.76rem;letter-spacing:.12em;color:var(--bronze);font-weight:500}
+.took p{margin:0;font-size:.93em;line-height:1.8}
+
+/* tension blocks (part 5) */
+.tension{margin:2.4rem 0;max-width:var(--wide);scroll-margin-top:1.5rem}
+.tension h4{font-family:var(--font-display);font-weight:600;color:var(--ink);font-size:1.16rem;margin:0 0 .8rem;max-width:var(--measure)}
+.tension h4 .t-no{font-family:var(--font-ui);font-size:.76rem;letter-spacing:.12em;color:var(--red);display:block;font-weight:500}
+.t-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-top:1px solid var(--rule)}
+@media (min-width:860px){.t-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.t-grid > div{padding:.8rem 1rem .9rem 0}
+@media (min-width:860px){.t-grid > div + div{padding-left:1rem;border-left:1px solid var(--rule-soft)}}
+.t-grid h5{margin:0 0 .3rem;font-family:var(--font-ui);font-size:.74rem;letter-spacing:.12em;font-weight:500;color:var(--muted)}
+.t-grid .t-a h5{color:var(--cobalt)}
+.t-grid .t-c h5{color:var(--red)}
+.t-grid p{margin:0;font-size:.93em;line-height:1.8}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:1.6rem 0;max-width:var(--wide);-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-family:var(--font-ui);font-size:.86rem;line-height:1.65;color:var(--ink-2)}
+th,td{text-align:left;vertical-align:top;padding:.55rem .7rem;border-bottom:1px solid var(--rule-soft)}
+thead th{font-weight:500;color:var(--ink);border-bottom:1px solid var(--ink);white-space:nowrap}
+tbody th{font-weight:500;color:var(--ink);white-space:nowrap}
+td.num,th.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+caption{caption-side:bottom;text-align:left;padding-top:.6rem;font-size:.8rem;color:var(--muted)}
+
+/* influence matrix */
+.matrix td{text-align:center;font-size:1rem;line-height:1;padding:.55rem .3rem}
+.matrix tbody th{white-space:normal;min-width:5.4rem}
+.matrix td .d{display:inline-block;width:.8rem;height:.8rem;border-radius:50%;border:1.5px solid var(--bronze)}
+.matrix td .d.full{background:var(--bronze)}
+.matrix td .d.half{background:linear-gradient(90deg,var(--bronze) 50%,transparent 50%)}
+.matrix thead th{white-space:normal;text-align:center;font-size:.78rem;min-width:2.6rem;padding:.55rem .25rem}
+.matrix thead th:first-child{text-align:left}
+
+/* figures */
+figure{margin:2.2rem 0;max-width:var(--wide)}
+figcaption{font-family:var(--font-ui);font-size:.82rem;line-height:1.7;color:var(--muted);margin-top:.8rem;max-width:var(--measure)}
+figcaption b{color:var(--ink);font-weight:500}
+.fig-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fig-scroll svg{display:block;min-width:600px;width:100%;height:auto}
+svg text{font-family:var(--font-ui)}
+
+/* architecture figure (HTML) */
+.arch{display:grid;gap:.55rem;font-family:var(--font-ui);font-size:.86rem;line-height:1.6;color:var(--ink-2)}
+.arch .lv{display:grid;grid-template-columns:6.2rem minmax(0,1fr);gap:.9rem;align-items:stretch}
+.arch .lv-name{font-size:.74rem;letter-spacing:.1em;color:var(--muted);padding-top:.75rem;text-align:right;border-right:1px solid var(--rule);padding-right:.8rem}
+.arch .lv-name b{display:block;color:var(--ink);font-size:.86rem;letter-spacing:.02em;font-weight:500}
+.arch .slab{border:1px solid var(--ink);padding:.65rem .9rem;background:var(--surface);border-radius:2px}
+.arch .slab strong{font-family:var(--font-display);font-size:1rem;font-weight:600}
+.arch .slab.key{border-width:2px;border-color:var(--cobalt)}
+.arch .slab.key strong{color:var(--cobalt)}
+.arch .slab.bed{background-image:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 8px)}
+.arch .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+@media (min-width:760px){.arch .cols{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.arch .col{border:1px solid var(--ink);border-top-width:3px;padding:.6rem .7rem;background:var(--surface);border-radius:2px}
+.arch .col strong{display:block;font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--ink)}
+.arch .col span{display:block;font-size:.8rem;color:var(--muted);line-height:1.6}
+.arch .acts{display:flex;flex-wrap:wrap;gap:.35rem .45rem}
+.arch .acts span{border:1px dashed var(--rule);padding:.05rem .5rem;border-radius:2px;font-size:.8rem;white-space:nowrap}
+.arch .up{font-size:.74rem;color:var(--muted);text-align:center;letter-spacing:.08em;margin-left:7.1rem}
+@media (max-width:520px){.arch .lv{grid-template-columns:minmax(0,1fr);gap:.25rem}.arch .lv-name{text-align:left;border-right:0;padding:0}.arch .up{margin-left:0}}
+
+/* 2x2 matrix */
+.quad{display:grid;grid-template-columns:auto repeat(2,minmax(0,1fr));gap:0;font-family:var(--font-ui);font-size:.84rem;line-height:1.6;max-width:var(--measure);margin:1.6rem 0}
+.quad > div{padding:.7rem .8rem;border:1px solid var(--rule-soft);margin:-1px 0 0 -1px}
+.quad .h{background:transparent;color:var(--muted);font-size:.78rem;letter-spacing:.06em;border-color:transparent}
+.quad .cell b{display:block;font-family:var(--font-display);font-size:.98rem;color:var(--ink);font-weight:600}
+.quad .cell.do{border:2px solid var(--cobalt);background:var(--cobalt-wash);position:relative;z-index:1}
+.quad .cell.do b{color:var(--cobalt)}
+
+/* timeline */
+.tl{list-style:none;margin:1.8rem 0;padding:0;max-width:var(--wide)}
+.tl > li{display:grid;grid-template-columns:minmax(0,1fr);gap:.2rem 1.4rem;padding:1.2rem 0;border-top:1px solid var(--rule)}
+@media (min-width:760px){.tl > li{grid-template-columns:9.5rem minmax(0,1fr)}}
+.tl .when{font-family:var(--font-ui);font-variant-numeric:tabular-nums;color:var(--ink);font-weight:500;font-size:.92rem}
+.tl .when small{display:block;font-weight:400;color:var(--muted);font-size:.78rem;letter-spacing:.04em}
+.tl h4{margin:0 0 .35rem!important;font-size:1.1rem}
+.tl p{margin:0 0 .6em}
+.tl .texts{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);line-height:1.7}
+.tl .imprint{font-family:var(--font-ui);font-size:.84rem;line-height:1.7;color:var(--ink-2);border-left:2px solid var(--cobalt);padding-left:.7rem;margin-top:.4rem}
+.tl .imprint b{color:var(--cobalt);font-weight:500}
+
+/* deep dive */
+details.deep{margin:1.4rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+details.deep summary{cursor:pointer;list-style:none;padding:.7rem 0;font-family:var(--font-ui);font-size:.86rem;color:var(--ink)}
+details.deep summary::-webkit-details-marker{display:none}
+details.deep summary::before{content:"展开";font-size:.72rem;letter-spacing:.12em;color:var(--cobalt);border:1px solid var(--cobalt);border-radius:2px;padding:0 .35rem;margin-right:.6rem}
+details.deep[open] summary::before{content:"收起"}
+details.deep > div{padding:0 0 1rem}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:minmax(0,1fr);gap:0;max-width:var(--wide);margin:1.4rem 0}
+@media (min-width:760px){.gloss{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:2rem}}
+.gloss div{padding:.75rem 0;border-top:1px solid var(--rule-soft);min-width:0}
+.gloss dt{color:var(--ink);font-weight:600}
+.gloss dt .en{font-weight:400;color:var(--muted);font-size:.9em;margin-left:.4rem}
+.gloss dd{margin:.2rem 0 0;font-size:.93em;line-height:1.8}
+
+/* reading list */
+.reading{counter-reset:r;list-style:none;padding:0;margin:1.6rem 0;max-width:var(--measure)}
+.reading li{counter-increment:r;position:relative;padding:.9rem 0 .9rem 2.4rem;border-top:1px solid var(--rule-soft)}
+.reading li::before{content:counter(r);position:absolute;left:0;top:.95rem;font-family:var(--font-ui);font-variant-numeric:tabular-nums;color:var(--cobalt);font-weight:500}
+.reading .t{display:block;color:var(--ink);font-weight:600}
+.reading .m{display:block;font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+
+/* errata */
+.errata li{margin:.5em 0}
+.errata .was{color:var(--red);text-decoration:line-through;text-decoration-thickness:1px}
+
+.end{max-width:var(--measure);margin-top:5rem;padding-top:1.2rem;border-top:1px solid var(--rule);font-family:var(--font-ui);font-size:.8rem;color:var(--muted);line-height:1.8}
+
+@media (max-width:520px){
+  body{line-height:1.88}
+  .mast{padding-block:3rem 2rem}
+  .sec h3,.src-entry h3{font-size:1.28rem}
+}
+</style>
+
+</head>
+<body>
+<div class="progress" aria-hidden="true"><i></i></div>
+<div class="shell">
+<div class="layout">
+<aside class="toc toc-side"><nav aria-label="目录"><ol><li data-part="guide"><a class="part" href="#guide"><small>导读</small>怎么读 · 总纲</a><ol><li><a href="#guide">这份文档怎么读</a></li><li><a href="#thesis">一段话总纲</a></li></ol></li><li data-part="p1"><a class="part" href="#p1"><small>第一部分</small>全貌：一张结构图</a><ol><li><a href="#p1-arch">1.1 六层结构</a></li><li><a href="#p1-thread">1.2 贯穿全局的一条线</a></li><li><a href="#p1-keys">1.3 十二个关键词</a></li></ol></li><li data-part="p2"><a class="part" href="#p2"><small>第二部分</small>来源：七个源头</a><ol><li><a href="#p2-girard">2.1 吉拉尔</a></li><li><a href="#p2-strauss">2.2 施特劳斯</a></li><li><a href="#p2-schmitt">2.3 施米特与科耶夫</a></li><li><a href="#p2-christ">2.4 基督教与培根</a></li><li><a href="#p2-liberty">2.5 自由意志主义、托尔金与科幻</a></li><li><a href="#p2-econ">2.6 经济学与金融</a></li><li><a href="#p2-life">2.7 亲身经历</a></li><li><a href="#p2-matrix">2.8 来源矩阵</a></li></ol></li><li data-part="p3"><a class="part" href="#p3"><small>第三部分</small>构造：结论怎样推出</a><ol><li><a href="#p3-premises">3.1 五个前提</a></li><li><a href="#p3-chain1">3.2 从模仿到垄断</a></li><li><a href="#p3-chain2">3.3 从停滞到自由与民主</a></li><li><a href="#p3-chain3">3.4 从9·11到《施特劳斯时刻》</a></li><li><a href="#p3-chain4">3.5 从吉拉尔到敌基督</a></li><li><a href="#p3-chain5">3.6 从确定的未来到创始人</a></li><li><a href="#p3-method">3.7 他的推理方式从哪里来</a></li></ol></li><li data-part="p4"><a class="part" href="#p4"><small>第四部分</small>演进：四十年里的变与不变</a><ol><li><a href="#p4-phases">4.1 八个阶段</a></li><li><a href="#p4-turns">4.2 三次转向</a></li><li><a href="#p4-constants">4.3 不变与变化</a></li><li><a href="#p4-now">4.4 2025—2026：体系怎样解释当下</a></li></ol></li><li data-part="p5"><a class="part" href="#p5"><small>第五部分</small>自洽：这套体系站得住吗</a><ol><li><a href="#p5-glue">5.1 把体系粘在一起的东西</a></li><li><a href="#p5-tensions">5.2 九处张力</a></li><li><a href="#p5-readings">5.3 三种读法</a></li><li><a href="#p5-record">5.4 可检验的判断</a></li></ol></li><li data-part="p6"><a class="part" href="#p6"><small>第六部分</small>读原典：一条阅读路线</a><ol><li><a href="#p6-texts">6.1 蒂尔本人的文本</a></li><li><a href="#p6-sources">6.2 他读过的书</a></li><li><a href="#p6-critics">6.3 传记与批评</a></li></ol></li><li data-part="ax"><a class="part" href="#ax"><small>附录</small>术语、勘误与资料说明</a><ol><li><a href="#ax-gloss">A 术语表</a></li><li><a href="#ax-errata">B 对上一版的评估与勘误</a></li><li><a href="#ax-method">C 资料与核查说明</a></li></ol></li></ol></nav></aside>
+<main class="content">
+
+<header class="mast">
+  <div class="eyebrow">思想人物研究 · 重构版</div>
+  <h1>彼得·蒂尔的思想世界</h1>
+  <p class="en-title">How a contrarian’s mind was built</p>
+  <p class="deck">这份文档追问三件事：蒂尔的思想由哪些部分构成、彼此怎样推出；这些部分各自从哪里来；整套东西是否自洽、在哪里出现裂缝。顺带回答第四件事：它在四十年里怎样一步步长成今天的样子。</p>
+  <div class="meta">
+    <span>六个部分 · 附录三篇</span>
+    <span>资料截至 2026 年 10 月</span>
+    <span class="fs-ctl" role="group" aria-label="字号">字号
+      <button type="button" data-fs="s" aria-pressed="false">小</button>
+      <button type="button" data-fs="m" aria-pressed="true">中</button>
+      <button type="button" data-fs="l" aria-pressed="false">大</button>
+    </span>
+  </div>
+  <details class="toc toc-inline"><summary>目录</summary><nav aria-label="目录"><ol><li data-part="guide"><a class="part" href="#guide"><small>导读</small>怎么读 · 总纲</a><ol><li><a href="#guide">这份文档怎么读</a></li><li><a href="#thesis">一段话总纲</a></li></ol></li><li data-part="p1"><a class="part" href="#p1"><small>第一部分</small>全貌：一张结构图</a><ol><li><a href="#p1-arch">1.1 六层结构</a></li><li><a href="#p1-thread">1.2 贯穿全局的一条线</a></li><li><a href="#p1-keys">1.3 十二个关键词</a></li></ol></li><li data-part="p2"><a class="part" href="#p2"><small>第二部分</small>来源：七个源头</a><ol><li><a href="#p2-girard">2.1 吉拉尔</a></li><li><a href="#p2-strauss">2.2 施特劳斯</a></li><li><a href="#p2-schmitt">2.3 施米特与科耶夫</a></li><li><a href="#p2-christ">2.4 基督教与培根</a></li><li><a href="#p2-liberty">2.5 自由意志主义、托尔金与科幻</a></li><li><a href="#p2-econ">2.6 经济学与金融</a></li><li><a href="#p2-life">2.7 亲身经历</a></li><li><a href="#p2-matrix">2.8 来源矩阵</a></li></ol></li><li data-part="p3"><a class="part" href="#p3"><small>第三部分</small>构造：结论怎样推出</a><ol><li><a href="#p3-premises">3.1 五个前提</a></li><li><a href="#p3-chain1">3.2 从模仿到垄断</a></li><li><a href="#p3-chain2">3.3 从停滞到自由与民主</a></li><li><a href="#p3-chain3">3.4 从9·11到《施特劳斯时刻》</a></li><li><a href="#p3-chain4">3.5 从吉拉尔到敌基督</a></li><li><a href="#p3-chain5">3.6 从确定的未来到创始人</a></li><li><a href="#p3-method">3.7 他的推理方式从哪里来</a></li></ol></li><li data-part="p4"><a class="part" href="#p4"><small>第四部分</small>演进：四十年里的变与不变</a><ol><li><a href="#p4-phases">4.1 八个阶段</a></li><li><a href="#p4-turns">4.2 三次转向</a></li><li><a href="#p4-constants">4.3 不变与变化</a></li><li><a href="#p4-now">4.4 2025—2026：体系怎样解释当下</a></li></ol></li><li data-part="p5"><a class="part" href="#p5"><small>第五部分</small>自洽：这套体系站得住吗</a><ol><li><a href="#p5-glue">5.1 把体系粘在一起的东西</a></li><li><a href="#p5-tensions">5.2 九处张力</a></li><li><a href="#p5-readings">5.3 三种读法</a></li><li><a href="#p5-record">5.4 可检验的判断</a></li></ol></li><li data-part="p6"><a class="part" href="#p6"><small>第六部分</small>读原典：一条阅读路线</a><ol><li><a href="#p6-texts">6.1 蒂尔本人的文本</a></li><li><a href="#p6-sources">6.2 他读过的书</a></li><li><a href="#p6-critics">6.3 传记与批评</a></li></ol></li><li data-part="ax"><a class="part" href="#ax"><small>附录</small>术语、勘误与资料说明</a><ol><li><a href="#ax-gloss">A 术语表</a></li><li><a href="#ax-errata">B 对上一版的评估与勘误</a></li><li><a href="#ax-method">C 资料与核查说明</a></li></ol></li></ol></nav></details>
+</header>
+
+<section class="part" id="guide" aria-labelledby="guide-title" style="padding-top:2.5rem">
+  <div class="sec" style="margin-top:0">
+    <h3 id="guide-title"><span class="num">导读</span>这份文档怎么读</h3>
+    <div class="tbl-wrap" style="margin-top:0">
+      <table>
+        <thead><tr><th>如果你想</th><th>先读</th></tr></thead>
+        <tbody>
+          <tr><th>一小时看懂全局</th><td>第一部分（全貌）和第五部分（自洽）</td></tr>
+          <tr><th>知道思想从哪里来</th><td>第二部分。七个源头都按“原意 → 他拿走了什么 → 怎样改造 → 在哪里出现”来写</td></tr>
+          <tr><th>跟着推理一步步走</th><td>第三部分。五条推理链，每一步都标了依据</td></tr>
+          <tr><th>看清思想怎样演变</th><td>第四部分。八个阶段、三次转向、哪些没变</td></tr>
+          <tr><th>自己去读原典</th><td>第六部分的阅读顺序</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">标注约定：<span style="color:var(--cobalt)">蓝色</span>是蒂尔自己的论证线；<span style="color:var(--red)">红色</span>是张力、批评与勘误；<span style="color:var(--bronze)">铜色</span>是思想来源。引文先列英文原文，再给中文意译，出处写在引文下方。凡是本文的解读而非蒂尔原话，都会注明。</p>
+  </div>
+
+  <div class="sec" id="thesis">
+    <h3><span class="num">总纲</span>一段话说清楚蒂尔</h3>
+    <p class="lede">蒂尔的出发点是一个关于人的判断：欲望是模仿来的。模仿让人趋同，趋同引发竞争和冲突，冲突最终要找一个替罪羊来平息。</p>
+    <p>古代社会靠献祭替罪羊恢复和平。在蒂尔所依从的吉拉尔看来，基督教揭穿了这套机制，现代世界从此只剩两条路：持续创造新东西，让社会保持“正和”；或者在停滞中退回零和与暴力。蒂尔认为，西方从1970年代起走上了后一条路。</p>
+    <p>由此推出他的四个核心命题。企业观：逃离竞争，建立创造性垄断。政治观：没有增长，自由与民主会互相冲突。技术观：原子世界停了步，只有比特在动。末世观：危险除了毁灭，还有一种以“和平与安全”为名、终结历史的统一世界秩序。</p>
+    <p>PayPal、Palantir、Facebook、创始人基金、蒂尔奖学金和他的政治押注，都可以看作这套判断在不同尺度上的下注。</p>
+    <div class="box cobalt">
+      <p class="box-t">这一版改了什么</p>
+      <ul>
+        <li>结构从“四个话题并列”改为“结构 → 来源 → 推理 → 演进 → 自洽”，逐一对应你的三个问题，以及“思想如何形成”的追问。</li>
+        <li>补上上一版缺失的源头：施特劳斯、施米特、科耶夫、基督教末世论、自由意志主义与托尔金，以及他的亲身经历。</li>
+        <li>补上上一版缺失的关键文本：《多元化神话》（1995）、《施特劳斯时刻》（2004）、《乐观的思想实验》（2008）、《未来的终结》（2011）、《反伊甸主义》（2015）、2016年的政治演讲等。</li>
+        <li>修正事实错误和乱码，逐条核对2025—2026年的新材料；无法核实的内容已删除或注明。完整清单见<a href="#ax-errata">附录 B</a>。</li>
+        <li>版式改为单栏长文：行距放宽，每节先给要点，目录随阅读位置高亮，可调字号。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="p1" aria-labelledby="p1-title">
+  <header class="part-head">
+    <div class="part-no">第一部分</div>
+    <h2 id="p1-title">全貌：一张结构图<span class="en">The whole system in one drawing</span></h2>
+    <dl class="answers">
+      <dt>回答</dt><dd>你的问题 (a) 的总览：这套思想由哪几层构成，层与层怎样相互支撑。</dd>
+      <dt>读法</dt><dd>从下往上读结构图；再读 1.2，看把所有层串起来的那条线。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" id="p1-arch">
+    <h3><span class="num">1.1</span>六层结构：从信念到行动</h3>
+    <p class="lede">把蒂尔四十年的文字和行动叠在一起，可以画出一座六层的建筑。下层回答“人是什么、什么最重要”，中层回答“世界出了什么问题”，上层回答“该怎么做”。</p>
+    <figure>
+      <div class="arch" role="img" aria-label="蒂尔思想的六层结构：底层是信念与人性论，中层是认识论与四个核心命题，上层是方法与行动。">
+        <div class="lv"><div class="lv-name"><b>行动</b>下注</div>
+          <div class="slab"><div class="acts"><span>PayPal 1998</span><span>Palantir 2003</span><span>Facebook 2004</span><span>创始人基金 2005</span><span>海上家园 2008</span><span>蒂尔奖学金 2010</span><span>《从0到1》2014</span><span>政治押注 2016—</span><span>敌基督讲座 2023—</span></div></div></div>
+        <div class="up">↑ 把判断变成赌注</div>
+        <div class="lv"><div class="lv-name"><b>方法</b>怎么想</div>
+          <div class="slab">反共识提问 · 寻找秘密 · 先找模仿 · 确定的计划 · 幂律集中 · 两极之间找窄路</div></div>
+        <div class="up">↑ 由四个命题提炼</div>
+        <div class="lv"><div class="lv-name"><b>命题</b>四根柱子</div>
+          <div class="cols">
+            <div class="col"><strong>停滞论</strong><span>1970年代后，原子世界的进步放缓，只有比特还在快速前进</span></div>
+            <div class="col"><strong>垄断论</strong><span>竞争是模仿的陷阱，创造性垄断才养得起创新</span></div>
+            <div class="col"><strong>自由论</strong><span>没有增长，民主滑向零和分配，自由被挤压</span></div>
+            <div class="col"><strong>末世论</strong><span>毁灭与以和平为名的统一世界，是两种末日</span></div>
+          </div></div>
+        <div class="up">↑ 用同一种人性解释四个领域</div>
+        <div class="lv"><div class="lv-name"><b>认识论</b>真理在哪里</div>
+          <div class="slab">共识常是模仿的产物；真正重要的真理是“秘密”，先被少数人看见</div></div>
+        <div class="lv"><div class="lv-name"><b>人性论</b>地基</div>
+          <div class="slab key"><strong>欲望是模仿的</strong>：模仿让人趋同，趋同引发竞争、冲突和替罪羊（吉拉尔）</div></div>
+        <div class="lv"><div class="lv-name"><b>信念</b>岩层</div>
+          <div class="slab bed">个人自由与生命高于一切；历史是线性的、开放的，并且有终局（基督教）</div></div>
+      </div>
+      <figcaption><b>读图：</b>蓝框是承重最多的一层。拿掉吉拉尔的人性论，四个命题就各自成了独立的意见；有了它，四个命题共享同一个原因。行动层的年份是第一次下注的时间。</figcaption>
+    </figure>
+    <p>这张图和上一版文档的“四卷”有一个关键区别：上一版按“停滞、垄断、民主、人工智能”四个话题并列，读者看到的是蒂尔对四件事的看法；这张图按依赖关系分层，读者看到的是这些看法从哪里推出来。前者回答“他怎么想”，后者回答“他为什么这样想”。</p>
+    <p>各层的形成时间也不同。信念和人性论在斯坦福时期（1985—1992）已经成形；停滞论和垄断论是在 PayPal 与互联网泡沫之后（2000年代）才系统化；自由论在2009年成文；末世论在2004年埋下伏笔，到2020年代才公开展开。第四部分会按时间把这个过程摊开。</p>
+  </div>
+
+  <div class="sec" id="p1-thread">
+    <h3><span class="num">1.2</span>贯穿全局的一条线：对“趋同”的警惕</h3>
+    <p class="lede">如果只用一个词概括蒂尔的思想，最合适的可能是“反趋同”。他在每一个尺度上反对的，都是“所有人变得一样”。</p>
+    <p>在市场里，完全竞争意味着所有企业提供同样的东西，利润归零，他因此主张做出“不同”的垄断：“所有成功的企业都是不同的。”在思想上，共识意味着所有人相信同样的东西，他因此追问“很少有人同意你的重要真理”。在国际上，全球化是把已有的东西复制到更多地方（从1到n），他更看重创造新东西（从0到1）。在历史的尽头，一个统一的世界国家意味着所有人生活在同一种秩序里，他把这视为敌基督的形态。</p>
+    <p>这条线贯穿了他三十多年的文字。回忆1980年代的斯坦福时，他说校园里的“多元化”意味着“人们看起来不同，想法却一样”（他1995年的第一本书《多元化神话》写的就是这个）。2012年在斯坦福讲课时，他说：“作为一个社会，我们似乎默认相信某种技术上的历史终结。”2022年在斯坦福的一次演讲结尾，他把敌基督与“一个同质化的、统一世界的极权国家”联系在一起。三个场合，三个领域，指向同一件事。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>尺度</th><th>他反对的“趋同”</th><th>他主张的“差异”</th></tr></thead>
+        <tbody>
+          <tr><th>个人</th><td>名校、律所、投行的精英赛道</td><td>寻找秘密，走没人走的路</td></tr>
+          <tr><th>企业</th><td>完全竞争，彼此模仿</td><td>创造性垄断，从0到1</td></tr>
+          <tr><th>思想</th><td>共识、校园政治正确</td><td>反共识提问，异端</td></tr>
+          <tr><th>国家</th><td>全球化的复制、统一的全球治理</td><td>技术创新、多个相互竞争的政治体、可退出</td></tr>
+          <tr><th>历史</th><td>“历史的终结”：普遍同质的世界国家</td><td>开放的、继续前进的历史</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>这条线的理论根源仍然是吉拉尔。吉拉尔认为，古代社会的危机往往是“差异的危机”：当等级、角色和边界消失，人人成了彼此的镜像，暴力就会蔓延。蒂尔把这个观察推广到经济、政治和历史：差异被抹平的地方，冲突就会上升；而让差异得以和平共存的条件，是增长。这也解释了他为什么把“停滞”看得如此严重：没有增长，差异就不再能共存，只能互相争夺。</p>
+    <p class="note">说明：“反趋同”是本文为了串起全局而提出的解读，蒂尔本人没有用过这个词。它的依据是上表中每一行都能在他的文本里找到对应。读者可以用它做线索，也可以在读完全文后检验它是否成立。</p>
+  </div>
+
+  <div class="sec" id="p1-keys">
+    <h3><span class="num">1.3</span>进入体系的十二个关键词</h3>
+    <p>下面这些词是蒂尔思想的“术语”。每个词后面标出它在本文主要展开的位置；完整定义见附录的术语表。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>关键词</th><th>一句话</th><th>见</th></tr></thead>
+        <tbody>
+          <tr><th>模仿欲望</th><td>我们想要别人想要的东西</td><td><a href="#p2-girard">2.1</a></td></tr>
+          <tr><th>替罪羊</th><td>群体把冲突集中到一个受害者身上，以恢复秩序</td><td><a href="#p2-girard">2.1</a></td></tr>
+          <tr><th>秘密</th><td>重要、真实、但尚未被多数人接受的事</td><td><a href="#p2-strauss">2.2</a></td></tr>
+          <tr><th>从0到1</th><td>创造新东西（纵向进步），区别于复制已有东西（从1到n）</td><td><a href="#p3-chain1">3.2</a></td></tr>
+          <tr><th>创造性垄断</th><td>因为做出了别人做不出的东西而获得的定价权</td><td><a href="#p3-chain1">3.2</a></td></tr>
+          <tr><th>幂律</th><td>少数项目拿走绝大部分回报</td><td><a href="#p3-chain1">3.2</a></td></tr>
+          <tr><th>大停滞</th><td>1970年代后原子世界放缓，比特世界独进</td><td><a href="#p3-chain2">3.3</a></td></tr>
+          <tr><th>零和政治</th><td>没有增长时，政治变成分饼之争</td><td><a href="#p3-chain2">3.3</a></td></tr>
+          <tr><th>退出</th><td>到政治管不到的地方（网络、太空、海洋）建立自由</td><td><a href="#p3-chain2">3.3</a></td></tr>
+          <tr><th>确定 / 不定</th><td>对未来有没有具体计划</td><td><a href="#p3-chain5">3.6</a></td></tr>
+          <tr><th>敌基督</th><td>以“和平与安全”为名统一世界、终结历史的力量</td><td><a href="#p3-chain4">3.5</a></td></tr>
+          <tr><th>拦阻者</th><td>延缓敌基督到来的力量（katechon）</td><td><a href="#p2-schmitt">2.3</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="p2" aria-labelledby="p2-title">
+  <header class="part-head">
+    <div class="part-no">第二部分</div>
+    <h2 id="p2-title">来源：七个源头<span class="en">Where the ideas come from</span></h2>
+    <dl class="answers">
+      <dt>回答</dt><dd>你的问题 (b)：他的哲学、政治、经济、科技思考各自从哪里来。</dd>
+      <dt>读法</dt><dd>七个源头按对体系的承重排序。每个源头先讲原意，再看三格：他拿走了什么、他怎样改造、在哪里看得到。2.8 用一张矩阵汇总。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" style="margin-top:0">
+    <p class="lede">蒂尔的来源分两类：读来的，和活出来的。读来的有六支，活出来的是一串经历。真正有意思的是两类来源怎样互相印证：书给了他解释经历的语言，经历让书里的理论变成了可以下注的判断。</p>
+    <p>读来的六支，大致对应体系的不同层次：吉拉尔给了人性论，施特劳斯给了认识论与写作方式，施米特与科耶夫给了政治观与历史观，基督教和培根给了历史的方向与终点，自由意志主义、托尔金与科幻给了价值和想象，经济学与金融给了分析工具。活出来的经历则决定了他在什么时候、用哪一支理论。</p>
+  </div>
+
+  <!-- 2.1 Girard -->
+  <article class="src-entry" id="p2-girard">
+    <header>
+      <span class="tag">源头一 · 人类学</span>
+      <h3>勒内·吉拉尔：欲望是借来的</h3>
+      <span class="works">René Girard（1923—2015），法国出身的文学批评家与人类学家，1981年起任教于斯坦福。《浪漫的谎言与小说的真实》1961 · 《暴力与神圣》1972 · 《创世以来隐藏的事物》1978 · 《我看见撒旦如闪电坠落》1999 · 《战斗到底》2007</span>
+    </header>
+    <div class="src-body">
+      <p>吉拉尔的理论可以分三步说清。</p>
+      <p><b>第一步，模仿欲望。</b>人并不天生知道自己想要什么，而是看别人想要什么。欲望是一个三角形：主体、榜样、对象。主体想要对象，是因为榜样想要它。小说家早就知道这一点，吉拉尔从塞万提斯、司汤达、普鲁斯特、陀思妥耶夫斯基的小说里把它提炼了出来。</p>
+      <p><b>第二步，竞争与替罪羊。</b>当榜样与模仿者争夺同一个不能分享的对象，两人会越来越像，成为彼此的“镜像”，原本的对象反而被遗忘，剩下的只有对抗。这种冲突会在群体中传染。古代社会的解决办法是：所有人突然一致地把矛头对准一个人，驱逐或杀死他，秩序随之恢复；事后这个受害者常被神化。吉拉尔认为，这就是献祭、神话与禁忌的起源。</p>
+      <p><b>第三步，基督教的揭示。</b>吉拉尔认为，福音书第一次站在受害者一边讲述这个故事：被钉十字架的人是无辜的。《创世以来隐藏的事物》这个书名就出自《马太福音》13:35：“我要开口用比喻，把创世以来所隐藏的事发明出来。”揭穿之后，献祭逐渐失效，现代社会失去了这根旧的安全阀。吉拉尔晚年因此带着启示录的口吻写作：人类要么学会放弃报复，要么在不断升级的冲突中自我毁灭。</p>
+    </div>
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 760 262" role="img" aria-label="吉拉尔的三步：主体模仿榜样的欲望；争夺同一对象的对手变成彼此的镜像；群体一致指向一个替罪羊，秩序暂时恢复。">
+          <defs>
+            <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink)"/></marker>
+            <marker id="ah2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker>
+          </defs>
+          <g style="fill:var(--ink)" font-size="13" font-weight="700" text-anchor="middle">
+            <text x="120" y="26">① 欲望：跟着榜样想要</text>
+            <text x="390" y="26">② 竞争：对手成了镜像</text>
+            <text x="655" y="26">③ 危机：一致对准一人</text>
+          </g>
+          <!-- panel 1 -->
+          <g style="stroke:var(--ink);fill:var(--surface)" stroke-width="1.3">
+            <circle cx="120" cy="88" r="25"/>
+            <circle cx="45" cy="188" r="25"/>
+            <circle cx="195" cy="188" r="25"/>
+          </g>
+          <g style="fill:var(--ink)" font-size="12.5" text-anchor="middle">
+            <text x="120" y="92">对象</text>
+            <text x="45" y="192">主体</text>
+            <text x="195" y="192">榜样</text>
+          </g>
+          <g style="stroke:var(--ink)" stroke-width="1.2" fill="none">
+            <line x1="180" y1="168" x2="136" y2="109" marker-end="url(#ah2)"/>
+            <line x1="60" y1="168" x2="104" y2="109" marker-end="url(#ah2)"/>
+            <line x1="71" y1="188" x2="168" y2="188" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
+          </g>
+          <g style="fill:var(--muted)" font-size="11.5">
+            <text x="168" y="132">想要</text>
+            <text x="72" y="132" text-anchor="end">于是也想要</text>
+            <text x="120" y="214" text-anchor="middle">模仿</text>
+          </g>
+          <!-- arrow between panels -->
+          <g style="stroke:var(--muted)" stroke-width="1.2" fill="none">
+            <line x1="236" y1="140" x2="272" y2="140" marker-end="url(#ah2)"/>
+            <line x1="506" y1="140" x2="548" y2="140" marker-end="url(#ah2)"/>
+          </g>
+          <!-- panel 2 -->
+          <circle cx="390" cy="88" r="25" style="stroke:var(--muted);fill:none" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <text x="390" y="92" text-anchor="middle" font-size="12.5" style="fill:var(--muted)">对象</text>
+          <g style="stroke:var(--ink);fill:var(--surface)" stroke-width="1.3">
+            <circle cx="320" cy="188" r="25"/>
+            <circle cx="460" cy="188" r="25"/>
+          </g>
+          <g style="fill:var(--ink)" font-size="12.5" text-anchor="middle">
+            <text x="320" y="192">对手</text>
+            <text x="460" y="192">对手</text>
+          </g>
+          <line x1="347" y1="188" x2="433" y2="188" style="stroke:var(--red)" stroke-width="1.4" marker-start="url(#ah2r)" marker-end="url(#ah2r)"/>
+          <text x="390" y="216" text-anchor="middle" font-size="11.5" style="fill:var(--red)">互相模仿，越来越像</text>
+          <text x="390" y="134" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">对象被遗忘</text>
+          <!-- panel 3 -->
+          <g style="stroke:var(--ink);fill:var(--surface)" stroke-width="1.2">
+            <circle cx="727" cy="150" r="10"/>
+            <circle cx="691" cy="88" r="10"/>
+            <circle cx="619" cy="88" r="10"/>
+            <circle cx="583" cy="150" r="10"/>
+            <circle cx="619" cy="212" r="10"/>
+            <circle cx="691" cy="212" r="10"/>
+          </g>
+          <g style="stroke:var(--ink)" stroke-width="1" fill="none">
+            <line x1="715" y1="150" x2="685" y2="150" marker-end="url(#ah2)"/>
+            <line x1="685" y1="98" x2="671" y2="122" marker-end="url(#ah2)"/>
+            <line x1="625" y1="98" x2="639" y2="122" marker-end="url(#ah2)"/>
+            <line x1="595" y1="150" x2="625" y2="150" marker-end="url(#ah2)"/>
+            <line x1="625" y1="202" x2="639" y2="178" marker-end="url(#ah2)"/>
+            <line x1="685" y1="202" x2="671" y2="178" marker-end="url(#ah2)"/>
+          </g>
+          <circle cx="655" cy="150" r="24" style="stroke:var(--red);fill:var(--red-wash)" stroke-width="1.6"/>
+          <text x="655" y="154" text-anchor="middle" font-size="12" style="fill:var(--red)">替罪羊</text>
+          <text x="655" y="248" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">冲突转移到一人身上，秩序暂时恢复</text>
+        </svg>
+      </div>
+      <figcaption><b>吉拉尔的机制。</b>蒂尔几乎所有领域的分析都从这三步出发：第①步解释热门赛道与泡沫，第②步解释为什么竞争会毁掉利润，第③步解释政治里的怨恨与他对“点名恶人”的敏感。</figcaption>
+    </figure>
+    <div class="src-body">
+      <p>蒂尔在斯坦福读本科期间（1980年代后期）结识吉拉尔，接触到模仿理论，此后多次公开推崇他。2007年，他出资与人共同成立 Imitatio 基金会，专门推广吉拉尔的研究；2016年1月吉拉尔的追思会上，他是致辞者之一。值得注意的是，《从0到1》全书没有出现吉拉尔的名字，书里用的词是“模仿性竞争”；在作为此书底稿的 CS183 课堂笔记里，第18讲“创始人是受害者，创始人是神”的末尾才明确写道：许多读者会认出吉拉尔对这部分内容的影响。</p>
+      <blockquote class="q">
+        <p class="orig">“Facebook first spread by word of mouth, and it’s about word of mouth, so it’s doubly mimetic. Social media proved to be more important than it looked, because it’s about our natures.”</p>
+        <p class="zh">Facebook 最初靠口碑传播，而它本身又是关于口碑的，所以它是双重模仿的。社交媒体比看上去更重要，因为它关乎我们的天性。</p>
+        <span class="src">蒂尔谈2004年投资 Facebook 的理由，引自《纽约时报》吉拉尔讣告，2015年11月</span>
+      </blockquote>
+      <p>他对替罪羊理论的用法更能说明他怎样改造吉拉尔。据布莱克·马斯特斯的课堂笔记，2012年 CS183 第18讲里他说：“国王是尚未被杀死的替罪羊。每个国王都是活着的神，每个神都是被杀死的国王。”他把创始人放进同一个结构里：社会对他们的态度在崇拜与驱逐之间摇摆。他甚至把“99%对1%”称为这种替罪羊机制的现代说法：“所有人减去一个，对那一个。”吉拉尔用这套理论为无名的受害者辩护；蒂尔用它来理解有权势的少数人为何、又怎样会成为众矢之的。</p>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>模仿欲望，用来解释竞争、热门赛道、泡沫和精英赛道；替罪羊，用来解释创始人的命运、精英的处境与政治里的怨恨；启示录处境，用来解释他对末日与敌基督的关注。</p></div>
+      <div><h5>他怎样改造</h5><p>吉拉尔给的出路是宗教性的：放弃竞争性的欲望，效法基督；他的理论是为了揭穿迫害者、替受害者辩护。蒂尔给的出路是创造性的：做别人没做过的事，从而避开模仿竞争；他更关心的是，创始人和精英怎样避免成为替罪羊。批评者认为，这是把一种关于“放弃”的伦理，改写成了一种关于“胜出”的策略。</p></div>
+      <div><h5>在哪里看得到</h5><p>《从0到1》第4章“竞争的意识形态”与第14章“创始人悖论”（均未点名）；CS183 第18讲；对 Facebook 的投资；Imitatio 基金会；《施特劳斯时刻》；敌基督讲座。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.2 Strauss -->
+  <article class="src-entry" id="p2-strauss">
+    <header>
+      <span class="tag">源头二 · 认识论与写作</span>
+      <h3>列奥·施特劳斯：真理藏在字里行间</h3>
+      <span class="works">Leo Strauss（1899—1973），德裔美国政治哲学家，长期任教于芝加哥大学。《迫害与写作艺术》1952 · 《自然权利与历史》1953 · 《论僭政》1948（后与科耶夫的论争一并出版）</span>
+    </header>
+    <div class="src-body">
+      <p>与蒂尔相关的施特劳斯思想有三点。第一是<b>隐微写作</b>：在思想受迫害的时代，哲学家会把真正的教诲藏在字里行间，表面的文字说给多数人听，真意只留给少数能读懂的人。第二是<b>古今之争</b>：现代政治哲学（马基雅维利、霍布斯、洛克）把政治建立在自我保存、舒适和财产这些“低而稳固”的目标上，放弃了“什么是好生活”的追问；施特劳斯认为，这让自由主义社会在面对真正的敌人时显得软弱。第三是他对<b>世界国家</b>的警告：在与科耶夫的论争中，他认为一个普遍而同质的世界国家，会是一种无处可逃的普遍僭政。</p>
+      <p>2004年7月，蒂尔与他的导师、吉拉尔思想的推动者罗伯特·汉默顿-凯利在斯坦福出资组织了一场为期一周的闭门研讨会，主题是“政治与启示录”，吉拉尔是核心参与者。蒂尔在会上宣读的论文就以施特劳斯为题：《施特劳斯时刻》（2007年收入会议文集《政治与启示录》）。文章依次讨论洛克、施米特、施特劳斯和吉拉尔，施特劳斯一节的小标题是“谨慎前行”。他的意思是：9·11之后，西方必须重新思考自由主义刻意回避的暴力问题，但这些真相不适合大声说出，只能谨慎地说。</p>
+      <p>“秘密”的概念与此同构，但他刻意与神秘主义划清界限。据 CS183 课堂笔记，他说塔罗牌、数字命理那类“隐秘的秘密”无关紧要：“隐秘的真理不是我们要找的。但你应该设法找出重要的真理，而它们往往是隐藏的。”他还在课上引了歌德《浮士德》里的诗句：少数看透真相、又把心交给众人的人，“人类向来把他们钉死、烧死”。</p>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>“真理不在共识里，而在少数人能看见的地方”；对现代自由主义“遗忘了暴力”的诊断；对世界国家的警惕。</p></div>
+      <div><h5>他怎样改造</h5><p>施特劳斯的隐微写作，是哲学家在城邦里的自我保护；蒂尔把“隐藏的真理”变成了创业与投资的方法：“每家伟大的公司都建立在一个秘密之上。”（这一层关联是本文的解读。）还有一处根本的分歧：施特劳斯把现代性的危机追溯到培根式的“征服自然”计划，蒂尔却热烈拥护这个计划。他在政治与宗教上是施特劳斯式的，在技术上却是彻底的现代人。</p></div>
+      <div><h5>在哪里看得到</h5><p>《施特劳斯时刻》；《从0到1》第8章“秘密”；他公开讲话时常见的“话说一半、点到为止”。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.3 Schmitt & Kojeve -->
+  <article class="src-entry" id="p2-schmitt">
+    <header>
+      <span class="tag">源头三 · 政治与历史</span>
+      <h3>施米特与科耶夫：政治不会消失，历史可能被终结</h3>
+      <span class="works">Carl Schmitt（1888—1985），德国法学家：《政治的神学》1922 · 《政治的概念》1932 · 《陆地与海洋》1942 · 《大地的法》1950。Alexandre Kojève（1902—1968），俄裔法国哲学家：《黑格尔导读》1947</span>
+    </header>
+    <div class="src-body">
+      <p><b>施米特</b>有两个概念进入了蒂尔的体系。一是“政治的概念”：政治的本质是区分敌友；自由主义想用经济交换和道德讨论取消政治，但敌意不会因此消失。二是“拦阻者”（katechon）：这个词出自保罗的《帖撒罗尼迦后书》第2章，指在末日之前“拦阻”不法者显露的力量；施米特把它变成政治神学概念，用来理解那些延缓混乱与终结的政治秩序。施米特本人曾加入纳粹党，这是读他时绕不开的背景。</p>
+      <p><b>科耶夫</b>通过讲解黑格尔提出“历史的终结”：人类最终会进入一个“普遍同质国家”，所有人都被平等地承认，不再有根本的冲突。有意思的是，科耶夫后半生是法国经济部的高级官员，参与了关税与贸易总协定和欧洲经济共同体的谈判，是战后国际经济秩序的建造者之一。福山1989年的“历史终结论”是这一思想的通俗版本。</p>
+      <p>这两条线在《施特劳斯时刻》里已经汇合。施米特一节的小标题是“政治的持续存在”，他写道：“如果接受施米特的前提，西方要么输掉战争，要么失去自我。”接着他讨论施米特的反面，也就是科耶夫：“黑格尔派的亚历山大·科耶夫相信，历史的终结将以彻底放弃一切难题为标志。”而施米特对这种统一的恐惧，正是后来蒂尔敌基督论的原型：</p>
+      <blockquote class="q">
+        <p class="orig">“Following the medieval tradition, Schmitt knows and fears that this artificial unity can be brought about only by the shadowy figure of the Antichrist. He will surreptitiously take over the entire world at the end of human history by seducing people with the promise of ‘peace and security’.”</p>
+        <p class="zh">按照中世纪的传统，施米特知道并且畏惧：这种人造的统一只能由敌基督这个暗影般的人物带来。他将在人类历史的终点，以“和平与安全”的许诺诱惑众人，悄然接管整个世界。</p>
+        <span class="src">《施特劳斯时刻》，2004年宣读，2007年出版</span>
+      </blockquote>
+      <p>这段话写于2004年，比他公开大谈敌基督早了近二十年。科耶夫这条线后来还进入了他的停滞论：2012年讲课时他说，“作为一个社会，我们似乎默认相信某种技术上的历史终结”。2026年6月，他在阿斯彭思想节参加的讨论题目就叫“历史终结处的人类”，同台者正是福山。</p>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>施米特：政治无法被取消（9·11之后）；“拦阻者”的概念。科耶夫与施特劳斯之争：统一的世界国家就是历史的终结。</p></div>
+      <div><h5>他怎样改造</h5><p>把“普遍同质国家”放进基督教末世论：以和平为名统一世界的力量，就是敌基督的形态。把“历史的终结”读成停滞：只复制、不创造的世界。“拦阻者”也被重新指派：施米特那里它是帝国或国家秩序；2026年在柏林领奖时，据报道，蒂尔把多个分散的国家主权、竞争和技术进步当作拦阻统一全球秩序的力量。</p></div>
+      <div><h5>在哪里看得到</h5><p>《施特劳斯时刻》的施米特一节；CS183 第1讲；敌基督讲座（2022年起）；阿克塞尔·施普林格奖颁奖演讲（2026）；对全球治理、国际监控体系与“一个世界”方案的一贯敌意。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.4 Christianity & Bacon -->
+  <article class="src-entry" id="p2-christ">
+    <header>
+      <span class="tag">源头四 · 神学</span>
+      <h3>基督教与培根：知识必增长</h3>
+      <span class="works">《但以理书》12:4 · 《帖撒罗尼迦前书》5:3 · 《帖撒罗尼迦后书》2:6—7 · 《哥林多前书》15:26；弗朗西斯·培根《伟大的复兴》1620 · 《新大西岛》1627</span>
+    </header>
+    <div class="src-body">
+      <p>蒂尔在福音派基督徒家庭长大，成年后一直自称基督徒。基督教给他的首先是一种<b>历史观</b>：历史不是循环往复的，它有起点、方向和终局，人的选择会影响结局。这与古希腊的循环时间观、与现代“历史会自动进步”的信念都不同。《施特劳斯时刻》里有一句话很能说明他的读法：“启示录（apocalypse）一词的本义是揭示。”在他看来，基督教揭示的是关于暴力的真相，而这个揭示一旦发生，就无法撤回。</p>
+      <p>他反复援引几段经文。《但以理书》12:4：“必有多人来往奔跑，知识就必增长。”他把这读作科学与技术进步、人员与货物全球流动的预言。《帖撒罗尼迦前书》5:3：“人正说平安稳妥的时候，灾祸忽然临到他们。”他用它说明敌基督兴起的方式。《帖撒罗尼迦后书》2章的“拦阻者”，则是他讨论“谁能延缓敌基督”的依据。</p>
+      <p>把这些线连起来的是<b>培根</b>。培根1620年《伟大的复兴》的卷首图，画着一艘驶出直布罗陀海峡“赫拉克勒斯之柱”的船，下面就印着《但以理书》12:4的拉丁文。在培根那里，科学革命本身就是一项带着末世意味的基督教事业。2025年，蒂尔与萨姆·沃尔夫在《第一要务》合写《驶向世界尽头的航行》，专门讨论这幅卷首图与培根的《新大西岛》。十年前，他在同一刊物发表的《反伊甸主义》已经把这层意思说得很直白：</p>
+      <blockquote class="q">
+        <p class="orig">“Science and technology are natural allies to this Judeo-Western optimism, especially if we remain open to an eschatological frame in which God works through us in building the kingdom of heaven today, here on Earth.”</p>
+        <p class="zh">科学与技术是这种犹太—西方乐观主义的天然盟友，尤其当我们对一种末世论框架保持开放：上帝今天就通过我们，在地上建造天国。</p>
+        <span class="src">《反伊甸主义》，First Things，2015年6月</span>
+      </blockquote>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>线性、开放、有终局的历史观；“知识必增长”作为进步的神学根据；“平安稳妥”与“拦阻者”作为分析政治的概念；对死亡的敌意（保罗称死亡为“尽末了所毁灭的仇敌”）。</p></div>
+      <div><h5>他怎样改造</h5><p>把末世论读成一套关于科学与政治的理论：敌基督会借“和平与安全”管控科学；技术进步与基督教同向，基督教不是要回到伊甸园，而是向前走（2015年《反伊甸主义》）。</p></div>
+      <div><h5>在哪里看得到</h5><p>《反伊甸主义》；敌基督讲座；对延寿研究的资助；拒绝“意识上传”的理由（“受基督教影响的看法”）。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.5 Libertarian, Tolkien, SF -->
+  <article class="src-entry" id="p2-liberty">
+    <header>
+      <span class="tag">源头五 · 价值与想象</span>
+      <h3>自由意志主义、托尔金与科幻：少年时代的信仰</h3>
+      <span class="works">安·兰德《源泉》1943 · 《阿特拉斯耸耸肩》1957；托尔金《魔戒》1954—1955；海因莱因、阿西莫夫等黄金时代科幻</span>
+    </header>
+    <div class="src-body">
+      <p>这是他最早的一层来源，在读到吉拉尔之前就已经形成。他在高中时读兰德，少年时代就成了自由意志主义者。<b>自由意志主义</b>给了他价值的顶点：个人自由高于一切，国家的强制是要尽量缩小的东西。</p>
+      <blockquote class="q">
+        <p class="orig">“I remain committed to the faith of my teenage years: to authentic human freedom as a precondition for the highest good. I stand against confiscatory taxes, totalitarian collectives, and the ideology of the inevitability of the death of every individual.”</p>
+        <p class="zh">我仍然忠于少年时代的信仰：真正的人的自由，是最高善的前提。我反对掠夺性的税收，反对极权的集体，也反对“每个人都必然死亡”的意识形态。</p>
+        <span class="src">《一个自由意志主义者的教育》开头，Cato Unbound，2009-04-13</span>
+      </blockquote>
+      <p>这段话把三样东西并列在一起：反对重税，反对极权，反对死亡。在他那里，自由与生命是同一个价值的两面，这就是前提 P4 的来历。</p>
+      <p><b>托尔金</b>给了他一套关于权力的寓言。《魔戒》里的至尊魔戒是一种任何人使用都会被腐蚀的绝对权力，真正的英雄是拒绝它的小人物。蒂尔把这部书读过十余遍，后来许多公司和投资实体都用了书里的名字：Palantir（真知晶石）、Mithril（秘银）、Valar（维拉）、Lembas、Rivendell、Arda。2012年讲“秘密”那一课，他以托尔金的诗作结：“也许就在拐角，还等着一条新路，或一道秘门。”</p>
+      <p><b>黄金时代科幻</b>给了他一个具体的未来图景：太空旅行、廉价能源、飞行汽车。他成年后的停滞论，某种程度上就是在追问：那个曾被许诺的未来去哪里了？</p>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>个人自由是最高的善；对集中权力的不信任；对宏大技术未来的期待。</p></div>
+      <div><h5>他怎样改造</h5><p>他保留了自由意志主义的目标，却丢掉了它的两种常见形态。一是哈耶克式的谦卑：据课堂笔记，他把“没人真正知道什么，所以人们得自由地四处摸索、撞上成功”这种自由意志主义认识论归入他所反对的“不确定的乐观”。二是兰德式的出走：《从0到1》第14章说兰德只是“半个伟大的作家：她的反派是真实的，她的英雄却是假的。没有高尔特峡谷。不存在脱离社会的出走”。他的英雄是有具体计划、又身处社会之中的创始人。</p></div>
+      <div><h5>在哪里看得到</h5><p>PayPal 的货币愿景；2009年“逃离政治”的主张；为《主权个人》2020年再版所写的序言（“如果说人工智能是共产主义的，加密货币就是自由意志主义的”）；公司命名；停滞论里那种“被辜负的未来”的情绪。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.6 Economics & finance -->
+  <article class="src-entry" id="p2-econ">
+    <header>
+      <span class="tag">源头六 · 经济与金融</span>
+      <h3>经济学与金融：垄断、幂律与泡沫</h3>
+      <span class="works">熊彼特《资本主义、社会主义与民主》1942；考恩《大停滞》2011；戈登《美国增长的起落》2016；风险投资中的幂律分布</span>
+    </header>
+    <div class="src-body">
+      <p>经济学教科书以“完全竞争”为理想：许多企业提供同样的产品，价格降到成本，利润归零。熊彼特给出了另一幅图景：资本主义的动力是“创造性毁灭”，企业家靠创新获得暂时的垄断利润，这份利润正是创新的报酬和燃料。蒂尔的垄断论在实质上属于熊彼特这一传统，不过在已核查的文本里，他没有直接引用熊彼特，而是直接拿“经济学入门课”的完全竞争模型作靶子。他与熊彼特也有一处重要差别：熊彼特强调垄断会被不断的创新摧毁，蒂尔要的却是能维持“几年甚至几十年”的垄断。</p>
+      <p>金融给了他另外两样东西。一是<b>幂律</b>：风险投资的回报极不均匀，最好的一笔投资往往超过其余所有投资之和，所以要集中下注。二是对<b>泡沫</b>的敏感：他做过衍生品交易员，经营过全球宏观对冲基金，亲历了2000年的互联网泡沫和2008年的金融危机。在他看来，泡沫是集体模仿的产物。</p>
+      <p>停滞论则与几位经济学家的工作平行发展。考恩2011年初出版《大停滞》，蒂尔同年10月发表《未来的终结》；戈登2016年的《美国增长的起落》用大量数据论证1970年以后增长放缓。三人结论相近，解释不同：经济学家更多归因于“容易摘的果子摘完了”，蒂尔更多归因于管制、文化与对风险的厌恶。他在2015年与考恩的对谈中说：我们生活在一个“比特不受管制、原子受到管制”的世界里。</p>
+      <blockquote class="q">
+        <p class="orig">“The single most important economic development in recent times has been the broad stagnation of real wages and incomes since 1973, the year when oil prices quadrupled. To a first approximation, the progress in computers and the failure in energy appear to have roughly canceled each other out.”</p>
+        <p class="zh">近来最重要的经济事实，是自1973年（油价翻了两番的那一年）以来实际工资与收入的普遍停滞。粗略地说，计算机的进步与能源的失败，大致相互抵消了。</p>
+        <span class="src">《未来的终结》，National Review，2011-10-03</span>
+      </blockquote>
+    </div>
+    <div class="took">
+      <div><h5>他拿走了什么</h5><p>垄断利润是创新的燃料；回报服从幂律；泡沫是集体的错觉；1970年代后增长放缓的证据。</p></div>
+      <div><h5>他怎样改造</h5><p>给经济学加上了人性论的解释：竞争之所以过度、泡沫之所以发生，都是因为模仿。经济学告诉他“是什么”，吉拉尔告诉他“为什么”。</p></div>
+      <div><h5>在哪里看得到</h5><p>《从0到1》第2、3、5、7章；创始人基金的集中投资；《未来的终结》；《乐观的思想实验》。</p></div>
+    </div>
+  </article>
+
+  <!-- 2.7 Lived experience -->
+  <article class="src-entry" id="p2-life">
+    <header>
+      <span class="tag">源头七 · 经历</span>
+      <h3>棋盘、赛道、PayPal、9·11、2008：活出来的来源</h3>
+      <span class="works">书提供语言，经历决定他在什么时候用哪一套语言</span>
+    </header>
+    <div class="src-body">
+      <p>只看书单，会把蒂尔读成一个书斋里的思想家。实际上，他几乎每一个核心判断都有一段经历作为底稿。下表把经历和它在体系里留下的东西对应起来。</p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>经历</th><th>他从中看到的</th><th>进入体系的哪一层</th></tr></thead>
+        <tbody>
+          <tr><th>移民与童年迁徙</th><td>不属于任何一个主流圈子的视角</td><td>反共识的姿态</td></tr>
+          <tr><th>国际象棋（少年）</th><td>零和竞赛的残酷（据传记，他的棋盘上贴着“生来就要赢”）；先想清楚终局</td><td>方法：从终局倒推；对竞争的警惕</td></tr>
+          <tr><th>精英赛道（1989—1996）</th><td>一群聪明人为同一批稀缺位置拼命</td><td>垄断论：逃离竞争；反对“赛道人生”</td></tr>
+          <tr><th>PayPal（1998—2002）</th><td>网络效应；与监管和欺诈的缠斗；泡沫的兴衰</td><td>垄断论；“技术可以绕开政治”</td></tr>
+          <tr><th>9·11（2001）</th><td>暴力并没有被商业繁荣消除</td><td>安全观（Palantir）；《施特劳斯时刻》</td></tr>
+          <tr><th>2008年金融危机</th><td>金融与全球化的脆弱；政府的扩张</td><td>停滞论；“自由与民主”的判断</td></tr>
+          <tr><th>海上家园的停滞（2008—2010年代）</th><td>“退出”比预想的难</td><td>从退出转向介入政治</td></tr>
+          <tr><th>2007年被八卦网站公开性取向，2016年资助诉讼使其破产</th><td>媒体可以成为围攻个人的机器</td><td>对舆论“替罪羊”的敌意</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <!-- 2.8 Matrix -->
+  <div class="sec" id="p2-matrix" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">2.8</span>来源矩阵：哪个源头支撑哪个命题</h3>
+    <p style="max-width:var(--measure)">实心圆表示这个源头是该命题的主要来源，半圆表示有明显贡献，空白表示关系不大。这张表是本文的归纳。</p>
+    <div class="tbl-wrap">
+      <table class="matrix">
+        <thead><tr><th>源头 ＼ 命题</th><th>垄断</th><th>秘密</th><th>停滞</th><th>自由</th><th>末世</th><th>方法</th></tr></thead>
+        <tbody>
+          <tr><th>吉拉尔</th><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td><td><span class="d full" title="主要来源"></span></td></tr>
+          <tr><th>施特劳斯</th><td></td><td><span class="d full" title="主要来源"></span></td><td></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td></tr>
+          <tr><th>施米特与科耶夫</th><td></td><td></td><td></td><td><span class="d full" title="主要来源"></span></td><td><span class="d full" title="主要来源"></span></td><td></td></tr>
+          <tr><th>基督教与培根</th><td></td><td></td><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td></tr>
+          <tr><th>自由意志主义 托尔金 科幻</th><td><span class="d half" title="明显贡献"></span></td><td></td><td><span class="d full" title="主要来源"></span></td><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td></td></tr>
+          <tr><th>经济学与金融</th><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td><td></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td></tr>
+          <tr><th>亲身经历</th><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td><td><span class="d half" title="明显贡献"></span></td><td><span class="d full" title="主要来源"></span></td></tr>
+        </tbody>
+        <caption>● 主要来源 · ◐ 明显贡献 · 空白 关系不大</caption>
+      </table>
+    </div>
+    <p style="max-width:var(--measure)">按列看，可以看出每个命题的“混合配方”。垄断论主要是经济学加吉拉尔加亲身经历；末世论是吉拉尔、施米特与科耶夫、基督教三者的汇合；停滞论则来自科幻里被辜负的未来、经济学的数据和基督教“知识必增长”的期待。按行看，吉拉尔是唯一一个几乎覆盖所有列的源头，这与第一部分把他放在地基的位置一致。</p>
+  </div>
+</section>
+
+<section class="part" id="p3" aria-labelledby="p3-title">
+  <header class="part-head">
+    <div class="part-no">第三部分</div>
+    <h2 id="p3-title">构造：结论是怎样一步步推出来的<span class="en">How the conclusions are derived</span></h2>
+    <dl class="answers">
+      <dt>回答</dt><dd>你的问题 (a)：这套体系的构成和逻辑是什么。</dd>
+      <dt>读法</dt><dd>先看五个前提，再看五条推理链。每一步后面标了依据：前提编号、上一步编号，或者具体文本。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" id="p3-premises">
+    <h3><span class="num">3.1</span>五个前提：体系的公理</h3>
+    <p class="lede">蒂尔很少把自己的前提一次说完，但从四十年的文字里可以整理出五条。后面所有结论都由它们组合推出；拿掉其中任何一条，都有一组结论会失去支撑。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>编号</th><th>前提</th><th>主要来源</th><th>支撑的结论</th></tr></thead>
+        <tbody>
+          <tr><th>P1</th><td>人的欲望是模仿来的；模仿让人趋同，趋同引发竞争与冲突。</td><td>吉拉尔</td><td>反竞争、泡沫论、零和政治、替罪羊</td></tr>
+          <tr><th>P2</th><td>历史是线性的、开放的，并且走向某种终局；人的选择会改变结局。</td><td>基督教末世论</td><td>停滞是退步、两种末日、反对“历史的终结”</td></tr>
+          <tr><th>P3</th><td>真正重要的真理常常与共识相反，只被少数人看见。</td><td>施特劳斯、自身经历</td><td>秘密、反共识提问、幂律投资</td></tr>
+          <tr><th>P4</th><td>个人自由与个人生命是最高的善；死亡与强制都是要对抗的东西。</td><td>自由意志主义、基督教</td><td>退出、反世界政府、延寿研究</td></tr>
+          <tr><th>P5</th><td>未来可以被具体地计划和建造，而不是只能等待或分散下注。</td><td>1960年代工程文化、科幻</td><td>确定乐观、创始人中心、从0到1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>这五条里，P1 是承重最多的一条：它同时解释了市场里的扎堆、学术和舆论里的从众、政治里的怨恨，以及宗教里的献祭。正因为一个前提能解释四个领域，蒂尔的思想才显得“成体系”，而不像一位成功投资人的观点合集。</p>
+  </div>
+
+  <div class="sec" id="p3-chain1">
+    <h3><span class="num">3.2</span>推理链一：从模仿到垄断</h3>
+    <p class="lede">“竞争是失败者的事”听上去像商业口号，其实是吉拉尔人性论在经济学上的推论。</p>
+    <ol class="chain">
+      <li><span class="c">人的欲望是模仿来的：我们想要别人想要的东西。</span><span class="why"><b>依据</b> 前提 P1</span></li>
+      <li><span class="c">所以人群会向同一批目标聚集：同一批名校、同一种职业、同一个热门赛道。</span><span class="why"><b>依据</b> 由 1</span></li>
+      <li><span class="c">聚集让竞争加剧；竞争者互相盯防，越来越像，最后忘了自己原本要追求的价值。</span><span class="why"><b>依据</b> 由 2；《从0到1》第4章用《罗密欧与朱丽叶》里“门第相当”的两大家族说明这一点</span></li>
+      <li><span class="c">在充分竞争的市场里，利润被压向零，企业没有余力做长期投入。</span><span class="why"><b>依据</b> 由 3；经济学教科书的完全竞争模型</span></li>
+      <li><span class="c">正确的做法是逃离竞争：做出别人做不出的东西，先在一个小市场形成垄断，再向相邻市场扩张。</span><span class="why"><b>依据</b> 由 3、4；《从0到1》第3、5章</span></li>
+      <li><span class="c">结论：创造性垄断是进步的引擎。垄断利润供养长期创新；回报服从幂律，少数公司拿走大部分价值，所以投资要集中。</span><span class="why"><b>依据</b> 由 4、5；《从0到1》第3、7章</span></li>
+    </ol>
+    <p>这条链有两个容易被忽略的限定。第一，蒂尔区分“创造性垄断”和“靠政府特许收租的垄断”，他赞成的是前者。第二，他认为这种垄断是暂时的，靠持续创新维持；一旦停止创造，竞争者会追上来。所以这条链并不推出“垄断越大越好”，它推出的是“先做出不同，再守住不同”。</p>
+    <p>第三步是整条链的关键，也是吉拉尔最直接的贡献。主流经济学把竞争看作理性主体的选择；蒂尔把它看作模仿驱动的集体行为，因此可以是非理性的、自我毁灭的。这一步一旦成立，“为什么聪明人还会挤进拥挤的赛道”就有了解释。</p>
+  </div>
+
+  <div class="sec" id="p3-chain2">
+    <h3><span class="num">3.3</span>推理链二：从停滞到“自由与民主不相容”</h3>
+    <p class="lede">2009年那句最受争议的话，是一条经济推理的终点，不是一条政治口号的起点。</p>
+    <ol class="chain">
+      <li><span class="c">1970年代以来，除计算机与通信之外，能源、交通、医药、太空等领域的进步明显放缓。</span><span class="why"><b>依据</b> 经验判断；《未来的终结》（2011）、《从0到1》第1章</span></li>
+      <li><span class="c">技术进步放缓，经济增长随之放缓，社会从“把饼做大”转向“分饼”。</span><span class="why"><b>依据</b> 由 1</span></li>
+      <li><span class="c">在分饼的处境里，一方所得就是另一方所失；模仿竞争与怨恨上升，政治变成零和斗争。</span><span class="why"><b>依据</b> 由 2；前提 P1</span></li>
+      <li><span class="c">民主程序在零和处境里倾向于扩大再分配与管制，政治的范围不断扩张，个人自由被挤压。</span><span class="why"><b>依据</b> 由 3；《一个自由意志主义者的教育》（2009）</span></li>
+      <li><span class="c">所以在停滞条件下，自由与民主相互冲突。</span><span class="why"><b>依据</b> 由 4；前提 P4</span></li>
+      <li><span class="c">结论：要么用技术重启增长，要么为自由寻找政治管不到的空间（网络空间、外太空、公海）。2016年以后，他又加上第三条路：进入政治，打破停滞的共识。</span><span class="why"><b>依据</b> 由 5；2009年文章与2016年转向</span></li>
+    </ol>
+    <blockquote class="q">
+      <p class="orig">“Technology means doing more with less. In the absence of technological progress, we end up with a zero-sum world, in which there must be a loser for every winner.”</p>
+      <p class="zh">技术意味着用更少做更多。没有技术进步，我们就会落入一个零和的世界：每有一个赢家，就必有一个输家。</p>
+      <span class="src">《反伊甸主义》，First Things，2015年6月。2011年《未来的终结》有几乎相同的表述：“在一个没有增长的世界里，每有一个赢家，就会有一个输家。”</span>
+    </blockquote>
+    <p>《从0到1》的结论把这条链推到了尽头。他借用哲学家博斯特罗姆对人类未来的四种设想（反复崩溃、停滞的平台、灭绝、加速起飞），认为全球性的停滞平台维持不了多久，停滞很可能演变为冲突，最终走向毁灭。所以他说未来只剩“要么什么都没有，要么有所作为”的选择。</p>
+    <p>把链条摆出来就能看清，这里的“民主”主要指“在零和条件下运转的大众政治”，被反对的是政治范围的无限扩张，不是投票本身。但链条的第4步是整条论证里证据最弱的一步：它把“福利与管制的扩张”主要归因于选民结构，而对其他解释（老龄化、全球化冲击、金融危机）讨论很少。第五部分会回到这一点。</p>
+  </div>
+
+  <div class="sec" id="p3-chain3">
+    <h3><span class="num">3.4</span>推理链三：从9·11到《施特劳斯时刻》</h3>
+    <p class="lede">2004年的这篇论文是读懂蒂尔的钥匙。吉拉尔、施特劳斯、施米特、科耶夫和基督教末世论第一次被放进同一个论证；他在2020年代才公开大讲的敌基督、“和平与安全”、拦阻者，这里全都已经出现。</p>
+    <ol class="chain">
+      <li><span class="c">9·11动摇了整个现代政治框架：威慑、理性的民族国家、公开辩论与外交，都对付不了少数决意赴死的人。</span><span class="why"><b>依据</b> 论文开头；“对西方脆弱性的认识，要求一种新的妥协：更多安全，更少自由”</span></li>
+      <li><span class="c">启蒙运动，尤其是洛克式的“美国式妥协”，用商业取代了关于人性、宗教与好生活的危险问题，换来和平与繁荣，却让西方理解不了仍然在乎这些问题的敌人。</span><span class="why"><b>依据</b> “约翰·洛克：美国式妥协”一节</span></li>
+      <li><span class="c">施米特说政治不会消失；但按他的前提，西方“要么输掉战争，要么失去自我”，而他的激烈方案在核时代已不可能。他所恐惧的反面，是科耶夫式的“历史终结”：一个以“和平与安全”诱惑世人的统一世界，也就是敌基督。</span><span class="why"><b>依据</b> “卡尔·施米特：政治的持续存在”一节</span></li>
+      <li><span class="c">施特劳斯提供一条“谨慎的中间道路”：对政治秩序的暴力根源保持清醒，但不公开声张，在公开审议之外行动，例如依靠情报机构的秘密协作，而不是联合国。</span><span class="why"><b>依据</b> “列奥·施特劳斯：谨慎前行”一节</span></li>
+      <li><span class="c">吉拉尔走得更远：基督教的启示不可逆地揭穿了社会建立在替罪羊之上的秘密，现代世界因此带着“强烈的启示录维度”，施特劳斯式的时刻可能非常短暂。</span><span class="why"><b>依据</b> “勒内·吉拉尔：人之城的终结”一节</span></li>
+      <li><span class="c">结论：基督徒政治家既不能与启蒙运动和解，也不能退回去读经、等待末日；他知道现代不会永久，在每一个难以判断的情形里，都应当站在和平一边。</span><span class="why"><b>依据</b> 结论“历史与知识”</span></li>
+    </ol>
+    <blockquote class="q">
+      <p class="orig">“Instead of the United Nations, filled with interminable and inconclusive parliamentary debates that resemble Shakespearean tales told by idiots, we should consider Echelon, the secret coordination of the world’s intelligence services, as the decisive path to a truly global pax Americana.”</p>
+      <p class="zh">与其看重联合国，那里充斥着冗长而无结论的议会辩论，像莎士比亚笔下“白痴讲的故事”，我们应当把“梯队”，即世界各国情报机构的秘密协作，视为通往真正全球性的“美国治下的和平”的决定性道路。</p>
+      <span class="src">《施特劳斯时刻》施特劳斯一节，2007年出版本约第207—208页</span>
+    </blockquote>
+    <p>这段话写在介绍施特劳斯路线的一节里，文章随后又借吉拉尔指出这条路线可能很快失效，所以不能把它简单当作蒂尔的最终主张。但它清楚地显示了2004年的思路：自由主义的公开程序处理不了暴力，需要在公开程序之外运作的安全能力。同一时期他参与创办的 Palantir，按他在《从0到1》里的自述，就是要把 PayPal 反欺诈系统里“人机结合”的方法，“用来识别恐怖网络与金融欺诈”。</p>
+    <p>文章的最后一句给出了整个体系的底色：现代之后的世界，要么走向“失控的模仿所带来的无限暴力”，要么走向“上帝之国的和平”。这正是后来“毁灭与敌基督”两难的前身。不过，2004年的“全球美国治下的和平”与他后来对“统一世界秩序”的恐惧之间有明显的张力，第五部分张力一专门讨论。</p>
+  </div>
+
+  <div class="sec" id="p3-chain4">
+    <h3><span class="num">3.5</span>推理链四：从吉拉尔到敌基督</h3>
+    <p class="lede">蒂尔晚年的“敌基督”论，听上去像神学转向，其实是吉拉尔人性论、施米特的“拦阻者”和科耶夫的“历史终结”三条线的汇合点。</p>
+    <ol class="chain">
+      <li><span class="c">古代社会靠替罪羊机制把群体暴力集中到一个受害者身上，从而恢复秩序。</span><span class="why"><b>依据</b> 吉拉尔《暴力与神圣》（1972）</span></li>
+      <li><span class="c">基督教揭穿了这个机制，献祭逐渐失效；模仿冲突失去了旧的安全阀。</span><span class="why"><b>依据</b> 吉拉尔《创世以来隐藏的事物》（1978）</span></li>
+      <li><span class="c">冲突可能无限升级，而技术让毁灭的能力越来越大：核武器、生物技术、人工智能。这是第一种末日，“毁灭”（Armageddon）。</span><span class="why"><b>依据</b> 由 2；吉拉尔《战斗到底》（2007）</span></li>
+      <li><span class="c">面对毁灭的危险，最直接的方案是建立统一的世界权力，统一管制科学与技术，口号是“和平与安全”。</span><span class="why"><b>依据</b> 由 3；1946年原子科学家文集《一个世界或者毁灭》的世界政府主张；博斯特罗姆2019年《脆弱世界假说》讨论的全球监控（据报道，他在讲座中以此为例）</span></li>
+      <li><span class="c">这样的世界权力会终结多元、终结退出、终结科学进步。在圣经叙事里，以和平之名统一世界，正是敌基督的特征。</span><span class="why"><b>依据</b> 由 4；《帖撒罗尼迦前书》5:3；《施特劳斯时刻》里施米特对“以和平与安全诱惑世人”的统一的恐惧；科耶夫的“普遍同质国家”</span></li>
+      <li><span class="c">结论：现代人站在两种末日之间。蒂尔认为今天被低估的是第二种：对毁灭的恐惧正在被用来论证全球管制。他的选择是在两者之间找窄路，并且宁可承担技术风险，也不交出未来。</span><span class="why"><b>依据</b> 由 3、5；前提 P2、P4</span></li>
+    </ol>
+    <figure>
+      <div class="fig-scroll">
+        <svg viewBox="0 0 760 300" role="img" aria-label="两种末日之间的窄路：对毁灭的恐惧被用来论证世界政府，而世界政府本身是另一种末日。">
+          <defs>
+            <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--muted)"/></marker>
+            <marker id="ah1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--red)"/></marker>
+          </defs>
+          <rect x="20" y="70" width="200" height="120" rx="3" style="fill:var(--surface);stroke:var(--ink)" stroke-width="1.2"/>
+          <rect x="540" y="70" width="200" height="120" rx="3" style="fill:var(--surface);stroke:var(--ink)" stroke-width="1.2"/>
+          <g style="fill:var(--ink)" font-size="15" font-weight="700" text-anchor="middle">
+            <text x="120" y="102">毁灭</text>
+            <text x="640" y="102">敌基督</text>
+          </g>
+          <g style="fill:var(--muted)" font-size="12" text-anchor="middle">
+            <text x="120" y="122">Armageddon</text>
+            <text x="120" y="148">技术失控、核战、</text>
+            <text x="120" y="166">生物与AI灾难</text>
+            <text x="640" y="122">Antichrist</text>
+            <text x="640" y="148">以“和平与安全”为名的</text>
+            <text x="640" y="166">统一世界权力</text>
+          </g>
+          <g style="fill:var(--muted)" font-size="11.5" text-anchor="middle">
+            <text x="120" y="215">变化太多：混乱</text>
+            <text x="640" y="215">变化太少：锁死</text>
+          </g>
+          <path d="M220,100 C330,40 430,40 540,100" fill="none" style="stroke:var(--red)" stroke-width="1.6" marker-end="url(#ah1r)"/>
+          <text x="380" y="40" text-anchor="middle" font-size="12.5" style="fill:var(--red)">对毁灭的恐惧，被用来论证全球管制</text>
+          <rect x="290" y="130" width="180" height="60" rx="3" style="fill:var(--cobalt-wash);stroke:var(--cobalt)" stroke-width="1.6"/>
+          <text x="380" y="155" text-anchor="middle" font-size="14" font-weight="700" style="fill:var(--cobalt)">窄路</text>
+          <text x="380" y="176" text-anchor="middle" font-size="11.5" style="fill:var(--cobalt)">多元、可退出、继续前进</text>
+          <g fill="none" style="stroke:var(--muted)" stroke-width="1">
+            <line x1="228" y1="160" x2="282" y2="160" marker-end="url(#ah1)"/>
+            <line x1="532" y1="160" x2="478" y2="160" marker-end="url(#ah1)"/>
+          </g>
+          <text x="255" y="150" text-anchor="middle" font-size="11" style="fill:var(--muted)">避开</text>
+          <text x="505" y="150" text-anchor="middle" font-size="11" style="fill:var(--muted)">避开</text>
+          <text x="380" y="238" text-anchor="middle" font-size="12" style="fill:var(--muted)">拦阻者（katechon）：延缓敌基督、又不招致毁灭的力量</text>
+          <text x="380" y="262" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">蒂尔认为今天被低估的是右侧的危险</text>
+        </svg>
+      </div>
+      <figcaption><b>两种末日之间。</b>蒂尔的末世论不是只怕毁灭。红色箭头是他认为最危险的机制：为了防止左边的灾难，人们会主动走向右边的统一管控。中间的窄路是他想守住的东西。</figcaption>
+    </figure>
+    <p>这条链的第4步把神学变成了政策判断：任何以“防止灾难”为理由、主张全球统一管制科学和技术的方案（无论针对核能、气候、生物还是人工智能），在蒂尔眼里都带着敌基督的结构。这解释了他为什么既承认人工智能有真实风险，又强烈反对全球性的“减速”与“暂停”。</p>
+    <blockquote class="q">
+      <p class="orig">“…the political slogan of the antichrist is peace and safety … you get it when you have sort of a homogenized, one world, totalitarian state, and what I wanna suggest in closing is perhaps we would do well to be a little bit more scared of the antichrist and a little bit less scared of Armageddon.”</p>
+      <p class="zh">……敌基督的政治口号是“平安稳妥”……当你有了一个同质化的、统一世界的极权国家，你就得到了它。最后我想说的是，也许我们应该多怕一点敌基督，少怕一点末日。</p>
+      <span class="src">斯坦福学术自由会议演讲结尾，2022-11-04（据视频自动字幕整理）。这是目前能核实的、他公开提出“敌基督与末日”对举的最早一次。</span>
+    </blockquote>
+    <p>此后这个对举成了他的固定主题：2023年在牛津联合会和巴黎的吉拉尔学会年会上讲，2024年在胡佛研究所的访谈里讲，2025年在旧金山连讲四场。第四部分第4.4节会看到，它怎样被用来回应2026年教宗关于人工智能的通谕。</p>
+  </div>
+
+  <div class="sec" id="p3-chain5">
+    <h3><span class="num">3.6</span>推理链五：从“确定的未来”到创始人</h3>
+    <p class="lede">蒂尔的未来观有一个很具体的落点：未来由有具体计划的人建造，今天能做到这一点的最大单位是创业公司。</p>
+    <ol class="chain">
+      <li><span class="c">未来不会自动到来，它由人的计划和行动塑造。</span><span class="why"><b>依据</b> 前提 P5</span></li>
+      <li><span class="c">一个社会对未来有四种态度：确定或不定，乐观或悲观。</span><span class="why"><b>依据</b> 《从0到1》第6章</span></li>
+      <li><span class="c">1982年以来的美国是“不定乐观”：相信未来会更好，却不做具体计划；资源流向金融、法律和程序，而不是工程和大项目。</span><span class="why"><b>依据</b> 由 2；《从0到1》第6章</span></li>
+      <li><span class="c">不定的态度造不出新东西，因为新东西要求把资源集中押在一个具体方案上。</span><span class="why"><b>依据</b> 由 3；幂律（第7章）</span></li>
+      <li><span class="c">公司是今天个人能够“确定地”掌控的最大单位；创始人对未来有具体图景，并为它承担后果。</span><span class="why"><b>依据</b> 由 1、4</span></li>
+      <li><span class="c">结论：社会层面的停滞，要由一个个“确定的”创始人来打破。他同时做投资人、写作者和奖学金的资助人，都是在培养这种确定性。</span><span class="why"><b>依据</b> 由 5；创始人基金、蒂尔奖学金</span></li>
+    </ol>
+    <figure>
+      <div class="quad" role="img" aria-label="《从0到1》第6章的四种未来态度：确定乐观是17世纪至1960年代的西方，不定乐观是1982年以来的美国，确定悲观是今天的中国，不定悲观是1970年代初以来的欧洲。">
+        <div class="h"></div><div class="h">乐观：未来会更好</div><div class="h">悲观：未来会更坏</div>
+        <div class="h">确定<br>有具体计划</div>
+        <div class="cell do"><b>确定的乐观</b>17世纪至1950—60年代的西方；美国一直是“最有远见的确定乐观者”的家园：帝国大厦、曼哈顿计划、州际公路、阿波罗</div>
+        <div class="cell"><b>确定的悲观</b>今天的中国，“也许是当今世界上最确定地悲观的地方”：清楚地看见一个更艰难的未来，并为它做准备</div>
+        <div class="h">不定<br>没有计划</div>
+        <div class="cell"><b>不定的乐观</b>1982年以来的美国：长期牛市开始，金融取代工程，成为面对未来的方式</div>
+        <div class="cell"><b>不定的悲观</b>1970年代初以来的欧洲：陷入“无方向的官僚漂流”</div>
+      </div>
+      <figcaption><b>四种对待未来的态度。</b>国家与年代的对应依《从0到1》第6章原文。蓝框是他主张回到的态度；他说西方需要一场“文化革命”才能回到“确定的未来”。</figcaption>
+    </figure>
+    <blockquote class="q">
+      <p class="orig">“A startup is the largest endeavor over which you can have definite mastery. You can have agency not just over your own life, but over a small and important part of the world. It begins by rejecting the unjust tyranny of Chance. You are not a lottery ticket.”</p>
+      <p class="zh">创业公司是你能够确定地掌控的最大事业。你能主宰的不只是自己的生活，还有世界上一个小而重要的部分。这从拒绝“偶然”的不公正暴政开始。你不是一张彩票。</p>
+      <span class="src">《从0到1》第6章</span>
+    </blockquote>
+    <p>这条链和吉拉尔再一次交汇。《从0到1》第14章“创始人悖论”说，创始人身上常同时出现相反的极端特质，社会对他们的态度也在崇拜与驱逐之间摇摆，就像古代社会对待国王和替罪羊。所以在蒂尔那里，创始人既是“确定性”的承担者，也是模仿暴力的潜在靶子。</p>
+  </div>
+
+  <div class="sec" id="p3-method">
+    <h3><span class="num">3.7</span>他的推理方式从哪里来</h3>
+    <p class="lede">内容之外，蒂尔有一套很稳定的思考动作。每一个动作都能在他的经历或阅读里找到出处。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>思考动作</th><th>典型例子</th><th>可能的来源</th></tr></thead>
+        <tbody>
+          <tr><th>反共识提问</th><td>“什么重要的真理，很少有人同意你？”</td><td>哲学训练；法庭交叉询问式的辩论</td></tr>
+          <tr><th>先找模仿</th><td>看到“大家都想要”，先怀疑这是模仿：泡沫、热门赛道、精英职业</td><td>吉拉尔；自己在法律与金融赛道上的经历</td></tr>
+          <tr><th>建立二分，再反转</th><td>原子/比特、0到1/1到n、确定/不定、竞争/垄断；把托尔斯泰的“幸福家庭都相似”反过来用</td><td>哲学的概念分析；辩论与写作习惯</td></tr>
+          <tr><th>从终局倒推</th><td>引卡帕布兰卡的话：先研究残局；“最后行动者优势”</td><td>国际象棋</td></tr>
+          <tr><th>为尾部风险定价</th><td>只在“世界没有毁灭”的情景里下注才有意义（2008年《乐观的思想实验》）；幂律投资</td><td>衍生品交易与宏观对冲</td></tr>
+          <tr><th>两极之间找窄路</th><td>毁灭与敌基督；太多竞争与太多控制</td><td>吉拉尔的启示录思想；基督教末世论</td></tr>
+          <tr><th>说一半，留一半</th><td>公开谈话中常停在暗示处，让听得懂的人去补全</td><td>施特劳斯的隐微写作</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>这些动作合在一起，构成了一种很有辨识度的论证风格：先指出一个人人接受的共识，揭示它背后的模仿机制，把问题提升到文明或历史的尺度，然后给出一个违反直觉、但能自圆其说的判断。这种风格的力量在于它总能逼出新问题；它的风险在于，把每个问题都放到文明尺度上，会让判断很难被检验。</p>
+  </div>
+</section>
+
+<section class="part" id="p4" aria-labelledby="p4-title">
+  <header class="part-head">
+    <div class="part-no">第四部分</div>
+    <h2 id="p4-title">演进：四十年里的变与不变<span class="en">How the system grew, 1967–2026</span></h2>
+    <dl class="answers">
+      <dt>回答</dt><dd>你追问的“思想是如何产生和发展的”：每一层是在什么时候、因为什么经历长出来的。</dd>
+      <dt>读法</dt><dd>4.1 按时间走一遍；4.2 只看三次转向；4.3 一张表看清什么没变。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" id="p4-phases" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">4.1</span>八个阶段</h3>
+    <p class="lede" style="max-width:var(--measure)">蒂尔的思想不是一次成形的。地基在青少年和斯坦福时期就打好了，四个命题是在三次外部冲击之后陆续长出来的：互联网泡沫、9·11、2008年金融危机。每个阶段末尾的蓝线，写的是这一阶段留在体系里的东西。</p>
+    <ol class="tl">
+      <li>
+        <div class="when">1967—1985<small>出身与少年</small></div>
+        <div>
+          <h4>外来者、棋手、科幻读者</h4>
+          <p>1967年生于西德法兰克福，一岁随家人移居美国克利夫兰。父亲是化学工程师，随矿业项目迁徙，他的童年有几年在南非和西南非洲（今纳米比亚）度过，在斯瓦科普蒙德上过一所德语学校；1977年全家定居加州福斯特城。少年时是全美同龄人里排名靠前的国际象棋选手，赢过加州的数学竞赛，爱读阿西莫夫和海因莱因的科幻，《魔戒》读过十余遍。家庭是福音派基督徒。他在高中时读兰德，2009年回顾时说，他仍然忠于“少年时代的信仰”：自由是最高善的前提。</p>
+          <p>据传记作者查夫金记载，他很小的时候问起家里那张牛皮地毯，父亲告诉他：“所有动物都会死。”成年后，他把自己反对的东西称为“每个人都必然死亡的意识形态”。</p>
+          <div class="imprint"><b>留下的：</b>外来者的视角；对零和竞赛的切身熟悉（棋盘）；科幻里那个“确定的未来”；对死亡的拒绝；对绝对权力（魔戒）与圣经叙事的熟悉。</div>
+        </div>
+      </li>
+      <li>
+        <div class="when">1985—1992<small>斯坦福</small></div>
+        <div>
+          <h4>吉拉尔、哲学与校园文化战争</h4>
+          <p>1980年代后期在斯坦福读哲学本科，其间结识勒内·吉拉尔，接触到模仿理论；随后读斯坦福法学院（1992年毕业）。1987年与同学创办保守派学生刊物《斯坦福评论》，当时校园正为“西方文化”必修课的存废激烈争论。他后来回忆，那时的“多元化”意味着“人们看起来不同，想法却一样”。1995年，他与戴维·萨克斯合写《多元化神话：斯坦福的“多元文化主义”与不宽容政治》。</p>
+          <div class="imprint"><b>留下的：</b>模仿理论（人性论的地基）；“大学是从众机器”的判断；用公共写作参与文化争论的习惯。</div>
+          <p class="texts">文本：《斯坦福评论》（1987—）；《多元化神话》（1995）</p>
+        </div>
+      </li>
+      <li>
+        <div class="when">1992—1998<small>精英赛道</small></div>
+        <div>
+          <h4>在“赛道”上跑到一半</h4>
+          <p>法学院毕业后在第十一巡回上诉法院当了一年书记员，进入最高法院书记员的面试（见了肯尼迪和斯卡利亚两位大法官），没有被选上；之后在纽约的苏利文·克伦威尔律师事务所做证券律师，很快离开，转做瑞士信贷的衍生品交易员。1996年回到加州，成立自己的投资公司。</p>
+          <blockquote class="q">
+            <p class="orig">“Had I actually clerked on the Supreme Court, I probably would have spent my entire career taking depositions or drafting other people’s business deals instead of creating anything new.”</p>
+            <p class="zh">如果我真的当上了最高法院的书记员，我大概会把整个职业生涯花在取证和替别人起草交易文件上，而不是创造任何新东西。</p>
+            <span class="src">《从0到1》第4章“竞争的意识形态”</span>
+          </blockquote>
+          <div class="imprint"><b>留下的：</b>对“精英赛道”的亲身反感：一群聪明人为同一批稀缺位置拼命竞争；交易员对赔率和尾部风险的直觉。</div>
+        </div>
+      </li>
+      <li>
+        <div class="when">1998—2002<small>PayPal</small></div>
+        <div>
+          <h4>在比特世界里绕开政治</h4>
+          <p>1998年底与马克斯·列夫钦等人创办 Confinity，2000年3月与马斯克的 X.com 合并，即后来的 PayPal；2002年上市，同年被 eBay 以15亿美元收购。PayPal 最初的愿景带着鲜明的自由意志主义色彩。据早期员工埃里克·杰克逊的回忆，1999年底蒂尔对员工说：</p>
+          <blockquote class="q">
+            <p class="orig">“PayPal will give citizens worldwide more direct control over their currencies than they ever had before. It will be nearly impossible for corrupt governments to steal wealth from their people through their old means…”</p>
+            <p class="zh">PayPal 将让全世界的公民比以往任何时候都更直接地掌控自己的货币。腐败的政府将几乎无法再用老办法窃取人民的财富……</p>
+            <span class="src">埃里克·杰克逊《PayPal 战争》（2004）所记的1999年员工大会讲话</span>
+          </blockquote>
+          <div class="imprint"><b>留下的：</b>“技术可以绕开政治”的信心；网络效应与垄断的实战经验；泡沫是集体模仿的判断（后来写进《从0到1》第2章）；一张“PayPal 帮”的人际网络。</div>
+        </div>
+      </li>
+      <li>
+        <div class="when">2001—2008<small>9·11之后</small></div>
+        <div>
+          <h4>暴力、安全与末日进入体系</h4>
+          <p>9·11之后，他参与创办 Palantir（2003年注册；他在《从0到1》里记为2004年），想法来自 PayPal 的反欺诈系统。2004年7月，他与导师罗伯特·汉默顿-凯利在斯坦福出资组织“政治与启示录”闭门研讨会，吉拉尔是核心参与者，他宣读了《施特劳斯时刻》。同年夏天，他以50万美元成为 Facebook 第一位外部投资人。这些年他经营全球宏观对冲基金 Clarium，2006年资助抗衰老研究，2007年出资成立推广吉拉尔思想的 Imitatio，2008年初发表《乐观的思想实验》（副标题是“长远来看，没有押注全球化失败的好赌注”），同年资助海上家园研究所。</p>
+          <div class="imprint"><b>留下的：</b>暴力与安全问题；末日意识与投资思想的结合；敌基督、拦阻者、“和平与安全”等概念的第一次出场（2004）。</div>
+          <p class="texts">文本：《施特劳斯时刻》（2004年宣读，2007年出版）；《乐观的思想实验》（2008）</p>
+        </div>
+      </li>
+      <li>
+        <div class="when">2009—2015<small>停滞论成形</small></div>
+        <div>
+          <h4>从“逃离政治”到“怎样建造未来”</h4>
+          <p>2009年4月发表《一个自由意志主义者的教育》，宣布不再相信自由与民主相容，寄望于网络空间、外太空和公海三条出路。2010年设立蒂尔奖学金，资助年轻人离开大学去创业，矛头指向“高等教育泡沫”。2011年，创始人基金发表宣言《未来怎么了？》（“我们想要会飞的汽车，得到的却是140个字符”），蒂尔在《国家评论》发表《未来的终结》，系统提出技术停滞论。2012年在斯坦福开设创业课 CS183，学生布莱克·马斯特斯的笔记在网上流传，2014年整理为《从0到1》。2015年在《第一要务》发表《反伊甸主义》。</p>
+          <div class="imprint"><b>留下的：</b>停滞论成为中心诊断；吉拉尔与停滞论被组织成一套可以传授的创业方法；“没有高尔特峡谷，不存在脱离社会的出走”（2014），“退出”开始让位。</div>
+          <p class="texts">文本：《一个自由意志主义者的教育》（2009）；《未来的终结》（2011）；CS183 笔记（2012）；《从0到1》（2014）；《反伊甸主义》（2015）</p>
+        </div>
+      </li>
+      <li>
+        <div class="when">2016—2022<small>进入政治</small></div>
+        <div>
+          <h4>从“退出”到“发声”</h4>
+          <p>2016年7月在共和党全国代表大会演讲，公开支持特朗普：“我们没有去火星，而是入侵了中东。”同年揭晓他资助了让八卦网站 Gawker 破产的诉讼。2018年在斯坦福与里德·霍夫曼辩论时说：“加密货币是去中心化的，人工智能是中心化的；用意识形态的话说，加密货币是自由意志主义的，人工智能是共产主义的。”2019年在全国保守主义大会作题为《星际迷航里的电脑还不够》的演讲，并在《纽约时报》发表《对谷歌有利，对美国有害》，核心论点是：人工智能本质上是一种军事技术，谷歌不该与中国分享。2022年他为布莱克·马斯特斯和 J. D. 万斯的参议员竞选投入巨资。</p>
+          <div class="imprint"><b>留下的：</b>停滞论的政治版本（他在大会上说，虚假的文化战争只会转移人们对经济衰退的注意，“除了特朗普，这场竞选里没有人对此说实话”）；民族国家与中美竞争进入体系；对人工智能的警惕：它倾向于集权。</div>
+          <p class="texts">文本：2016年共和党大会演讲、全国新闻俱乐部演讲；2018年斯坦福辩论；2019年全国保守主义大会演讲；《对谷歌有利，对美国有害》（2019）</p>
+        </div>
+      </li>
+      <li>
+        <div class="when">2022—2026<small>末世论公开化</small></div>
+        <div>
+          <h4>敌基督、人工智能与教会</h4>
+          <p>2022年11月在斯坦福的一次演讲结尾，他第一次公开说“也许我们应该多怕一点敌基督，少怕一点末日”。此后这个主题越讲越多：2023年在牛津联合会、在巴黎的吉拉尔学会年会；2024年在胡佛研究所的访谈《现在就是启示录？》；2025年6月接受《纽约时报》罗斯·杜塔特的长篇访谈；9—10月在旧金山连讲四场，录音外泄后引起广泛争议；2026年1月在剑桥、3月在罗马再讲。2026年5月教宗良十四世发布关于人工智能的首部通谕，他先后在阿斯彭（6月，与福山同台讨论“历史终结处的人类”）和德普夫纳的访谈中（9月）公开批评。9月在柏林领取阿克塞尔·施普林格奖。</p>
+          <div class="imprint"><b>留下的：</b>2004年埋下的神学框架被公开说出来；人工智能成为“两种末日”之争的主战场；与天主教会的公开分歧。</div>
+          <p class="texts">文本：2022年斯坦福演讲；胡佛研究所访谈（2024）；杜塔特访谈（2025）；《驶向世界尽头的航行》（2025，与萨姆·沃尔夫合写）；MD MEETS 访谈（2026）</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="sec" id="p4-turns">
+    <h3><span class="num">4.2</span>三次转向，以及它们的触发点</h3>
+    <p class="lede">蒂尔的地基几乎没有动过，变的是他认为“该在哪里下注”。每一次转向都由一个外部事件触发，又都能用原有的前提解释。</p>
+    <h4>转向一 · 2001—2004：从“绕开政治”到“正视暴力”</h4>
+    <p>PayPal 时期，他相信技术可以绕开政治：一种不受政府控制的货币，就能把人从政治里解放出来。9·11打破了这个想象。《施特劳斯时刻》开篇就承认：“对西方脆弱性的认识，要求一种新的妥协，而这种妥协不可避免地要求更多安全、更少自由。”他的回应分两层：在思想上，他回到施米特与施特劳斯，承认政治与敌意无法被取消；在行动上，他参与创办 Palantir。前提 P1（模仿冲突）与 P4（自由至上）都没有变，变的是：自由需要安全来守护。</p>
+    <h4>转向二 · 2009—2016：从“退出”到“发声”</h4>
+    <p>2009年他寄望于“逃离一切形式的政治”，并在补充说明里写道：“我不认为任何一类人应当被剥夺投票权，但我对投票能让事情变好不抱什么希望。”五年后，《从0到1》已经改口：“没有高尔特峡谷。不存在脱离社会的出走。”海上家园停在纸面上，网络与太空也没有提供足够的出口；而停滞受到政治与管制的保护，不进入政治就无法改变它。2016年他选择了一个公开承认衰落的候选人。用经济学家赫希曼的术语说，这是从“退出”转向“发声”（这是本文的类比，蒂尔本人用的词是“逃离”）。</p>
+    <h4>转向三 · 2022—2025：神学从研讨会走上讲台</h4>
+    <p>这一次变的不是内容，而是场合与对象。敌基督、拦阻者、“和平与安全”在2004年的论文里都已出现，但当时只出现在一场约八人的闭门研讨会和一本学术文集里。触发它们走上公共讲台的，是“要不要在全球范围内管住技术”从思想实验变成了现实议题：学者提出以全球监控防范技术灾难，业界呼吁暂停训练更强大的模型，各国开始为人工智能立法。在蒂尔的体系里，这正是“为防止毁灭而走向统一管控”的那一步。于是他把一直藏在底层的神学框架直接搬到台前，并用它回应人工智能与气候议题。这一转向让体系更完整，也让它更难被不接受基督教前提的读者接受。</p>
+  </div>
+
+  <div class="sec" id="p4-constants" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">4.3</span>不变与变化</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>维度</th><th>四十年不变</th><th>发生变化</th></tr></thead>
+        <tbody>
+          <tr><th>人性论</th><td>吉拉尔的模仿理论（1980年代后期至今）</td><td>解释范围从个人与公司，扩展到精英、政治、宗教与末世</td></tr>
+          <tr><th>价值</th><td>个人自由与生命至上；拒绝“每个人都必然死亡”</td><td>守护自由的方式从退出变为介入</td></tr>
+          <tr><th>诊断</th><td>西方自1970年代起陷入停滞</td><td>2026年说人工智能“也许比互联网更大”，可能让增长重新加速</td></tr>
+          <tr><th>对政治</th><td>反对政治范围的无限扩张</td><td>2009 逃离政治 → 2014 “不存在脱离社会的出走” → 2016 介入选举 → 2020年代神学批判</td></tr>
+          <tr><th>对国家</th><td>警惕统一的世界权力</td><td>2004年设想以情报协作实现全球性的“美国治下的和平”；2020年代把统一的全球秩序视为敌基督，把多个国家主权视为拦阻者</td></tr>
+          <tr><th>对全球化</th><td>—</td><td>2008年说押注全球化失败不是好赌注；2014年说技术比全球化重要；2016年后转向民族国家与贸易保护</td></tr>
+          <tr><th>对人工智能</th><td>技术是自由的物质基础</td><td>2014年说强人工智能是“22世纪的担忧”、计算机是人的补充；2018年说它“是共产主义的”；2019年说它是军事技术；2026年说它也许比互联网更大，并反对为它踩刹车</td></tr>
+          <tr><th>表达方式</th><td>反共识、二分与反转</td><td>从学术化、隐微的论文，到公开的、布道式的讲座</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="max-width:var(--measure)">这张表支持一个判断：蒂尔的“思想”非常稳定，他的“策略”很灵活。读他时要把两者分开。很多看上去自相矛盾的地方（例如一位自由意志主义者支持民族主义政治），在前提层面并不矛盾，只是策略换了。第五部分会检验哪些矛盾是真矛盾。</p>
+  </div>
+
+  <div class="sec" id="p4-now">
+    <h3><span class="num">4.4</span>2025—2026：体系怎样解释当下</h3>
+    <p class="lede">最近两年的言论，几乎可以逐条对应到第三部分的推理链上。体系没有被晚年的经历推翻，而是被拿来解释人工智能、欧洲和教会。</p>
+    <p>2026年9月24日，德国阿克塞尔·施普林格集团在柏林授予他年度奖项；同一天，集团首席执行官马蒂亚斯·德普夫纳对他的一小时访谈（MD MEETS）上线。这次访谈，加上6月阿斯彭思想节的发言和2025年秋天的旧金山讲座，是目前了解他晚近想法最集中的材料。下面把它们逐条放回推理链里。</p>
+
+    <h4>停滞论：人工智能也许是出口</h4>
+    <blockquote class="q">
+      <p class="orig">“Perhaps AI is bigger than the internet and at least has the potential to re-accelerate growth with all the good and bad things that come with that.”</p>
+      <p class="zh">也许人工智能比互联网更大，至少有可能让增长重新加速，连同随之而来的一切好与坏。</p>
+      <span class="src">MD MEETS 访谈，2026-09-24（据访谈文字稿）</span>
+    </blockquote>
+    <p>他的措辞是“也许”和“至少有可能”。上一版把这句话写成“至少和互联网一样大，甚至更大”，还说他“斩钉截铁”，与原话不符。他对另一种前景的判断反而更明确：一个毫无进步的零增长世界“远非中性”。这正是推理链二的前两步：没有增长，政治会变坏。</p>
+
+    <h4>零和政治：德国、柏林与美国民主党</h4>
+    <p>他用一组数字描述德国的停滞：美国最富有的50人里，属于X世代或更年轻（1965年及以后出生）的有12人，其中9人白手起家；德国最富有的50人里，同一年龄段有20人，全部来自继承。“没有一个人做出了新东西、挣到了新钱、建起了一家可以规模化的新公司。”他说德国人常谈“害怕失败”，“也许还有一种对成功的恐惧”。</p>
+    <p>政治上，他认为德国另类选择党（AfD）在乌克兰、以色列、中国三个问题上“全都错了”，但它的崛起反映了中间派的失败：中间派政党“系统性地低估了问题的规模”，没能为德国找到一个包容的、惠及整个社会的经济前景。谈到柏林年轻人大量投票给左翼党，他说至少要认真对待年轻人谈论的问题：房租太高，房子盖不起来。6月在阿斯彭，他预言美国民主党将出现“民主社会主义者的接管”，并说那不是非理性的愤怒，而是“对这种停滞非常、非常深的挫败感”。</p>
+    <p>这几段几乎是推理链二的原样复述：停滞让年轻人失去上升通道，政治随之零和化，左右两翼同时得益，中间塌陷。</p>
+
+    <h4>两种末日：教宗通谕与“有牙齿的世界政府”</h4>
+    <p>2026年5月25日，教宗良十四世发布首部通谕《伟大的人性》（<i class="en">Magnifica Humanitas</i>，落款日期为5月15日），主题是人工智能时代对人的保护。通谕第110段说，人工智能已经是我们身处其中的环境、必须应对的力量，因此“仅仅监管它是不够的：它必须被解除武装，并让所有人都能使用”。</p>
+    <blockquote class="q">
+      <p class="orig">“The Communist Party of China is not going to listen to the Pope. There’s a chance people in the U.S. will. And so in effect, the Pope’s encyclical was working for the Communist Party. … I’m not saying he was an agent of the Communists, but he was at least acting as a useful idiot for the CCP.”</p>
+      <p class="zh">中国共产党不会听教宗的，美国人倒有可能听。所以实际上，这份通谕是在为中国共产党工作。……我不是说他是共产党的代理人，但他至少充当了中共的“有用的白痴”。</p>
+      <span class="src">MD MEETS 访谈，2026-09-24。6月30日在阿斯彭思想节的一场讨论中，他已说过教宗在“为中国共产党工作”。</span>
+    </blockquote>
+    <p>他的理由是推理链四的直接应用。真正让人工智能慢下来，“需要一个有真正牙齿、真正强制力的世界政府”，而“我身上古典自由主义的那部分认为，这几乎是跳出油锅又落入火中，药比病更糟”。没有这样的世界政府，单方面的克制只会让对手领先：“美国是人工智能真正发生的地方。中国是快速的跟随者。欧洲远远落后。”</p>
+    <p>值得留意的是，教宗与蒂尔都从基督教出发，却得出相反的结论。通谕看到的是技术权力集中的危险，主张为人工智能“解除武装”；蒂尔看到的是以管控之名集中政治权力的危险，认为全球性的克制要么需要一个比病更糟的药，要么只束缚了西方。这是同一传统里两种末世感受的正面冲突。</p>
+
+    <h4>拦阻者：2026年的新说法</h4>
+    <p>9月在柏林的颁奖演讲里，据报道，他呼吁拒绝一种“不义的和平”，加强“拦阻者”。在他的用法里，拦阻者是多个分散的国家主权、彼此的竞争与技术进步，它们共同阻止一个统一的全球政权出现。这是施米特概念的一次重新指派：施米特那里，拦阻者是帝国或国家秩序；蒂尔这里，它是多元本身。</p>
+
+    <h4>末世论的讲坛：从旧金山到罗马</h4>
+    <p>2025年9月15日至10月6日的四个星期一，他在旧金山联邦俱乐部连讲四场“敌基督”讲座，主办方是基督教团体 ACTS 17，讲座不公开、不许录音。10月，《华盛顿邮报》与《卫报》披露了外泄的录音。据这些报道，他从《但以理书》12:4“必有多人来往奔跑，知识就必增长”读出科学与技术的进步，用《帖撒罗尼迦前书》5:3的“平安稳妥”说明敌基督兴起的方式，用《帖撒罗尼迦后书》2:6的“拦阻者”说明延缓它的力量。</p>
+    <blockquote class="q">
+      <p class="orig">“The antichrist comes to power by talking constantly about Armageddon, about rumors of wars, and scaring you into giving him control over science and technology.”</p>
+      <p class="zh">敌基督靠不停地谈论末日、谈论战争的风声来夺取权力，把你吓得交出对科学和技术的控制。</p>
+      <span class="src">旧金山讲座外泄录音，据《卫报》2025年10月报道</span>
+    </blockquote>
+    <p>讲座中他点名格蕾塔·通贝里和埃利泽·尤德考斯基，称他们为“敌基督的军团”。2026年1月，他在剑桥圣凯瑟琳学院、3月在罗马继续这一系列；罗马讲座最初与一所宗座大学有关联，后来几家天主教机构公开与之保持距离，意大利议会也有人提出质询。</p>
+
+    <h4>生命：治愈痴呆，但拒绝“上传”</h4>
+    <p>访谈里他说，未来几年最想攻克的是痴呆：找到减缓或逆转大脑衰退的办法。但他不接受把意识上传到计算机来延续生命：“一种非常注重身体的、也许是受基督教影响的看法，让我无法接受被上传到一个模拟我的计算机程序里。我不认为那会是我。”这与前提 P4 一致，也与他的基督教身体观一致：他要的是这个身体继续活下去，而不是一份数字副本。</p>
+
+    <div class="box cobalt">
+      <p class="box-t">与2014年相比，体系有两处新变化</p>
+      <p>第一，停滞论被重新表述：人工智能之前的几十年是停滞的，而人工智能第一次被他当作可能的出口，尽管他承认这个出口“带着好与坏”。第二，他的论敌从“政治与管制”扩展到“道德与宗教权威”。他用来批评通谕的理由，正是敌基督论的推理结构，这让他与天主教会的分歧公开化，也让他的末世论第一次面对来自同一传统内部的反驳。</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="p5" aria-labelledby="p5-title">
+  <header class="part-head">
+    <div class="part-no">第五部分</div>
+    <h2 id="p5-title">自洽：这套体系站得住吗<span class="en">Does it hold together?</span></h2>
+    <dl class="answers">
+      <dt>回答</dt><dd>你的问题 (c)：它的逻辑如何自洽，以及在哪里不自洽。</dd>
+      <dt>读法</dt><dd>5.1 讲粘合剂，5.2 逐条检验九处张力，5.3 给出三种读法和本文的判断，5.4 用事实检验他的预测。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" id="p5-glue">
+    <h3><span class="num">5.1</span>把体系粘在一起的四样东西</h3>
+    <p class="lede">蒂尔的思想之所以“像一个体系”，不只是因为他观点多，而是因为有四样东西把观点粘在一起。</p>
+    <h4>一个原因，解释四个领域</h4>
+    <p>模仿理论同时解释了创业者为什么扎堆、学者为什么从众、选民为什么怨恨、古代宗教为什么献祭。一个前提覆盖经济、思想、政治、宗教四个领域，这是体系感的主要来源。代价是，当一个原因能解释一切时，它也可能什么都没有真正解释；5.3 节会回到这个问题。</p>
+    <h4>“两种危险，一条窄路”的论证结构</h4>
+    <p>几乎每个领域，蒂尔都先指出两种相反的失败，再把自己放在中间的窄路上。经济上，一边是彼此雷同的完全竞争，一边是靠特许收租的垄断，中间是创造性垄断。政治上，一边是零和的大众政治，一边是统一的世界政府，中间是有限的、可以退出的多元政治。历史上，一边是毁灭，一边是敌基督，中间是拦阻者。这个结构让他可以同时批评左右两边，也让他的立场显得一以贯之。</p>
+    <h4>稳定的价值排序</h4>
+    <p>当自由、生命与平等、安全、共识发生冲突时，他几乎总是选前者。这个排序四十年没有变过。知道这一点，就能相当准确地预测他对一个新议题的立场：凡是以安全或平等为理由扩大统一管控的方案，他都会反对。</p>
+    <h4>理论与下注互相印证</h4>
+    <p>他的投资和公司是他理论的实物：集中下注（幂律）、寻求垄断（Facebook、Palantir）、尝试退出（海上家园）、对抗死亡（抗衰老研究）、改变教育（蒂尔奖学金）。理论指导下注，下注的成败又回过头来为理论作证。这种“用自己的钱检验自己的理论”的一致性，是纯粹的理论家很少具备的。</p>
+  </div>
+
+  <div class="sec" id="p5-tensions" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">5.2</span>九处张力：逐条检验</h3>
+    <p class="lede" style="max-width:var(--measure)">每一条都按三栏写：张力是什么；蒂尔自己怎样回应；本文怎样评估。先看一览表，再看细节。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>张力</th><th>判断</th><th>一句话</th></tr></thead>
+        <tbody>
+          <tr><th><a href="#t1">一 · 自由意志主义者与安全国家</a></th><td style="color:var(--red)">未化解</td><td>“拦阻者”与“敌基督”可能用同一套工具</td></tr>
+          <tr><th><a href="#t2">二 · 创造性垄断与收租垄断</a></th><td>部分化解</td><td>两者事前难分，事后会互相转化</td></tr>
+          <tr><th><a href="#t3">三 · 反模仿与最大的模仿机器</a></th><td>部分化解</td><td>投资上自洽，伦理上不自洽</td></tr>
+          <tr><th><a href="#t4">四 · 自由与民主</a></th><td>部分化解</td><td>策略自洽，对民主正当性的看法模糊</td></tr>
+          <tr><th><a href="#t5">五 · 用吉拉尔点名“敌基督”</a></th><td style="color:var(--red)">未化解</td><td>体系里最深的内部矛盾</td></tr>
+          <tr><th><a href="#t6">六 · 基督徒与“打败死亡”</a></th><td>部分化解</td><td>少数派神学，可辩护但有争议</td></tr>
+          <tr><th><a href="#t7">七 · 停滞论与比特里的财富</a></th><td style="color:var(--cobalt)">能化解</td><td>真正的问题在停滞论的证据</td></tr>
+          <tr><th><a href="#t8">八 · 末日焦虑与确定的乐观</a></th><td style="color:var(--cobalt)">能化解</td><td>悲观描述现实，乐观规定行动</td></tr>
+          <tr><th><a href="#t9">九 · 反模仿者成了榜样</a></th><td>部分化解</td><td>逻辑完整，但带着自我豁免</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tension" id="t1">
+      <h4><span class="t-no">张力一 · 未化解</span>自由意志主义者与安全国家</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>他把“以安全为名的统一管控”视为敌基督的形态，却参与创办了为情报、国防与移民执法机构提供数据平台的 Palantir。2004年他还写过：与其看重联合国，不如把各国情报机构的秘密协作，视为通往全球性“美国治下的和平”的决定性道路。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>区分两种东西：多个国家各自的安全能力，与一个统一的世界权力。前者是放任暴力与全面管控之间的第三条路，后者才是敌基督。2026年他把“多个分散的国家主权”明确当作拦阻者。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>区分本身能成立，但它押在一个前提上：国家的安全机器不会滑向他所警惕的统一管控。监控能力一旦建成，任何掌权者都可以使用；有评论者因此说“拦阻者已经变成了敌基督”。2004年的“全球性美国治下的和平”与2020年代对“统一世界秩序”的恐惧怎样调和，他也没有公开解释过。这是体系里最需要正面回答、也最少被他正面回答的问题。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t2">
+      <h4><span class="t-no">张力二 · 部分化解</span>创造性垄断与收租垄断</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>他主张企业追求垄断，又说只有“创造性垄断”是好的；他自己也承认：“在一个静止的世界里，垄断者只是收租人。”</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>创造性垄断“为世界增加了全新类别的丰富”，靠持续创新维持；一旦停止创造，竞争者就会追上来。政府特许的垄断才应当反对。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>两者事前难以区分，事后会相互转化：今天的创造性垄断可能就是明天的收租者。经济学研究也不完全支持“垄断养创新”：阿罗指出在位垄断者的创新动力反而较弱，后来的研究发现竞争与创新呈倒 U 形关系，竞争太少同样抑制创新。这个论点回答“创业者该追求什么”很有力，回答“社会该容忍什么”很薄弱。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t3">
+      <h4><span class="t-no">张力三 · 部分化解</span>反模仿的哲学与最大的模仿机器</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>按吉拉尔的理论，社交网络会放大比较、嫉妒与集体围攻。蒂尔恰恰因为看懂了这一点，才在2004年投资 Facebook。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>Facebook 先靠口碑传播，它的内容本身又是口碑，所以是“双重模仿的”；社交媒体比看上去更重要，“因为它关乎我们的天性”。理解模仿，让他看到了别人看不到的秘密。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>作为投资判断，完全自洽：模仿理论是他看清价值的工具。作为伦理立场，不自洽：他后来批评的网络围攻、舆论替罪羊与从众，正是在这类平台上被放大的。理论解释了机制，却没有约束他参与这个机制。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t4">
+      <h4><span class="t-no">张力四 · 部分化解</span>自由与民主</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>2009年他宣布“不再相信自由与民主相容”，并把福利受益人的增加与女性获得选举权并列为让“资本主义民主”变成矛盾说法的原因；2016年起他却投身选举政治。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>事后的补充说明：“说女性的选票会被拿走，或者这样能解决困扰我们的政治问题，都是荒谬的。我不认为任何一类人应当被剥夺投票权，但我对投票能让事情变好不抱什么希望。”转向选举，则是因为退出的路走不通。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>从退出到发声是策略调整，前提没变，这一层自洽。问题在于他对民主正当性的根本看法。据课堂笔记，2012年他说：“君主制是从0到1，民主制是从1到99。”他珍视的自由首先是创始人与创造者的自由，这与人人平等的公民自由不是一回事，而他从未正面处理两者的冲突。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t5">
+      <h4><span class="t-no">张力五 · 未化解</span>用吉拉尔的理论点名“敌基督”</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>吉拉尔一生最重要的发现是：替罪羊是无辜的，群体指认“恶人”的冲动正是暴力的根源。蒂尔却在讲座里把具体的人（通贝里、尤德考斯基）称为“敌基督的军团”。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>他关心的是一种结构：以末日为理由、要求停止科学的话语。提到这些名字，是为了说明这种结构今天长什么样。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>按吉拉尔自己的逻辑，给对手贴上末世之恶的标签，正是群体寻找替罪羊的典型动作。蒂尔2012年讲课时自己也说过，把冲突讲成“善对恶”是“一种有用的宣传工具”，现实里的对手大多彼此相似；他晚年的修辞却在往“善恶对决”那一端移动。不少研究吉拉尔的学者因此认为，他在用吉拉尔的语言，做吉拉尔警告人们不要做的事。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t6">
+      <h4><span class="t-no">张力六 · 部分化解</span>基督徒与“打败死亡”</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>基督教传统通常教人接受有限与死亡；他却资助抗衰老研究，把死亡当作有待解决的问题。2025年杜塔特问他是否希望人类延续下去，他犹豫了很久才回答“是”。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>基督教是向前走的宗教，不是回到伊甸园；科学与技术是“犹太—西方乐观主义的天然盟友”（2015）。同时他拒绝把意识上传到计算机，理由正是“受基督教影响”的身体观。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>这是少数派的神学读法，有经文可援引（保罗称死亡为“尽末了所毁灭的仇敌”），但主流神学通常区分复活的盼望与技术延寿。批评者称之为普罗米修斯式、甚至异端式的信仰：梵蒂冈的人工智能伦理顾问、修士保罗·贝南蒂在罗马讲座前撰文，题目就叫《美国异端》。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t7">
+      <h4><span class="t-no">张力七 · 能化解</span>停滞论与比特里的财富</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>他说只有比特世界在进步、原子世界停滞了，可他的财富几乎都来自比特：支付、社交网络、数据软件。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>这恰好是证据：我们生活在一个“比特不受管制、原子受到管制”的世界，软件是阻力最小的方向，聪明人和钱都流向那里。他的基金也投资火箭、能源与生物技术。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>这一条基本自洽。更大的问题在停滞论本身的证据：1970年代初以后美国全要素生产率增速放缓有广泛共识；但可回收火箭、mRNA 疫苗、新一代减重药物、电池与光伏成本大降，都是原子世界的突破。弱版本（原子世界相对放缓）站得住，强版本（全面停滞）越来越难维持。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t8">
+      <h4><span class="t-no">张力八 · 能化解</span>末日焦虑与“确定的乐观”</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>他一面谈末日、谈敌基督，一面要求人们做“确定的乐观者”。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>2008年《乐观的思想实验》的回答：如果世界真的毁灭，任何投资与计划都没有回报可言，所以理性的人只能押注“世界不会毁灭”的那一支，并在这一支里认真建设。末日意识是行动的理由，不是消极的理由。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>这一条自洽，而且是他最有原创性的推理之一：悲观用来描述现实，乐观用来规定行动。代价是，乐观需要一个具体的建设方案，而他晚年的作品更多在描述危险，较少给出方案。</p></div>
+      </div>
+    </div>
+
+    <div class="tension" id="t9">
+      <h4><span class="t-no">张力九 · 部分化解</span>反模仿者成了被模仿的榜样</h4>
+      <div class="t-grid">
+        <div><h5>张力</h5><p>他教人不要跟风，可“蒂尔式的反共识”本身成了硅谷最流行的风格之一；“PayPal 帮”、蒂尔奖学金得主、投资圈里的逆向姿态，都在模仿他。</p></div>
+        <div class="t-a"><h5>他的回应</h5><p>《从0到1》第2章已经预见到这一点：“最反共识的事情，不是反对大众，而是独立思考。”简单地反着说，同样是被大众牵着走。</p></div>
+        <div class="t-c"><h5>怎么看</h5><p>逻辑上完整，但它把检验标准交给了“是否真正独立思考”，而这无法从外部判断。体系在这里带着一个自我豁免：任何失败的模仿者，都可以被说成“没有真正理解”。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" id="p5-readings">
+    <h3><span class="num">5.3</span>三种读法，以及本文的判断</h3>
+    <p class="lede">怎样看待整个体系，大致有三种读法。它们不完全互斥。</p>
+    <h4>读法一：一个以吉拉尔为轴的哲学体系</h4>
+    <p>支持者的读法。依据是核心前提的稳定性：吉拉尔的影响始于1980年代后期，《多元化神话》写于 PayPal 之前；2004年的《施特劳斯时刻》里，敌基督、“和平与安全”、拦阻者都已出现，比他公开大谈这些早了近二十年。这些想法早于他的财富，很难说是财富的副产品。</p>
+    <h4>读法二：利益的合理化</h4>
+    <p>批评者的读法，传记作者马克斯·查夫金的《逆行者》（<i class="en">The Contrarian</i>，2021）是代表。赞美垄断，与他持有的垄断型公司相符；反对监管与“减速”，与他投资的国防、数据与人工智能公司相符；怀疑民主，与富豪用资金影响政治相符；自由意志主义的言辞，与国家安全合同、秘密资助诉讼并存。按这种读法，理论的锋利程度，取决于它是否有利于理论家本人。</p>
+    <h4>读法三：稳定的直觉，灵活的策略</h4>
+    <p>第四部分支持的读法。地基（人性论、价值排序、末世感）几十年不变；策略（退出还是介入、依靠还是警惕国家）随外部事件调整。很多看上去的矛盾，只是策略的变化。</p>
+    <div class="box red">
+      <p class="box-t">本文的判断</p>
+      <p>第一，内核是自洽的，而且先于财富形成，这削弱了“纯粹合理化”的说法。第二，在应用层面存在系统性的选择：他的理论被锋利地用来批评对手（大学、媒体、监管者、教会），却很少被用来检验自己的企业（Facebook 对模仿的放大、Palantir 的监控能力）。这是读法二最有力的地方。第三，体系有两个结构性弱点。一是模仿理论的解释力过强：几乎任何竞争、从众或冲突都能被说成模仿，这让它很难被反驳。二是“两种危险”的框架几乎可以容纳任何事实：监管可以被说成走向敌基督，失控可以被说成走向毁灭，两边都能对号入座。读他时值得一直追问：在什么样的事实面前，他会承认自己错了？</p>
+    </div>
+  </div>
+
+  <div class="sec" id="p5-record" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">5.4</span>可检验的判断：一张记分表</h3>
+    <p style="max-width:var(--measure)">体系的价值，最终要看它的判断与现实对得上多少。下表只收可以用事实检验的判断。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>判断</th><th class="num">提出</th><th>后来的情况</th><th>评估</th></tr></thead>
+        <tbody>
+          <tr><th>社交网络的价值（投资 Facebook）</th><td class="num">2004</td><td>得到验证</td><td>成立</td></tr>
+          <tr><th>技术停滞：1970年代起原子世界放缓</th><td class="num">2011</td><td>生产率增速放缓有广泛共识；但2010—2020年代出现了可回收火箭、mRNA 疫苗、新型减重药物、电池与光伏成本大降、人工智能突破</td><td>弱版本成立，强版本受挑战</td></tr>
+          <tr><th>高等教育泡沫</th><td class="num">2010</td><td>美国学生贷款总额持续攀升；大学学历的工资溢价依然存在；公众对大学的信任明显下降</td><td>部分成立</td></tr>
+          <tr><th>停滞中自由与民主冲突，中间派塌陷</th><td class="num">2009</td><td>2016年后欧美民粹与两极化上升，2026年他仍用同一机制解释德国与美国</td><td>与事实相符，但存在其他解释（移民、金融危机、媒体结构）</td></tr>
+          <tr><th>退出：海上家园、网络空间</th><td class="num">2009</td><td>海上家园基本停留在设想；加密货币壮大，但已被纳入国家监管</td><td>大体未成立</td></tr>
+          <tr><th>承认衰落的政治会赢</th><td class="num">2016</td><td>特朗普两次当选；他资助过的万斯成为副总统</td><td>作为政治判断命中</td></tr>
+          <tr><th>人工智能可能重启增长</th><td class="num">2026</td><td>尚待检验</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="max-width:var(--measure)">记分的结果与第4.3节的判断一致：他对“人”的判断（模仿、泡沫、精英的不满、对衰落的感受）命中率很高；对“制度出口”的判断（海上家园、退出）命中率很低。他看问题比开药方准。</p>
+  </div>
+</section>
+
+<section class="part" id="p6" aria-labelledby="p6-title">
+  <header class="part-head">
+    <div class="part-no">第六部分</div>
+    <h2 id="p6-title">读原典：一条阅读路线<span class="en">A reading path through the primary texts</span></h2>
+    <dl class="answers">
+      <dt>用途</dt><dd>如果你想自己验证本文的判断，按下面的顺序读原典。顺序按“理解体系的需要”排，不按发表时间。</dd>
+    </dl>
+  </header>
+
+  <div class="sec" id="p6-texts">
+    <h3><span class="num">6.1</span>蒂尔本人的文本：十二组</h3>
+    <p class="lede">先读公开的“教科书版”，再读奠基的哲学论文，最后读晚近的神学与政治言论。每条写明为什么读、读时盯住什么。</p>
+    <ol class="reading">
+      <li><span class="t">《从0到1》<i class="en">Zero to One</i>（2014，与布莱克·马斯特斯合著）</span><span class="m">先读第1、2、4、6、8、14章与结论</span>体系的公开版。盯住第4章的竞争观（吉拉尔的影子，但书中没有点他的名）、第6章的四种未来态度、第14章的“创始人悖论”、结论里的四种未来。</li>
+      <li><span class="t">《一个自由意志主义者的教育》<i class="en">The Education of a Libertarian</i>（Cato Unbound，2009-04-13）</span><span class="m">短文，十几分钟读完</span>政治论的源头。连同页面下方他关于选举权的补充说明一起读，盯住“逃离一切形式的政治”的三个方向，以及“政治与技术之间的生死竞赛”这个比喻。</li>
+      <li><span class="t">《施特劳斯时刻》<i class="en">The Straussian Moment</i>（2004年宣读；收入《政治与启示录》，2007，第189—218页）</span><span class="m">最难，也最重要</span>整个体系的“罗塞塔石碑”。按小节读：人性问题、洛克、施米特、施特劳斯、吉拉尔、历史与知识。盯住施米特一节里的敌基督与“和平与安全”，施特劳斯一节里的“梯队”，以及结尾的“基督徒政治家”。</li>
+      <li><span class="t">《乐观的思想实验》<i class="en">The Optimistic Thought Experiment</i>（Policy Review，2008年2—3月号）</span><span class="m">把末日与投资放在一起想</span>理解他为什么能同时是末世论者和乐观者，以及他怎样把金融泡沫读成对全球化的集体押注。</li>
+      <li><span class="t">《未来的终结》<i class="en">The End of the Future</i>（National Review，2011-10-03）</span><span class="m">停滞论的系统陈述</span>盯住他使用的证据类型：交通速度、能源价格、粮食产量、医药，以及“没有增长就有输有赢”的政治推论。</li>
+      <li><span class="t">斯坦福 CS183 课堂笔记（2012，布莱克·马斯特斯整理）</span><span class="m">比书更粗糙，也更坦率</span>重点读第11讲“秘密”、第12讲“战争与和平”、第17讲“深思”（谈人工智能）、第18讲“创始人是受害者，创始人是神”和第19讲“停滞还是奇点”。很多没进书的话在这里。</li>
+      <li><span class="t">《反伊甸主义》<i class="en">Against Edenism</i>（First Things，2015年6月）</span><span class="m">短文</span>基督教与技术进步怎样被他绑在一起。</li>
+      <li><span class="t">《多元化神话》<i class="en">The Diversity Myth</i>（1995，与戴维·萨克斯合著）</span><span class="m">读导论与结论即可</span>最早的文本，看“反趋同”在校园文化战争里的早期形态。书中有关性侵的段落，他在2016年公开道歉。</li>
+      <li><span class="t">2016年共和党全国代表大会演讲（7月21日）与全国新闻俱乐部演讲（10月31日）</span><span class="m">各十几分钟</span>停滞论怎样被翻译成政治语言。“认真对待，但不按字面理解”出自后一场的问答（这个说法最早由记者塞琳娜·齐托提出，他借用了它）。</li>
+      <li><span class="t">2018年斯坦福 Cardinal Conversations 系列中与里德·霍夫曼的对谈；2019年全国保守主义大会演讲与《纽约时报》评论</span><span class="m">科技与政治</span>“人工智能是共产主义的”这一判断的出处，以及中美竞争怎样进入他的体系。</li>
+      <li><span class="t">2022年斯坦福学术自由会议演讲；2024年胡佛研究所访谈《现在就是启示录？》；2025年《纽约时报》杜塔特访谈</span><span class="m">末世论的公开版本</span>看“敌基督与末日”的对举怎样一步步展开，以及他如何把它用于人工智能与气候议题。</li>
+      <li><span class="t">《驶向世界尽头的航行》（First Things，2025年11月号，与萨姆·沃尔夫合写）；MD MEETS 访谈（2026年9月）</span><span class="m">最新形态</span>前者讲培根与《但以理书》，后者讲人工智能、欧洲、教会与美国政治。读后者时对照第4.4节，区分原话与媒体转述。</li>
+    </ol>
+  </div>
+
+  <div class="sec" id="p6-sources">
+    <h3><span class="num">6.2</span>他读过的书：进入源头</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>源头</th><th>先读</th><th>再读</th></tr></thead>
+        <tbody>
+          <tr><th>吉拉尔</th><td>《我看见撒旦如闪电坠落》（1999），最清楚的入门</td><td>《创世以来隐藏的事物》（1978）；《暴力与神圣》（1972）；《浪漫的谎言与小说的真实》（1961）；《战斗到底》（2007）</td></tr>
+          <tr><th>施特劳斯</th><td>《迫害与写作艺术》（1952）</td><td>《自然权利与历史》（1953）；《论僭政》（含与科耶夫的往来）</td></tr>
+          <tr><th>施米特</th><td>《政治的概念》（1932）</td><td>《大地的法》（1950）；《陆地与海洋》（1942）</td></tr>
+          <tr><th>科耶夫</th><td>《黑格尔导读》（1947）</td><td>福山《历史的终结与最后的人》（1992），作为通俗版本</td></tr>
+          <tr><th>圣经与培根</th><td>《但以理书》第12章；《帖撒罗尼迦后书》第2章；《帖撒罗尼迦前书》第5章</td><td>培根《新大西岛》（1627）与《伟大的复兴》（1620）卷首图</td></tr>
+          <tr><th>文学与自由意志主义</th><td>托尔金《魔戒》</td><td>兰德《源泉》《阿特拉斯耸耸肩》；黄金时代科幻</td></tr>
+          <tr><th>经济学</th><td>熊彼特《资本主义、社会主义与民主》（1942）中论垄断与创新的章节</td><td>考恩《大停滞》（2011）；戈登《美国增长的起落》（2016）</td></tr>
+          <tr><th>他反对的文本</th><td>博斯特罗姆《脆弱世界假说》（2019）</td><td>原子科学家文集《一个世界或者毁灭》（1946）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec" id="p6-critics">
+    <h3><span class="num">6.3</span>传记与批评：从外面看</h3>
+    <p class="lede">只读蒂尔本人，容易被他的论证风格带走。下面这些从外部检验他。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>作者与文本</th><th>角度</th><th>读它是为了</th></tr></thead>
+        <tbody>
+          <tr><th>马克斯·查夫金《逆行者》（2021）</th><td>传记</td><td>最完整的生平记录；强调他的言辞与行动之间的落差</td></tr>
+          <tr><th>乔治·帕克《不死，不税》（《纽约客》，2011-11-28）</th><td>人物特写</td><td>2011年前后的蒂尔：停滞论、海上家园与对死亡的态度</td></tr>
+          <tr><th>劳拉·布拉德《蒂尔敌基督执念的真实故事》（《连线》，2025-09-30）</th><td>报道</td><td>2004年研讨会的来龙去脉，以及“末日巡回演讲”的起点</td></tr>
+          <tr><th>保罗·莱斯利《从哲学到权力》（Salmagundi，2025）；亚历山大·道格拉斯《科技大佬读不懂吉拉尔》（UnHerd，2025-06-17）；《替罪羊机器》（The New Inquiry，2016）</th><td>吉拉尔研究者的批评</td><td>他保留了吉拉尔的诊断，丢掉了吉拉尔的伦理</td></tr>
+          <tr><th>卢克·伯吉斯《〈从0到1〉的哲学》</th><td>同情的吉拉尔派解读</td><td>书中没有点名吉拉尔，却处处是模仿理论</td></tr>
+          <tr><th>保罗·贝南蒂《美国异端》（Le Grand Continent，2026年3月）；凯文·迪尔《我是一名牧师……》（SF Standard，2025-10-01）</th><td>神学批评</td><td>他的敌基督论在教会内部遭遇的反驳</td></tr>
+          <tr><th>《雅各宾》对敌基督讲座的评论（2025年11月）</th><td>左翼政治批评</td><td>“末世地缘政治”：把内部矛盾投射为外部之恶</td></tr>
+          <tr><th>阿罗（1962）论“替代效应”；阿吉翁等（2005）论竞争与创新的倒 U 形关系</th><td>经济学</td><td>检验“垄断养创新”这一论点</td></tr>
+          <tr><th>考恩《大停滞》（2011）；戈登《美国增长的起落》（2016）</th><td>经济学</td><td>同样承认停滞，但给出不同的原因</td></tr>
+          <tr><th>辛西娅·黑文《欲望的演化：勒内·吉拉尔传》（2018）</th><td>吉拉尔传记</td><td>理解吉拉尔本人，以及他在斯坦福的那些年</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="ax" aria-labelledby="ax-title">
+  <header class="part-head">
+    <div class="part-no">附录</div>
+    <h2 id="ax-title">术语、勘误与资料说明<span class="en">Glossary, errata, method</span></h2>
+  </header>
+
+  <div class="sec" id="ax-gloss" style="max-width:var(--wide)">
+    <h3><span class="num">附录 A</span>术语表</h3>
+    <p style="max-width:var(--measure)">按体系的层次排列：先人性论与认识论，再四个命题，最后是末世论。括号里是英文原词。</p>
+    <dl class="gloss">
+      <div><dt>模仿欲望<span class="en">mimetic desire</span></dt><dd>吉拉尔的核心概念。人不知道自己该要什么，于是模仿“榜样”想要的东西；欲望是主体、榜样、对象三者构成的三角。</dd></div>
+      <div><dt>模仿竞争<span class="en">mimetic rivalry</span></dt><dd>当榜样与模仿者争夺同一个不可分享的对象，两者越来越像，变成彼此的“双重”，冲突开始传染。</dd></div>
+      <div><dt>替罪羊机制<span class="en">scapegoat mechanism</span></dt><dd>群体把蔓延的冲突集中到一个受害者身上，驱逐或杀死他，秩序随之恢复；受害者事后常被神化。吉拉尔认为这是古代宗教与禁忌的起源。</dd></div>
+      <div><dt>秘密<span class="en">secret</span></dt><dd>重要、真实、但尚未被多数人接受的事。分为关于自然的秘密和关于人的秘密。“每家伟大的公司都建立在一个秘密之上。”</dd></div>
+      <div><dt>反共识提问<span class="en">contrarian question</span></dt><dd>“什么重要的真理，很少有人同意你？”蒂尔用它面试、投资，也用它组织整本《从0到1》。</dd></div>
+      <div><dt>从0到1 / 从1到n<span class="en">vertical / horizontal progress</span></dt><dd>纵向进步是做出新东西（技术），横向进步是把已有的东西复制到更多地方（全球化）。</dd></div>
+      <div><dt>创造性垄断<span class="en">creative monopoly</span></dt><dd>因为做出别人做不出的东西而获得定价权的企业；区别于靠政府特许或寻租获得的垄断。</dd></div>
+      <div><dt>最后行动者优势<span class="en">last mover advantage</span></dt><dd>重要的不是第一个进入市场，而是成为某个市场里最后一个做出重大改进、并能长期占据它的公司。</dd></div>
+      <div><dt>幂律<span class="en">power law</span></dt><dd>少数项目贡献绝大部分回报。推论：不要平均分散下注，要集中押注最有可能成为垄断的少数项目。</dd></div>
+      <div><dt>确定 / 不定<span class="en">definite / indefinite</span></dt><dd>对未来有没有具体计划。与乐观、悲观交叉，得出四种态度；蒂尔推崇“确定的乐观”。</dd></div>
+      <div><dt>大停滞<span class="en">the great stagnation</span></dt><dd>1970年代以来，除信息技术外，能源、交通、医药、太空等原子世界的进步明显放缓。“原子与比特”是它的简称。</dd></div>
+      <div><dt>零和政治<span class="en">zero-sum politics</span></dt><dd>没有增长时，一方所得即另一方所失，政治从“做大饼”变成“分饼”，怨恨与极端随之上升。</dd></div>
+      <div><dt>退出<span class="en">exit / escape from politics</span></dt><dd>2009年的主张：到政治管不到的新空间（网络空间、外太空、公海）建立自由，而不是在既有政治里争夺控制权。</dd></div>
+      <div><dt>教育泡沫<span class="en">higher education bubble</span></dt><dd>蒂尔2010年前后的判断：大学学位的价格远高于它的价值，却被人们近乎信仰般地追捧，因此是一个泡沫。蒂尔奖学金由此而来。</dd></div>
+      <div><dt>施特劳斯时刻<span class="en">the Straussian moment</span></dt><dd>蒂尔2004年会议论文的标题：9·11之后，西方必须重新正视暴力与政治，但只能谨慎地、在字里行间说出这些真相。</dd></div>
+      <div><dt>隐微写作<span class="en">esotericism</span></dt><dd>施特劳斯的概念：哲学家把真正的教诲藏在字里行间，表面说给多数人，暗里说给少数能读懂的人。</dd></div>
+      <div><dt>敌基督<span class="en">Antichrist</span></dt><dd>在蒂尔的用法里，指以“和平与安全”为口号、借对末日的恐惧统一世界并终止科学进步的力量；他多用它描述一种全球统一的极权秩序。</dd></div>
+      <div><dt>毁灭<span class="en">Armageddon</span></dt><dd>与敌基督相对的另一种末日：技术与冲突失控导致的大规模毁灭（核战、生物灾难、AI 失控等）。</dd></div>
+      <div><dt>拦阻者<span class="en">katechon</span></dt><dd>出自《帖撒罗尼迦后书》2章，指“那拦阻的”，即延缓敌基督到来的力量；施米特把它变成政治神学概念。</dd></div>
+      <div><dt>普遍同质国家<span class="en">universal and homogeneous state</span></dt><dd>科耶夫对“历史终结”的描述：所有人在同一个国家里被平等承认，再无根本冲突。施特劳斯警告它将是普遍的僭政。</dd></div>
+    </dl>
+  </div>
+
+  <div class="sec" id="ax-errata" style="max-width:var(--wide)">
+    <h3 style="max-width:var(--measure)"><span class="num">附录 B</span>对上一版的评估与勘误</h3>
+    <p class="lede" style="max-width:var(--measure)">上一版（“总论 + 四卷”的知识框架本）抓住了蒂尔的几个真实命题，但它回答的是“他说了什么”，没有回答你最关心的“为什么这样想、从哪里来、是否自洽”。此外有一批事实错误和乱码。</p>
+
+    <h4 style="max-width:var(--measure)">做得好的地方</h4>
+    <ul style="max-width:var(--measure)">
+      <li>抓住了几个核心命题：原子与比特的停滞、垄断与秘密、确定的乐观、模仿欲望、2009年的自由与民主命题、敌基督论。</li>
+      <li>有问题链意识：每章一问一答，章末把问题交给下一章。</li>
+      <li>提醒读者区分“效果判断”与“动机指控”（“有用的白痴”与“不是代理人”必须连着引），以及2009年文章要连同后续说明一起读。</li>
+    </ul>
+
+    <h4 style="max-width:var(--measure)">与你的目标不匹配的地方</h4>
+    <ol class="plain" style="max-width:var(--measure)">
+      <li><b>结构按话题，不按形成。</b>“停滞 → 垄断 → 民主 → 人工智能”是一条叙事顺序。蒂尔思想的实际起点是吉拉尔与自由意志主义（1980年代），停滞论到2000年代末才系统化。读者看不到“这些观点从哪里来”。</li>
+      <li><b>来源几乎缺席。</b>除吉拉尔外，没有交代施特劳斯、施米特、科耶夫、基督教末世论、自由意志主义与托尔金，也没有交代他的亲身经历。吉拉尔也只被用来解释创业，没有触及他的基督教启示论和启示录思想，而那正是蒂尔末世论的来源。</li>
+      <li><b>关键文本缺席。</b>没有《施特劳斯时刻》《乐观的思想实验》《未来的终结》《反伊甸主义》《多元化神话》，也没有2016—2022年的整个政治阶段。</li>
+      <li><b>过度依赖一次访谈。</b>三卷以2026年9月的 MD MEETS 访谈为“底本”，把即兴评论（某国政局、某个选举数字）与体系命题放在同一层级，而且多处转述有误（见下表）。</li>
+      <li><b>自洽性分析薄弱。</b>总论第6章的“共同模式”（反共识、第一原理、增长换自由）概括过宽，“第一原理”也不是蒂尔的常用框架；体系内部的张力几乎没有讨论。</li>
+      <li><b>版式过密。</b>正文14像素，卡片层层嵌套，中英标签混排，每屏信息量过高。</li>
+    </ol>
+
+    <h4 style="max-width:var(--measure)">事实勘误</h4>
+    <div class="tbl-wrap">
+      <table class="errata-t">
+        <thead><tr><th>上一版的说法</th><th>更正</th></tr></thead>
+        <tbody>
+          <tr><td><span class="was">1995年斯坦福的吉拉尔课；1990年代受教于吉拉尔</span></td><td>蒂尔1985—1989年在斯坦福读本科，在那时结识吉拉尔、接触模仿理论（具体修过哪门课没有可靠记载）。1995年是他与萨克斯出版《多元化神话》的年份。</td></tr>
+          <tr><td><span class="was">1969年之后没有重返月球</span></td><td>阿波罗12号至17号在1969—1972年间又五次载人登月。应为：1972年以后再无人登月。</td></tr>
+          <tr><td><span class="was">《从0到1》第3—7章是“操作手册”：第7章讲幂律与分销，附“七个问题”</span></td><td>第7章只讲幂律；分销在第11章，“七个问题”在第13章；第4章是“竞争的意识形态”（马克思与莎士比亚的对照），创始人悖论在第14章。</td></tr>
+          <tr><td><span class="was">四种未来态度的例子：确定悲观“如囤积与堡垒化”，不定悲观“如彻底摆烂”</span></td><td>书中的对应是：确定乐观＝17世纪至1950—60年代的西方（以美国为代表）；不定乐观＝1982年以来的美国；确定悲观＝今天的中国；不定悲观＝1970年代初以来的欧洲。</td></tr>
+          <tr><td><span class="was">《从0到1》开篇：“我们期待的是飞行汽车，得到的却是140个字符”</span></td><td>书中没有这句话。它是创始人基金2011年宣言《未来怎么了？》的标语，通常归于合伙人布鲁斯·吉布尼执笔；蒂尔接受并使用过这句话。中信版中译本的两篇序言引用了它，这可能是误会的来源。</td></tr>
+          <tr><td><span class="was">“竞争是失败者”是2014年芝加哥大学布斯商学院的演讲</span></td><td>同名文章是《华尔街日报》2014年9月12日发表的书摘；同名讲座是2014年10月7日斯坦福 CS183B（Y Combinator“如何创业”课）的第5讲，正式题目是“商业战略与垄断理论”。查不到布斯商学院的同名演讲。</td></tr>
+          <tr><td><span class="was">PayPal 帮“数学竞赛、国际象棋、科幻小说、libertarian 读书会”</span></td><td>这是没有出处的概括。《从0到1》第14章的说法是：PayPal 的创始人里，有四位高中时造过炸弹，五位当时不超过23岁，四位出生在美国以外，三位逃离过共产主义国家。</td></tr>
+
+          <tr><td><span class="was">AI 至少和互联网一样大，甚至更大；他“斩钉截铁”</span></td><td>原话是“也许人工智能比互联网更大，至少有可能让增长重新加速”。“至少一样大”是一家媒体的转述。</td></tr>
+          <tr><td><span class="was">蒂尔给出5%—10%的灭绝风险，并认为值得冒这个险继续前进；与阿莫代伊、奥尔特曼、马斯克“同日警示”</span></td><td>数字来自主持人引用的一项实验。蒂尔说的是“我不认为概率很高；但即使是5%或10%，也已经相当糟糕”。“同日警示”找不到出处。</td></tr>
+          <tr><td><span class="was">“有牙齿”与“假政府”的对照</span></td><td>“有真正牙齿、真正强制力的世界政府”与“药比病更糟”可以核实；“假政府”的说法在可得的文字稿与报道中找不到。</td></tr>
+          <tr><td><span class="was">德国50岁以下最富50人中20人继承；美国同龄最富12人中9人白手起家</span></td><td>口径是“各国最富的50人中，X世代或更年轻（1965年及以后出生）的人”：美国12人，9人白手起家；德国20人，全部继承。</td></tr>
+          <tr><td><span class="was">柏林16—24岁左翼党得票约47%</span></td><td>这个数字在访谈中被提到，说话者未能确认；Infratest dimap 的出口民调为25岁以下43%。</td></tr>
+          <tr><td><span class="was">JD Vance 2028难赢</span></td><td>原话是“我仍然支持万斯”，但担心“无论万斯还是卢比奥都很难赢”。</td></tr>
+          <tr><td><span class="was">欧洲人 don’t do tomorrow</span></td><td>完整说法是“能拖到后天的事，明天就别做”（don’t do tomorrow what you can save for the day after）。</td></tr>
+          <tr><td><span class="was">Minitel 代表“相对分权、贴近市场”，又代表“官僚主导”（前后矛盾，并夹有乱码）</span></td><td>据访谈报道的转述，蒂尔的对照是：协和式飞机代表欧洲追上并一度超过美国；Minitel 代表法国落后之后反而在旧路上越走越深。他认为欧洲在人工智能上更像后者。</td></tr>
+          <tr><td><span class="was">长寿与治痴呆的判断出自2026年6月的阿斯彭演讲，Palantir-Merlin 也在那里被讨论</span></td><td>长寿与痴呆出自9月的 MD MEETS 访谈，阿斯彭的报道中没有。阿斯彭（2026-06-30）那场讨论的题目是“历史终结处的人类”，他在那里说教宗在“为中国共产党工作”；“有用的白痴”则出自9月的访谈。</td></tr>
+          <tr><td><span class="was">通谕日期写作2026-05-25，另一处写作2026-05-09</span></td><td>落款日期2026年5月15日，发布日期5月25日。</td></tr>
+          <tr><td><span class="was">“Palantir-Merlin”军用 AI 合作</span></td><td>查无此项目。Palantir 为美军提供的人工智能系统名为 Maven Smart System，疑为混淆。</td></tr>
+          <tr><td><span class="was">《One World or None》（1945）</span></td><td>文集出版于1946年；口号在1945年底已在原子科学家中流行。</td></tr>
+          <tr><td><span class="was">敌基督讲座的主题句是 Knowledge shall be increased</span></td><td>《但以理书》12:4 是讲座引用的经文之一，并非讲座标题；四场讲座的单独标题未见公开。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 style="max-width:var(--measure)">乱码与混排</h4>
+    <p style="max-width:var(--measure)">上一版正文中夹有十余处生成错误：英文残词（Earn、Bred、uu、penalties、delay 不能 solve），俄文（сцеп、угадать、катастрофа），德文（verlängern），阿拉伯字母词（ملی），日文写法（主張），以及缺失的年份（“对 年代初的门户搜索”）。本版已全部移除。</p>
+  </div>
+
+  <div class="sec" id="ax-method">
+    <h3><span class="num">附录 C</span>资料与核查说明</h3>
+    <ul>
+      <li><b>依据。</b>蒂尔本人的书、文章、演讲与访谈；可查证的报道；关于吉拉尔、施特劳斯、施米特、科耶夫的标准文献；传记与学术批评。</li>
+      <li><b>核查方式。</b>2025—2026年的材料逐条检索核对，优先采用访谈文字稿与多家媒体一致的措辞。只出现在单一来源、或只能找到转述的内容，本文要么不用，要么写明是转述。</li>
+      <li><b>引文。</b>英文原文以可核实的文字稿或报道为准；中文为本文的意译。外泄讲座录音的内容来自媒体报道，蒂尔本人未公开发表讲稿。</li>
+      <li><b>解读与事实的界线。</b>“反趋同”这条主线、各处的“怎么看”与第5.3节的判断，是本文的解读。凡属解读，文中都已注明。</li>
+      <li><b>《从0到1》与 CS183。</b>书中引文依据全文核对；CS183 的引文来自布莱克·马斯特斯的课堂笔记，笔记是整理稿而非逐字稿，所以文中写作“据课堂笔记”。</li>
+      <li><b>局限。</b>部分原始网页（视频平台、梵蒂冈官网、出版社页面等）在核查时无法直接打开，相应内容依据检索摘要、文字稿副本与多方报道交叉确认。《纽约时报》杜塔特访谈与2024年胡佛研究所访谈的逐字稿未能直接核对，本文只转述其中被多家媒体一致报道的内容，没有引用英文原句。《乐观的思想实验》与《反伊甸主义》只核对了被多处一致引用的段落。</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="end">
+  <p>彼得·蒂尔的思想世界 · 重构版。依据蒂尔本人的著作、文章、演讲与访谈，以及可查证的报道与研究整理；资料截至 2026 年 10 月。引文的中文均为意译，以英文原文为准。凡标明“本文的解读”之处，是整理者的判断，不是蒂尔的观点。</p>
+</footer>
+</main>
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  /* font size: a per-reader convenience; the page reads correctly without storage */
+  var KEY='thiel-fs';
+  function setFs(v){
+    if(v==='m'){root.removeAttribute('data-fs');}else{root.setAttribute('data-fs',v);}
+    var bs=document.querySelectorAll('.fs-ctl button');
+    for(var i=0;i<bs.length;i++){bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-fs')===v?'true':'false');}
+  }
+  var saved='m';
+  try{saved=localStorage.getItem(KEY)||'m';}catch(e){}
+  if(saved!=='s'&&saved!=='m'&&saved!=='l'){saved='m';}
+  setFs(saved);
+  document.addEventListener('click',function(ev){
+    var b=ev.target.closest?ev.target.closest('.fs-ctl button'):null;
+    if(!b)return;
+    var v=b.getAttribute('data-fs');
+    setFs(v);
+    try{localStorage.setItem(KEY,v);}catch(e){}
+  });
+
+  /* reading progress and side-index highlight, computed together on scroll */
+  var bar=document.querySelector('.progress i');
+  var links=document.querySelectorAll('.toc-side a[href^="#"]');
+  var targets=[];
+  for(var i=0;i<links.length;i++){
+    var el=document.getElementById(links[i].getAttribute('href').slice(1));
+    if(el){targets.push({el:el,a:links[i]});}
+  }
+  var current=null,ticking=false;
+  function update(){
+    ticking=false;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    var p=h>0?Math.min(1,Math.max(0,window.scrollY/h)):0;
+    if(bar){bar.style.width=(p*100).toFixed(2)+'%';}
+    if(!targets.length)return;
+    var line=window.innerHeight*0.3,hit=null;
+    for(var j=0;j<targets.length;j++){
+      if(targets[j].el.getBoundingClientRect().top<=line){hit=targets[j];}else{break;}
+    }
+    if(hit===current)return;
+    for(var k=0;k<targets.length;k++){targets[k].a.removeAttribute('aria-current');}
+    current=hit;
+    if(hit){
+      hit.a.setAttribute('aria-current','true');
+      var li=hit.a.closest('li[data-part]');
+      if(li){var pa=li.querySelector('a.part');if(pa){pa.setAttribute('aria-current','true');}}
+    }
+  }
+  function onScroll(){if(!ticking){ticking=true;window.requestAnimationFrame(update);}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
+
+</body>
+</html>
