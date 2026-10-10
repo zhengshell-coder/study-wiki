@@ -345,19 +345,6 @@
       "date": "2026-06-19"
     },
     {
-      "id": "mqkwfr9rub1t",
-      "moduleId": "mq6wzs4fqo5b",
-      "title": "claude-code-core-concepts",
-      "file": "claude-code-core-concepts.html",
-      "desc": "Claude Code 核心概念一册通：主循环、工具、记忆、Skills、Subagent、Hooks、MCP、Plugins。",
-      "tags": [
-        "Claude Code",
-        "Agent",
-        "概念"
-      ],
-      "date": "2026-06-19"
-    },
-    {
       "id": "mqn9rs6rcuiv",
       "moduleId": "mmqkvw9m4",
       "title": "BLM业务领先模型-系统讲解",
